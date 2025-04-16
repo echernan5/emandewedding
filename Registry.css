@@ -124,21 +124,79 @@ h1, h2, h3 {
   box-sizing: border-box;
 }
 
+.hero-header {
+    display: flex;
+    align-items: center;
+    justify-content: center; /* this doesn't matter as much with fixed column widths, but nice to have */
+    padding: 1rem 2rem;
+    width: 100%;
+    box-sizing: border-box;
+}
+
 .hero-col {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-width: 0;
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-width: 0;
 }
 
 .hero-col.left {
-  justify-content: flex-start;
+    justify-content: flex-start;
 }
 
 .hero-col.right {
-  justify-content: flex-end;
+    justify-content: flex-end;
 }
+
+.hero-col.center {
+    flex-grow: 1 !important;     /* Let the center column take up the remaining space */
+    text-align: right !important; /* Title aligned right */
+    white-space: nowrap !important;  /* Prevent wrapping */
+    overflow: hidden !important;     /* Hide overflow text */
+    text-overflow: ellipsis !important; /* Optionally add ellipsis if text overflows */
+}
+
+  .menu-icon {
+    font-size: 3rem;
+    cursor: pointer;
+    color: rgb(255, 255, 255);
+  }
+  
+
+.hero-title {
+    font-size: 2rem;
+    font-family: 'Beverly', serif;
+    transform: translateY(8px);
+    text-transform: uppercase;
+    letter-spacing: 0.2rem;
+    line-height: .8;
+    text-align: center;
+    color: white; /* Or black, depending on background */
+    margin-right: 0px; /* Adjust margin as needed */
+    width: auto !important;        /* Allow title to take as much space as needed */
+  }
+
+  .hero-title a {
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .rsvp-button {
+    padding: 15px 30px;
+    border: 2px solid rgb(255, 255, 255);
+    background: transparent;
+    color: rgb(255, 255, 255);
+    border-radius: 15px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: 1s ease-in-out;
+  }
+  
+  .rsvp-button:hover {
+    background: rgb(255, 255, 255);
+    color: rgb(0, 0, 0);
+  }
 
 .hero-description {
   text-align: center;
@@ -172,22 +230,6 @@ h1, h2, h3 {
   color: rgb(0, 0, 0);
   margin-top: 15px;
   margin-bottom: 0px
-}
-
-.rsvp-button {
-  padding: 15px 30px;
-  border: 2px solid rgb(0, 0, 0);
-  background: transparent;
-  color: rgb(0, 0, 0);
-  border-radius: 15px;
-  cursor: pointer;
-  font-size: 0.8rem;
-  transition: 1s ease-in-out;
-}
-
-.rsvp-button:hover {
-  background: rgb(43, 38, 38);
-  color: rgb(255, 255, 255);
 }
 
 .hero-title {
