@@ -1,0 +1,735 @@
+/* General Styles */
+@font-face {
+    font-family: 'Beverly';
+    src: url('Cordon/Cordon.woff') format('woff'),
+         url('Cordon/Cordon.woff2') format('woff2'),
+         url('Cordon/Cordon.ttf') format('truetype'),
+         url('Cordon/Cordon.otf') format('opentype');
+    font-weight: 400 !important;
+    line-height: 1.2;
+    padding-top: 0%;
+    padding-bottom: 0%;
+    font-style: normal;
+}
+
+
+body {
+    margin: 0;
+    font-family: sans-serif;
+    color: rgb(0, 0, 0);
+    background-color: #f5f5f5;
+}
+
+h1, h2, h3 {
+    font-family: 'Beverly', serif !important;
+    font-weight: normal !important; /* Add !important to override any bolding */
+    line-height: 1.2;
+}
+
+
+.content-wrapper{
+    transition: transform 0.3s ease-in-out;
+    transform: translateX(0);
+}
+
+
+/* Hero Section */
+.hero {
+    background: url('Content/HeroImg.jpg') no-repeat center center fixed;
+    background-size: cover;
+    font-weight: 400;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    text-align: center;
+    color: white;
+}
+
+.hero-content {
+    position: absolute;
+    top: 50%; /* Vertically center the content */
+    left: 50%;
+    transform: translate(-50%, -50%); /* Center content horizontally and vertically */
+    text-align: center;
+    z-index: 1; /* Ensures content stays on top of the overlay */
+    padding: 0;
+    margin: 0;
+    width: 70%;
+}
+
+.hero-subtitle {
+    font-family: 'Beverly', serif !important;
+    font-size: 4rem;
+    text-transform: uppercase;
+    letter-spacing: .2rem;
+    color: white; /* Or black, depending on background */
+    margin-top: 0.83em; /* Adjust as needed */
+    margin-bottom: 0px;
+}
+
+.hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background: linear-gradient(to bottom, 
+        rgba(0, 0, 0, 0.2) 0%,   /* Top: Semi-transparent black */
+        rgba(0, 0, 0, 0) 10%,    /* Fade to fully transparent in the middle */
+        rgba(0, 0, 0, 0.3) 80%); /* Bottom: Fade back to semi-transparent black */
+}
+
+.hero-header {
+    display: flex;
+    align-items: center;
+    justify-content: center; /* this doesn't matter as much with fixed column widths, but nice to have */
+    padding: 1rem 2rem;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.hero-col {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-width: 0;
+}
+
+.hero-col.left {
+    justify-content: flex-start;
+}
+
+.hero-col.right {
+    justify-content: flex-end;
+}
+
+.hero-col.center {
+    flex-grow: 1 !important;     /* Let the center column take up the remaining space */
+    text-align: right !important; /* Title aligned right */
+    white-space: nowrap !important;  /* Prevent wrapping */
+    overflow: hidden !important;     /* Hide overflow text */
+    text-overflow: ellipsis !important; /* Optionally add ellipsis if text overflows */
+}
+
+  .menu-icon {
+    font-size: 3rem;
+    cursor: pointer;
+    color: rgb(255, 255, 255);
+  }
+  
+
+.hero-title {
+    font-size: 2rem;
+    font-family: 'Beverly', serif;
+    transform: translateY(8px);
+    text-transform: uppercase;
+    letter-spacing: 0.2rem;
+    line-height: .8;
+    text-align: center;
+    color: white; /* Or black, depending on background */
+    margin-right: 0px; /* Adjust margin as needed */
+    width: auto !important;        /* Allow title to take as much space as needed */
+  }
+
+  .hero-title a {
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .rsvp-button {
+    padding: 15px 30px;
+    border: 2px solid rgb(255, 255, 255);
+    background: transparent;
+    color: rgb(255, 255, 255);
+    border-radius: 15px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: 1s ease-in-out;
+  }
+  
+  .rsvp-button:hover {
+    background: rgb(255, 255, 255);
+    color: rgb(0, 0, 0);
+  }
+
+/* Sidebar Styles */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: -500px; /* Hide off-screen initially */
+    width: 500px;
+    height: 100%;
+    background-color: white;
+    color: black;
+    transition: left 0.3s ease-in-out;
+    transform: translateX(0);
+    padding-top: 7%;
+    text-transform: uppercase;
+}
+
+.sidebar.active {
+    left: 0; /* Slide in when active */
+}
+
+.sidebar .close-icon {
+    position: absolute;
+    top: 5%;
+    right: 5%;
+    font-size: 3rem;
+    color: black;
+    cursor: pointer;
+}
+
+.sidebar ul {
+    list-style-type: none;
+    padding: 3%;
+    margin: 0;
+}
+
+.sidebar li {
+    padding: 15px 20px;
+    font-size: 1.2rem;
+}
+
+.sidebar a {
+    color: black;
+    text-decoration: none;
+    display: block;
+    padding-left: 10%;
+    size: 2rem;
+}
+
+.sidebar .dropdown-content {
+    display: none;
+    padding-left: 5%;
+}
+
+.sidebar .dropdown:hover .dropdown-content {
+    display: block;
+}
+
+/* Overlay (Darkens the Page when Menu is Active) */
+/* Overlay (background) for when sidebar is open */
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    opacity: 0; /* Initially hidden */
+    pointer-events: none; /* Prevent interaction when hidden */
+    transition: opacity 0.3s ease-in-out; /* Smooth transition */
+    z-index: 999;
+}
+
+/* When sidebar is open, overlay becomes visible */
+.overlay.active {
+    opacity: 1; /* Full opacity */
+    visibility: visible; /* Make it visible */
+    pointer-events: auto; /* Allow interaction when visible */
+    z-index: 999;   /* Ensure it's on top */
+}
+
+/* Content sliding effect */
+.content-slide {
+    transform: translateX(500px); /* Move the content to the left by 500px when sidebar is open */
+    transition: transform 0.3s ease-in-out;
+}
+
+/* Explore Section */
+.explore {
+    padding-top: 80px;
+    padding-bottom: 80px;
+    padding-left: 0px;
+    margin-right: 0px;
+    overflow: auto;
+    position: relative;
+}
+
+.carousel-wrapper {
+    /* Define the default padding, adjust based on your needs */
+    padding-left: 0px;
+    transition: padding-left 0.3s ease; /* Smooth transition */
+}
+
+
+.carousel-container {
+    width: 100%;
+    overflow: hidden;  /* Prevents horizontal scroll */
+    position: relative; /* Keeps arrows inside */
+}
+
+.card-container {
+    display: flex;
+    gap: 10px; /* Adjust spacing between cards */
+    width: 33%;
+    transition: transform 0.5s ease-in-out;
+}
+
+.card-container::-webkit-scrollbar {
+    display: none; /* Hide scrollbar for Chrome, Safari */
+}
+
+.card {
+    flex: 0 0 30%; /* Keeps each card at 30% of the container width */
+    height: 35vw; /* Adjust as needed */
+    aspect-ratio: 415 / 552; /* Keeps the container's 4:5 aspect ratio */
+    position: relative;
+    background-size: cover;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+/* Padding only for the first card */
+.card-link:first-child {
+    margin-left: 65px;
+}
+
+/* Card Image */
+.card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Ensures the image maintains its aspect ratio and is cropped */
+    transition: transform 2s ease; /* Adds a smooth transition for zoom effect */
+}
+
+/* Hover Effect */
+.card:hover img {
+    transform: scale(1.1); /* Zooms in the image by 10%, without affecting the card size */
+}
+
+.card-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient( to top, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0) 20%);
+}
+
+.card-link {
+    display: block;
+    width: 100%;  /* Ensures it takes up the full width of the card */
+    height: 100%; /* Makes it cover the entire height of the card */
+    text-decoration: none; /* Remove default link styling */
+    color: inherit; /* Keep text color as per the card styles */
+}
+
+.card-title {
+    font-family: Beverly;
+    text-transform: uppercase;
+    line-height: 1;
+    position: absolute;
+    text-align: center;
+    color: white;
+    font-size: 2.5rem;
+    letter-spacing: .2rem;
+    width: 100%;
+    bottom: 10px;
+    margin: 0;
+}
+
+/* Carousel Arrows */
+.carousel-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: black;
+    outline: white;
+    border-radius: 50%;
+    padding: 0px;
+    cursor: pointer;
+    z-index: 2;
+    transition: 0.3s ease;
+    max-height: 45px;
+    max-width: 45px;
+}
+
+.carousel-arrow:hover {
+    background: rgba(0, 0, 0, 0.8);
+}
+
+.left {
+    left: 0;
+}
+
+.right {
+    right: 0;
+}
+
+.carousel-arrow svg {
+    width:45px;
+    height: 45px;
+    color: white;
+    align-items: center;
+}
+
+.carousel-arrow.left {
+    display: none; /* Initially hide the left arrow */
+    position: absolute;
+    top: 50%;
+    left: 10px;
+    transform: translateY(-50%);
+    cursor: pointer;
+    z-index: 10;
+}
+
+.carousel-arrow.right {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    cursor: pointer;
+    z-index: 10;
+}
+
+/* About Section */
+.about {
+    background: url('Content/national-gallery-of-art-washington-dc-engagement-43.webp') no-repeat center center fixed;
+    text-align: center;
+    padding: 50px 0;
+    padding-bottom: 5rem;
+}
+
+.about-logo {
+    max-width: 15vw;
+}
+
+.about-heading {
+    font-family: serif;
+    text-transform: uppercase;
+    font-size: 3rem;
+    max-width: 70vw;
+    margin: 0 auto;
+    padding-top: 1.5rem;
+    padding-bottom: 3rem;
+    color: white;
+}
+
+.about-text {
+    font-family: sans-serif;
+    color: white;
+    max-width: 50vw;
+    margin: auto;
+    padding-bottom: 1rem;
+}
+
+/* Debugging styles */
+/* .about, .about-logo, .about-heading, .about-text {
+    border: 1px solid red; /* Add a border temporarily to debug */
+/* } */   
+
+/* Squares Section */
+.squares {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    min-height: 80vh;
+    margin-top: 80px;
+    margin-bottom: 80px;
+    background: #f5f5f5;
+}
+
+.square {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.square img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    aspect-ratio: 1 / 1;
+}
+
+.top-left, .bottom-right {
+    background: #f5f5f5;
+    flex-direction: column;
+}
+
+.pre-heading {
+    font-family: sans-serif;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+}
+
+.square-heading {
+    font-family: serif;
+    text-transform: uppercase;
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.square-link {
+    font-family: sans-serif;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: black;
+}
+
+/* Footer */
+.footer {
+    background: white;
+    padding: 20px 0;
+    text-align: center;
+    margin-top: 20px;
+    min-height: 25%;
+}
+
+.footer ul {
+    list-style: none;
+    padding: 0;
+}
+
+.footer ul li {
+    display: inline;
+    margin: 0 10px;
+}
+
+.footer ul li a {
+    text-decoration: none;
+    color: black;
+    font-family: sans-serif;
+}
+
+/* Mobile-specific Styles */
+@media (max-width: 640px) {
+    /* Adjust hero header layout on mobile */
+    .hero-header {
+        display: flex;
+        justify-content: space-between;  /* Spread out content */
+        align-items: center;
+        padding: 1rem 2rem;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    /* Adjust the hero-col class to take minimal space for left column */
+    .hero-col {
+        flex: 0 1 auto; /* Allow columns to shrink, but not expand */
+        min-width: 0;
+    }
+
+    /* Hide the third column by setting width to 0 */
+    .hero-col.right {
+        width: 0;  /* Set width to 0 to hide the RSVP button */
+        flex: 0;   /* Ensure the column doesn’t take up space */
+        padding: 0; /* Optional: remove padding if needed */
+        margin: 0;  /* Optional: remove any margin */
+    }
+
+    /* Allow the title to take up just as much space as needed */
+    .hero-title {
+        font-size: 1.5rem;  /* Smaller title size */
+        text-align: right;   /* Align title to the right */
+        white-space: nowrap; /* Prevent wrapping of the text */
+        width: auto;         /* Let the title take only as much width as it needs */
+        margin-right: 0px;  /* Space on the right */
+        text-transform: uppercase;
+        letter-spacing: 0.2rem;
+        color: white;
+        overflow: hidden;    /* Prevent overflow of long text */
+        line-height: 1.2; /* Adjust line height */
+        transform: none; /* Remove the translateY */
+    }
+
+    .hero-title a {
+        text-decoration: none;
+        color: inherit;
+    }
+
+    /* Hide RSVP button on mobile */
+    .rsvp-button {
+        display: none;
+    }
+
+    .hero-content {
+        width: 90%; /* Adjust width for mobile */
+    }
+
+    /* Adjust the subtitle on mobile */
+    .hero-subtitle {
+        font-family: 'Beverly', serif !important;
+        font-size: 3rem;  /* Smaller subtitle size */
+        text-transform: uppercase;
+        letter-spacing: .2rem;
+        color: white;
+        margin-top: 0.83em;
+        margin-bottom: 0px;
+    }
+
+    /* Adjust content's padding and margins for mobile */
+    .hero-description {
+        font-size: 1rem;
+        color: white;
+    }
+
+    .sidebar {
+        width: 80vw; /* Set the sidebar width to 80% of viewport */
+        left: -80vw; /* Initially hide the sidebar off-screen */
+    }
+
+    .sidebar.active {
+        left: 0; /* Slide in when active */
+    }
+
+    .explore {
+        padding-top: 50px;
+        padding-bottom: 50px;
+    }
+
+    .carousel-container {
+        overflow-x: auto;  /* Allow horizontal scrolling */
+        -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+        scroll-snap-type: x mandatory; /* Snap cards into place */
+        scroll-padding-left: 65px;
+    }
+    .carousel-container::-webkit-scrollbar {
+        display: none;                 /* WebKit (Chrome, Safari, etc.) */
+      }
+
+    .card-container {
+        width: 100%;
+        height: 80%;
+        gap: 10px; /* Adjust spacing between cards */
+        transition: none;
+        margin-left: 10px; /* Space on the left */
+    }
+
+    .card {
+        flex: 0 0 85%; /* Show one card at 80% width */
+        height: 90vw; /* Adjust height on mobile */
+        margin-right: 10px; /* Space between cards */
+        scroll-snap-align: start; /* Align scrolling to cards */
+    }
+
+    .card-link:first-child {
+        padding-left: 65px;
+    }
+
+    .carousel-arrow {
+        display: none !important;
+      }
+
+}
+
+
+/* For Tablet-sized devices (iPad Air and similar) */
+@media (max-width: 1024px) and (min-width: 641px) {
+    .hero {
+        max-height: 100vh; /* Ensure the hero section doesn't exceed 100vh */
+    }
+
+    .hero-overlay {
+        background: linear-gradient(to bottom, 
+            rgba(0, 0, 0, 0.5) 0%,   /* Top: Semi-transparent black */
+            rgba(0, 0, 0, 0.2) 20%,    /* Fade to fully transparent in the middle */
+            rgba(0, 0, 0, 0.3) 80%); /* Bottom: Fade back to semi-transparent black */
+    }
+
+    .hero-header {
+        display: flex !important;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 2rem;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    /* Adjust the left column to be smaller */
+    .hero-col.left {
+        flex-basis: 15% !important;  /* Set the left column width to 15% */
+        max-width: 15% !important;   /* Ensure it doesn't stretch more than 15% */
+    }
+
+    /* Adjust the right column to be smaller */
+    .hero-col.right {
+        flex-basis: 15% !important;  /* Set the right column width to 15% */
+        max-width: 15% !important;   /* Ensure it doesn't stretch more than 15% */
+    }
+
+    /* Make the center column take more space */
+    .hero-col.center {
+        flex-grow: 1 !important;     /* Let the center column take up the remaining space */
+        text-align: right !important; /* Title aligned right */
+        white-space: nowrap !important;  /* Prevent wrapping */
+        overflow: hidden !important;     /* Hide overflow text */
+        text-overflow: ellipsis !important; /* Optionally add ellipsis if text overflows */
+    }
+
+    .menu-icon {
+        font-size: 4rem !important; /* Adjust icon size for tablet */
+    }
+
+    /* Ensure title does not wrap */
+    .hero-content {
+        width: 80%;
+    }
+
+    .hero-title {
+        margin-right: 0px !important; /* Adjust margin as needed */
+        width: auto !important;        /* Allow title to take as much space as needed */
+        font-size: 2rem !important;  /* Adjust font size for tablet */
+    }
+
+    .hero-description {
+        font-size: 1.5rem;
+    }
+
+    .rsvp-button {
+        font-size: 1.2rem !important; /* Adjust font size for tablet */
+        transition: 0s ease-in-out; /* Remove transition for tablet */
+        min-height: 44px; /* Ensure button has a minimum height */
+    }
+
+    .sidebar .close-icon {
+        min-width: 50px; /* Ensure close icon has a minimum width */
+        min-height: 50px; /* Ensure close icon has a minimum height */
+    }
+
+    .close-icon {
+        min-width: 50px; /* Ensure close icon has a minimum width */
+        min-height: 50px; /* Ensure close icon has a minimum height */
+    }
+
+    .carousel-wrapper {
+        overflow: visible;
+        justify-content: center;
+        margin-left: 30px;
+        margin-right: 30px;
+      }
+    
+      .carousel-container {
+        overflow: visible;
+        justify-content: center;
+      }
+    
+      .card-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(25vw, 1fr));
+        gap: 20px;
+        justify-content: center;
+        width: 100%;
+      }
+      
+      .card {
+        flex: unset;
+        height: auto;
+        width: 100%; /* Let the grid control sizing */
+        aspect-ratio: 415 / 552;
+      }
+    
+      .carousel-arrow {
+        display: none !important;
+      }
+    
+      .card-link:first-child {
+        margin-left: 0; /* Reset extra spacing */
+      }
+    }

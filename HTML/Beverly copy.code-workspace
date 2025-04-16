@@ -1,0 +1,15 @@
+{
+	"folders": [
+		{
+			"name": "Beverly copy",
+			"path": "../../Downloads/ModernFontBundle/Beverly copy"
+		},
+		{
+			"name": "EmandEWedding",
+			"path": ".."
+		}
+	],
+	"settings": {
+		"liveServer.settings.multiRootWorkspaceName": "EmandEWedding"
+	}
+}

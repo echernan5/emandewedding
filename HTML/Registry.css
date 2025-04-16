@@ -1,0 +1,324 @@
+@font-face {
+    font-family: 'Beverly';
+    src: url('Cordon/Cordon.woff') format('woff'),
+         url('Cordon/Cordon.woff2') format('woff2'),
+         url('Cordon/Cordon.ttf') format('truetype'),
+         url('Cordon/Cordon.otf') format('opentype');
+    font-weight: 400 !important;
+    line-height: 1;
+    font-style: normal;
+}
+
+body {
+    margin: 0;
+    color: rgb(0, 0, 0);
+    background-color: #f5f5f5;
+    font-family: Arial, Helvetica, sans-serif !important;
+    font-style: normal;
+    overflow-x: hidden; /* Prevent horizontal scroll */
+}
+
+h1, h2, h3 {
+    font-family: 'Beverly', serif !important;
+    font-weight: normal !important; /* Add !important to override any bolding */
+    line-height: 1;
+    text-transform: uppercase;
+}
+/* Sidebar Styles */
+.sidebar {
+    position: fixed;
+    left: -500px; /* Hide off-screen initially */
+    width: 500px;
+    height: 100%;
+    background-color: white;
+    color: black;
+    transition: left 0.3s ease-in-out;
+    transform: translateX(0);
+    padding-top: 7%;
+    text-transform: uppercase;
+    z-index: 999; /* Ensure it's on top */
+}
+
+.sidebar.active {
+    left: 0; /* Slide in when active */
+    z-index: 1000; /* Ensure it's on top */
+}
+
+.sidebar .close-icon {
+  position: absolute;
+  top: 5%;
+  right: 5%;
+  font-size: 3rem;
+  color: black;
+  cursor: pointer;
+}
+
+.sidebar ul {
+    list-style-type: none;
+    padding: 3%;
+    margin: 0;
+}
+
+.sidebar li {
+    padding: 15px 20px;
+    font-size: 1.2rem;
+}
+
+.sidebar a {
+    color: black;
+    text-decoration: none;
+    display: block;
+    padding-left: 10%;
+    size: 2rem;
+}
+
+.sidebar .dropdown-content {
+    display: none;
+    padding-left: 5%;
+}
+
+.sidebar .dropdown:hover .dropdown-content {
+    display: block;
+}
+
+/* Overlay (Darkens the Page when Menu is Active) */
+/* Overlay (background) for when sidebar is open */
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    opacity: 0; /* Initially hidden */
+    pointer-events: none; /* Prevent interaction when hidden */
+    transition: opacity 0.3s ease-in-out; /* Smooth transition */
+    z-index: 999;
+}
+
+/* When sidebar is open, overlay becomes visible */
+.overlay.active {
+    opacity: 1; /* Full opacity */
+    visibility: visible; /* Make it visible */
+    pointer-events: auto; /* Allow interaction when visible */
+    z-index: 999;   /* Ensure it's on top */
+}
+
+.content-wrapper {
+  transition: transform 0.3s ease-in-out;
+}
+
+
+/* Content sliding effect */
+.content-slide {
+  transform: translateX(500px); /* Move the content to the left by 500px when sidebar is open */
+  transition: transform 0.3s ease-in-out;
+}
+  
+.hero-header {
+  display: flex;
+  align-items: center;
+  justify-content: center; /* this doesn't matter as much with fixed column widths, but nice to have */
+  padding: 1rem 2rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.hero-col {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-width: 0;
+}
+
+.hero-col.left {
+  justify-content: flex-start;
+}
+
+.hero-col.right {
+  justify-content: flex-end;
+}
+
+.hero-description {
+  text-align: center;
+  line-height: 1.5;
+}
+
+.menu-icon {
+  font-size: 3rem;
+  cursor: pointer;
+  color: rgb(33, 33, 33);
+}
+
+.hero-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  left: 50%;
+  justify-content: center;
+  margin-top: 50px;
+  margin-bottom: 25px;
+  margin-left: 75px;
+  margin-right: 75px;
+  max-width: 100vw;
+}
+
+.hero-content h1 {
+  font-size: 4rem;
+  font-family: 'Playfair Display', serif;
+  letter-spacing: .2rem;
+  text-align: center;
+  color: rgb(0, 0, 0);
+  margin-top: 15px;
+  margin-bottom: 0px
+}
+
+.rsvp-button {
+  padding: 15px 30px;
+  border: 2px solid rgb(0, 0, 0);
+  background: transparent;
+  color: rgb(0, 0, 0);
+  border-radius: 15px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: 1s ease-in-out;
+}
+
+.rsvp-button:hover {
+  background: rgb(43, 38, 38);
+  color: rgb(255, 255, 255);
+}
+
+.hero-title {
+  text-decoration: none;
+  font-size: 2rem;
+  font-family: 'Playfair Display', serif;
+  transform: translateY(8px); /* Try tweaking the value */
+  letter-spacing: 0.2rem;
+  line-height: .8;
+  left: 50%;
+  color: rgb(0, 0, 0);
+}
+
+.hero-title a {
+  text-decoration: none;
+  color: inherit;
+}
+  
+  .registry-preview {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+    padding: 4rem 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding-bottom: 50px;
+    padding-top: 0px;
+  }
+  
+  /* Center the overlay content */
+.registry-item .img-wrapper {
+    position: relative;
+    overflow: hidden;
+    transition: 1s ease;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.05);
+    aspect-ratio: 1 / 1;
+  }
+  
+  /* Image styling and hover effect */
+  .registry-item img {
+    width: 100%;
+    display: block;
+    transition: transform 1s ease;
+    aspect-ratio: 1 / 1;
+  }
+  
+  .registry-item .img-wrapper:hover img {
+    transform: scale(1.05);
+  }
+  
+  /* Overlay (darkens the image when hovered) */
+  .overlay {
+    position: absolute;
+    top: 0;
+    left: 50%; /* Adjust left to 50% */
+    transform: translateX(-50%); /* Move it back by 50% of its width */
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.55);
+    color: white;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    
+    /* Use flexbox to center the overlay content */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0 1.5rem; /* Adjust the horizontal padding */
+    text-align: center;
+    font-size: 1.2rem;
+  }
+  
+  .img-wrapper:hover .overlay {
+    opacity: 1;
+  }
+  
+  /* Item info inside overlay */
+  .item-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  /* Adjusting the font styles inside the overlay */
+  .item-info .brand {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    opacity: 0.8;
+  }
+  
+  .item-info .name {
+    font-size: 1.2rem;
+    font-weight: 500;
+  }
+  
+  .item-info .price {
+    font-size: 1rem;
+    margin-bottom: 2rem;
+  }
+  
+  .item-info .btn {
+    background-color: #ffffff;
+    color: #000;
+    font-size: 0.9rem;
+    padding: 0.5rem;
+    border-radius: 4px;
+  }
+  
+  .item-info .btn:hover {
+    background-color: #ddd;
+  }
+  
+
+  .see-full-registry {
+    text-align: center;
+    padding-bottom: 50px;
+  }
+  
+  .see-full-registry .btn {
+    padding: 0.75rem 1.5rem;
+    background-color: #333;
+    color: white;
+    font-size: 1.1rem;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    display: inline-block;
+    transition: background-color 0.3s ease;
+  }
+  
+  .see-full-registry .btn:hover {
+    background-color: #555;
+  }

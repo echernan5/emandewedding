@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Story</title>
+    <link rel="stylesheet" href="ourstory.css"> <!-- Link to your CSS file -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+</head>
+<body>
+
+  <!-- Sidebar Menu -->
+    <div class="sidebar">
+        <i class="bi bi-x close-icon"></i> <!-- Close Icon -->
+        <ul>
+            <li><a href="Index.html">Home</a></li>
+            <li><a href="#">Details</a></li>
+            <li class="dropdown">
+                <a href="#">Photo Gallery</a>
+                <ul class="dropdown-content">
+                    <li><a href="#">Proposal</a></li>
+                    <li><a href="#">Getting Ready</a></li>
+                    <li><a href="#">Ceremony</a></li>
+                    <li><a href="#">Reception</a></li>
+                </ul>
+            </li>
+            <li><a href="#">Our Story</a></li>
+        </ul>
+    </div>
+
+    <div class="content-wrapper">
+        <div class="overlay"></div>
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero-overlay">
+                <i class="bi bi-list menu-icon"></i>
+                <h1 class="hero-title">Ethan & Emma</h1>
+                <button class="rsvp-button">RSVP</button>
+            </div>
+        </section>
+
+    <!-- Opening Animation -->
+    <section class="intro">
+        <p>Ethan & Emma are…</p>
+        <h2 id="animated-text"> .</h2> <!-- JavaScript will update this text -->
+    </section>
+
+   <!-- Timeline Section -->
+   <div class="timeline-wrapper">
+        <button class="scroll-left">←</button>
+        <section class="timeline">
+            <h2>Our Journey</h2>
+            <div class="timeline-container">
+                <div class="timeline-item">
+                    <img src="Content/2H4A9681 copy.JPG" alt="Met in high school">
+                    <p class="year">2018</p>
+                    <p>Met in high school</p>
+                </div>
+                <div class="timeline-item">
+                    <img src="Content/2H4A9681 copy.JPG" alt="First date in Italy">
+                    <p class="year">2019</p>
+                    <p>First date in Italy</p>
+                </div>
+                <div class="timeline-item">
+                    <img src="Content/2H4A9726 copy.JPG" alt="Graduated high school">
+                    <p class="year">2020</p>
+                    <p>Graduated high school together</p>
+                </div>
+                <div class="timeline-item">
+                    <img src="Content/2H4A9746 copy.JPG" alt="Went to Valpo">
+                    <p class="year">2021</p>
+                    <p>Went to Valpo together</p>
+                </div>
+                <div class="timeline-item">
+                    <img src="Content/2H4A9727 copy.JPG" alt="Moved to DC">
+                    <p class="year">2024</p>
+                    <p>Moved to DC</p>
+                </div>
+                <div class="timeline-item">
+                    <img src="Content/2H4A9727 copy.JPG" alt="Engaged!">
+                    <p class="year">2025</p>
+                    <p>Got engaged!</p>
+                </div>
+            </div>
+        </section>
+        <button class="scroll-right">→</button>
+    </div>
+
+    <!-- Clickable Bio Cards -->
+    <section class="bios">
+        <div class="bio-card">
+            <div class="bio-text">
+                <h3>Emma</h3>
+            </div>
+            <img src="Content/GirlsOctober-5.JPG" alt="Bride">
+            <div class="bio-plus">+</div> <!-- Placeholder for future expansion -->
+        </div>
+        <div class="bio-card">
+            <div class="bio-text">
+                <h3>Ethan</h3>
+            </div>
+            <img src="Content/Ethan Headshot.png" alt="Groom">
+            <div class="bio-plus">+</div> <!-- Placeholder for future expansion -->
+        </div>
+    </section>
+
+    <script src="Ourstory.js"></script> <!-- Link to your JavaScript file -->
+</body>
+</html>
