@@ -19,3 +19,15 @@ document.addEventListener("DOMContentLoaded", function() {
         contentWrapper.classList.remove("content-slide");
     });
 });
+
+  document.addEventListener('DOMContentLoaded', function () {
+    const dropdown = document.querySelector('.sidebar .dropdown');
+    const toggle = dropdown.querySelector('.dropdown-toggle');
+    const content = dropdown.querySelector('.dropdown-content');
+
+    toggle.addEventListener('click', function () {
+      dropdown.classList.toggle('open');
+      content.style.display = dropdown.classList.contains('open') ? 'block' : 'none';
+    });
+  });
+

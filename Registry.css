@@ -77,8 +77,30 @@ h1, h2, h3 {
     padding-left: 5%;
 }
 
-.sidebar .dropdown:hover .dropdown-content {
-    display: block;
+/* Style for the dropdown toggle */
+.sidebar .dropdown-toggle {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  padding-left: 10%;
+  text-align: left;
+  width: 100%;
+  cursor: pointer;
+  color: black;
+}
+
+.sidebar .arrow {
+  margin-left: 8px;
+  transition: transform 0.3s ease;
+}
+
+/* When open, rotate the arrow */
+.sidebar .dropdown.open .arrow {
+  transform: rotate(180deg);
+}
+
+.dropdown-toggle {
+  text-transform: uppercase;
 }
 
 /* Overlay (Darkens the Page when Menu is Active) */
@@ -184,9 +206,9 @@ h1, h2, h3 {
 
   .rsvp-button {
     padding: 15px 30px;
-    border: 2px solid rgb(255, 255, 255);
+    border: 2px solid rgb(0, 0, 0);
     background: transparent;
-    color: rgb(255, 255, 255);
+    color: rgb(0, 0, 0);
     border-radius: 15px;
     cursor: pointer;
     font-size: 0.8rem;
@@ -194,8 +216,8 @@ h1, h2, h3 {
   }
   
   .rsvp-button:hover {
-    background: rgb(255, 255, 255);
-    color: rgb(0, 0, 0);
+    background: rgb(0, 0, 0);
+    color: rgb(255, 255, 255);
   }
 
 .hero-description {
@@ -311,6 +333,8 @@ h1, h2, h3 {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
+    align-items: center;
+    width: 100%;
   }
   
   /* Adjusting the font styles inside the overlay */
@@ -337,6 +361,9 @@ h1, h2, h3 {
     font-size: 0.9rem;
     padding: 0.5rem;
     border-radius: 4px;
+    cursor: pointer;
+    width: 50%;
+    text-decoration: none;
   }
   
   .item-info .btn:hover {
@@ -351,16 +378,74 @@ h1, h2, h3 {
   
   .see-full-registry .btn {
     padding: 0.75rem 1.5rem;
-    background-color: #333;
-    color: white;
+    background-color: transparent;
+    color: black;
     font-size: 1.1rem;
     text-decoration: none;
+    border: 2px solid rgb(0, 0, 0);;
     border-radius: 5px;
     font-weight: bold;
     display: inline-block;
-    transition: background-color 0.3s ease;
+    transition: background-color 1s ease-in-out, color 1s ease-in-out;
   }
   
   .see-full-registry .btn:hover {
-    background-color: #555;
+    background-color: rgb(13, 13, 13);
+    border-color: #141414;
+    color: #ffffff;
+  }
+
+  @media (max-width: 640px) {
+    /* Adjust hero header layout on mobile */
+    .hero-header {
+        display: flex;
+        justify-content: space-between;  /* Spread out content */
+        align-items: center;
+        padding: 1rem 2rem;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    
+    .content-wrapper {
+      width: 100vw; /* Full width on mobile */
+    }
+
+    /* Adjust the hero-col class to take minimal space for left column */
+    .hero-col {
+        flex: 0 1 auto; /* Allow columns to shrink, but not expand */
+        min-width: 0;
+    }
+
+    /* Hide the third column by setting width to 0 */
+    .hero-col.right {
+        width: 0;  /* Set width to 0 to hide the RSVP button */
+        flex: 0;   /* Ensure the column doesn’t take up space */
+        padding: 0; /* Optional: remove padding if needed */
+        margin: 0;  /* Optional: remove any margin */
+    }
+
+    /* Allow the title to take up just as much space as needed */
+    .hero-title {
+        font-size: 1.5rem;  /* Smaller title size */
+        text-align: right;   /* Align title to the right */
+        white-space: nowrap; /* Prevent wrapping of the text */
+        width: auto;         /* Let the title take only as much width as it needs */
+        margin-right: 0px;  /* Space on the right */
+        text-transform: uppercase;
+        letter-spacing: 0.2rem;
+        color: white;
+        overflow: hidden;    /* Prevent overflow of long text */
+        line-height: 1.2; /* Adjust line height */
+        transform: none; /* Remove the translateY */
+    }
+
+    .hero-title a {
+        text-decoration: none;
+        color: inherit;
+    }
+
+    /* Hide RSVP button on mobile */
+    .rsvp-button {
+        display: none;
+    }
   }
