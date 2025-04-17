@@ -124,9 +124,37 @@ h1, h2, h3 {
     padding-left: 5%;
 }
 
-.sidebar .dropdown:hover .dropdown-content {
-    display: block;
+.sidebar .dropdown-content {
+    display: none;
+    padding-left: 5%;
 }
+
+
+/* Style for the dropdown toggle */
+.sidebar .dropdown-toggle {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    padding-left: 10%;
+    text-align: left;
+    width: 100%;
+    cursor: pointer;
+    color: black;
+  }
+  
+  .sidebar .arrow {
+    margin-left: 8px;
+    transition: transform 0.3s ease;
+  }
+  
+  /* When open, rotate the arrow */
+  .sidebar .dropdown.open .arrow {
+    transform: rotate(180deg);
+  }
+  
+  .dropdown-toggle {
+    text-transform: uppercase;
+  }  
 
 /* Overlay (Darkens the Page when Menu is Active) */
 /* Overlay (background) for when sidebar is open */
