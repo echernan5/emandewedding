@@ -127,11 +127,13 @@ h1, h2, h3 {
     transform: translateY(8px);
     text-transform: uppercase;
     letter-spacing: 0.2rem;
-    line-height: .8;
+    line-height: 1;
     text-align: center;
     color: white; /* Or black, depending on background */
     margin-right: 0px; /* Adjust margin as needed */
     width: auto !important;        /* Allow title to take as much space as needed */
+    margin-block-start: 0px; /* Remove default margin */
+    margin-block-end: 0px; /* Remove default margin */
   }
 
   .hero-title a {
