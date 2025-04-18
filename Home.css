@@ -281,17 +281,16 @@ h1, h2, h3 {
     transition: padding-left 0.3s ease; /* Smooth transition */
 }
 
-
 .carousel-container {
     width: 100%;
-    overflow: hidden;  /* Prevents horizontal scroll */
-    position: relative; /* Keeps arrows inside */
+    overflow: hidden; 
+    position: relative;
 }
 
 .card-container {
     display: flex;
-    gap: 10px; /* Adjust spacing between cards */
-    width: 33%;
+    gap: 10px;
+    width: fit-content; /* let the width be dictated by the cards */
     transition: transform 0.5s ease-in-out;
 }
 
@@ -414,7 +413,7 @@ h1, h2, h3 {
 
 /* About Section */
 .about {
-    background: url('Content/national-gallery-of-art-washington-dc-engagement-43.webp') no-repeat center center fixed;
+    background-color: white;
     text-align: center;
     padding: 50px 0;
     padding-bottom: 5rem;
@@ -432,12 +431,12 @@ h1, h2, h3 {
     margin: 0 auto;
     padding-top: 1.5rem;
     padding-bottom: 3rem;
-    color: white;
+    color: rgb(0, 0, 0);
 }
 
 .about-text {
     font-family: sans-serif;
-    color: white;
+    color: rgb(0, 0, 0);
     max-width: 50vw;
     margin: auto;
     padding-bottom: 1rem;

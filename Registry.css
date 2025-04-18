@@ -26,22 +26,21 @@ h1, h2, h3 {
 }
 /* Sidebar Styles */
 .sidebar {
-    position: fixed;
-    left: -500px; /* Hide off-screen initially */
-    width: 500px;
-    height: 100%;
-    background-color: white;
-    color: black;
-    transition: left 0.3s ease-in-out;
-    transform: translateX(0);
-    padding-top: 7%;
-    text-transform: uppercase;
-    z-index: 999; /* Ensure it's on top */
+  position: fixed;
+  top: 0;
+  left: -500px; /* Hide off-screen initially */
+  width: 500px;
+  height: 100%;
+  background-color: white;
+  color: black;
+  transition: left 0.3s ease-in-out;
+  transform: translateX(0);
+  padding-top: 7%;
+  text-transform: uppercase;
 }
 
 .sidebar.active {
-    left: 0; /* Slide in when active */
-    z-index: 1000; /* Ensure it's on top */
+  left: 0; /* Slide in when active */
 }
 
 .sidebar .close-icon {
@@ -54,28 +53,29 @@ h1, h2, h3 {
 }
 
 .sidebar ul {
-    list-style-type: none;
-    padding: 3%;
-    margin: 0;
+  list-style-type: none;
+  padding: 3%;
+  margin: 0;
 }
 
 .sidebar li {
-    padding: 15px 20px;
-    font-size: 1.2rem;
+  padding: 15px 20px;
+  font-size: 1.2rem;
 }
 
 .sidebar a {
-    color: black;
-    text-decoration: none;
-    display: block;
-    padding-left: 10%;
-    size: 2rem;
+  color: black;
+  text-decoration: none;
+  display: block;
+  padding-left: 10%;
+  size: 2rem;
 }
 
 .sidebar .dropdown-content {
-    display: none;
-    padding-left: 5%;
+  display: none;
+  padding-left: 5%;
 }
+
 
 /* Style for the dropdown toggle */
 .sidebar .dropdown-toggle {
@@ -101,7 +101,7 @@ h1, h2, h3 {
 
 .dropdown-toggle {
   text-transform: uppercase;
-}
+}  
 
 /* Overlay (Darkens the Page when Menu is Active) */
 /* Overlay (background) for when sidebar is open */
