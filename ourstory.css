@@ -289,7 +289,6 @@ h1, h2, h3 {
   .intro-image img {
     width: 100%;
     height: auto;
-    border-radius: 12px;
     object-fit: cover;
   }
 
@@ -499,35 +498,128 @@ h1, h2, h3 {
       display: none;
     }
 
+    /* Adjust hero header layout on mobile */
+    .hero-header {
+        display: flex;
+        justify-content: space-between;  /* Spread out content */
+        align-items: center;
+        padding: 1rem 2rem;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    /* Adjust the hero-col class to take minimal space for left column */
+    .hero-col {
+        flex: 0 1 auto; /* Allow columns to shrink, but not expand */
+        min-width: 0;
+    }
+
+    /* Hide the third column by setting width to 0 */
+    .hero-col.right {
+        width: 0;  /* Set width to 0 to hide the RSVP button */
+        flex: 0;   /* Ensure the column doesn’t take up space */
+        padding: 0; /* Optional: remove padding if needed */
+        margin: 0;  /* Optional: remove any margin */
+    }
+
+    /* Allow the title to take up just as much space as needed */
+    .hero-title {
+        font-size: 1.5rem;  /* Smaller title size */
+        text-align: right;   /* Align title to the right */
+        white-space: nowrap; /* Prevent wrapping of the text */
+        width: auto;         /* Let the title take only as much width as it needs */
+        margin-right: 0px;  /* Space on the right */
+        text-transform: uppercase;
+        letter-spacing: 0.2rem;
+        color: rgb(0, 0, 0);
+        overflow: hidden;    /* Prevent overflow of long text */
+        line-height: 1.2; /* Adjust line height */
+        transform: none; /* Remove the translateY */
+    }
+
+    .hero-title a {
+        text-decoration: none;
+        color: inherit;
+    }
+
+    /* Hide RSVP button on mobile */
+    .rsvp-button {
+        display: none;
+    }
+
+    .sidebar {
+        width: 80vw;
+        left: -80vw;
+      }
+    
+      .content-slide {
+        transform: translateX(80vw);
+      }
+    
+    .sidebar.active {
+        left: 0; /* Slide in when active */
+    }
+
+    .intro-section {
+        padding-bottom: 0px;
+        padding-top: 50px;
+    }
+
     .intro p {
         font-size: 1.2rem; /* Adjust font size for smaller screens */
         padding-left: 0 !important; /* Remove left padding */
-        text-align: center; /* Center align the text */
+        text-align: left; /* Center align the text */
+        margin-left: 30px;
     }
 
     .intro h2#animated-text {
         font-size: 3rem; /* Adjust font size for smaller screens */
         padding-left: 0 !important; /* Remove left padding */
-        text-align: center; /* Center align the text */
+        text-align: left; /* Center align the text */
+        margin-left: 30px;
     }
 
     .overlay {
         max-width: 100%;
     }
 
-.intro-container {
-        flex-direction: column; /* Stack text and image vertically */
-        align-items: center;  /* Center align the content */
+    .intro-container {
+        flex-direction: column; /* Stack items vertically */
+        align-items: center;    /* Center align items */
     }
-    
+
+    .intro-heading-container {
+        left: 50%;
+        width: 100%;
+        text-align: left;
+    }
+
     .intro-image {
-        flex: 1 1 100%;  /* Make the image take full width */
-        padding: 1rem 0;
+        order: 2; /* Move the image below the text */
+        width: 100vw; /* Adjust image width */
+        margin-top: 2rem; /* Add space between text and image */
+        padding: 0; /* Remove padding */
+        aspect-ratio: 721 / 666; /* Forces square shape */
     }
-    
+
     .intro-text {
-        width: 90%;  /* Optional: Adjust text width for better alignment */
-        padding: 1rem 0;
+        order: 1; /* Keep the text above the image */
+        text-align: left; /* Center text for mobile */
+        padding: 0; /* Remove padding */
+    }
+
+    .intro-text h1 {
+        font-size: 2.5rem;
+      }
+
+
+    .intro-text h3 {
+        font-size: 1.5rem;
+    }
+
+    .intro-image img {
+        min-width: 100%;
+        min-height: 100%;
     }
 
     .timeline {

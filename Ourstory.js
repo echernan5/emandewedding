@@ -121,29 +121,30 @@ timelineItems.forEach((item, index) => {
 
 // Function to update the active dot based on scroll position
 function updateActiveDot() {
-    const scrollLeft = container.scrollLeft;
-    const containerCenter = scrollLeft + container.offsetWidth / 2;
-  
-    let closestIndex = 0;
-    let minDistance = Infinity;
-  
-    timelineItems.forEach((item, index) => {
-      const itemCenter = item.offsetLeft + item.offsetWidth / 2;
-      const distance = Math.abs(containerCenter - itemCenter);
-  
-      if (distance < minDistance) {
-        minDistance = distance;
-        closestIndex = index;
-      }
-    });
-  
-    // Reset all dots to inactive
-    const dots = document.querySelectorAll('.timeline-dot');
-    dots.forEach(dot => dot.classList.remove('active'));
-  
-    // Set the closest one as active
-    dots[closestIndex].classList.add('active');
-  }  
+  const scrollLeft = container.scrollLeft;
+  const containerCenter = scrollLeft + container.offsetWidth / 2;
+
+  let closestIndex = 0;
+  let minDistance = Infinity;
+
+  timelineItems.forEach((item, index) => {
+    const itemCenter = item.offsetLeft + item.offsetWidth / 2;
+    const distance = Math.abs(containerCenter - itemCenter);
+
+    if (distance < minDistance) {
+      minDistance = distance;
+      closestIndex = index;
+    }
+  });
+
+  // Reset all dots to inactive
+  const dots = document.querySelectorAll('.timeline-dot');
+  dots.forEach(dot => dot.classList.remove('active'));
+
+  // Set the closest one as active
+  dots[closestIndex].classList.add('active');
+}
+
 
 // Listen for scroll event to update the active dot
 container.addEventListener('scroll', updateActiveDot);
