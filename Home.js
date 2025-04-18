@@ -25,12 +25,22 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   
     function updateArrows() {
-      // These arrow updates are used when not on mobile.
-      leftArrow.style.display = (currentIndex === 0) ? 'none' : 'block';
-      rightArrow.style.display =
-        (currentIndex === totalCards - 1) ? 'none' : 'block';
-    }
-  
+      const visibleWidth = cardContainer.offsetParent.offsetWidth;
+      const lastCard = cards[totalCards - 1];
+      const lastCardRightEdge = lastCard.offsetLeft + lastCard.offsetWidth;
+      const currentScroll = currentIndex * cardWidth;
+    
+      // Left arrow
+      leftArrow.style.display = currentIndex === 0 ? 'none' : 'block';
+    
+      // Right arrow: hide when last card is fully visible within the current scroll + visible area
+      if (lastCardRightEdge <= currentScroll + visibleWidth) {
+        rightArrow.style.display = 'none';
+      } else {
+        rightArrow.style.display = 'block';
+      }
+    }        
+    
     function moveCarousel(direction) {
       if (direction === 'left' && currentIndex > 0) {
         currentIndex--;
