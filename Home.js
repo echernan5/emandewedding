@@ -1,3 +1,15 @@
+//Password Checker:
+document.getElementById("submitPassword").addEventListener("click", function () {
+  const enteredPassword = document.getElementById("passwordInput").value;
+  const correctPassword = "PiDay"; // Change this to your password
+  
+  if (enteredPassword === correctPassword) {
+    document.getElementById("passwordModal").style.display = "none"; // Hide the modal
+  } else {
+    document.getElementById("errorMessage").style.display = "block"; // Show error message
+  }
+});
+
 // Carousel Code
 document.addEventListener("DOMContentLoaded", function () {
     // Define isMobile function locally so it's available here
