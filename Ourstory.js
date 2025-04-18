@@ -108,3 +108,41 @@ document.addEventListener("DOMContentLoaded", function() {
     });
   });
 
+  const container = document.querySelector('.timeline-container');
+const dotsContainer = document.querySelector('.timeline-dots-container');
+const timelineItems = document.querySelectorAll('.timeline-item');
+
+// Create dots for each timeline item
+timelineItems.forEach((item, index) => {
+  const dot = document.createElement('div');
+  dot.classList.add('timeline-dot');
+  dotsContainer.appendChild(dot);
+});
+
+// Function to update the active dot based on scroll position
+function updateActiveDot() {
+  const containerWidth = window.innerWidth;
+  const currentScroll = container.scrollLeft;
+
+  // Find the current item in view
+  let activeIndex = Math.round(currentScroll / containerWidth);
+  
+  // Adjust for looping
+  if (activeIndex >= timelineItems.length) {
+    activeIndex = 0;
+  }
+
+  // Reset all dots to inactive
+  const dots = document.querySelectorAll('.timeline-dot');
+  dots.forEach(dot => dot.classList.remove('active'));
+
+  // Mark the active dot as active
+  dots[activeIndex].classList.add('active');
+}
+
+// Listen for scroll event to update the active dot
+container.addEventListener('scroll', updateActiveDot);
+
+// Initial update when the page loads
+updateActiveDot();
+

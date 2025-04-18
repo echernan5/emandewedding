@@ -310,115 +310,120 @@ h1, h2, h3 {
   }
 
 /*Timeline Section*/
-.timeline {
-    display: flex;
-    flex-direction: column; /* Ensure the heading is above the timeline items */
-    width: 100%;
-    max-width: 100vw;
-    margin: 0;
-    padding: 0;
-    align-items: center;
-    padding-top: 80px;
-}
-
 .timeline-wrapper {
     display: flex;
     align-items: center;
-    gap: 10px;
-    width: 80vw;
-    overflow: hidden;
-    margin: 0 auto;
-}
-
-button {
-    background-color: #ccc;
-    border: none;
-    padding: 10px;
-    cursor: pointer;
-}
-
-.timeline-item {
-    display: flex;
-    flex-direction: column;
     justify-content: center;
-    align-items: center;
-    width: 30%; /* Adjust the width of each timeline item */
-    flex-shrink: 0; /* Prevent items from shrinking */
-    height: auto; /* Ensure each item adjusts in height depending on content */
-    margin: 0 5px;
-    box-sizing: border-box;
-    scroll-snap-align: start; /* Makes items snap to the start */
-    background: transparent; /* Background for each item */
-    padding: 0px;
-}
-
-.timeline h2 {
-    font-size: 2.5rem;
-    margin-bottom: 20px;
-    color: #333;
-    text-transform: uppercase;
-    text-align: center;
-    letter-spacing: .2rem;
-    font-family: 'Beverly', serif;
-}
-
-.timeline-content {
-    text-align: center;
-}
-
-/* Constrain the images inside the cards */
-.timeline-item img {
-    width: 100%; /* Ensure the image does not overflow */
-    height: auto; /* Maintain the aspect ratio */
-    object-fit: cover; /* Crop the image to fit without distortion */
-    overflow: hidden; /* Hide any overflow */
-    aspect-ratio: 4 / 5 !important; /* Force the aspect ratio */
-    transition: transform 0.3s ease-in-out;
-    max-width: 100%;
-}
-
-.timeline-item h3 {
-    font-size: 2rem;
-    margin-bottom: 10px;
-    color: #333;
-    text-transform: uppercase;
-    max-width: 100%;
-}
-
-.timeline-item p.year {
-    font-family: 'Beverly', serif;
-    font-size: 2rem;
-    line-height: 1.2;
-    margin: 0;
-    color: #555;
-    text-align: left;
-    width: 95%;
-    padding-top: 2%;
-    margin-left: 5%;
-    letter-spacing: .1rem;
-}
-
-.timeline-item p {
-    font-size: 1rem;
-    margin: 0;
-    margin-left: 5%;
-    color: #555;
-    text-align: left;
-    width: 95%;
-}
-
-.timeline-container {
+    position: relative;
+    overflow: hidden;
+    padding: 2rem;
+    background-color: #f4f4f4;
+    flex-direction: column;
+  }
+  
+  .timeline-container {
     display: flex;
-    flex-wrap: nowrap; /* Prevent items from wrapping */
-    overflow-x: auto; /* Enable horizontal scrolling */
-    scroll-snap-type: x mandatory; /* Snap effect */
-    white-space: nowrap; /* Prevent items from stacking */
-    max-width: 80vw; /* Ensures it doesn't exceed the viewport width */
-}
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    gap: 0rem;
+    padding: 0;
+    max-width: 100vw;
+    width: 100vw;
+  }  
 
-.timeline-container::-webkit-scrollbar {
-    display: none; /* Hide scrollbar for Chrome, Safari */
-}
+  .scroll-container {
+    display: flex;
+    align-items: center; /* Align arrows with the timeline */
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    gap: 1rem; /* Space between left arrow, timeline, and right arrow */
+    max-width: 100vw;
+  }
+  
+  .timeline-spacer {
+    flex: 0 0 calc(50vw - 300px); /* half the screen - half the card */
+    height: 1px; /* invisible */
+  }
+  
+  .timeline-item {
+    width: 100%; /* fixed width */
+    flex: 0 0 auto;
+    scroll-snap-align: center;
+    background: transparent;
+    padding: 0rem;
+    text-align: center;
+    border-radius: 12px;
+    }  
+  
+  .timeline-item img {
+    width: 100px;
+    height: 100px;
+    object-fit: contain;
+    margin-bottom: 1rem;
+     }
+  
+  .timeline-item h3 {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .scroll-left,
+  .scroll-right {
+    background-color: transparent;
+    color: rgb(0, 0, 0);
+    border: none;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    z-index: 2;
+  }
+
+.arrow-img {
+    width: 40px;
+    height: auto;
+    display: block;
+    object-fit: contain;
+  }
+  
+  .arrow-img.left {
+    transform: rotate(-180deg);
+    padding-right: 10vw;
+  }
+  
+  .arrow-img.right {
+    padding-right: 10vw;
+  }
+
+  .timeline-container::-webkit-scrollbar {
+    display: none;
+  }
+
+  .timeline-container {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .timeline-dots-container {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    width: 100%;
+  }
+  
+  .timeline-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: rgba(0, 0, 0, 0.5); /* Default inactive state */
+    transition: background-color 0.3s;
+  }
+  
+  .timeline-dot.active {
+    background-color: rgba(0, 0, 0, 1); /* Active state */
+  }  
+  
 
 /* Bios Section */
 .bios {
