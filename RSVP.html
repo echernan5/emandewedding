@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emma & Ethan</title>
+    <link rel="stylesheet" href="RSVP.css">
+    <script src="RSVP.js" defer></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+
+ <!-- Site Description -->
+  <meta name="description" content="A brief description of your website or project.">
+
+  <!-- Keywords (for SEO) -->
+  <meta name="keywords" content="Emma Hernandez, Ethan Wlodarczyk, Wedding, Emma and Ethan, Emma Hernandez and Ethan Wlodarczyk">
+
+  <!-- Author (optional) -->
+  <meta name="author" content="Emma Hernandez and Ethan Wlodarczyk">
+</head>
+<body>
+
+ <!-- Sidebar Menu -->
+    <div class="sidebar">
+        <i class="bi bi-x close-icon"></i> <!-- Close Icon -->
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="#">Details</a></li>
+            <li class="dropdown">
+                <button class="dropdown-toggle">
+                    Photo Gallery <span class="arrow">▾</span>
+                  </button>
+                <ul class="dropdown-content">
+                    <li><a href="#">Proposal</a></li>
+                    <li><a href="#">Getting Ready</a></li>
+                    <li><a href="#">Ceremony</a></li>
+                    <li><a href="#">Reception</a></li>
+                </ul>
+            </li>
+            <li><a href="OurStory.html">Our Story</a></li>
+            <li><a href="Registry.html">Registry</a></li>
+        </ul>
+    </div>
+
+ <!-- Header -->
+    <section class="hero">
+        <div class="hero-overlay">
+            <div class="hero-header">
+                <div class="hero-col left">
+                    <i class="bi bi-list menu-icon"></i>
+                </div>
+                <div class="hero-col center">
+                    <h1 class="hero-title">
+                        <a href="index.html">Ethan & Emma</a>
+                </div>
+                <div class="hero-col right">
+                    <a href="RSVP.html">
+                        <button class="rsvp-button">RSVP</button>
+                    </a>
+                </div>
+            </div>
+
+            <hr>
+    
+ <!-- Name -->
+  <!-- index.html -->
+  <form id="multi-step-form">
+
+    <!-- Step 1: Lookup -->
+    <div class="form-step active" id="step-1">
+      <label for="guest-name">Enter your name:</label>
+      <input type="text" id="guest-name" name="guest-name" required />
+      <button type="submit">Continue</button>
+      <div id="error-message" style="color: red;"></div>
+    </div>
+  
+    <!-- Step 2: RSVP Options -->
+    <div class="form-step" id="step-2">
+      <div id="guest-info"></div>
+      <div id="party-members"></div>
+      <button type="button" id="to-meal-step">Next</button>
+    </div>
+  
+    <!-- Step 3: Meal Preferences -->
+    <div class="form-step" id="step-3">
+      <div id="meal-preferences">
+        <h3>Meal Preferences</h3>
+        <label><input type="radio" name="mealChoice" value="Chicken"> Chicken</label>
+        <label><input type="radio" name="mealChoice" value="Steak"> Steak</label>
+        <label><input type="radio" name="mealChoice" value="Vegetarian"> Vegetarian</label>
+        <label for="dietaryNotes">Dietary Restrictions</label>
+        <textarea id="dietaryNotes" name="dietaryNotes"></textarea>
+      </div>
+      <button type="button" id="to-message-step">Next</button>
+    </div>
+  
+    <!-- Step 4: Message to Hosts -->
+    <div class="form-step" id="step-4">
+      <h3>Message to the Hosts (optional)</h3>
+      <textarea id="messageToHosts" name="messageToHosts"></textarea>
+      <button type="submit" id="submitRSVP">Submit RSVP</button>
+    </div>
+  
+  </form>
+  
+  
+    
+ <!-- Footer -->
+ <footer class="footer">
+    <ul>
+        <li><a href="#">Home</a></li>
+        <li><a href="#">Details</a></li>
+        <li><a href="#">Q&As</a></li>
+        <li><a href="#">Proposal</a></li>
+        <li><a href="#">Engagement</a></li>
+        <li><a href="#">Getting Ready</a></li>
+        <li><a href="#">Ceremony</a></li>
+        <li><a href="#">Reception</a></li>
+        <li><a href="#">Our Story</a></li>
+        <li><a href="#">Registry</a></li>
+    </ul>
+ </footer>
+</div>
+</body>
+
+</html>
