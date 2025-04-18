@@ -29,6 +29,10 @@ h1, h2, h3 {
 
 /* Menu and Navbar*/
 
+.content-wrapper {
+    width: 100vw;
+}
+
 .hero-header {
     display: flex;
     align-items: center;
@@ -486,4 +490,60 @@ h1, h2, h3 {
     color: white;
     cursor: pointer;
     z-index: 2; /* Ensures it sits above the image */
+}
+
+/* Hide arrows on mobile */
+@media screen and (max-width: 768px) {
+    .scroll-left,
+    .scroll-right {
+      display: none;
+    }
+
+    .intro p {
+        font-size: 1.2rem; /* Adjust font size for smaller screens */
+        padding-left: 0 !important; /* Remove left padding */
+        text-align: center; /* Center align the text */
+    }
+
+    .intro h2#animated-text {
+        font-size: 3rem; /* Adjust font size for smaller screens */
+        padding-left: 0 !important; /* Remove left padding */
+        text-align: center; /* Center align the text */
+    }
+
+    .overlay {
+        max-width: 100%;
+    }
+
+.intro-container {
+        flex-direction: column; /* Stack text and image vertically */
+        align-items: center;  /* Center align the content */
+    }
+    
+    .intro-image {
+        flex: 1 1 100%;  /* Make the image take full width */
+        padding: 1rem 0;
+    }
+    
+    .intro-text {
+        width: 90%;  /* Optional: Adjust text width for better alignment */
+        padding: 1rem 0;
+    }
+
+    .timeline {
+        padding-left: 5vw;
+        padding-right: 5vw;
+    }
+
+    .timeline-container {
+        width: 100%;
+    }
+
+    .timeline-spacer {
+        flex: 0 0 calc(50vw - 150px); /* Reduced value for smaller screens */
+    }
+
+    .timeline-item {
+        width: 90%;
+    }
 }
