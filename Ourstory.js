@@ -152,3 +152,43 @@ container.addEventListener('scroll', updateActiveDot);
 // Initial update when the page loads
 updateActiveDot();
 
+// Get modal elements
+const hisStoryModal = document.getElementById("hisStoryModal");
+const herStoryModal = document.getElementById("herStoryModal");
+
+// Get button elements
+const openHisStoryButton = document.getElementById("openHisStory");
+const openHerStoryButton = document.getElementById("openHerStory");
+
+// Get close buttons
+const closeHisStory = hisStoryModal.querySelector(".close");
+const closeHerStory = herStoryModal.querySelector(".close");
+
+// Open modals when buttons are clicked
+openHisStoryButton.onclick = function() {
+  hisStoryModal.style.display = "block";
+};
+
+openHerStoryButton.onclick = function() {
+  herStoryModal.style.display = "block";
+};
+
+// Close modals when the close button is clicked
+closeHisStory.onclick = function() {
+  hisStoryModal.style.display = "none";
+};
+
+closeHerStory.onclick = function() {
+  herStoryModal.style.display = "none";
+};
+
+// Close modals if clicked outside of the modal content
+window.onclick = function(event) {
+  if (event.target === hisStoryModal) {
+    hisStoryModal.style.display = "none";
+  }
+  if (event.target === herStoryModal) {
+    herStoryModal.style.display = "none";
+  }
+};
+
