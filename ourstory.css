@@ -366,6 +366,18 @@ h1, h2, h3 {
     margin-bottom: 0.5rem;
   }
 
+  .timeline h2 {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    text-align: center; /* Add this to center the text */
+    width: 100%; /* Ensure the element takes up the full width of its container */
+    padding-top: 2rem;
+}
+
+  .section-timeline {
+    align-items: center;
+  }
+  
   .scroll-left,
   .scroll-right {
     background-color: transparent;
@@ -484,6 +496,148 @@ h1, h2, h3 {
     cursor: pointer;
     z-index: 2; /* Ensures it sits above the image */
 }
+
+.story-section {
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-start;
+  padding: 60px 50px;
+  background-color: white;
+  flex-wrap: wrap; /* Stacks cards on small screens */
+}
+
+.story-card {
+  width: 30vw;
+  text-align: left;
+  background: white;
+  overflow: hidden;
+  transition: transform 0.3s ease;
+}
+
+.story-image-container {
+  aspect-ratio: 1/1 !important; /* Forces square shape */
+  overflow: hidden;
+}
+
+.story-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.animated-link {
+  display: block;
+  margin-bottom: 20px;
+  padding-top: 10px;
+  cursor: pointer;
+}
+
+.animated-link a {
+  position: relative;
+  display: inline-block;
+  text-decoration: none;
+  color: black;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  padding-right: 10px; /* Make space for the arrow */
+  font-family: Beverly, serif !important;
+  font-size: 1.5rem;
+  line-height: 1.2;
+}
+
+.animated-link .text {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.story-card .arrow {
+  position: absolute;
+  top: 50%;
+  left: 100%; /* Start the line just outside the link */
+  transform: translateY(-50%); /* Center it vertically */
+  width: 40px; /* Starting with a slightly longer arrow */
+  height: 2px;
+  background-color: black;
+  transition: width 1s ease; /* Animating the width */
+}
+
+.story-card .arrow::after {
+  content: '';
+  position: absolute;
+  top: -3px;
+  right: 0px; /* Slightly offset to match the arrowline */
+  width: 6px;
+  height: 6px;
+  border-top: 2px solid black;
+  border-right: 2px solid black;
+  transform: rotate(45deg);
+  transition: right 2s ease; /* Move arrowhead with the line */
+}
+
+.story-card:hover .arrow {
+  width: 70px; /* Increase the width on hover */
+}
+
+.story-card:hover .arrow::after {
+  right: 0px; /* Move the arrowhead to match the expanding line */
+}
+
+/* Unique button styling */
+.story-button {
+  background-color: #333;
+  color: white;
+  font-size: 16px;
+  border: none;
+  padding: 12px 24px;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background-color 0.3s ease;
+}
+
+.story-button:hover {
+  background-color: #555;
+}
+
+/* Modal Styles */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Fixed position (stay in place) */
+  z-index: 1; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: none; /* Enable scroll if needed */
+  background-color: rgba(0, 0, 0, 0.4); /* Black with opacity */
+  transition: opacity 0.3s ease;
+}
+
+.modal-content {
+  background-color: #fefefe;
+  margin: 15% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%; /* Can change to fit content */
+  max-width: 600px;
+  border-radius: 8px;
+}
+
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
 
 /* Hide arrows on mobile */
 @media screen and (max-width: 768px) {
