@@ -122,6 +122,10 @@ document.addEventListener("DOMContentLoaded", () => {
     form.addEventListener("submit", (e) => {
         e.preventDefault();
 
+        // Log the current step and data to check if form is being submitted
+        console.log("Form submission triggered");
+        console.log("Current step: ", currentStep);
+
         if (currentStep === 1) {
             // Step 1: Name lookup
             const typedName = guestNameInput.value.trim();
@@ -129,7 +133,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 return errorMessageDiv.textContent = "Please enter a name!";
             }
             errorMessageDiv.textContent = "";  // Clear previous error messages
-            fetch(`https://script.google.com/macros/s/AKfycbyWxq-9p6Wr3WxspOq08FsMh8e4Y2tZDDEpSYw_mM5TKDnN0I9xpuYqRtZkDzLbXveT/exec?name=${encodeURIComponent(typedName)}`)
+            fetch(`https://immense-plains-30838-adb516d69898.herokuapp.com/proxy?name=${encodeURIComponent(typedName)}`)
+
                 .then(r => r.json())
                 .then(data => {
                     if (data.error) {
@@ -158,7 +163,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 console.log("About to fetch to Heroku endpoint...");
 
-                fetch("https://emma-ethan-wedding-217cf537dfe4.herokuapp.com/api/submit", {
+                fetch("https://immense-plains-30838-adb516d69898.herokuapp.com/api/submit", {
                     method: "POST",
                     body: JSON.stringify(rsvpData),
                     headers: {
