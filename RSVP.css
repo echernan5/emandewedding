@@ -223,3 +223,7 @@ h1, h2, h3 {
     display: block;
   }
   
+  #dietaryNotes {
+    display: block; /* Make sure it's set to be visible */
+  }
+   
