@@ -26,6 +26,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Loop through each member and create UI elements for RSVP buttons
         partyMembers.forEach(member => {
+            rsvpChoices[member.fullName] = { rsvp: null, mealChoice: null };  // Initialize RSVP object
             const memberDiv = document.createElement("div");
             memberDiv.classList.add("party-member");
             const nameDiv = document.createElement("span");
