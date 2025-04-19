@@ -155,14 +155,17 @@ document.addEventListener("DOMContentLoaded", () => {
                     dietaryNotes: dietaryNotes,
                     rsvps: rsvpChoices  // This includes each guest's RSVP and meal choice
                 };
-            
-                fetch("https://script.google.com/macros/s/AKfycbyWxq-9p6Wr3WxspOq08FsMh8e4Y2tZDDEpSYw_mM5TKDnN0I9xpuYqRtZkDzLbXveT/exec", {
+
+                console.log("About to fetch to Heroku endpoint...");
+
+                fetch("https://emma-ethan-wedding-217cf537dfe4.herokuapp.com/api/submit", {
                     method: "POST",
                     body: JSON.stringify(rsvpData),
                     headers: {
                         "Content-Type": "application/json"
                     }
                 })
+
                 .then(r => r.json())
                 .then(data => {
                     if (data.success) {
