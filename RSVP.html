@@ -80,24 +80,28 @@
       <button type="button" id="to-meal-step">Next</button>
     </div>
   
-    <!-- Step 3: Meal Preferences -->
+    <!-- Step 3: Meal Preferences -->
     <div class="form-step" id="step-3">
-      <div id="meal-preferences">
+        <div id="meal-preferences">
         <h3>Meal Preferences</h3>
-        <label><input type="radio" name="mealChoice" value="Chicken"> Chicken</label>
-        <label><input type="radio" name="mealChoice" value="Steak"> Steak</label>
-        <label><input type="radio" name="mealChoice" value="Vegetarian"> Vegetarian</label>
+    
+        <!-- This is the only container we’ll clear & re‐populate in JS -->
+        <div id="member-meal-choices"></div>
+    
+        <!-- Dietary Notes lives outside of the cleared area -->
         <label for="dietaryNotes">Dietary Restrictions</label>
         <textarea id="dietaryNotes" name="dietaryNotes"></textarea>
-      </div>
-      <button type="button" id="to-message-step">Next</button>
+        </div>
+    
+        <button type="button" id="to-message-step">Next</button>
     </div>
+  
   
     <!-- Step 4: Message to Hosts -->
     <div class="form-step" id="step-4">
       <h3>Message to the Hosts (optional)</h3>
       <textarea id="messageToHosts" name="messageToHosts"></textarea>
-      <button type="submit" id="submitRSVP">Submit RSVP</button>
+      <button id="submit-rsvp" type="submit">Submit RSVP</button>
     </div>
   
   </form>
