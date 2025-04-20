@@ -13,8 +13,8 @@
 
 body {
     margin: 0;
-    color: rgb(0, 0, 0);
-    background-color: #f5f5f5;
+    color: rgb(255, 255, 255);
+    background-color: rgb(112, 127, 91);
     font-family: Arial, Helvetica, sans-serif !important;
     font-style: normal;
 }
@@ -64,7 +64,7 @@ h1, h2, h3 {
   .menu-icon {
     font-size: 3rem;
     cursor: pointer;
-    color: rgb(0, 0, 0);
+    color: rgb(255, 255, 255);
   }
   
 
@@ -76,7 +76,7 @@ h1, h2, h3 {
     letter-spacing: 0.2rem;
     line-height: 1;
     text-align: center;
-    color: rgb(0, 0, 0); /* Or black, depending on background */
+    color: rgb(255, 255, 255); /* Or black, depending on background */
     margin-right: 0px; /* Adjust margin as needed */
     width: auto !important;        /* Allow title to take as much space as needed */
     margin-block-start: 0px; /* Remove default margin */
@@ -90,9 +90,9 @@ h1, h2, h3 {
 
   .rsvp-button {
     padding: 15px 30px;
-    border: 2px solid rgb(0, 0, 0);
+    border: 2px solid rgb(255, 255, 255);
     background: transparent;
-    color: rgb(0, 0, 0);
+    color: rgb(255, 255, 255);
     border-radius: 15px;
     cursor: pointer;
     font-size: 0.8rem;
@@ -100,8 +100,8 @@ h1, h2, h3 {
   }
   
   .rsvp-button:hover {
-    background: rgb(0, 0, 0);
-    color: rgb(255, 255, 255);
+    background: rgb(255, 255, 255);
+    color: rgb(112, 127, 91);
   }
 
 .content-wrapper {
@@ -287,24 +287,33 @@ textarea {
 
 input[type="text"]:focus,
 textarea:focus {
-  border-color: #0077ff;
+  border-color: #ffffff;
   outline: none;
+}
+
+.form-step h1 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  text-align: center;
+  letter-spacing: 0.15rem;
 }
 
 /* Buttons */
 button {
   padding: 0.75rem 1.5rem;
   font-size: 1rem;
-  background-color: #0077ff;
-  color: #fff;
-  border: none;
+  background-color: rgb(112, 127, 91);
+  color: rgb(255, 255, 255);
+  border: white solid 2px;
   border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.2s ease-in-out;
+  transition: 1s ease-in-out;
 }
 
 button:hover {
-  background-color: #005fcc;
+  background-color: rgb(255, 255, 255);
+  color: rgb(112, 127, 91);
+  border: white solid 2px;
 }
 
 .back-button {

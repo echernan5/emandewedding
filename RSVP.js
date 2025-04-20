@@ -183,14 +183,16 @@ document.addEventListener("DOMContentLoaded", () => {
         );
         const json1 = await resp1.json();
 
-        // Log the party field to see what it contains
-        console.log(json1.records[0].fields.party);
-      
         // No match?
         if (!json1.records.length) {
-          errorMessageDiv.textContent = "No matching guests found.";
-          return;
-        }
+            errorMessageDiv.textContent = "We couldn’t find your name on the guest list. Double-check your spelling, or reach out if you think we made a mistake—we’d love to help! 💌";
+            console.log("Error message set:", errorMessageDiv.textContent); // Debugging log
+            return;
+          }
+      
+
+        // Log the party field to see what it contains
+        console.log(json1.records[0].fields.party);
       
         // 2️⃣ Grab the party ID from that record
         partyId = json1.records[0].fields.party; // <-- STORE IT HERE
