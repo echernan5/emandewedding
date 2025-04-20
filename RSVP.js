@@ -16,7 +16,7 @@ document.addEventListener("DOMContentLoaded", () => {
     function showStep(step) {
       document.querySelectorAll(".form-step").forEach((el,i) => {
         el.classList.toggle("active", i === step-1);
-      });
+      }, false);
       currentStep = step;
     }
   
@@ -55,15 +55,52 @@ document.addEventListener("DOMContentLoaded", () => {
                 .querySelectorAll(`.meal-choice[data-name="${member.fullName}"]`)
                 .forEach(el => el.remove());
       }
-      // highlight buttons
-      Array.from(partyMembersDiv.children).forEach(div => {
-        if (div.querySelector("span").textContent === member.fullName) {
-          div.querySelectorAll("button").forEach(btn=>{
-            btn.style.fontWeight = btn.textContent===choice?"bold":"normal";
-            btn.style.backgroundColor = btn.textContent===choice?"#e0e0e0":"";
-          });
+      // --- NEW: Style Buttons ---
+        // Find the specific div for the member being updated
+        const memberDiv = Array.from(partyMembersDiv.children).find(div =>
+            div.querySelector("span").textContent === member.fullName
+        );
+
+        if (memberDiv) {
+            const acceptBtn = memberDiv.querySelector(".accept-button");
+            const declineBtn = memberDiv.querySelector(".decline-button");
+
+            // Define the styles clearly
+            const selectedStyle = {
+                bgColor: '#ffffff',    // White background
+                textColor: '#707f5b',  // Green text
+                fontWeight: 'bold'
+            };
+            const unselectedStyle = {
+                bgColor: 'transparent', // Transparent background
+                textColor: '#ffffff',   // White text
+                fontWeight: 'normal'
+            };
+
+            if (choice === "Accept") {
+                // Style Accept button as selected
+                acceptBtn.style.backgroundColor = selectedStyle.bgColor;
+                acceptBtn.style.color = selectedStyle.textColor;
+                acceptBtn.style.fontWeight = selectedStyle.fontWeight;
+
+                // Style Decline button as unselected
+                declineBtn.style.backgroundColor = unselectedStyle.bgColor;
+                declineBtn.style.color = unselectedStyle.textColor;
+                declineBtn.style.fontWeight = unselectedStyle.fontWeight;
+
+            } else { // choice === "Decline"
+                // Style Accept button as unselected
+                acceptBtn.style.backgroundColor = unselectedStyle.bgColor;
+                acceptBtn.style.color = unselectedStyle.textColor;
+                acceptBtn.style.fontWeight = unselectedStyle.fontWeight;
+
+                // Style Decline button as selected
+                declineBtn.style.backgroundColor = selectedStyle.bgColor;
+                declineBtn.style.color = selectedStyle.textColor;
+                declineBtn.style.fontWeight = selectedStyle.fontWeight;
+            }
         }
-      });
+
     }
   
     // ──  E. Show meal choices ──────────────────────────
@@ -316,7 +353,27 @@ document.addEventListener("DOMContentLoaded", () => {
                 id: record.id, // Keep the ID, might be useful later
                 fullName: record.fields.fullName
             }));
+
             displayPartyMembers(partyMembersForDisplay); // This creates the divs and buttons
+
+            // --- ADD THIS BLOCK START ---
+            // Define the styles clearly (needed for repopulating)
+            const selectedStyle = {
+                bgColor: '#ffffff',    // White background
+                textColor: '#707f5b',  // Green text
+                fontWeight: 'bold'
+            };
+            const unselectedStyle = {
+                bgColor: 'transparent', // Transparent background
+                textColor: '#ffffff',   // White text
+                fontWeight: 'normal'
+            };
+            // --- ADD THIS BLOCK END ---
+
+            // 3. *** Crucial Part: Populate Steps 2 & 3 UI based on fetchedRecords ***
+            console.log("fetchedRecords on Update:", fetchedRecords);
+            fetchedRecords.forEach(record => { // The loop starts AFTER the style definitions
+                // ... rest of the loop code ...
 
             // 3. *** Crucial Part: Populate Steps 2 & 3 UI based on fetchedRecords ***
             console.log("fetchedRecords on Update:", fetchedRecords);
@@ -348,30 +405,34 @@ document.addEventListener("DOMContentLoaded", () => {
                     dietaryNotes: currentNotes || ""
                 };
 
-                // Visually update Step 2 buttons
+                 // Visually update Step 2 buttons using the CONSISTENT style objects
                 if (currentRSVP === "Accept") {
-                    acceptButton.style.fontWeight = "bold";
-                    acceptButton.style.backgroundColor = "#e0e0e0";
-                    declineButton.style.fontWeight = "normal";
-                    declineButton.style.backgroundColor = "";
+                    // Style Accept button as selected
+                    acceptButton.style.backgroundColor = selectedStyle.bgColor; // Use object
+                    acceptButton.style.color = selectedStyle.textColor;       // Use object
+                    acceptButton.style.fontWeight = selectedStyle.fontWeight; // Use object
+
+                    // Style Decline button as unselected (Explicitly)
+                    declineButton.style.backgroundColor = unselectedStyle.bgColor; // Use object
+                    declineButton.style.color = unselectedStyle.textColor;         // Use object
+                    declineButton.style.fontWeight = unselectedStyle.fontWeight;   // Use object
 
                     // Add to accepted members list and display their meal choices in Step 3
                     if (!acceptedMembers.includes(memberName)) {
                         acceptedMembers.push(memberName);
                     }
-                    displayMealChoices(record.fields); // Pass the fields object which contains fullName
+                    // Pass the whole record.fields, which includes fullName etc. needed by displayMealChoices
+                    displayMealChoices(record.fields);
 
-                    // Now, populate the meal choice section we just created
+                    // Now, populate the meal choice section we just created - KEEP THIS
                     const mealChoiceDiv = document.querySelector(`#member-meal-choices .meal-choice[data-name="${memberName}"]`);
                     console.log(`Found mealChoiceDiv for ${memberName}:`, mealChoiceDiv);
                     if (mealChoiceDiv) {
-                        // Corrected line:
                             const mealInput = mealChoiceDiv.querySelector(`input[name="meal-${memberName}"][value="${currentMeal}"]`);
                             console.log(`Found mealInput for ${memberName} - ${currentMeal}:`, mealInput);
                             if (mealInput) {
                                 mealInput.checked = true;
                             }
-                            // Fill in dietary notes
                             const notesTextarea = mealChoiceDiv.querySelector(`textarea[name="diet-${memberName}"]`);
                             if (notesTextarea) {
                                 notesTextarea.value = currentNotes || "";
@@ -381,35 +442,44 @@ document.addEventListener("DOMContentLoaded", () => {
                         }
 
                 } else if (currentRSVP === "Decline") {
-                    declineButton.style.fontWeight = "bold";
-                    declineButton.style.backgroundColor = "#e0e0e0";
-                    acceptButton.style.fontWeight = "normal";
-                    acceptButton.style.backgroundColor = "";
-                    // No meal choices needed for declined members
+                    // Style Decline button as selected
+                    declineButton.style.backgroundColor = selectedStyle.bgColor; // Use object
+                    declineButton.style.color = selectedStyle.textColor;       // Use object
+                    declineButton.style.fontWeight = selectedStyle.fontWeight; // Use object
+
+                    // Style Accept button as unselected (Explicitly)
+                    acceptButton.style.backgroundColor = unselectedStyle.bgColor; // Use object
+                    acceptButton.style.color = unselectedStyle.textColor;         // Use object
+                    acceptButton.style.fontWeight = unselectedStyle.fontWeight;   // Use object
+
+                    // Note: No need to set acceptButton.style.border here, let CSS handle the default border
+
                 } else {
-                    // No RSVP recorded - reset styles (shouldn't happen if they reached Step 5, but good practice)
-                    acceptButton.style.fontWeight = "normal";
-                    acceptButton.style.backgroundColor = "";
-                    declineButton.style.fontWeight = "normal";
-                    declineButton.style.backgroundColor = "";
+                    // No RSVP recorded - set both to unselected explicitly
+                    acceptButton.style.backgroundColor = unselectedStyle.bgColor;
+                    acceptButton.style.color = unselectedStyle.textColor;
+                    acceptButton.style.fontWeight = unselectedStyle.fontWeight;
+
+                    declineButton.style.backgroundColor = unselectedStyle.bgColor;
+                    declineButton.style.color = unselectedStyle.textColor;
+                    declineButton.style.fontWeight = unselectedStyle.fontWeight;
                 }
-            });
+          });
 
-            // 4. Finally, navigate the user interface to Step 2
-            console.log("Repopulation complete. Showing Step 2.");
-            showStep(2);
-        });
+          // 4. Finally, navigate the user interface to Step 2
+          console.log("Repopulation complete. Showing Step 2.");
+          showStep(2);
+      });
 
-    document.getElementById("finish-button")
-    .addEventListener("click", () => {
-        // Reset everything and go home (step 1)
-        form.reset();
-        // clear out any UI from steps 2–5
-        showStep(1);
-    });
+      document.getElementById("finish-button")
+          .addEventListener("click", () => {
+              // Reset everything and go home (step 1)
+              form.reset();
+              // clear out any UI from steps 2–5
+              showStep(1);
+          });
 
-  
-    // ──  H. Kick it off at Step 1  ─────────────────────
-    showStep(1);
+      // ──  H. Kick it off at Step 1  ─────────────────────
+      showStep(1);
+    }
   });
-  

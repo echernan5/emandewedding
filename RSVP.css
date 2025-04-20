@@ -337,6 +337,45 @@ button:hover {
   color: red;
 }
 
+/* Target the container for each party member */
+.party-member {
+  display: flex; /* 1. Treat this div as a flex container */
+  align-items: center; /* Vertically align items (name and buttons) in the middle */
+  margin-bottom: 10px; /* Optional: Add some space between member rows */
+  padding: 5px 0; /* Optional: Add some vertical padding */
+  border-bottom: 1px solid #eee; /* Optional: Visual separator */
+}
+
+/* Target the span containing the guest's name */
+.party-member span {
+  flex-grow: 1; /* 2. Allow the name span to take up all available horizontal space */
+  /* text-align: left; */ /* Default, but ensures names align left */
+  padding-right: 15px; /* Optional: Add space between the longest name and the first button */
+}
+
+/* Target both buttons within the party member div */
+.party-member button {
+  flex-shrink: 0; /* Keep this */
+  width: 80px;    /* Keep this (or adjust as needed) */
+  margin-left: 8px; /* Keep this */
+  text-align: center; /* Keep this */
+  padding: 6px 10px; /* Adjusted padding slightly for better look, feel free to change */
+  box-sizing: border-box; /* Good practice */
+
+  /* --- NEW Default Styles (Unselected Look) --- */
+  background-color: transparent;   /* Use transparent */
+  color: #ffffff;                /* White text */
+  border: 1px solid #ffffff;     /* 1px white border */
+  border-radius: 8px;            /* Keep your border-radius */
+  cursor: pointer;               /* Keep cursor */
+  font-weight: normal;           /* Normal text weight */
+  font-size: 0.9rem;             /* Slightly smaller font for small buttons */
+
+  /* --- Transition --- */
+  /* Smooth transition for background and color changes */
+  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+}
+
 /* Animation */
 @keyframes fadeIn {
   from {
