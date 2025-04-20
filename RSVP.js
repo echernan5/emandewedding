@@ -100,6 +100,22 @@ document.addEventListener("DOMContentLoaded", () => {
       .addEventListener("click", () => showStep(3));
     document.getElementById("to-message-step")
       .addEventListener("click", () => showStep(4));
+
+    // Generate Recap Fucntion 
+    function generateRecap() {
+        let recapHTML = `<strong>Your RSVP Summary:</strong><br>`;
+        
+        Object.entries(rsvpChoices).forEach(([name, { rsvp, mealChoice, dietaryNotes }]) => {
+          recapHTML += `<br><strong>${name}</strong>: ${rsvp}`;
+          
+          if (rsvp === "Accept") {
+            recapHTML += `<br>Meal: ${mealChoice || "Not selected"}<br>`;
+            recapHTML += `Dietary Notes: ${dietaryNotes || "None"}<br>`;
+          }
+        });
+      
+        return recapHTML;
+      }      
   
     // ──  G. Form Submit: Step 1 & Step 4 Logic  ───────
     form.addEventListener("submit", async e => {
@@ -194,12 +210,30 @@ document.addEventListener("DOMContentLoaded", () => {
           })
         );
   
-        alert("🎉 RSVP submitted! Thank you!");
-        form.reset();
-        showStep(1);
-        return;
-      }
+            // Step 5: Show the confirmation recap
+            showStep(5);
+            const recap = generateRecap(); // Recap of the user's selections
+            document.getElementById("confirmation-recap").innerHTML = recap;
+
+            return;
+        }
     });
+
+      // ──  I. Add listeners for your new buttons on Step 5 ──
+  document.getElementById("update-response-button")
+  .addEventListener("click", () => {
+    // Jump back to step 2 so they can tweak their choices
+    showStep(2);
+  });
+
+    document.getElementById("finish-button")
+    .addEventListener("click", () => {
+        // Reset everything and go home (step 1)
+        form.reset();
+        // clear out any UI from steps 2–5
+        showStep(1);
+    });
+
   
     // ──  H. Kick it off at Step 1  ─────────────────────
     showStep(1);
