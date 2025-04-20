@@ -101,21 +101,38 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("to-message-step")
       .addEventListener("click", () => showStep(4));
 
-    // Generate Recap Fucntion 
-    function generateRecap() {
+      function showRSVPConfirmation(records) {
+        const recapHTML = generateRecap(records); // Generate recap from stored records
+        document.getElementById("confirmation-recap").innerHTML = recapHTML;
+      
+        // Show the confirmation step and update message
+        const confirmationMessage = document.getElementById("confirmation-message");
+        const alreadySubmitted = records.some(record => record.fields.weddingRSVP);
+      
+        confirmationMessage.textContent = alreadySubmitted
+          ? "Welcome back! Here's a quick recap of your RSVP."
+          : "RSVP Submitted! Here's a quick recap of your response.";
+      
+        showStep(5); // Show the confirmation step (RSVP Submitted page)
+      }
+
+     // Generate Recap Fucntion 
+     function generateRecap(records) {
         let recapHTML = `<strong>Your RSVP Summary:</strong><br>`;
         
-        Object.entries(rsvpChoices).forEach(([name, { rsvp, mealChoice, dietaryNotes }]) => {
-          recapHTML += `<br><strong>${name}</strong>: ${rsvp}`;
-          
-          if (rsvp === "Accept") {
-            recapHTML += `<br>Meal: ${mealChoice || "Not selected"}<br>`;
+        records.forEach(record => {
+          const { fullName, weddingRSVP, mealPreference, dietaryNotes } = record.fields;
+          recapHTML += `<br><strong>${fullName}</strong>: ${weddingRSVP || "No response"}`;
+      
+          if (weddingRSVP === "Accept") {
+            recapHTML += `<br>Meal: ${mealPreference || "Not selected"}<br>`;
             recapHTML += `Dietary Notes: ${dietaryNotes || "None"}<br>`;
           }
         });
-      
+        
         return recapHTML;
-      }      
+      }
+      
   
     // ──  G. Form Submit: Step 1 & Step 4 Logic  ───────
     form.addEventListener("submit", async e => {
@@ -161,6 +178,14 @@ document.addEventListener("DOMContentLoaded", () => {
         const json2 = await resp2.json();
 
         console.log(json2);
+
+        // Check if the party has already submitted an RSVP
+        const existingResponse = json2.records.find(r => r.fields.weddingRSVP); // check for RSVP status
+        if (existingResponse) {
+            // Guest has already submitted, skip to the confirmation page
+            showRSVPConfirmation(json2.records); // Call the function to show the confirmation
+            return;
+            }
       
         // Store these for Step 4 and build your party member list
         fetchedRecords = json2.records;
@@ -220,11 +245,11 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
       // ──  I. Add listeners for your new buttons on Step 5 ──
-  document.getElementById("update-response-button")
-  .addEventListener("click", () => {
-    // Jump back to step 2 so they can tweak their choices
-    showStep(2);
-  });
+    document.getElementById("update-response-button")
+    .addEventListener("click", () => {
+        // Jump back to step 2 so they can tweak their choices
+        showStep(2);
+    });
 
     document.getElementById("finish-button")
     .addEventListener("click", () => {
