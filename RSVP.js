@@ -1,194 +1,207 @@
 // RSVP.js
 
 document.addEventListener("DOMContentLoaded", () => {
-    let currentStep = 1;  // Keeps track of the current step in the form
-    const form = document.getElementById("multi-step-form");  // Form container
-    const guestNameInput = document.getElementById("guest-name");  // Input field for the guest name
-    const partyMembersDiv = document.getElementById("party-members");  // Div to display party members
-    const errorMessageDiv = document.getElementById("error-message");  // Div to show error messages
-    let acceptedMembers = [];  // List of accepted party members
-    let rsvpChoices = {};  // Tracks RSVP choices (Accept/Decline) and meal choices for each member
-
-    // Utility to show one step at a time in the form
+    // ──  A. State & Elements  ──────────────────────────
+    let currentStep     = 1;
+    let fetchedRecords  = [];             // ◀︎ store Airtable records for Step 4
+    let acceptedMembers = [];
+    let rsvpChoices     = {};
+    const form               = document.getElementById("multi-step-form");
+    const guestNameInput    = document.getElementById("guest-name");
+    const partyMembersDiv   = document.getElementById("party-members");
+    const errorMessageDiv   = document.getElementById("error-message");
+  
+    // ──  B. Helper: show one step at a time  ──────────
     function showStep(step) {
-        document.querySelectorAll(".form-step").forEach((el, i) => {
-            el.classList.toggle("active", i === step - 1);
-        });
-        currentStep = step;  // Update the current step
+      document.querySelectorAll(".form-step").forEach((el,i) => {
+        el.classList.toggle("active", i === step-1);
+      });
+      currentStep = step;
     }
-
-    // Function to display party members and handle their RSVP choices
-    function displayPartyMembers(partyMembers) {
-        if (!partyMembers || partyMembers.length === 0) {
-            partyMembersDiv.innerHTML = "<p>No party members found.</p>";  // Show message if no members
-            return;
-        }
-
-        // Loop through each member and create UI elements for RSVP buttons
-        partyMembers.forEach(member => {
-            rsvpChoices[member.fullName] = { rsvp: null, mealChoice: null };  // Initialize RSVP object
-            const memberDiv = document.createElement("div");
-            memberDiv.classList.add("party-member");
-            const nameDiv = document.createElement("span");
-            nameDiv.textContent = member.fullName;
-            memberDiv.appendChild(nameDiv);
-
-            // Create the Accept and Decline buttons for each member
-            const acceptButton = document.createElement("button");
-            acceptButton.textContent = "Accept";
-            acceptButton.classList.add("accept-button");
-            acceptButton.addEventListener("click", () => handleRSVP(member, "Accept"));
-            memberDiv.appendChild(acceptButton);
-
-            const declineButton = document.createElement("button");
-            declineButton.textContent = "Decline";
-            declineButton.classList.add("decline-button");
-            declineButton.addEventListener("click", () => handleRSVP(member, "Decline"));
-            memberDiv.appendChild(declineButton);
-
-            partyMembersDiv.appendChild(memberDiv);  // Add the member's div to the page
-        });
-    }
-
-    // Function to handle RSVP choice (Accept or Decline)
-    function handleRSVP(member, choice) {
-        rsvpChoices[member.fullName] = { rsvp: choice, mealChoice: null };  // Save the RSVP choice for this member
-
-        // Update the acceptedMembers list based on the choice
-        if (choice === "Accept" && !acceptedMembers.includes(member.fullName)) {
-            acceptedMembers.push(member.fullName);
-        } else if (choice === "Decline" && acceptedMembers.includes(member.fullName)) {
-            acceptedMembers = acceptedMembers.filter(name => name !== member.fullName);
-        }
-
-        // Highlight the selected button for the member
-        const memberDiv = Array.from(partyMembersDiv.children)
-            .find(div => div.querySelector('span').textContent === member.fullName);
-        if (!memberDiv) return;  // Safety check
-
-        // Remove previous highlights from all buttons
-        memberDiv.querySelectorAll('button').forEach(btn => {
-            btn.style.fontWeight = 'normal';      // Un-bold all buttons
-            btn.style.backgroundColor = '';      // Reset background color
-        });
-
-        // Highlight the clicked button
-        const clickedButton = Array.from(memberDiv.querySelectorAll('button'))
-            .find(btn => btn.textContent === choice);
-        clickedButton.style.fontWeight = 'bold';  // Bold the clicked button
-        clickedButton.style.backgroundColor = '#e0e0e0';  // Change background color
-
-        // Show meal choices only for accepted members
-        if (choice === "Accept") {
-            displayMealChoices(member);  // Show meal choices for this member
-        }
-    }
-
-    // Function to display meal choices for accepted members (Step 3)
-    function displayMealChoices(member) {
-        const mealPreferencesDiv = document.getElementById("meal-preferences");
-        const mealDiv = document.createElement("div");
-        mealDiv.classList.add("meal-choice");
-
-        // Create meal options for this member
-        const nameSpan = document.createElement("span");
-        nameSpan.textContent = member.fullName;
-        mealDiv.appendChild(nameSpan);
-
-        const mealChoiceDiv = document.createElement("div");
-        mealChoiceDiv.innerHTML = `
-            <label><input type="radio" name="mealChoice-${member.fullName}" value="Chicken"> Chicken</label>
-            <label><input type="radio" name="mealChoice-${member.fullName}" value="Steak"> Steak</label>
-            <label><input type="radio" name="mealChoice-${member.fullName}" value="Vegetarian"> Vegetarian</label>
+  
+    // ──  C. Display party members  ────────────────────
+    function displayPartyMembers(members) {
+      partyMembersDiv.innerHTML = "";       // clear old
+      document.getElementById("member-meal-choices").innerHTML = "";  // clear previous meal choices
+      members.forEach(member => {
+        rsvpChoices[member.fullName] = { rsvp: null, mealChoice: null };
+        const div = document.createElement("div");
+        div.className = "party-member";
+        div.innerHTML = `
+          <span>${member.fullName}</span>
+          <button class="accept-button">Accept</button>
+          <button class="decline-button">Decline</button>
         `;
-        mealDiv.appendChild(mealChoiceDiv);
-        mealPreferencesDiv.appendChild(mealDiv);
-
-        // Listen for changes in the meal choice
-        mealChoiceDiv.addEventListener("change", (e) => {
-            if (e.target.name === `mealChoice-${member.fullName}`) {
-                rsvpChoices[member.fullName].mealChoice = e.target.value;  // Save the meal choice
-            }
-        });
+        // Accept / Decline
+        div.querySelector(".accept-button")
+           .addEventListener("click", () => handleRSVP(member, "Accept"));
+        div.querySelector(".decline-button")
+           .addEventListener("click", () => handleRSVP(member, "Decline"));
+        partyMembersDiv.append(div);
+      });
     }
+  
+    // ──  D. Handle RSVP click  ────────────────────────
+    function handleRSVP(member, choice) {
+      rsvpChoices[member.fullName] = { rsvp: choice, mealChoice: null };
+      if (choice === "Accept" && !acceptedMembers.includes(member.fullName)) {
+        acceptedMembers.push(member.fullName);
+        displayMealChoices(member);
+      }
+      if (choice === "Decline") {
+        acceptedMembers = acceptedMembers.filter(n => n!==member.fullName);
+        document.getElementById("member-meal-choices")
+                .querySelectorAll(`.meal-choice[data-name="${member.fullName}"]`)
+                .forEach(el => el.remove());
+      }
+      // highlight buttons
+      Array.from(partyMembersDiv.children).forEach(div => {
+        if (div.querySelector("span").textContent === member.fullName) {
+          div.querySelectorAll("button").forEach(btn=>{
+            btn.style.fontWeight = btn.textContent===choice?"bold":"normal";
+            btn.style.backgroundColor = btn.textContent===choice?"#e0e0e0":"";
+          });
+        }
+      });
+    }
+  
+    // ──  E. Show meal choices ──────────────────────────
+    function displayMealChoices(member) {
+        const container = document.getElementById("member-meal-choices");
+        const div = document.createElement("div");
+        div.className = "meal-choice";
+        div.dataset.name = member.fullName;
+      
+        div.innerHTML = `
+          <strong>${member.fullName}</strong><br>
+          <label><input type="radio" name="meal-${member.fullName}" value="Chicken"> Chicken</label>
+          <label><input type="radio" name="meal-${member.fullName}" value="Steak"> Steak</label>
+          <label><input type="radio" name="meal-${member.fullName}" value="Vegetarian"> Vegetarian</label><br>
+          <label>Dietary Notes:</label>
+          <textarea name="diet-${member.fullName}" rows="2" cols="40"></textarea>
+        `;
+      
+        container.append(div);
+      
+        div.addEventListener("change", e => {
+          if (e.target.name === `meal-${member.fullName}`) {
+            rsvpChoices[member.fullName].mealChoice = e.target.value;
+          }
+        });
+      
+        div.querySelector(`textarea[name="diet-${member.fullName}"]`).addEventListener("input", e => {
+          rsvpChoices[member.fullName].dietaryNotes = e.target.value;
+        });
+      }
+      
+  
+    // ──  F. Step‑by‑Step Button Listeners  ────────────
+    document.getElementById("to-meal-step")
+      .addEventListener("click", () => showStep(3));
+    document.getElementById("to-message-step")
+      .addEventListener("click", () => showStep(4));
+  
+    // ──  G. Form Submit: Step 1 & Step 4 Logic  ───────
+    form.addEventListener("submit", async e => {
+      e.preventDefault();
+  
+      // —— Step 1: Name lookup
+      if (currentStep === 1) {
+        const name = guestNameInput.value.trim();
+        if (!name) {
+          return errorMessageDiv.textContent = "Please enter your name.";
+        }
+        errorMessageDiv.textContent = "";
+      
+        // 1️⃣ Fetch the single record to learn the party ID
+        const resp1 = await fetch(
+          `https://api.airtable.com/v0/app31oPmGDUIxWmvf/RSVP%20Responses?` +
+          `filterByFormula=OR(` +
+            `FIND(LOWER("${name}"),LOWER(fullName)),` +
+            `FIND(LOWER("${name}"),LOWER(altNames))` +
+          `)`,
+          { headers: { Authorization: `Bearer patvhQFVk64q2Bxbx.fe59112ee4ca237d7dd233e506cc7345b26bbf020754fd437c133b862ad09f6f` } }
+        );
+        const json1 = await resp1.json();
 
-    // Event listeners for next/submit buttons
-    document.getElementById("to-meal-step").addEventListener("click", () => {
-        showStep(3);
-    });
+        // Log the party field to see what it contains
+        console.log(json1.records[0].fields.party);
+      
+        // No match?
+        if (!json1.records.length) {
+          errorMessageDiv.textContent = "No matching guests found.";
+          return;
+        }
+      
+        // 2️⃣ Grab the party ID from that record
+        const partyId = json1.records[0].fields.party;
+      
+        // 3️⃣ Fetch *all* members with the same party ID
+        const resp2 = await fetch(
+          `https://api.airtable.com/v0/app31oPmGDUIxWmvf/RSVP%20Responses?` +
+          `filterByFormula={party}="${partyId}"`,
+          { headers: { Authorization: `Bearer patvhQFVk64q2Bxbx.fe59112ee4ca237d7dd233e506cc7345b26bbf020754fd437c133b862ad09f6f` } }
+        );
+        const json2 = await resp2.json();
 
-    document.getElementById("to-message-step").addEventListener("click", () => showStep(4));  // Go to Step 4
+        console.log(json2);
+      
+        // Store these for Step 4 and build your party member list
+        fetchedRecords = json2.records;
+        const partyMembers = json2.records.map(r => ({
+          id: r.id,
+          fullName: r.fields.fullName
+        }));
+      
+        displayPartyMembers(partyMembers);
+        showStep(2);
+        return;
+      }      
+  
+      // —— Step 4: Submit RSVP to Airtable
+      if (currentStep === 4) {
+        const message = document.getElementById("messageToHosts").value;
 
-    // Handle form submission
-    form.addEventListener("submit", (e) => {
-        e.preventDefault();
-
-        // Log the current step and data to check if form is being submitted
-        console.log("Form submission triggered");
-        console.log("Current step: ", currentStep);
-
-        if (currentStep === 1) {
-            // Step 1: Name lookup
-            const typedName = guestNameInput.value.trim();
-            if (!typedName) {
-                return errorMessageDiv.textContent = "Please enter a name!";
+        // ✅ Validate meal choice for each accepted guest
+        for (const [name, { rsvp, mealChoice }] of Object.entries(rsvpChoices)) {
+            if (rsvp === "Accept" && !mealChoice) {
+            alert(`Please select a meal for ${name}.`);
+            return; // stop submission
             }
-            errorMessageDiv.textContent = "";  // Clear previous error messages
-            fetch(`https://immense-plains-30838-adb516d69898.herokuapp.com/proxy?name=${encodeURIComponent(typedName)}`)
-
-                .then(r => r.json())
-                .then(data => {
-                    if (data.error) {
-                        errorMessageDiv.textContent = data.error;
-                    } else {
-                        partyMembersDiv.innerHTML = "";  // Clear previous members
-                        displayPartyMembers(data.partyMembers);  // Show party members
-                        showStep(2);  // Move to Step 2
-                    }
+        }
+  
+        await Promise.all(
+          Object.entries(rsvpChoices).map(([name, {rsvp, mealChoice, dietaryNotes}]) => {
+            const rec = fetchedRecords.find(r=>r.fields.fullName===name);
+            return fetch(
+              `https://api.airtable.com/v0/app31oPmGDUIxWmvf/RSVP%20Responses/${rec.id}`,
+              {
+                method: "PATCH",
+                headers: {
+                  Authorization:   "Bearer patvhQFVk64q2Bxbx.fe59112ee4ca237d7dd233e506cc7345b26bbf020754fd437c133b862ad09f6f",
+                  "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                  fields: {
+                    weddingRSVP:   rsvp,
+                    mealPreference: mealChoice || "",
+                    dietaryNotes:   dietaryNotes || "",
+                    Message:        message
+                  }
                 })
-                .catch(err => {
-                    console.error(err);
-                    errorMessageDiv.textContent = "Error fetching data.";
-                });
-
-            } else if (currentStep === 4) {
-                const dietaryNotes = document.getElementById("dietaryNotes").value;
-                const messageToHosts = document.getElementById("messageToHosts").value;
-            
-                const rsvpData = {
-                    name: guestNameInput.value.trim(),
-                    message: messageToHosts,
-                    dietaryNotes: dietaryNotes,
-                    rsvps: rsvpChoices  // This includes each guest's RSVP and meal choice
-                };
-
-                console.log("About to fetch to Heroku endpoint...");
-
-                fetch("https://immense-plains-30838-adb516d69898.herokuapp.com/api/submit", {
-                    method: "POST",
-                    body: JSON.stringify(rsvpData),
-                    headers: {
-                        "Content-Type": "application/json"
-                    }
-                })
-
-                .then(r => r.json())
-                .then(data => {
-                    if (data.success) {
-                        alert("RSVP submitted! Thanks!");
-                        showStep(1);
-                        form.reset();
-                    } else {
-                        alert("Failed to submit RSVP.");
-                    }
-                })
-                .catch(err => {
-                    console.error(err);
-                    alert("Error submitting RSVP.");
-                });
-            }
+              }
+            );
+          })
+        );
+  
+        alert("🎉 RSVP submitted! Thank you!");
+        form.reset();
+        showStep(1);
+        return;
+      }
     });
-
-    // Initially show Step 1
+  
+    // ──  H. Kick it off at Step 1  ─────────────────────
     showStep(1);
-});
+  });
+  
