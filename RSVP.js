@@ -6,6 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let fetchedRecords  = [];             // ◀︎ store Airtable records for Step 4
     let acceptedMembers = [];
     let rsvpChoices     = {};
+    let partyId      = null;
     const form               = document.getElementById("multi-step-form");
     const guestNameInput    = document.getElementById("guest-name");
     const partyMembersDiv   = document.getElementById("party-members");
@@ -96,10 +97,35 @@ document.addEventListener("DOMContentLoaded", () => {
       
   
     // ──  F. Step‑by‑Step Button Listeners  ────────────
-    document.getElementById("to-meal-step")
-      .addEventListener("click", () => showStep(3));
-    document.getElementById("to-message-step")
-      .addEventListener("click", () => showStep(4));
+     document.getElementById("to-meal-step")
+        .addEventListener("click", () => {
+            // Check if at least one RSVP is "Accept" before proceeding
+            const hasAcceptedRSVP = Object.values(rsvpChoices).some(choice => choice.rsvp === "Accept");
+
+            if (!hasAcceptedRSVP) {
+            alert("Please RSVP 'Accept' for at least one guest to proceed to meal selection.");
+            return; // Stop the transition to Step 3
+            }
+
+            showStep(3); // Proceed to Step 3 if validation passes
+        });
+
+        document.getElementById("to-message-step")
+         .addEventListener("click", () => showStep(4));
+
+        // Add event listeners for all "Back" buttons
+         document.querySelectorAll(".back-button").forEach(button => {
+            button.addEventListener("click", (event) => {
+                // Get the current active step
+                const currentActiveStep = parseInt(
+                    Array.from(document.querySelectorAll(".form-step"))
+                        .find(el => el.classList.contains("active"))
+                        .id.split('-')[1] // Extract the step number from the ID (e.g., "step-2" -> 2)
+                );
+                showStep(currentActiveStep - 1); // Go to the previous step
+            });
+         });
+
 
       function showRSVPConfirmation(records) {
         const recapHTML = generateRecap(records); // Generate recap from stored records
@@ -167,7 +193,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       
         // 2️⃣ Grab the party ID from that record
-        const partyId = json1.records[0].fields.party;
+        partyId = json1.records[0].fields.party; // <-- STORE IT HERE
       
         // 3️⃣ Fetch *all* members with the same party ID
         const resp2 = await fetch(
@@ -183,6 +209,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const existingResponse = json2.records.find(r => r.fields.weddingRSVP); // check for RSVP status
         if (existingResponse) {
             // Guest has already submitted, skip to the confirmation page
+            fetchedRecords = json2.records; // ⭐️ IMPORTANT: Store the records here!
             showRSVPConfirmation(json2.records); // Call the function to show the confirmation
             return;
             }
@@ -234,22 +261,142 @@ document.addEventListener("DOMContentLoaded", () => {
             );
           })
         );
+
+        try {
+            console.log("Re-fetching records after update for party ID:", partyId);
+            const freshResp = await fetch(
+                `https://api.airtable.com/v0/app31oPmGDUIxWmvf/RSVP%20Responses?` +
+                `filterByFormula={party}="${partyId}"`, // Use the stored partyId
+                { headers: { Authorization: `Bearer patvhQFVk64q2Bxbx.fe59112ee4ca237d7dd233e506cc7345b26bbf020754fd437c133b862ad09f6f` } }
+            );
+            const freshJson = await freshResp.json();
+            if (freshJson.records) {
+                fetchedRecords = freshJson.records; // Update fetchedRecords with the latest data
+                console.log("Updated fetchedRecords:", fetchedRecords);
+            } else {
+                console.error("Failed to re-fetch records after update.");
+                // Decide how to handle this - maybe show previous data anyway?
+            }
+        } catch (error) {
+            console.error("Error re-fetching records:", error);
+            // Handle error - maybe alert the user or proceed with potentially stale data
+        }
   
             // Step 5: Show the confirmation recap
-            showStep(5);
-            const recap = generateRecap(); // Recap of the user's selections
-            document.getElementById("confirmation-recap").innerHTML = recap;
-
-            return;
+            // --- Corrected code ---
+            // Step 5: Show the confirmation using the potentially updated records
+            showRSVPConfirmation(fetchedRecords); // Use the updated fetchedRecords here
+            return; // Exit the submit handler
+            // --- End Corrected code ---
         }
     });
 
       // ──  I. Add listeners for your new buttons on Step 5 ──
-    document.getElementById("update-response-button")
-    .addEventListener("click", () => {
-        // Jump back to step 2 so they can tweak their choices
-        showStep(2);
-    });
+        document.getElementById("update-response-button").addEventListener("click", () => {
+            if (!fetchedRecords || fetchedRecords.length === 0) {
+                // Safety check: Should not happen if Step 5 displayed correctly
+                console.error("Cannot update response: fetchedRecords is empty.");
+                alert("An error occurred. Please refresh and try again.");
+                return;
+            }
+
+            console.log("Update Response clicked. Preparing to go back to Step 2.");
+            console.log("Data to repopulate from:", fetchedRecords);
+
+            // 1. Reset temporary state variables that track user choices *during* editing
+            rsvpChoices = {};
+            acceptedMembers = [];
+            document.getElementById("member-meal-choices").innerHTML = ""; // Clear old meal choices visually
+
+            // 2. Display the basic structure for Step 2
+            // We map just the names needed for the initial display structure
+            const partyMembersForDisplay = fetchedRecords.map(record => ({
+                id: record.id, // Keep the ID, might be useful later
+                fullName: record.fields.fullName
+            }));
+            displayPartyMembers(partyMembersForDisplay); // This creates the divs and buttons
+
+            // 3. *** Crucial Part: Populate Steps 2 & 3 UI based on fetchedRecords ***
+            console.log("fetchedRecords on Update:", fetchedRecords);
+            fetchedRecords.forEach(record => {
+                const memberName = record.fields.fullName;
+                const currentRSVP = record.fields.weddingRSVP; // "Accept" or "Decline"
+                const currentMeal = record.fields.mealPreference;
+                const currentNotes = record.fields.dietaryNotes;
+                console.log(`Processing <span class="math-inline">\{memberName\}\: RSVP\=</span>{currentRSVP}, Meal=${currentMeal}`);
+
+                // Find the UI elements for this member in Step 2
+                const memberDiv = Array.from(partyMembersDiv.children).find(div =>
+                    div.querySelector("span").textContent === memberName
+                );
+                console.log(`Found memberDiv for ${memberName}:`, memberDiv);
+
+                if (!memberDiv) {
+                    console.warn(`Could not find div for member: ${memberName} in Step 2`);
+                    return; // Skip if the element wasn't found
+                }
+
+                const acceptButton = memberDiv.querySelector(".accept-button");
+                const declineButton = memberDiv.querySelector(".decline-button");
+
+                // Update the internal state (rsvpChoices)
+                rsvpChoices[memberName] = {
+                    rsvp: currentRSVP,
+                    mealChoice: currentMeal || null, // Store meal/notes even if declined (won't be used unless they switch to Accept)
+                    dietaryNotes: currentNotes || ""
+                };
+
+                // Visually update Step 2 buttons
+                if (currentRSVP === "Accept") {
+                    acceptButton.style.fontWeight = "bold";
+                    acceptButton.style.backgroundColor = "#e0e0e0";
+                    declineButton.style.fontWeight = "normal";
+                    declineButton.style.backgroundColor = "";
+
+                    // Add to accepted members list and display their meal choices in Step 3
+                    if (!acceptedMembers.includes(memberName)) {
+                        acceptedMembers.push(memberName);
+                    }
+                    displayMealChoices(record.fields); // Pass the fields object which contains fullName
+
+                    // Now, populate the meal choice section we just created
+                    const mealChoiceDiv = document.querySelector(`#member-meal-choices .meal-choice[data-name="${memberName}"]`);
+                    console.log(`Found mealChoiceDiv for ${memberName}:`, mealChoiceDiv);
+                    if (mealChoiceDiv) {
+                        // Corrected line:
+                            const mealInput = mealChoiceDiv.querySelector(`input[name="meal-${memberName}"][value="${currentMeal}"]`);
+                            console.log(`Found mealInput for ${memberName} - ${currentMeal}:`, mealInput);
+                            if (mealInput) {
+                                mealInput.checked = true;
+                            }
+                            // Fill in dietary notes
+                            const notesTextarea = mealChoiceDiv.querySelector(`textarea[name="diet-${memberName}"]`);
+                            if (notesTextarea) {
+                                notesTextarea.value = currentNotes || "";
+                            }
+                        } else {
+                            console.warn(`Could not find meal choice div for accepted member: ${memberName}`);
+                        }
+
+                } else if (currentRSVP === "Decline") {
+                    declineButton.style.fontWeight = "bold";
+                    declineButton.style.backgroundColor = "#e0e0e0";
+                    acceptButton.style.fontWeight = "normal";
+                    acceptButton.style.backgroundColor = "";
+                    // No meal choices needed for declined members
+                } else {
+                    // No RSVP recorded - reset styles (shouldn't happen if they reached Step 5, but good practice)
+                    acceptButton.style.fontWeight = "normal";
+                    acceptButton.style.backgroundColor = "";
+                    declineButton.style.fontWeight = "normal";
+                    declineButton.style.backgroundColor = "";
+                }
+            });
+
+            // 4. Finally, navigate the user interface to Step 2
+            console.log("Repopulation complete. Showing Step 2.");
+            showStep(2);
+        });
 
     document.getElementById("finish-button")
     .addEventListener("click", () => {
