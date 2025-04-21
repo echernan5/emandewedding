@@ -446,11 +446,12 @@ function showRSVPConfirmation(records) {
   
       // —— Step 1: Name lookup
       if (currentStep === 1) {
+        errorMessageDiv.textContent = "";
+
         const name = guestNameInput.value.trim();
         if (!name) {
           return errorMessageDiv.textContent = "Please enter your name.";
         }
-            errorMessageDiv.textContent = "";
 
             const submitButton = document.querySelector('#step-1 button[type="submit"]');
             if (!submitButton) { // Safety check in case button isn't found
@@ -464,30 +465,30 @@ function showRSVPConfirmation(records) {
             submitButton.textContent = 'Searching...';
             guestNameInput.disabled = true; // Disable input too
       
-        // 1️⃣ Fetch the single record to learn the party ID
-        const resp1 = await fetch(
-          `https://api.airtable.com/v0/app31oPmGDUIxWmvf/RSVP%20Responses?` +
-          `filterByFormula=OR(` +
-            `FIND(LOWER("${name}"),LOWER(fullName)),` +
-            `FIND(LOWER("${name}"),LOWER(altNames))` +
-          `)`,
-          { headers: { Authorization: `Bearer patvhQFVk64q2Bxbx.fe59112ee4ca237d7dd233e506cc7345b26bbf020754fd437c133b862ad09f6f` } }
-        );
-        const json1 = await resp1.json();
+            // 1️⃣ Fetch the single record to learn the party ID
+            const resp1 = await fetch(
+            `https://api.airtable.com/v0/app31oPmGDUIxWmvf/RSVP%20Responses?` +
+            `filterByFormula=OR(` +
+                `FIND(LOWER("${name}"),LOWER(fullName)),` +
+                `FIND(LOWER("${name}"),LOWER(altNames))` +
+            `)`,
+            { headers: { Authorization: `Bearer patvhQFVk64q2Bxbx.fe59112ee4ca237d7dd233e506cc7345b26bbf020754fd437c133b862ad09f6f` } }
+            );
+            const json1 = await resp1.json();
 
-        // No match?
-        if (!json1.records.length) {
-            errorMessageDiv.textContent = "We couldn’t find your name on the guest list. Double-check your spelling, or reach out if you think we made a mistake. We’d love to help! 💌";
-            console.log("Error message set:", errorMessageDiv.textContent); // Debugging log
+            // No match?
+            if (!json1.records.length) {
+                errorMessageDiv.textContent = "We couldn’t find your name on the guest list. Double-check your spelling, or reach out if you think we made a mistake. We’d love to help! 💌";
+                console.log("Error message set:", errorMessageDiv.textContent); // Debugging log
 
-            // This code SHOULD run and fix the problem
-            submitButton.disabled = false;
-            submitButton.textContent = originalButtonText;
-            guestNameInput.disabled = false;
-            // --- END: Revert Loading State on Error ---
-            return;
-          }
-      
+                // This code SHOULD run and fix the problem
+                submitButton.disabled = false;
+                submitButton.textContent = originalButtonText;
+                guestNameInput.disabled = false;
+                // --- END: Revert Loading State on Error ---
+                return;
+            }
+        
 
         // Log the party field to see what it contains
         console.log(json1.records[0].fields.party);
