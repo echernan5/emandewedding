@@ -450,7 +450,7 @@ function showRSVPConfirmation(records) {
 
         const name = guestNameInput.value.trim();
         if (!name) {
-          return errorMessageDiv.textContent = "Please enter your name.";
+          return errorMessageDiv.textContent = "Please enter your name to continue.";
         }
 
             const submitButton = document.querySelector('#step-1 button[type="submit"]');
@@ -462,7 +462,7 @@ function showRSVPConfirmation(records) {
 
             // Disable button and input, show loading text
             submitButton.disabled = true;
-            submitButton.textContent = 'Searching...';
+            submitButton.textContent = 'Finding your invitation...';
             guestNameInput.disabled = true; // Disable input too
       
             // 1️⃣ Fetch the single record to learn the party ID
