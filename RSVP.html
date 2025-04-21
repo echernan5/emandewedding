@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Emma & Ethan</title>
     <link rel="stylesheet" href="RSVP.css">
-    <script src="RSVP.js" defer></script>
+    <script src="trsvp.js" defer></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
 
  <!-- Site Description -->
@@ -73,6 +73,8 @@
                  <div class="progress-step" data-step="4"></div>
                  <div class="progress-line"></div>
                  <div class="progress-step" data-step="5"></div>
+                 <div class="progress-line"></div>
+                 <div class="progress-step" data-step="6"></div>
              </div>
             
         <!-- Name -->
@@ -99,7 +101,8 @@
         
             <!-- Step 3 -->
             <div class="form-step" id="step-3">
-                <h3>Meal Preferences</h3>
+                <h1>Let’s talk dinner.</h1>
+                <p>Please select one entrée per guest and let us know about any dietary needs below.</p>
                 <div id="member-meal-choices"></div> <!-- JS appends meal + dietary notes here -->
                 <div class="step-navigation">
                     <button type="button" class="back-button">Back</button>
@@ -114,12 +117,24 @@
             <textarea id="messageToHosts"></textarea>
             <div class="step-navigation">
                 <button type="button" class="back-button">Back</button>
-                <button type="submit">Submit RSVP</button>
+                <button type="button" id="to-phone-step">Next</button>
             </div>
             </div>  
+
+            <!-- Step 5: Phone Number-->
+            <div class="form-step" id="step-5">
+                <h1>Before You Go...</h1>
+                <p>If you'd like a quick confirmation, just drop your number here. We’ll text you your RSVP details and event info.</p>
+                <input type="tel" id="guest-phone" name="guest-phone" placeholder="e.g., 555-123-4567">
+                <div id="error-message" class="error-message"></div>
+                <div class="step-navigation">
+                    <button type="button" class="back-button">Back</button>
+                    <button type="submit">Submit RSVP</button>
+                </div>
+            </div>
         
-            <!-- Step 5: Confirmation -->
-            <div id="step-5" class="form-step">
+            <!-- Step 6: Confirmation -->
+            <div class="form-step" id="step-6">
                 <h2 id="confirmation-main-message"></h2>
                 <h3 id="confirmation-sub-message"></h3>
                 <p id="confirmation-recap"></p>

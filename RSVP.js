@@ -228,7 +228,7 @@ document.addEventListener("DOMContentLoaded", () => {
           <label><input type="radio" name="meal-${member.fullName}" value="Chicken"> Chicken</label>
           <label><input type="radio" name="meal-${member.fullName}" value="Steak"> Steak</label>
           <label><input type="radio" name="meal-${member.fullName}" value="Vegetarian"> Vegetarian</label><br>
-          <label>Dietary Notes:</label>
+          <label>Any dietary needs or allergies?</label>
           <textarea name="diet-${member.fullName}" rows="2" cols="40"></textarea>
         `;
       
@@ -302,25 +302,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 showStep(currentActiveStep - 1); // Go to the previous step
             });
          });
-
-
-      function showRSVPConfirmation(records) {
-        const recapHTML = generateRecap(records); // Generate recap from stored records
-        document.getElementById("confirmation-recap").innerHTML = recapHTML;
-      
-        // Show the confirmation step and update message
-        const confirmationMessage = document.getElementById("confirmation-message");
-        const alreadySubmitted = records.some(record => record.fields.weddingRSVP);
-      
-        confirmationMessage.textContent = alreadySubmitted
-          ? "Welcome back!"
-          : "RSVP Submitted!";
-      
-        showStep(5); // Show the confirmation step (RSVP Submitted page)
-      }
-
-        // generateRecap function change
-        // RSVP.js
 
 // Replace the ENTIRE old generateRecap function with this one:
     function generateRecap(records) {
@@ -404,40 +385,51 @@ document.addEventListener("DOMContentLoaded", () => {
         return recapHTML;
     }
 
-// ALSO: Update the main confirmation message text
-function showRSVPConfirmation(records) {
-    const recapHTML = generateRecap(records); // Use the NEW generateRecap
-    // Make sure the element receiving the recap exists and is cleared if needed
-    const recapElement = document.getElementById("confirmation-recap");
-    if (recapElement) {
-        recapElement.innerHTML = recapHTML; // Populate recap area
-    } else {
-        console.error("Cannot find #confirmation-recap element!");
+    // ALSO: Update the main confirmation message text
+    // ALSO: Update the main confirmation message text
+    // **MODIFIED**: Added 'isJustSubmitted = false' parameter
+    function showRSVPConfirmation(records, isJustSubmitted = false) {
+        const recapHTML = generateRecap(records); // Use the NEW generateRecap
+        // Make sure the element receiving the recap exists and is cleared if needed
+        const recapElement = document.getElementById("confirmation-recap");
+        if (recapElement) {
+            recapElement.innerHTML = recapHTML; // Populate recap area
+        } else {
+            console.error("Cannot find #confirmation-recap element!");
+        }
+
+        // Get the elements for the messages
+        const mainMessageElement = document.getElementById("confirmation-main-message");
+        const subMessageElement = document.getElementById("confirmation-sub-message");
+
+        // **MODIFIED**: Now use the 'isJustSubmitted' flag passed into the function
+
+        if (mainMessageElement) {
+            if (isJustSubmitted) {
+                // Text for first-time submission (they just clicked "Submit RSVP")
+                mainMessageElement.textContent = "RSVP Submitted!"; // Or "You're all set!"
+            } else {
+                // Text for returning guests (they looked up their name and already had an RSVP)
+                mainMessageElement.textContent = "Welcome back!";
+            }
+        } else {
+            console.error("Cannot find #confirmation-main-message element!");
+        }
+
+        if (subMessageElement) {
+            if (isJustSubmitted) {
+                // Text for first-time submission
+                subMessageElement.textContent = "Here's what we have down for your group:"; // Or customize as needed
+            } else {
+                // Text for returning guests
+                subMessageElement.textContent = "Review your RSVP details below or make changes if needed.";
+            }
+        } else {
+            console.error("Cannot find #confirmation-sub-message element!");
+        }
+
+        showStep(5); // Show the confirmation step (RSVP Submitted page)
     }
-
-
-    // Get the new elements by their updated/new IDs
-    const mainMessageElement = document.getElementById("confirmation-main-message");
-    const subMessageElement = document.getElementById("confirmation-sub-message");
-
-    // Set the text for the H2
-    if(mainMessageElement) {
-        // You could put logic back here to check if 'alreadySubmitted' if needed
-        // For now, just setting the main message:
-        mainMessageElement.textContent = "You're all set!";
-    } else {
-         console.error("Cannot find #confirmation-main-message element!");
-    }
-
-    // Set the text for the H3
-    if(subMessageElement) {
-        subMessageElement.textContent = "Here's what we have down for your group:";
-    } else {
-        console.error("Cannot find #confirmation-sub-message element!");
-    }
-
-    showStep(5); // Show the confirmation step (RSVP Submitted page)
-}
             
   
     // ──  G. Form Submit: Step 1 & Step 4 Logic  ───────
@@ -511,7 +503,7 @@ function showRSVPConfirmation(records) {
         if (existingResponse) {
             // Guest has already submitted, skip to the confirmation page
             fetchedRecords = json2.records; // ⭐️ IMPORTANT: Store the records here!
-            showRSVPConfirmation(json2.records); // Call the function to show the confirmation
+            showRSVPConfirmation(json2.records, false); // Call the function to show the confirmation
             return;
             }
 
@@ -590,7 +582,7 @@ function showRSVPConfirmation(records) {
             // Step 5: Show the confirmation recap
             // --- Corrected code ---
             // Step 5: Show the confirmation using the potentially updated records
-            showRSVPConfirmation(fetchedRecords); // Use the updated fetchedRecords here
+            showRSVPConfirmation(fetchedRecords, true); // Use the updated fetchedRecords here
             return; // Exit the submit handler
             
             // --- End Corrected code ---
