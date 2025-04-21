@@ -47,6 +47,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const guestNameInput    = document.getElementById("guest-name");
     const partyMembersDiv   = document.getElementById("party-members");
     const errorMessageDiv   = document.getElementById("error-message");
+
+    const step1SubmitButton = document.querySelector('#step-1 button[type="submit"]');
+    const step1OriginalButtonText = step1SubmitButton ? step1SubmitButton.textContent : 'Continue'; // Store original text or default
     
     // --- CALCULATE HEADER HEIGHT & SET CSS VARIABLE ---
     const headerElement = document.querySelector('.hero-header');
@@ -106,6 +109,28 @@ document.addEventListener("DOMContentLoaded", () => {
         } else {
             console.warn("Progress indicator steps not found.");
         }
+
+        if (step === 1) {
+            console.log("Navigated to Step 1, resetting controls.");
+            // Reset input field (use existing global variable)
+            if (guestNameInput) {
+                guestNameInput.disabled = false;
+                // Optional: Clear the input value when going back?
+                // guestNameInput.value = '';
+            }
+
+            // Reset button (use variable defined outside function)
+            if (step1SubmitButton) {
+                step1SubmitButton.disabled = false;
+                step1SubmitButton.textContent = step1OriginalButtonText; // Restore original text
+            }
+
+            // Reset error message
+            if (errorMessageDiv) {
+                errorMessageDiv.textContent = '';
+            }
+        }
+        window.scrollTo(0, 0);
     }
   
     // ──  C. Display party members  ────────────────────
@@ -224,14 +249,20 @@ document.addEventListener("DOMContentLoaded", () => {
     // ──  F. Step‑by‑Step Button Listeners  ────────────
      document.getElementById("to-meal-step")
         .addEventListener("click", () => {
+
+            console.log("--- Debugging Step 2 'Next' Click ---");
+            console.log("Checking rsvpChoices:", JSON.stringify(rsvpChoices, null, 2));
             // Check if at least one RSVP is "Accept" before proceeding
             const choices = Object.values(rsvpChoices); // Get all current RSVP choices
 
             // Check 1: Has a choice (Accept/Decline) been made for EVERY guest?
             // We check if every 'rsvp' property is NOT null
             const allResponded = choices.every(choice => choice.rsvp !== null);
+            console.log("Result of 'allResponded' check:", allResponded); // Log the result
+
 
             if (!allResponded) {
+                console.log("Validation FAILED: 'allResponded' is false."); // Log failure
                 // If not everyone has responded, show an alert and stop.
                 alert("Please select 'Accept' or 'Decline' for every guest in your party before continuing.");
                 return;
@@ -239,7 +270,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // If we get here, everyone has responded.
             // Check 2: Did AT LEAST ONE guest accept?
+            console.log("Validation PASSED: 'allResponded' is true.");
             const anyoneAccepted = choices.some(choice => choice.rsvp === "Accept");
+            console.log("Anyone accepted?", anyoneAccepted);
 
             if (anyoneAccepted) {
                 // YES, at least one guest accepted. Proceed to Step 3 (Meal Selection).
@@ -417,7 +450,19 @@ function showRSVPConfirmation(records) {
         if (!name) {
           return errorMessageDiv.textContent = "Please enter your name.";
         }
-        errorMessageDiv.textContent = "";
+            errorMessageDiv.textContent = "";
+
+            const submitButton = document.querySelector('#step-1 button[type="submit"]');
+            if (!submitButton) { // Safety check in case button isn't found
+                console.error("Step 1 submit button not found!");
+                return;
+            }
+            const originalButtonText = submitButton.textContent; // Store original text
+
+            // Disable button and input, show loading text
+            submitButton.disabled = true;
+            submitButton.textContent = 'Searching...';
+            guestNameInput.disabled = true; // Disable input too
       
         // 1️⃣ Fetch the single record to learn the party ID
         const resp1 = await fetch(
@@ -432,8 +477,14 @@ function showRSVPConfirmation(records) {
 
         // No match?
         if (!json1.records.length) {
-            errorMessageDiv.textContent = "We couldn’t find your name on the guest list. Double-check your spelling, or reach out if you think we made a mistake—we’d love to help! 💌";
+            errorMessageDiv.textContent = "We couldn’t find your name on the guest list. Double-check your spelling, or reach out if you think we made a mistake. We’d love to help! 💌";
             console.log("Error message set:", errorMessageDiv.textContent); // Debugging log
+
+            // This code SHOULD run and fix the problem
+            submitButton.disabled = false;
+            submitButton.textContent = originalButtonText;
+            guestNameInput.disabled = false;
+            // --- END: Revert Loading State on Error ---
             return;
           }
       
@@ -462,6 +513,10 @@ function showRSVPConfirmation(records) {
             showRSVPConfirmation(json2.records); // Call the function to show the confirmation
             return;
             }
+
+            console.log("Resetting rsvpChoices and acceptedMembers for new party.");
+            rsvpChoices = {}; // <<<<<< ADD THIS LINE
+            acceptedMembers = []; // <<<<<< ADD THIS LINE
       
         // Store these for Step 4 and build your party member list
         fetchedRecords = json2.records;
@@ -536,8 +591,10 @@ function showRSVPConfirmation(records) {
             // Step 5: Show the confirmation using the potentially updated records
             showRSVPConfirmation(fetchedRecords); // Use the updated fetchedRecords here
             return; // Exit the submit handler
+            
             // --- End Corrected code ---
         }
+        
     });
 
       // ──  I. Add listeners for your new buttons on Step 5 ──

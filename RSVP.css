@@ -338,7 +338,7 @@ button {
   border: white solid 2px;
   border-radius: 15px;
   cursor: pointer;
-  transition: 1s ease-in-out;
+  transition: 0.4s ease-in-out;
 }
 
 button:hover {
@@ -354,7 +354,7 @@ button:hover {
 }
 
 .back-button:hover {
-  background-color: #bbb;
+  background-color: #ffffff;
 }
 
 /* Confirmation step */
@@ -369,6 +369,19 @@ button:hover {
 
 #step-1 {
   align-items: left;
+}
+
+#step-1 button[type="submit"] {
+  transition: 1s ease-in-out
+}
+
+#step-1 button[type="submit"]:disabled {
+  opacity: 0.6; /* Make it look faded */
+  cursor: wait; /* Show a waiting cursor */
+  background-color: rgb(255, 255, 255, 0.7);
+  color: rgb(112, 127, 91);
+  border-color: rgba(255, 255, 255, 0.7);
+  pointer-events: none;
 }
 
 /* Error message */
@@ -396,7 +409,7 @@ button:hover {
 /* Target both buttons within the party member div */
 .party-member button {
   flex-shrink: 0; /* Keep this */
-  width: 80px;    /* Keep this (or adjust as needed) */
+  width: 100px;    /* Keep this (or adjust as needed) */
   margin-left: 8px; /* Keep this */
   text-align: center; /* Keep this */
   padding: 6px 10px; /* Adjusted padding slightly for better look, feel free to change */
@@ -409,7 +422,7 @@ button:hover {
   border-radius: 8px;            /* Keep your border-radius */
   cursor: pointer;               /* Keep cursor */
   font-weight: normal;           /* Normal text weight */
-  font-size: 0.9rem;             /* Slightly smaller font for small buttons */
+  font-size: 1.2rem;             /* Slightly smaller font for small buttons */
 
   /* --- Transition --- */
   /* Smooth transition for background and color changes */
@@ -599,6 +612,53 @@ button:hover {
   color: rgb(112, 127, 91); // Darker color on light background
 }
 */
+
+/* Footer */
+.wedding-footer {
+  background-color: #f5f5f5;
+  padding: 2rem 1rem;
+  font-family: 'Georgia', serif;
+  color: #333;
+  text-align: center;
+  border-top: 1px solid #ddd;
+}
+
+.footer-inner {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.footer-names {
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  font-style: italic;
+  color: #555;
+}
+
+.footer-nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.footer-nav a {
+  text-decoration: none;
+  color: #444;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.footer-nav a:hover {
+  color: #000;
+}
+
+.footer-tagline {
+  font-size: 0.875rem;
+  color: #888;
+}
+
 
 /* Animation */
 @keyframes fadeIn {
