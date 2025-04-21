@@ -47,13 +47,65 @@ document.addEventListener("DOMContentLoaded", () => {
     const guestNameInput    = document.getElementById("guest-name");
     const partyMembersDiv   = document.getElementById("party-members");
     const errorMessageDiv   = document.getElementById("error-message");
+    
+    // --- CALCULATE HEADER HEIGHT & SET CSS VARIABLE ---
+    const headerElement = document.querySelector('.hero-header');
+
+    if (headerElement) {
+        const headerHeight = headerElement.offsetHeight;
+        console.log('Calculated Header Height:', headerHeight + 'px');
+
+        // Set the value as a CSS custom property (--header-height) on the root element (<html>)
+        // The value needs units (e.g., 'px')
+        document.documentElement.style.setProperty('--header-height', headerHeight + 'px');
+
+    } else {
+        console.warn('Header element (.hero-header) not found for height calculation.');
+        // Optionally set a default fallback height if the header isn't found
+        // document.documentElement.style.setProperty('--header-height', '80px'); // Example fallback
+    }
   
     // ──  B. Helper: show one step at a time  ──────────
     function showStep(step) {
-      document.querySelectorAll(".form-step").forEach((el,i) => {
+        const formElement = document.getElementById("multi-step-form");
+        document.querySelectorAll(".form-step").forEach((el,i) => {
         el.classList.toggle("active", i === step-1);
       }, false);
       currentStep = step;
+
+        // Add/remove class on the FORM based on the current step number
+        if (formElement) { // Check if form element exists
+            if (step === 5) { // Step 5 is the confirmation/recap
+                formElement.classList.add('is-long-step');
+            } else {
+                formElement.classList.remove('is-long-step');
+            }
+        } else {
+            console.error("Form element not found for step class toggling.");
+        }
+
+
+        // --- Progress Bar Update ---
+        const progressSteps = document.querySelectorAll('.progress-indicator .progress-step');
+
+        if (progressSteps.length > 0) { // Check if progress steps exist
+            progressSteps.forEach((stepElement, index) => {
+                const stepNum = index + 1; // Steps are 1-based, index is 0-based
+
+                stepElement.classList.remove('active', 'completed'); // Reset classes first
+
+                if (stepNum < step) {
+                    // Mark steps before the current one as completed
+                    stepElement.classList.add('completed');
+                } else if (stepNum === step) {
+                    // Mark the current step as active
+                    stepElement.classList.add('active');
+                }
+                // Steps after the current one remain inactive (default state)
+            });
+        } else {
+            console.warn("Progress indicator steps not found.");
+        }
     }
   
     // ──  C. Display party members  ────────────────────
@@ -173,14 +225,33 @@ document.addEventListener("DOMContentLoaded", () => {
      document.getElementById("to-meal-step")
         .addEventListener("click", () => {
             // Check if at least one RSVP is "Accept" before proceeding
-            const hasAcceptedRSVP = Object.values(rsvpChoices).some(choice => choice.rsvp === "Accept");
+            const choices = Object.values(rsvpChoices); // Get all current RSVP choices
 
-            if (!hasAcceptedRSVP) {
-            alert("Please RSVP 'Accept' for at least one guest to proceed to meal selection.");
-            return; // Stop the transition to Step 3
+            // Check 1: Has a choice (Accept/Decline) been made for EVERY guest?
+            // We check if every 'rsvp' property is NOT null
+            const allResponded = choices.every(choice => choice.rsvp !== null);
+
+            if (!allResponded) {
+                // If not everyone has responded, show an alert and stop.
+                alert("Please select 'Accept' or 'Decline' for every guest in your party before continuing.");
+                return;
             }
 
-            showStep(3); // Proceed to Step 3 if validation passes
+            // If we get here, everyone has responded.
+            // Check 2: Did AT LEAST ONE guest accept?
+            const anyoneAccepted = choices.some(choice => choice.rsvp === "Accept");
+
+            if (anyoneAccepted) {
+                // YES, at least one guest accepted. Proceed to Step 3 (Meal Selection).
+                console.log("Someone accepted, proceeding to Step 3.");
+                showStep(3);
+            } else {
+                // NO, nobody accepted (meaning all guests declined).
+                // Skip Step 3 and go directly to Step 4 (Message).
+                console.log("Everyone declined, skipping Step 3 and proceeding to Step 4.");
+                showStep(4);
+            }
+
         });
 
         document.getElementById("to-message-step")
@@ -209,29 +280,132 @@ document.addEventListener("DOMContentLoaded", () => {
         const alreadySubmitted = records.some(record => record.fields.weddingRSVP);
       
         confirmationMessage.textContent = alreadySubmitted
-          ? "Welcome back! Here's a quick recap of your RSVP."
-          : "RSVP Submitted! Here's a quick recap of your response.";
+          ? "Welcome back!"
+          : "RSVP Submitted!";
       
         showStep(5); // Show the confirmation step (RSVP Submitted page)
       }
 
-     // Generate Recap Fucntion 
-     function generateRecap(records) {
-        let recapHTML = `<strong>Your RSVP Summary:</strong><br>`;
-        
+        // generateRecap function change
+        // RSVP.js
+
+// Replace the ENTIRE old generateRecap function with this one:
+    function generateRecap(records) {
+        // Start with an overall container for styling
+        let recapHTML = `<div class="recap-container">`;
+
+        // --- Section 1: Wedding RSVP Status ---
+        recapHTML += `<div class="recap-section rsvp-status-section">`;
+        recapHTML += `  <h3>Wedding RSVP</h3>`;
+        recapHTML += `  <ul class="rsvp-status-list">`;
         records.forEach(record => {
-          const { fullName, weddingRSVP, mealPreference, dietaryNotes } = record.fields;
-          recapHTML += `<br><strong>${fullName}</strong>: ${weddingRSVP || "No response"}`;
-      
-          if (weddingRSVP === "Accept") {
-            recapHTML += `<br>Meal: ${mealPreference || "Not selected"}<br>`;
-            recapHTML += `Dietary Notes: ${dietaryNotes || "None"}<br>`;
-          }
+            const { fullName, weddingRSVP } = record.fields;
+            let icon = '';
+            let statusClass = '';
+            // Assign icon based on RSVP status
+            if (weddingRSVP === "Accept") {
+                icon = '<span class="recap-icon accept">✔</span> ';
+                statusClass = 'status-accept';
+            } else if (weddingRSVP === "Decline") {
+                icon = '<span class="recap-icon decline">❌</span> '; // Icon for declined
+                statusClass = 'status-decline';
+            } else {
+                icon = '<span class="recap-icon pending">?</span> '; // Icon if somehow no response recorded
+                statusClass = 'status-pending';
+            }
+            // Add list item for each guest
+            recapHTML += `<li class="${statusClass}">${icon}${fullName}</li>`;
         });
-        
+        recapHTML += `  </ul>`;
+        recapHTML += `</div>`; // End RSVP section
+
+        // --- Section 2: Meal Selections ---
+        // Filter for guests who accepted AND chose a meal
+        const acceptedWithMeals = records.filter(r => r.fields.weddingRSVP === "Accept" && r.fields.mealPreference);
+        if (acceptedWithMeals.length > 0) { // Only show section if there are meal choices
+            recapHTML += `<div class="recap-section meal-section">`;
+            recapHTML += `  <h3>Meal Selections</h3>`;
+            recapHTML += `  <ul class="meal-list">`;
+            acceptedWithMeals.forEach(record => {
+                const { fullName, mealPreference } = record.fields;
+                const firstName = fullName.split(' ')[0]; // Get first name
+                recapHTML += `<li><span class="recap-icon meal">🍽</span> ${firstName} – ${mealPreference}</li>`;
+            });
+            recapHTML += `  </ul>`;
+            recapHTML += `</div>`; // End Meal section
+        }
+
+        // --- Section 3: Dietary Notes ---
+         // Check if ANYONE in the party accepted the invitation
+        const anyoneAccepted = records.some(r => r.fields.weddingRSVP === "Accept");
+
+        if (anyoneAccepted) { // Only show Dietary Notes section if at least one person accepted
+            // Filter for guests who provided dietary notes
+            const guestsWithNotes = records.filter(r => r.fields.dietaryNotes && r.fields.dietaryNotes.trim() !== "");
+            // Check if anyone in the party *didn't* leave notes
+            const guestsWithoutNotes = records.length - guestsWithNotes.length > 0;
+
+            // Show section only if someone left notes OR if we need the "(Everyone else: None)" summary
+            if (guestsWithNotes.length > 0 || guestsWithoutNotes) {
+                recapHTML += `<div class="recap-section notes-section">`;
+                recapHTML += `  <h3>Dietary Notes</h3>`;
+                // Only create the list if there are actual notes
+                if (guestsWithNotes.length > 0) {
+                    recapHTML += `  <ul class="notes-list">`;
+                    guestsWithNotes.forEach(record => {
+                        const { fullName, dietaryNotes } = record.fields;
+                        const firstName = fullName.split(' ')[0]; // Get first name
+                        recapHTML += `<li><span class="recap-icon notes">💬</span> ${firstName} – ${dietaryNotes}</li>`;
+                    });
+                    recapHTML += `  </ul>`;
+                }
+                // Show summary line if applicable
+                if (guestsWithoutNotes) {
+                    recapHTML += `  <p class="notes-summary">(Everyone else: None)</p>`;
+                }
+                recapHTML += `</div>`; // End Notes section
+            }
+        }
+
+        recapHTML += `</div>`; // Close overall container
         return recapHTML;
-      }
-      
+    }
+
+// ALSO: Update the main confirmation message text
+function showRSVPConfirmation(records) {
+    const recapHTML = generateRecap(records); // Use the NEW generateRecap
+    // Make sure the element receiving the recap exists and is cleared if needed
+    const recapElement = document.getElementById("confirmation-recap");
+    if (recapElement) {
+        recapElement.innerHTML = recapHTML; // Populate recap area
+    } else {
+        console.error("Cannot find #confirmation-recap element!");
+    }
+
+
+    // Get the new elements by their updated/new IDs
+    const mainMessageElement = document.getElementById("confirmation-main-message");
+    const subMessageElement = document.getElementById("confirmation-sub-message");
+
+    // Set the text for the H2
+    if(mainMessageElement) {
+        // You could put logic back here to check if 'alreadySubmitted' if needed
+        // For now, just setting the main message:
+        mainMessageElement.textContent = "You're all set!";
+    } else {
+         console.error("Cannot find #confirmation-main-message element!");
+    }
+
+    // Set the text for the H3
+    if(subMessageElement) {
+        subMessageElement.textContent = "Here's what we have down for your group:";
+    } else {
+        console.error("Cannot find #confirmation-sub-message element!");
+    }
+
+    showStep(5); // Show the confirmation step (RSVP Submitted page)
+}
+            
   
     // ──  G. Form Submit: Step 1 & Step 4 Logic  ───────
     form.addEventListener("submit", async e => {

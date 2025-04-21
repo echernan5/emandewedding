@@ -20,12 +20,25 @@ body {
     font-size: 1.2rem;
 }
 
-h1, h2, h3 {
+h1 {
     font-family: 'Beverly', serif !important;
     font-weight: normal !important; /* Add !important to override any bolding */
     line-height: 1.2;
     margin: 0;
     text-transform: uppercase;
+    letter-spacing: 0.1rem;
+  }
+
+h2 {
+    font-size: 2rem;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+    font-family: 'Beverly', serif !important;
+    font-weight: normal !important; /* Add !important to override any bolding */
+    line-height: 1.2;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.1rem;
 }
 
 /* Menu and Navbar*/
@@ -104,6 +117,12 @@ h1, h2, h3 {
     background: rgb(255, 255, 255);
     color: rgb(112, 127, 91);
   }
+
+  /* Content sliding effect */
+.content-slide {
+  transform: translateX(500px); /* Move the content to the left by 500px when sidebar is open */
+  transition: transform 0.3s ease-in-out;
+}
 
 .content-wrapper {
     width: 100vw;
@@ -211,7 +230,7 @@ h1, h2, h3 {
 }
 
 .page-wrapper {
-  max-height: 100vh;
+  height: 100vh;
 }
 
 /* Content sliding effect */
@@ -224,17 +243,15 @@ h1, h2, h3 {
   display: none;
   flex-direction: column;
   gap: 1rem;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
-  height: 80vh;
   width: 100%;
   padding-left: 1rem;
   padding-right: 1rem;
-  padding-top: 0rem;
+  padding-top: 2rem;
   padding-bottom: 2rem;
   box-sizing: border-box;
   animation: fadeIn 0.3s ease-in-out;
-  overflow-y: auto;
 }
   
   .form-step.active {
@@ -247,32 +264,46 @@ h1, h2, h3 {
   }
 
   /* Container styles */
-form#multi-step-form {
-  max-width: 600px;
-  margin: 0 auto;
-  padding-left: 1rem;
-  padding-right: 1rem;
-  padding-top: 0rem;
-  padding-bottom: 2rem;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-  min-height: 80vh;
-  justify-content: center;
-}
+  form#multi-step-form {
+    max-width: 600px;
+    margin: 0 auto;
+    margin-top: calc(var(--header-height, 60px) + 0rem);
+    padding: 1rem 2rem; /* Adjust side padding as needed */
+    padding-bottom: 4rem; /* Add space at the very bottom */
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem; /* Only relevant if multiple steps were somehow visible */
+    min-height: calc(75vh - var(--header-height, 60px));
+    justify-content: center;
+    transform: translateY(calc(var(--header-height, 0px) * -1.1)); /* Keep this */
+    transition: justify-content 0.3s ease-in-out; /* Optional: smooth transition */
+  }
+
+  form#multi-step-form.is-long-step {
+    justify-content: flex-start; /* Align Step 5 content to the top */
+    min-height: 0; /* Allow form height to be determined by content */
+    margin-top: calc(var(--header-height, 60px) + 1rem);;
+  }
 
 /* Step container */
 .form-step {
-  display: none;
-  flex-direction: column;
-  gap: 1rem;
+  display: none; /* Hidden by default */
+  flex-direction: column; /* Content inside step stacks */
+  align-items: center; /* Center content inside step horizontally */
+  gap: 1.5rem; /* Space between elements within the step */
+  width: 100%; /* Take full width of form */
   animation: fadeIn 0.3s ease-in-out;
+  padding: 1rem 0; /* Add some vertical padding *inside* the step */
+  /* REMOVE any height, min-height, or overflow properties here */
 }
 
 .form-step.active {
-  display: flex;
+  display: flex; /* Show active step */
+  flex-direction: column;
+  align-items: center;
 }
+
 
 /* Inputs & Textareas */
 input[type="text"],
@@ -293,8 +324,7 @@ textarea:focus {
 }
 
 .form-step h1 {
-  font-size: 2rem;
-  margin-bottom: 1rem;
+  font-size: 2.5rem;
   text-align: center;
   letter-spacing: 0.15rem;
 }
@@ -306,7 +336,7 @@ button {
   background-color: rgb(112, 127, 91);
   color: rgb(255, 255, 255);
   border: white solid 2px;
-  border-radius: 8px;
+  border-radius: 15px;
   cursor: pointer;
   transition: 1s ease-in-out;
 }
@@ -329,8 +359,16 @@ button:hover {
 
 /* Confirmation step */
 #step-5 {
-  text-align: center;
-  padding: 2rem 1rem;
+  /* No special width needed, should be centered by .form-step's align-items: center */
+   padding-top: 0rem; /* Add more space at the top if needed */
+}
+
+#step-5.form-step.active {
+  padding-top: 0px; /* Remove extra space at the top */
+}
+
+#step-1 {
+  align-items: left;
 }
 
 /* Error message */
@@ -377,6 +415,190 @@ button:hover {
   /* Smooth transition for background and color changes */
   transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
 }
+
+/* Style the overall container for the new recap format */
+#confirmation-recap .recap-container {
+  text-align: left; /* Align text left within the container */
+  padding: 0 1rem; /* Add some padding if needed */
+}
+
+/* Style each section (RSVP, Meals, Notes) */
+#confirmation-recap .recap-section {
+  margin-bottom: 2rem; /* Space between sections */
+}
+
+#confirmation-recap .recap-section:last-child {
+  margin-bottom: 0; /* No margin after the last section */
+}
+
+#confirmation-sub-message {
+  margin: 0px;
+  margin-block-start: 0px;
+  margin-block-end: 0px;
+}
+
+/* Style the section headings */
+#confirmation-recap .recap-section h3 {
+  font-family: Arial, Helvetica, sans-serif !important;
+  font-size: 1.3rem; /* Adjust heading size */
+  text-align: center; /* Center section headings */
+  margin-bottom: 0.5rem;
+  padding-bottom: 0rem;
+  margin-block-start: 0px; /* Remove default margin */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3); /* Optional separator line */
+  color: #fff; /* Ensure heading color */
+  letter-spacing: 0.1rem;
+  font-weight: normal; /* Ensure normal weight */
+}
+
+/* Style the lists */
+#confirmation-recap ul {
+  list-style-type: none; /* Remove default bullets */
+  padding: 0;
+  margin: 0 auto; /* Center the list block if needed */
+  max-width: 400px; /* Constrain list width for readability */
+}
+
+#confirmation-recap li {
+  margin-bottom: 0.6rem; /* Space between list items */
+  line-height: 1.4; /* Improve readability */
+}
+
+/* Style the icons */
+#confirmation-recap .recap-icon {
+  display: inline-block;
+  width: 20px; /* Ensure icons align */
+  text-align: center;
+  margin-right: 8px; /* Space after icon */
+}
+
+#confirmation-recap .recap-icon.accept {
+  color: #a2e8a2; /* Lighter green */
+}
+#confirmation-recap .recap-icon.decline {
+  color: #f1aaaa; /* Lighter red */
+}
+#confirmation-recap .recap-icon.pending {
+  color: #ccc; /* Grey */
+}
+/* You can add specific colors for meal/notes icons too if desired */
+/* #confirmation-recap .recap-icon.meal { color: #...; } */
+/* #confirmation-recap .recap-icon.notes { color: #...; } */
+
+
+/* Style the summary paragraph for notes */
+#confirmation-recap .notes-summary {
+  text-align: center;
+  font-style: italic;
+  color: rgba(255, 255, 255, 0.8);
+  margin-top: 1rem;
+  font-size: 0.9em;
+}
+
+/* Ensure the main confirmation message is centered */
+#confirmation-message {
+  text-align: center;
+  font-size: 1.4rem; /* Adjust as needed */
+  margin-bottom: 2rem; /* Space below the main title */
+  line-height: 1.4;
+}
+
+/* Keep centering rules for the step container */
+#step-5 {
+  /* text-align: center; */ /* No longer needed here, handled by children */
+  padding-top: 2rem; /* More space at the top */
+}
+#confirmation-recap {
+   /* No changes needed here from last step, parent centers it */
+   max-width: 500px;
+   margin: 1rem auto;
+   text-align: left; /* Keep this default */
+}
+
+/* Progress Bar */
+/* RSVP.css */
+
+/* Progress Bar Container */
+.progress-indicator {
+  display: flex;           /* Arrange steps and lines horizontally */
+  align-items: center;    /* Vertically align dots and lines */
+  justify-content: space-between; /* Distribute space */
+  width: 80%;             /* Width of the progress bar */
+  max-width: 500px;        /* Max width */
+  margin: 0.5rem auto;      /* Center the bar and add space above/below */
+  margin-top: calc(var(--header-height, 60px) + 0rem); /* Position below header */
+  padding: 0 10px;        /* Small padding on the sides */
+  box-sizing: border-box;
+}
+
+/* Styling for the connecting lines */
+.progress-line {
+  height: 3px;             /* Thickness of the line */
+  background-color: rgba(255, 255, 255, 0.3); /* Inactive line color */
+  flex-grow: 1;           /* Allow line to take up available space */
+  margin: 0 2px;          /* Tiny space around lines */
+  transition: background-color 0.4s ease; /* Smooth color change */
+}
+
+/* Styling for the step dots */
+.progress-step {
+  width: 25px;            /* Size of the dot */
+  height: 25px;           /* Size of the dot */
+  border-radius: 50%;     /* Make it a circle */
+  background-color: transparent; /* Inactive background */
+  border: 3px solid rgba(255, 255, 255, 0.3); /* Inactive border */
+  flex-shrink: 0;        /* Prevent dots from shrinking */
+  transition: background-color 0.4s ease, border-color 0.4s ease; /* Smooth transitions */
+  position: relative;     /* Needed if adding step numbers */
+  box-sizing: border-box;
+}
+
+/* --- Styling for States --- */
+
+/* Style for completed steps (dots) */
+.progress-step.completed {
+  background-color: #ffffff; /* White fill for completed */
+  border-color: #ffffff; /* White border */
+}
+/* Style for the line AFTER a completed step */
+.progress-step.completed + .progress-line {
+   background-color: #ffffff; /* White line for completed segment */
+}
+
+/* Style for the currently active step (dot) */
+.progress-step.active {
+  border-color: #ffffff; /* Highlight active step border */
+  background-color: rgba(255, 255, 255, 0.372); /* White color at 50% opacity */
+  /* Optional: make active slightly larger */
+  /* transform: scale(1.1); */
+}
+
+/* Override: Make the LAST step dot look 'completed' WHEN it is 'active' */
+.progress-indicator > .progress-step:last-child.active {
+  background-color: #ffffff; /* Apply solid white fill, same as .completed */
+  /* The border-color is already white from the general .active rule above */
+}
+
+/* Optional: Add Step Numbers inside dots */
+/*
+.progress-step::after {
+  content: attr(data-step);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.5); // Dim color for numbers
+}
+.progress-step.completed::after,
+.progress-step.active::after {
+  color: rgb(112, 127, 91); // Darker color on light background
+}
+*/
 
 /* Animation */
 @keyframes fadeIn {

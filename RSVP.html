@@ -40,90 +40,115 @@
             <li><a href="Registry.html">Registry</a></li>
         </ul>
     </div>
-<div class="page-wrapper">
-    <!-- Header -->
-        <section class="hero">
-            <div class="hero-overlay">
-                <div class="hero-header">
-                    <div class="hero-col left">
-                        <i class="bi bi-list menu-icon"></i>
-                    </div>
-                    <div class="hero-col center">
-                        <h1 class="hero-title">
-                            <a href="index.html">Ethan & Emma</a>
-                    </div>
-                    <div class="hero-col right">
-                        <a href="RSVP.html">
-                            <button class="rsvp-button">RSVP</button>
-                        </a>
-                    </div>
-                </div>
 
-                <hr>
+<div class="content-wrapper">
+    <div class="overlay"></div>
+    <div class="page-wrapper">
+        <!-- Header -->
+            <section class="hero">
+                <div class="hero-overlay">
+                    <div class="hero-header">
+                        <div class="hero-col left">
+                            <i class="bi bi-list menu-icon"></i>
+                        </div>
+                        <div class="hero-col center">
+                            <h1 class="hero-title">
+                                <a href="index.html">Ethan & Emma</a>
+                        </div>
+                        <div class="hero-col right">
+                            <a href="RSVP.html">
+                                <button class="rsvp-button">RSVP</button>
+                            </a>
+                        </div>
+                    </div>
+
+                    <hr>
+
+             <div id="progress-indicator" class="progress-indicator">
+                <div class="progress-step active" data-step="1"></div> <div class="progress-line"></div>
+                 <div class="progress-step" data-step="2"></div>
+                 <div class="progress-line"></div>
+                 <div class="progress-step" data-step="3"></div>
+                 <div class="progress-line"></div>
+                 <div class="progress-step" data-step="4"></div>
+                 <div class="progress-line"></div>
+                 <div class="progress-step" data-step="5"></div>
+             </div>
+            
+        <!-- Name -->
+        <form id="multi-step-form">
+            <!-- Step 1 -->
+            <div class="form-step active" id="step-1">
+            <h1>Let’s find your invitation.</h1>
+            <p>If your invite includes a guest or family members, you’ll be able to reply for everyone all in one place.</p>
+            <input type="text" id="guest-name" name="guest-name" placeholder="Enter your full name" required />
+            <div id="error-message" style="color: rgb(255, 255, 255);"></div>
+            <button type="submit">Continue</button>
+            </div>
         
-    <!-- Name -->
-    <form id="multi-step-form">
-        <!-- Step 1 -->
-        <div class="form-step active" id="step-1">
-        <h1>Let’s find your invitation.</h1>
-        <input type="text" id="guest-name" name="guest-name" placeholder="Enter your full name" required />
-        <div id="error-message" style="color: rgb(255, 255, 255);"></div>
-        <button type="submit">Continue</button>
-        </div>
-    
-        <!-- Step 2 -->
-        <div class="form-step" id="step-2">
-        <h1>We saved you a seat!</h1>
-        <p>Let us know who will be celebrating with us.</p>
-        <div id="party-members"></div>
-        <button type="button" class="back-button">Back</button>
-        <button type="button" id="to-meal-step">Next</button>
-        </div>
-    
-        <!-- Step 3 -->
-        <div class="form-step" id="step-3">
-            <h3>Meal Preferences</h3>
-            <div id="member-meal-choices"></div> <!-- JS appends meal + dietary notes here -->
-            <button type="button" class="back-button">Back</button>
-            <button type="button" id="to-message-step">Next</button>
-        </div>
+            <!-- Step 2 -->
+            <div class="form-step" id="step-2">
+            <h1>We saved you a seat!</h1>
+            <p>Let us know who will be celebrating with us.</p>
+            <div id="party-members"></div>
+            <div class="step-navigation">
+                <button type="button" class="back-button">Back</button>
+                <button type="button" id="to-meal-step">Next</button>
+            </div>
+            </div>
         
-    
-        <!-- Step 4 -->
-        <div class="form-step" id="step-4">
-        <h3>Message to the Hosts (optional)</h3>
-        <textarea id="messageToHosts"></textarea>
-        <button type="button" class="back-button">Back</button>
-        <button type="submit">Submit RSVP</button>
-        </div>  
-    
-        <!-- Step 5: Confirmation -->
-        <div id="step-5" class="form-step">
-            <h2 id="confirmation-message"></h2>
-            <p id="confirmation-recap"></p>
-            <button id="update-response-button">Update Response</button>
-            <button id="finish-button">Finish</button>
-        </div>      
-    
-    </form>
- </div>
+            <!-- Step 3 -->
+            <div class="form-step" id="step-3">
+                <h3>Meal Preferences</h3>
+                <div id="member-meal-choices"></div> <!-- JS appends meal + dietary notes here -->
+                <div class="step-navigation">
+                    <button type="button" class="back-button">Back</button>
+                    <button type="button" id="to-message-step">Next</button>
+                </div>
+            </div>
+            
+        
+            <!-- Step 4 -->
+            <div class="form-step" id="step-4">
+            <h3>Message to the Hosts (optional)</h3>
+            <textarea id="messageToHosts"></textarea>
+            <div class="step-navigation">
+                <button type="button" class="back-button">Back</button>
+                <button type="submit">Submit RSVP</button>
+            </div>
+            </div>  
+        
+            <!-- Step 5: Confirmation -->
+            <div id="step-5" class="form-step">
+                <h2 id="confirmation-main-message"></h2>
+                <h3 id="confirmation-sub-message"></h3>
+                <p id="confirmation-recap"></p>
+                <div class="step-navigation">
+                    <button id="update-response-button">Update Response</button>
+                    <button id="finish-button">Finish</button>
+                </div>
+            </div>      
+        
+        </form>
+    </div>
   
     
- <!-- Footer -->
- <footer class="footer">
-    <ul>
-        <li><a href="#">Home</a></li>
-        <li><a href="#">Details</a></li>
-        <li><a href="#">Q&As</a></li>
-        <li><a href="#">Proposal</a></li>
-        <li><a href="#">Engagement</a></li>
-        <li><a href="#">Getting Ready</a></li>
-        <li><a href="#">Ceremony</a></li>
-        <li><a href="#">Reception</a></li>
-        <li><a href="#">Our Story</a></li>
-        <li><a href="#">Registry</a></li>
-    </ul>
- </footer>
+    <!-- Footer -->
+    <footer class="footer">
+        <ul>
+            <li><a href="#">Home</a></li>
+            <li><a href="#">Details</a></li>
+            <li><a href="#">Q&As</a></li>
+            <li><a href="#">Proposal</a></li>
+            <li><a href="#">Engagement</a></li>
+            <li><a href="#">Getting Ready</a></li>
+            <li><a href="#">Ceremony</a></li>
+            <li><a href="#">Reception</a></li>
+            <li><a href="#">Our Story</a></li>
+            <li><a href="#">Registry</a></li>
+        </ul>
+    </footer>
+    </div>
 </div>
 </body>
 
