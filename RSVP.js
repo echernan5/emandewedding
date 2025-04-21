@@ -370,13 +370,6 @@ document.addEventListener("DOMContentLoaded", () => {
             };
             // --- ADD THIS BLOCK END ---
 
-            // 3. *** Crucial Part: Populate Steps 2 & 3 UI based on fetchedRecords ***
-            console.log("fetchedRecords on Update:", fetchedRecords);
-            fetchedRecords.forEach(record => { // The loop starts AFTER the style definitions
-                // ... rest of the loop code ...
-
-            // 3. *** Crucial Part: Populate Steps 2 & 3 UI based on fetchedRecords ***
-            console.log("fetchedRecords on Update:", fetchedRecords);
             fetchedRecords.forEach(record => {
                 const memberName = record.fields.fullName;
                 const currentRSVP = record.fields.weddingRSVP; // "Accept" or "Decline"
@@ -481,5 +474,5 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // ──  H. Kick it off at Step 1  ─────────────────────
       showStep(1);
-    }
+
   });
