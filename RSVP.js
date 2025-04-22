@@ -407,7 +407,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (mainMessageElement) {
             if (isJustSubmitted) {
                 // Text for first-time submission (they just clicked "Submit RSVP")
-                mainMessageElement.textContent = "RSVP Submitted!"; // Or "You're all set!"
+                mainMessageElement.textContent = "You're In! Thank You!"; // Or "You're all set!"
             } else {
                 // Text for returning guests (they looked up their name and already had an RSVP)
                 mainMessageElement.textContent = "Welcome back!";
@@ -419,7 +419,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (subMessageElement) {
             if (isJustSubmitted) {
                 // Text for first-time submission
-                subMessageElement.textContent = "Here's what we have down for your group:"; // Or customize as needed
+                subMessageElement.textContent = "Here's a quick recap of your RSVP:"; // Or customize as needed
             } else {
                 // Text for returning guests
                 subMessageElement.textContent = "Review your RSVP details below or make changes if needed.";

@@ -291,7 +291,6 @@ h2 {
   display: none; /* Hidden by default */
   flex-direction: column; /* Content inside step stacks */
   align-items: center; /* Center content inside step horizontally */
-  gap: 1.5rem; /* Space between elements within the step */
   width: 100%; /* Take full width of form */
   animation: fadeIn 0.3s ease-in-out;
   padding: 1rem 0; /* Add some vertical padding *inside* the step */
@@ -675,7 +674,7 @@ button:hover {
 /* Responsive adjustments */
 @media (min-width: 600px) {
   form#multi-step-form {
-    padding: 4rem 2rem;
+    padding: 2rem 2rem;
   }
 }
 

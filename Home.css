@@ -473,7 +473,7 @@ h1, h2, h3 {
     max-width: 70vw;
     margin: 0 auto;
     padding-top: 1.5rem;
-    padding-bottom: 3rem;
+    padding-bottom: 1rem;
     color: rgb(0, 0, 0);
 }
 
@@ -483,6 +483,7 @@ h1, h2, h3 {
     max-width: 50vw;
     margin: auto;
     padding-bottom: 1rem;
+    text-align: left;
 }
 
 /* Debugging styles */

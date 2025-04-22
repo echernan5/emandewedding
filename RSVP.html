@@ -81,7 +81,7 @@
         <form id="multi-step-form" novalidate>
             <!-- Step 1 -->
             <div class="form-step active" id="step-1">
-            <h1>Let’s find your invitation.</h1>
+            <h1>Welcome! Let's Find Your Invite.</h1>
             <p>If your invite includes a guest or family members, you’ll be able to reply for everyone all in one place.</p>
             <input type="text" id="guest-name" name="guest-name" placeholder="Enter your full name" required />
             <div id="error-message" style="color: rgb(255, 255, 255);"></div>
@@ -102,7 +102,7 @@
             <!-- Step 3 -->
             <div class="form-step" id="step-3">
                 <h1>Let’s talk dinner.</h1>
-                <p>Please select one entrée per guest and let us know about any dietary needs below.</p>
+                <p>Please choose an entrée for each guest attending and let us know about any dietary needs!</p>
                 <div id="member-meal-choices"></div> <!-- JS appends meal + dietary notes here -->
                 <div class="step-navigation">
                     <button type="button" class="back-button">Back</button>
@@ -113,7 +113,9 @@
         
             <!-- Step 4 -->
             <div class="form-step" id="step-4">
-            <h3>Message to the Hosts (optional)</h3>
+            <p>Optional</p>
+            <h1>Leave us a message?</h1>
+            <p>Leave us a note, share a song request, or just say hi! We'll be reading them all with excitement here in Virginia while we finalize the last details!</p>
             <textarea id="messageToHosts"></textarea>
             <div class="step-navigation">
                 <button type="button" class="back-button">Back</button>
@@ -123,8 +125,8 @@
 
             <!-- Step 5: Phone Number-->
             <div class="form-step" id="step-5">
-                <h1>Before You Go...</h1>
-                <p>If you'd like a quick confirmation, just drop your number here. We’ll text you your RSVP details and event info.</p>
+                <h1>Quick Confirmation Text?</h1>
+                <p>Want a handy text with your RSVP details and event info? If so, feel free to enter your number below. (Totally optional, no pressure!)</p>
                 <input type="tel" id="guest-phone" name="guest-phone" placeholder="e.g., 555-123-4567">
                 <div id="error-message" class="error-message"></div>
                 <div class="step-navigation">
