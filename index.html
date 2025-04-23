@@ -18,16 +18,31 @@
   <meta name="author" content="Emma Hernandez and Ethan Wlodarczyk">
 </head>
 <body>
-    <!-- Password Modal -->
-<div id="passwordModal" class="password-modal">
-    <div class="password-modal-content">
-      <h2>Site Under Construction</h2>
-      <p>This site is currently under construction. Please enter the password to continue:</p>
-      <input type="password" id="passwordInput" placeholder="Enter password">
-      <button id="submitPassword">Submit</button>
-      <p id="errorMessage" style="color: red; display: none;">Incorrect password. Please try again.</p>
+
+ <!-- Password Modal -->
+    <div id="passwordModal" class="password-modal">
+        <div class="password-modal-content">
+    
+            <img src="Content/transparent.png" alt="an illusrtation of Emma and Ethan humorously building their website" class="construction-illustration">
+    
+            <h2>Oops! A Little Ahead of Schedule?</h2>
+    
+            <p>We're still laying the foundation (and maybe arguing over the instructions 😉). Check back soon for the grand reveal!</p>
+    
+            <p class="playlist-link-container">
+                While you wait, here's a peek at our building soundtrack:
+                <a href="https://open.spotify.com/playlist/7gslThZPjDOKi77G8ZhbcF?si=U6bg-eXlRWaOVA6e5GLf2Q" target="_blank" class="playlist-link" aria-label="Listen to our Spotify playlist">
+                    Listen Now <i class="bi bi-spotify"></i> </a>
+            </p>
+    
+            <hr class="password-separator">
+    
+            <p class="password-prompt">Psst... Emma & Ethan, enter password here to sneak inside!</p>
+            <input type="password" id="passwordInput" placeholder="Enter password" aria-label="Password Input">
+            <button type="button" id="submitPassword">Submit</button> <p id="errorMessage" style="color: red; display: none;" role="alert">Sorry! Top secret Bride & Groom planning zone only. Password incorrect.</p>
+    
+        </div>
     </div>
-  </div>
   
     <!-- Sidebar Menu -->
     <div class="sidebar">

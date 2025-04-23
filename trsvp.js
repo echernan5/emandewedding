@@ -108,7 +108,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // Reset Step 1 controls if navigating back to it
         if (validStep === 1) {
             console.log("Navigated to Step 1, resetting controls.");
-            if (guestNameInput) guestNameInput.disabled = false;
+            if (guestNameInput) guestNEameInput.disabled = false;
             if (step1SubmitButton) {
                 step1SubmitButton.disabled = false;
                 step1SubmitButton.textContent = step1OriginalButtonText;
@@ -412,6 +412,69 @@ document.addEventListener("DOMContentLoaded", () => {
             // Get phone number from Step 5 input
             const finalPhoneNumber = guestPhoneInput.value.trim();
 
+            // --- Generate Dynamic SMS Body ---
+            console.log("Generating SMS body...");
+            let generatedMessageBody = ""; // Default empty string
+            let submitterName = "Guest"; // Default name
+
+            try {
+                // 1. Find submitter's preferredName
+                const submitterRecord = fetchedRecords.find(r => r.id === submitterRecordId);
+                if (submitterRecord) {
+                    // Use preferredName field if it exists and has a value, otherwise fallback to fullName
+                    submitterName = submitterRecord.fields.preferredName?.trim() || submitterRecord.fields.fullName || "Guest";
+                } else {
+                    console.warn("Could not find submitter record in fetchedRecords to get name.");
+                    // Attempt to get name from input as last resort (though usually we have fetchedRecords)
+                    submitterName = guestNameInput.value.trim().split(' ')[0] || "Guest";
+                }
+
+
+                // 2. Get preferredNames of OTHERS who accepted
+                const otherAcceptedNames = [];
+                fetchedRecords.forEach(record => {
+                    const nameInChoices = record.fields.fullName; // Key used in rsvpChoices
+                    // Check if they accepted AND are NOT the submitter
+                    // Ensure rsvpChoices[nameInChoices] exists before accessing .rsvp
+                    if (rsvpChoices[nameInChoices] && rsvpChoices[nameInChoices].rsvp === "Accept" && record.id !== submitterRecordId) {
+                        // Use preferredName if available, else fallback to the first name from fullName
+                        const preferred = record.fields.preferredName?.trim() || nameInChoices.split(' ')[0] || "Guest";
+                        otherAcceptedNames.push(preferred);
+                    }
+                });
+
+                // 3. Build the middle part of the message based on count
+                let partyListString = "";
+                const numOthers = otherAcceptedNames.length;
+
+                if (numOthers === 0) {
+                    partyListString = "You are all set.";
+                } else if (numOthers === 1) {
+                    partyListString = `You and ${otherAcceptedNames[0]} are all set.`;
+                } else if (numOthers === 2) {
+                    partyListString = `You, ${otherAcceptedNames[0]}, and ${otherAcceptedNames[1]} are all set.`;
+                } else { // 3 or more others
+                    // Get all names except the last one
+                    const allButLast = otherAcceptedNames.slice(0, numOthers - 1);
+                    // Get the last name
+                    const lastName = otherAcceptedNames[numOthers - 1];
+                    // Join them correctly
+                    partyListString = `You, ${allButLast.join(", ")}, and ${lastName} are all set.`;
+                }
+
+                // 4. Assemble the final message
+                generatedMessageBody = `Hi ${submitterName}, thank you for RSVPing! ${partyListString} We’re looking forward to celebrating with you! - Emma & Ethan 💌`;
+                console.log("Generated Message:", generatedMessageBody);
+
+            } catch (err) {
+                console.error("Error generating SMS body:", err);
+                // Fallback message if generation fails
+                // Ensure submitterName is defined here too for the fallback
+                 const submitterRecord = fetchedRecords.find(r => r.id === submitterRecordId);
+                 submitterName = submitterRecord?.fields?.preferredName?.trim() || submitterRecord?.fields?.fullName || "Guest";
+                 generatedMessageBody = `Hi ${submitterName}, thank you for RSVPing! We look forward to celebrating with you! - Emma & Ethan 💌`;
+            }
+
             // Re-validate meal choices for accepted guests
             const mealsValid = acceptedMembers.every(name => rsvpChoices[name] && rsvpChoices[name].mealChoice);
             if (!mealsValid) {
@@ -447,6 +510,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         if (rec.id === submitterRecordId) {
                             fieldsToUpdate.submitterPhoneNumber = finalPhoneNumber;
                             fieldsToUpdate.lastSubmissionTime = submissionTimestamp;
+                            fieldsToUpdate.generatedSMSBody = generatedMessageBody; // <<< ADD THIS LINE
                         }
 
                         return fetch(

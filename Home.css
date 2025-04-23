@@ -1,45 +1,172 @@
-/*Password Modal*/
-.password-modal {
-    display: block;
-    position: fixed;
+body.modal-active {
+    overflow: hidden;
+}
+
+/* Styles for the updated Password Modal Content */
+#passwordModal {
+    /* Core Modal Positioning & Overlay */
+    position: fixed; /* Takes it out of flow, relative to viewport */
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgb(255, 255, 255); /* Dimmed background */
-    z-index: 1000;
-    justify-content: center;
-    align-items: center;
-    color: rgb(0, 0, 0);
-  }
-  
-  .password-modal-content {
-    background-color: #ffffff;
-    padding: 20px;
-    border-radius: 8px;
-    text-align: center;
-  }
-  
-  input[type="password"] {
-    padding: 10px;
-    margin: 10px 0;
-    border-radius: 5px;
-    border: 1px solid #ddd;
-  }
-  
-  button {
+    background-color: #f5f5f5;
+    z-index: 1050; /* Ensures it's on top of other content */
+
+    /* Centering the Content Box */
+    display: flex;
+    align-items: center; /* Vertically center */
+    justify-content: center; /* Horizontally center */
+
+    /* Ensures modal itself can scroll if content overflows viewport height */
+    overflow-y: auto;
+
+    /* Assuming the modal should be visible by default on this temp page */
+    /* If controlled by JS later, you might start with display: none; */
+}
+
+.password-modal-content {
+    /* Keep or adjust existing modal content styles like background, padding, border-radius, box-shadow */
+    padding: 30px 40px; /* Example */
+    text-align: center; /* Center aligns all content */
+    max-width: 550px; /* Adjust as needed */
+    margin: auto; /* Helps center if not already handled */
+}
+
+.construction-illustration {
+    display: block; /* Allows margin auto to work */
+    max-width: 180px; /* Adjust based on illustration */
+    height: auto; /* Maintain aspect ratio */
+    margin: 0 auto 25px auto; /* Center illustration and add space below */
+}
+
+.password-modal-content h2 {
+    font-size: 1.7em; /* Example */
+    font-weight: bold; /* Or match site style */
+    margin-bottom: 15px;
+    color: #333; /* Example - Match site text color */
+}
+
+.password-modal-content p {
+    font-size: 1em; /* Example */
+    line-height: 1.6;
+    color: #555; /* Example - Match site text color */
+    margin-bottom: 15px;
+}
+
+/* Playlist Link Styling */
+.playlist-link-container {
+    margin-top: 25px; /* Space above the playlist paragraph */
+    margin-bottom: 30px; /* Space below the playlist paragraph */
+}
+
+.playlist-link {
+    display: inline-block; /* Makes it button-like */
+    margin-top: 5px; /* Space below the preceding text line */
     padding: 10px 20px;
-    background-color: #000000;
-    border: none;
-    color: white;
-    border-radius: 5px;
+    background-color: #1DB954; /* Official Spotify Green */
+    color: #ffffff;
+    text-decoration: none;
+    border-radius: 50px; /* Pill shape */
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth transition */
+    border: none; /* Remove default border */
     cursor: pointer;
-  }
-  
-  button:hover {
-    background-color: #555;
-  }
-  
+}
+
+.playlist-link:hover,
+.playlist-link:focus {
+    background-color: #1AA34A; /* Darker Spotify Green */
+    color: #ffffff; /* Ensure text color remains */
+    transform: scale(1.03); /* Slight grow effect */
+    text-decoration: none; /* Remove underline on hover */
+}
+
+.playlist-link i.bi-spotify {
+    margin-left: 8px; /* Space between text and icon */
+    vertical-align: -2px; /* Fine-tune icon alignment */
+    font-size: 1.1em; /* Slightly larger icon */
+}
+
+/* Separator Line */
+.password-separator {
+    border: 0;
+    height: 1px;
+    background-color: #e0e0e0; /* Light gray line */
+    margin: 35px auto; /* Generous spacing */
+    width: 75%; /* Doesn't span full width */
+}
+
+/* Password Prompt Text */
+.password-prompt {
+    font-size: 0.9em;
+    color: #777; /* Lighter text color */
+    margin-bottom: 10px;
+    font-style: italic;
+}
+
+/* Password Input & Button Styling */
+#passwordInput {
+    display: block; /* Take full width */
+    width: 80%; /* Adjust width as needed */
+    max-width: 300px; /* Prevent getting too wide */
+    margin: 0 auto 15px auto; /* Center and add space below */
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px; /* Match site style */
+    font-size: 1em;
+    box-sizing: border-box;
+}
+
+#submitPassword {
+    padding: 12px 25px;
+    background-color: #444; /* Example: Dark gray - Match site button style */
+    color: white;
+    border: none;
+    border-radius: 4px; /* Match site style */
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+#submitPassword:hover,
+#submitPassword:focus {
+    background-color: #222; /* Darker hover */
+}
+
+#errorMessage {
+    margin-top: 15px;
+    font-size: 0.9em;
+    font-weight: bold;
+    /* Color is set inline via JS - or you can style it here */
+    /* color: #D8000C; */ /* Example error color */
+}
+
+/* Basic Responsive Adjustments */
+@media (max-width: 600px) {
+    .password-modal-content {
+        padding: 25px 20px;
+        max-width: 90%;
+    }
+
+    .construction-illustration {
+        max-width: 120px; /* Smaller illustration on mobile */
+        margin-bottom: 20px;
+    }
+
+    .password-modal-content h2 {
+        font-size: 1.4em;
+    }
+
+    .password-modal-content p {
+        font-size: 0.9em;
+    }
+
+    #passwordInput {
+        width: 90%; /* Wider input on mobile */
+    }
+}
 
 /* General Styles */
 @font-face {
