@@ -170,11 +170,11 @@ body.modal-active {
 
 /* General Styles */
 @font-face {
-    font-family: 'Beverly';
-    src: url('Cordon/Cordon.woff') format('woff'),
-         url('Cordon/Cordon.woff2') format('woff2'),
-         url('Cordon/Cordon.ttf') format('truetype'),
-         url('Cordon/Cordon.otf') format('opentype');
+    font-family: 'DancingInTheRain';
+    src: url('DancingInTheRain/Dancing In The Rain.woff') format('woff'),
+         url('DancingInTheRain/Dancing In The Rain.woff2') format('woff2'),
+         url('DancingInTheRain/Dancing In The Rain.ttf') format('truetype'),
+         url('DancingInTheRain/Dancing In The Rain.otf') format('opentype');
     font-weight: 400 !important;
     line-height: 1.2;
     padding-top: 0%;
@@ -191,7 +191,7 @@ body {
 }
 
 h1, h2, h3 {
-    font-family: 'Beverly', serif !important;
+    font-family: 'DancingInTheRain', serif !important;
     font-weight: normal !important; /* Add !important to override any bolding */
     line-height: 1.2;
 }
@@ -230,7 +230,7 @@ h1, h2, h3 {
 }
 
 .hero-subtitle {
-    font-family: 'Beverly', serif !important;
+    font-family: 'DancingInTheRain', serif !important;
     font-size: 4rem;
     text-transform: uppercase;
     letter-spacing: .2rem;
@@ -293,7 +293,7 @@ h1, h2, h3 {
 
 .hero-title {
     font-size: 2rem;
-    font-family: 'Beverly', serif;
+    font-family: 'DancingInTheRain', serif;
     transform: translateY(8px);
     text-transform: uppercase;
     letter-spacing: 0.2rem;
@@ -514,7 +514,7 @@ h1, h2, h3 {
 }
 
 .card-title {
-    font-family: Beverly;
+    font-family: DancingInTheRain;
     text-transform: uppercase;
     line-height: 1;
     position: absolute;
@@ -583,9 +583,8 @@ h1, h2, h3 {
 
 /* About Section */
 .about {
-    background-color: white;
+    background-color: rgb(112, 127, 91);
     padding: 50px 0;
-    padding-bottom: 5rem;
     align-items: left;
 }
 
@@ -605,21 +604,21 @@ h1, h2, h3 {
 .about-heading {
     font-family: serif;
     text-transform: uppercase;
-    font-size: 3rem;
+    font-size: 4rem;
     max-width: 50vw;
     margin: 0 auto;
     padding-top: 1.5rem;
     padding-bottom: 1rem;
-    color: rgb(0, 0, 0);
+    color: rgb(255, 255, 255);
 }
 
 .about-text {
     font-family: sans-serif;
-    color: rgb(0, 0, 0);
+    color: rgb(255, 255, 255);
     margin: auto;
     padding-bottom: 1rem;
-    text-align: left;
-    width: 50vw;
+    text-align: center;
+    width: 40vw;
 }
 
 /* Debugging styles */
@@ -759,7 +758,7 @@ h1, h2, h3 {
 
     /* Adjust the subtitle on mobile */
     .hero-subtitle {
-        font-family: 'Beverly', serif !important;
+        font-family: 'DancingInTheRain', serif !important;
         font-size: 3rem;  /* Smaller subtitle size */
         text-transform: uppercase;
         letter-spacing: .2rem;
