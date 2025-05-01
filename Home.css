@@ -826,41 +826,6 @@ h1, h2, h3 {
         width: 100%;
         padding-bottom: 0;
     }
-
-
-    .carousel-container {
-        overflow-x: auto;  /* Allow horizontal scrolling */
-        -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
-        scroll-snap-type: x mandatory; /* Snap cards into place */
-        scroll-padding-left: 65px;
-    }
-    .carousel-container::-webkit-scrollbar {
-        display: none;                 /* WebKit (Chrome, Safari, etc.) */
-      }
-
-    .card-container {
-        width: 100%;
-        height: 80%;
-        gap: 10px; /* Adjust spacing between cards */
-        transition: none;
-        margin-left: 10px; /* Space on the left */
-    }
-
-    .card {
-        flex: 0 0 85%; /* Show one card at 80% width */
-        height: 90vw; /* Adjust height on mobile */
-        margin-right: 10px; /* Space between cards */
-        scroll-snap-align: start; /* Align scrolling to cards */
-    }
-
-    .card-link:first-child {
-        padding-left: 65px;
-    }
-
-    .carousel-arrow {
-        display: none !important;
-      }
-
       
 
 }
