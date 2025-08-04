@@ -2,6 +2,12 @@
 // Wrap everything in DOMContentLoaded to avoid null references
 
 document.addEventListener("DOMContentLoaded", function() {
+
+  const modal = document.getElementById("passwordModal");
+  if (modal && modal.style.display !== "none") {
+    document.body.style.overflow = "hidden"; // 🔒 Disable scroll while modal is open
+  }
+  
   // Password Checker (if modal exists)
   const pwBtn = document.getElementById("submitPassword");
   if (pwBtn) {
@@ -10,9 +16,10 @@ document.addEventListener("DOMContentLoaded", function() {
       const correctPassword = "PiDay"; // Change this to your password
       if (enteredPassword === correctPassword) {
         document.getElementById("passwordModal").style.display = "none";
+        document.body.style.overflow = ""; // ✅ Re-enable scroll
       } else {
         document.getElementById("errorMessage").style.display = "block";
-      }
+      }      
     });
   }
 

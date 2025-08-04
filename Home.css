@@ -10,7 +10,7 @@ body.modal-active {
     left: 0;
     width: 100%;
     height: 100%;
-    background-image: url('Content/Untitled design (14).png');
+    background-image: url('Content/Untitled design (14) 2.webp');
     background-repeat: no-repeat, repeat;
     background-size: cover, cover; /* Cover the entire viewport */
     background-position: center center; /* Center the background image */   
@@ -154,7 +154,7 @@ body.modal-active {
     }
 
     .construction-illustration {
-        max-width: 120px; /* Smaller illustration on mobile */
+        max-width: 50vw; /* Smaller illustration on mobile */
         margin-bottom: 20px;
     }
 
