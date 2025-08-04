@@ -154,7 +154,7 @@ body.modal-active {
     }
 
     .construction-illustration {
-        max-width: 50vw; /* Smaller illustration on mobile */
+        max-width: 60vw; /* Smaller illustration on mobile */
         margin-bottom: 20px;
     }
 
