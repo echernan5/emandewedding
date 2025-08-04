@@ -1,0 +1,525 @@
+@font-face {
+    font-family: 'Hamilton';
+    src:
+         url('TCHamiltonArchive/TCHamiltonArcScript-Light.otf') format('truetype');
+    font-weight: 200 !important;
+    line-height: 1.2;
+    padding-top: 0%;
+    padding-bottom: 0%;
+    font-style: normal;
+}
+
+html {
+    scroll-behavior: smooth; /* optional, for smooth scrolling */
+    scroll-padding-top: 70px; /* adjust this to match your navbar height */
+  }  
+
+.body {
+    margin: 0; /* Reset default margin */
+}
+
+.h1 {
+    font-family: 'Hamilton', serif; /* Use Hamilton font for headings */
+    font-size: 2.5em; /* Adjusted size for headings */
+    color: #333; /* Dark color for better readability */
+    margin: 0; /* Reset margin for h1 */
+}
+
+.font-sans {
+    margin: 0; /* Reset margin for body */
+}
+
+/* Hero Section Styles */
+
+#hero,
+.hero-section {
+    position: relative;
+    width: 100vw;
+    height: calc(100vh - 70px);
+    overflow: hidden;
+  
+    display: flex;
+    justify-content: center; /* horizontally center hero-content container */
+    align-items: center;     /* vertically center hero-content container */
+  }
+  
+  .photo-background {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    
+    background-image: 
+      url('edited2/ethanandemmaengagement-7.jpg'),
+      url('edited2/ethanandemmaengagement-19.jpg');
+    background-repeat: no-repeat, no-repeat;
+    background-position: left center, right center;
+    background-size: 65% 100%, 35% 100%;
+    
+    z-index: 1;
+    filter: brightness(0.75);
+  }
+  
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    
+    display: flex;
+    width: 100%;
+    max-width: 1200px;
+    padding: 2rem;
+  
+    align-items: center; /* vertically center the items */
+    justify-content: space-between; /* space out left, center, right */
+    color: #fff;
+  }
+  
+  /* Left and right text */
+  .hero-location,
+  .hero-date {
+    font-family: 'Geramond', serif;
+    font-size: 1.2em;
+    line-height: 1.4;
+    text-align: center;
+    white-space: nowrap; /* keep text on one line */
+    width: 25%;          /* control width as needed */
+  }
+  
+  /* Center title */
+  .hero-title {
+    font-family: 'Hamilton', cursive;
+    font-size: 6em;
+    margin: 0;
+    line-height: 1;
+    text-align: center;
+    width: 50%; /* take up center space */
+  }  
+
+/* Styles for the navigation bar container */
+nav {
+    width: 100%; /* Ensures the nav takes full width */
+}
+
+.sticky-nav {
+    position: sticky;
+    top: 0;
+    z-index: 50; /* ensure it’s above other content */
+  }
+
+/* Styles for the container holding the navigation links */
+.container {
+    display: flex; /* Use flexbox for horizontal layout */
+    justify-content: center; /* Center the links horizontally */
+    align-items: stretch; /* Make items stretch to fill the height of the container */
+    text-align: center; /* Center text within each link */
+    margin-left: auto; /* Center the container itself */
+    margin-right: auto; /* Center the container itself */
+    height: 70px;
+}
+
+/* Styles for individual navigation links */
+.container a {
+    flex: 1; /* Each link takes equal available space */
+    padding-top: 1rem; /* py-4 (16px) */
+    padding-bottom: 1rem; /* py-4 (16px) */
+    padding-left: 0.5rem; /* px-2 (8px) */
+    padding-right: 0.5rem; /* px-2 (8px) */
+    color: white; /* text-white */
+    font-size: 1.125rem; /* text-lg (18px) */
+    display: flex; /* Use flexbox to center content within the link */
+    align-items: center; /* Vertically center content */
+    justify-content: center; /* Horizontally center content */
+    text-decoration: none; /* Remove underline from links */
+}
+
+/* Specific background colors for each link to match the image */
+.container a:nth-child(1) { /* Home */
+    background-color: #546428;
+}
+
+.container a:nth-child(2) { /* Details */
+    background-color: #8aa348;
+}
+
+.container a:nth-child(3) { /* About Us */
+    background-color: #7e3c47;
+}
+
+.container a:nth-child(4) { /* Registry */
+    background-color: #728fb5;
+}
+
+.container a:nth-child(5) { /* Rsvp */
+    background-color: #3b4a6a;
+}
+
+/*Welcome Section Styles*/
+
+/* Make sure the section is the positioning context */
+.welcome-section {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;     /* centers text horizontally on mobile */
+    justify-content: center; /* centers text vertically on mobile */
+    min-height: 53vh;
+    overflow: visible;       /* so images aren’t clipped */
+    padding: 4rem 1rem;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    background-color: #fffefa;
+  }
+
+ .welcome-text h1 {
+    font-family: 'Hamilton', cursive;
+    font-size: 6em;
+    color: #728fb5; /* A soft blue color */
+    margin: 0; /* Reset margin */
+    line-height: 1; /* Adjust line height for better spacing */
+    padding-bottom: 1rem;
+  }
+  
+  @media (min-width: 1024px) {
+    .welcome-section {
+      flex-direction: row;
+      justify-content: center; /* center text & leave edges free */
+      align-items: center;     /* center text vertically */
+      padding: 6rem 0;
+    }
+  
+    /* LEFT IMAGE: always top-left corner of the section */
+    .left-image {
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+  
+    /* RIGHT IMAGE: always bottom-right corner of the section */
+    .right-image {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+    }
+  
+    /* constrain their size so they peek in at a nice scale */
+    .left-image img,
+    .right-image img {
+      display: block;
+      max-width: 250px;
+      height: auto;
+      object-fit: cover;
+      opacity: 0;
+      transition: opacity 1s ease-in-out;
+    }
+
+    .fade-in {
+        opacity: 1;
+    }
+  
+    /* CENTER TEXT: span 2/3 width, always centered */
+    .welcome-text {
+      position: relative;     /* stack above the absolute images */
+      z-index: 1;
+      max-width: 45%;
+      padding: 0 2rem;       /* horizontal padding */
+      margin: 0 auto;
+      text-align: center;
+    }
+  }  
+
+/* Details Section Styles */
+
+#details {
+    padding: 4rem 1rem;
+    background-image: url('0c5f05d85d57a3b9a5a03dd18e668ae1.jpg'); /* Replace with your actual image path */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    padding: 4rem 1rem;
+    color: #fffefa; /* Change if your image requires light text */
+  }
+  
+  .details-container {
+    background-color: #fffefa;
+    max-width: 70vw;
+    margin: 0 auto;
+    padding: 2rem;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+  }
+  
+  /* Heading */
+  .section-title {
+    text-align: center;
+    font-size: 6em;
+    font-family: 'Hamilton', cursive;
+    color: #728fb5;
+    margin-bottom: 1rem;
+    margin-top: 0rem;
+  }
+  
+  /* 1. Accordion item spacing */
+  .accordion-item {
+    margin-bottom: 0.5rem;
+  }
+
+  .accordion-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+    padding: 1rem;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1.2rem;
+    height: 3rem;
+  }
+
+  .accordion-toggle {
+    font-size: 2rem;
+  }
+
+  /* 2. Accordion content padding so it doesn’t “stick” to the next header */
+  .accordion-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+    color: #101010;
+    text-align: left;
+    padding: 0;               /* adds space above & below when open */
+  }
+
+  .accordion-content.itinerary {
+    padding-bottom: 0.5rem; /* or adjust to taste */
+  }
+  
+  /* 3. Grid container for everything inside .itinerary */
+  .accordion-content.itinerary .itinerary {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    column-gap: 2rem;
+    row-gap: 1rem;
+  }
+  
+  /* 4. Make the intro span both columns */
+  .accordion-content.itinerary .itinerary-intro {
+    grid-column: 1 / -1;           /* full‑width in the grid */
+    margin-bottom: 0rem;
+    color: #101010;
+    max-width: none;               /* override any width limits */
+  }
+  
+  /* 5. Push the right‑column blocks down to align with dates */
+  .accordion-content.itinerary .itinerary > div:nth-child(2n) {
+    padding-top: 0.5em;
+  }
+  
+  /* 6. Date styling */
+  .accordion-content.itinerary .date {
+    font-weight: bold;
+    padding-top: 0.5em;
+    margin: 0;
+  }
+  
+  /* 7. Event title styling */
+  .accordion-content.itinerary .event-title {
+    font-weight: bold;
+    margin-bottom: 0.2em;
+  }
+  
+  /* 8. Button styling */
+  .accordion-content.itinerary .button {
+    display: inline-block;
+    margin-top: 0.5em;
+    padding: 8px 16px;
+    background-color: #7f1d1d;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+  }  
+  
+  /* Custom Header Colors */
+  .header-maroon {
+    background-color: #823640;
+  }
+  
+  .header-olive {
+    background-color: #4f6228;
+  }
+  
+  .header-lightgreen {
+    background-color: #a3c35b;
+  }
+  
+  .header-blue {
+    background-color: #6d8db9;
+  }
+  
+  .header-navy {
+    background-color: #2f3e63;
+  }
+
+/* Best Friend Section Styles */
+
+  #best-friend {
+    padding: 4rem 1rem;
+    background: #7e3c47;
+    color: #fffefa;
+  }
+  
+  .wrap {
+    display: flex;
+    max-width: 1000px;
+    margin: 0 auto;
+    gap: 2rem;
+  }
+  
+  .img {
+    flex: 1;
+  }
+  
+  .img img {
+    width: 100%;
+    height: auto;
+    border-radius: 0.5rem;
+  }
+  
+  .text {
+    flex: 2;
+    color: #fffefa;
+  }
+  
+  .text h1 {
+    margin-bottom: 1rem;
+    font-size: 2rem;
+    font-weight: bold;
+  }
+  
+  .text h2 {
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+    font-style: italic;
+  }
+  
+  .text p {
+    margin-bottom: 1rem;
+    line-height: 1.6;
+  }
+
+/* Our Journey Section Styling */
+/* Journey Section */
+.journey-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+  }
+  
+  /* Card with scalloped edges */
+  .journey-card {
+    background-color: #ffffff;
+    padding: 3rem 2rem;
+    max-width: 700px;
+    text-align: center;
+    border-radius: 2rem;
+    border: 2rem solid #6b84a9;
+    position: relative;
+    clip-path: polygon(
+      5% 0, 10% 6%, 15% 0, 20% 6%, 25% 0, 30% 6%, 35% 0, 40% 6%,
+      45% 0, 50% 6%, 55% 0, 60% 6%, 65% 0, 70% 6%, 75% 0, 80% 6%,
+      85% 0, 90% 6%, 95% 0, 100% 6%, 100% 94%, 95% 100%, 90% 94%,
+      85% 100%, 80% 94%, 75% 100%, 70% 94%, 65% 100%, 60% 94%,
+      55% 100%, 50% 94%, 45% 100%, 40% 94%, 35% 100%, 30% 94%,
+      25% 100%, 20% 94%, 15% 100%, 10% 94%, 5% 100%, 0% 94%, 0% 6%
+    );
+  }
+  
+  /* Static title */
+  .journey-title {
+    font-family: 'Brush Script MT', cursive;
+    font-size: 3rem;
+    color: #6b84a9;
+    margin-bottom: 1rem;
+  }
+  
+  /* Carousel */
+  .carousel {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .carousel-content {
+    overflow: hidden;
+    width: 100%;
+    max-width: 500px;
+    min-height: 150px;
+    position: relative;
+  }
+  
+  .slide {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    animation: fade 0.5s ease-in-out;
+  }
+  
+  .slide.active {
+    display: flex;
+  }
+  
+  .icon {
+    width: 50px;
+    margin-bottom: 1rem;
+  }
+  
+  .slide p {
+    color: #101010;
+}
+  
+  /* Arrows */
+  .arrow {
+    background: none;
+    border: none;
+    font-size: 2rem;
+    color: #6b84a9;
+    cursor: pointer;
+    padding: 0 1rem;
+    user-select: none;
+  }
+  
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .hero-title {
+        font-size: 4em; /* Smaller font for mobile */
+    }
+
+    .hero-details {
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 40px;
+    }
+
+    .hero-location,
+    .hero-date {
+        text-align: center;
+        margin-bottom: 10px;
+    }
+
+    .hero-images {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .hero-image {
+        width: 80%; /* Make images wider on small screens */
+        height: auto; /* Adjust height automatically */
+        max-width: 250px; /* Max width to prevent overly large images */
+    }
+
+    .hero-images img:nth-child(1),
+    .hero-images img:nth-child(2),
+    .hero-images img:nth-child(3) {
+        transform: none; /* Remove rotation for better stacking on mobile */
+    }
+}
