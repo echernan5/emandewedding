@@ -430,10 +430,6 @@ body.modal-active {
     border-bottom: 1px solid #728fb5;
   }
   
-  .accordion-item:last-child {
-    border-bottom: none; /* Removes the border from the last item */
-  }
-  
   /* Styling for the clickable button */
   .accordion-toggle {
     display: flex; /* Aligns the text and arrow */
