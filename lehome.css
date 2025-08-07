@@ -9,517 +9,446 @@
     font-style: normal;
 }
 
-html {
-    scroll-behavior: smooth; /* optional, for smooth scrolling */
-    scroll-padding-top: 70px; /* adjust this to match your navbar height */
-  }  
+/* Fonts */
+.kapakana-regular {
+  font-family: "Kapakana", cursive;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+}
+.inria-serif-light {
+  font-family: "Inria Serif", serif;
+  font-weight: 300;
+  font-style: normal;
+}
+
+.inria-serif-regular {
+  font-family: "Inria Serif", serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.inria-serif-bold {
+  font-family: "Inria Serif", serif;
+  font-weight: 700;
+  font-style: normal;
+}
+
+.inria-serif-light-italic {
+  font-family: "Inria Serif", serif;
+  font-weight: 300;
+  font-style: italic;
+}
+
+.inria-serif-regular-italic {
+  font-family: "Inria Serif", serif;
+  font-weight: 400;
+  font-style: italic;
+}
+
+.inria-serif-bold-italic {
+  font-family: "Inria Serif", serif;
+  font-weight: 700;
+  font-style: italic;
+}
+
+/* Universal Styles */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.html {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
 
 .body {
-    margin: 0; /* Reset default margin */
+  padding: 0;
+  margin: 0;
+  max-width: 100vw;
+  overflow-x: hidden;
 }
 
-.h1 {
-    font-family: 'Hamilton', serif; /* Use Hamilton font for headings */
-    font-size: 2.5em; /* Adjusted size for headings */
-    color: #333; /* Dark color for better readability */
-    margin: 0; /* Reset margin for h1 */
+/* Nabar Styles */
+
+#navbar {
+  position: sticky;
+  top: 0;
+  background-color: transparent;
+  width: 100%;
+  z-index: 1000;
+  height: 80px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding-top: 50px;
 }
 
-.font-sans {
-    margin: 0; /* Reset margin for body */
+.navbar .logo-link {
+  /* You may want to center the image inside its anchor tag */
+  text-align: center;
+}
+
+.navbar .logo {
+  width: 300px; /* Use a fixed pixel value for better control */
+  height: auto;
+}
+
+.navbar .nav-link {
+  font-family: "inria-bold-italic", serif;
+  font-style: italic;
+  text-transform: uppercase;
+  letter-spacing: 0.2rem;
+  color: white;
+  text-decoration: none;
 }
 
 /* Hero Section Styles */
-
-#hero,
 .hero-section {
-    position: relative;
-    width: 100vw;
-    height: calc(100vh - 70px);
-    overflow: hidden;
-  
-    display: flex;
-    justify-content: center; /* horizontally center hero-content container */
-    align-items: center;     /* vertically center hero-content container */
-  }
-  
-  .photo-background {
-    position: absolute;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    
-    background-image: 
-      url('edited2/ethanandemmaengagement-7.jpg'),
-      url('edited2/ethanandemmaengagement-19.jpg');
-    background-repeat: no-repeat, no-repeat;
-    background-position: left center, right center;
-    background-size: 65% 100%, 35% 100%;
-    
-    z-index: 1;
-    filter: brightness(0.75);
-  }
-  
-  .hero-content {
-    position: relative;
-    z-index: 2;
-    
-    display: flex;
-    width: 100%;
-    max-width: 1200px;
-    padding: 2rem;
-  
-    align-items: center; /* vertically center the items */
-    justify-content: space-between; /* space out left, center, right */
-    color: #fff;
-  }
-  
-  /* Left and right text */
-  .hero-location,
-  .hero-date {
-    font-family: 'Geramond', serif;
-    font-size: 1.2em;
-    line-height: 1.4;
-    text-align: center;
-    white-space: nowrap; /* keep text on one line */
-    width: 25%;          /* control width as needed */
-  }
-  
-  /* Center title */
-  .hero-title {
-    font-family: 'Hamilton', cursive;
-    font-size: 6em;
-    margin: 0;
-    line-height: 1;
-    text-align: center;
-    width: 50%; /* take up center space */
-  }  
-
-/* Styles for the navigation bar container */
-nav {
-    width: 100%; /* Ensures the nav takes full width */
+  background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.33), rgba(0, 0, 0, 0) 62%), url('ethanandemmaengagement-1.jpg');
+  height: 100dvh;
+  width: 100vw;
+  background-size: cover;
+  background-position: center;
+  margin-top: -80px;
 }
 
-.sticky-nav {
-    position: sticky;
-    top: 0;
-    z-index: 50; /* ensure it’s above other content */
-  }
-
-/* Styles for the container holding the navigation links */
-.container {
-    display: flex; /* Use flexbox for horizontal layout */
-    justify-content: center; /* Center the links horizontally */
-    align-items: stretch; /* Make items stretch to fill the height of the container */
-    text-align: center; /* Center text within each link */
-    margin-left: auto; /* Center the container itself */
-    margin-right: auto; /* Center the container itself */
-    height: 70px;
+.hero-foreground {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Ensures the image covers the container */
+  z-index: 2; /* The foreground image will be on top */
 }
 
-/* Styles for individual navigation links */
-.container a {
-    flex: 1; /* Each link takes equal available space */
-    padding-top: 1rem; /* py-4 (16px) */
-    padding-bottom: 1rem; /* py-4 (16px) */
-    padding-left: 0.5rem; /* px-2 (8px) */
-    padding-right: 0.5rem; /* px-2 (8px) */
-    color: white; /* text-white */
-    font-size: 1.125rem; /* text-lg (18px) */
-    display: flex; /* Use flexbox to center content within the link */
-    align-items: center; /* Vertically center content */
-    justify-content: center; /* Horizontally center content */
-    text-decoration: none; /* Remove underline from links */
+.hero-text span {
+  position: absolute;
+  color: white;
 }
 
-/* Specific background colors for each link to match the image */
-.container a:nth-child(1) { /* Home */
-    background-color: #546428;
+.line-1, .line-3 {
+  font-family: "Inria Serif", serif;
+  text-transform: uppercase;
+  font-style: italic;
+  font-weight: normal;
 }
 
-.container a:nth-child(2) { /* Details */
-    background-color: #8aa348;
+.line-2, .line-4 {
+  font-family: "Kapakana", cursive;
+  font-weight: normal;
 }
 
-.container a:nth-child(3) { /* About Us */
-    background-color: #7e3c47;
+.line-1 {
+  top: 35%;
+  left: 5%;
+  font-size: 7rem;
 }
 
-.container a:nth-child(4) { /* Registry */
-    background-color: #728fb5;
+.line-2 {
+  top: 50%;
+  left: 15%;
+  font-size: 12rem;
 }
 
-.container a:nth-child(5) { /* Rsvp */
-    background-color: #3b4a6a;
+.line-3 {
+  top: 42%;
+  right: 5%;
+  font-size: 7rem;
 }
 
-/*Welcome Section Styles*/
+.line-4 {
+  bottom: 23%;
+  right: 10%;
+  font-size: 12rem;
+}
 
-/* Make sure the section is the positioning context */
 .welcome-section {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;     /* centers text horizontally on mobile */
-    justify-content: center; /* centers text vertically on mobile */
-    min-height: 53vh;
-    overflow: visible;       /* so images aren’t clipped */
-    padding: 4rem 1rem;
-    margin-top: 20px;
-    margin-bottom: 20px;
-    background-color: #fffefa;
-  }
-
- .welcome-text h1 {
-    font-family: 'Hamilton', cursive;
-    font-size: 6em;
-    color: #728fb5; /* A soft blue color */
-    margin: 0; /* Reset margin */
-    line-height: 1; /* Adjust line height for better spacing */
-    padding-bottom: 1rem;
-  }
-  
-  @media (min-width: 1024px) {
-    .welcome-section {
-      flex-direction: row;
-      justify-content: center; /* center text & leave edges free */
-      align-items: center;     /* center text vertically */
-      padding: 6rem 0;
-    }
-  
-    /* LEFT IMAGE: always top-left corner of the section */
-    .left-image {
-      position: absolute;
-      top: 0;
-      left: 0;
-    }
-  
-    /* RIGHT IMAGE: always bottom-right corner of the section */
-    .right-image {
-      position: absolute;
-      bottom: 0;
-      right: 0;
-    }
-  
-    /* constrain their size so they peek in at a nice scale */
-    .left-image img,
-    .right-image img {
-      display: block;
-      max-width: 250px;
-      height: auto;
-      object-fit: cover;
-      opacity: 0;
-      transition: opacity 1s ease-in-out;
-    }
-
-    .fade-in {
-        opacity: 1;
-    }
-  
-    /* CENTER TEXT: span 2/3 width, always centered */
-    .welcome-text {
-      position: relative;     /* stack above the absolute images */
-      z-index: 1;
-      max-width: 45%;
-      padding: 0 2rem;       /* horizontal padding */
-      margin: 0 auto;
-      text-align: center;
-    }
-  }  
-
-/* Details Section Styles */
-
-#details {
-    padding: 4rem 1rem;
-    background-image: url('0c5f05d85d57a3b9a5a03dd18e668ae1.jpg'); /* Replace with your actual image path */
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    padding: 4rem 1rem;
-    color: #fffefa; /* Change if your image requires light text */
-  }
-  
-  .details-container {
-    background-color: #fffefa;
-    max-width: 70vw;
-    margin: 0 auto;
-    padding: 2rem;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
-  }
-  
-  /* Heading */
-  .section-title {
-    text-align: center;
-    font-size: 6em;
-    font-family: 'Hamilton', cursive;
-    color: #728fb5;
-    margin-bottom: 1rem;
-    margin-top: 0rem;
-  }
-  
-  /* 1. Accordion item spacing */
-  .accordion-item {
-    margin-bottom: 0.5rem;
-  }
-
-  .accordion-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    color: white;
-    padding: 1rem;
-    cursor: pointer;
-    font-weight: bold;
-    font-size: 1.2rem;
-    height: 3rem;
-  }
-
-  .accordion-toggle {
-    font-size: 2rem;
-  }
-
-  /* 2. Accordion content padding so it doesn’t “stick” to the next header */
-  .accordion-content {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.3s ease;
-    color: #101010;
-    text-align: left;
-    padding: 0;               /* adds space above & below when open */
-  }
-
-  .accordion-content.itinerary {
-    padding-bottom: 0.5rem; /* or adjust to taste */
-  }
-  
-  /* 3. Grid container for everything inside .itinerary */
-  .accordion-content.itinerary .itinerary {
-    display: grid;
-    grid-template-columns: 200px 1fr;
-    column-gap: 2rem;
-    row-gap: 1rem;
-  }
-  
-  /* 4. Make the intro span both columns */
-  .accordion-content.itinerary .itinerary-intro {
-    grid-column: 1 / -1;           /* full‑width in the grid */
-    margin-bottom: 0rem;
-    color: #101010;
-    max-width: none;               /* override any width limits */
-  }
-  
-  /* 5. Push the right‑column blocks down to align with dates */
-  .accordion-content.itinerary .itinerary > div:nth-child(2n) {
-    padding-top: 0.5em;
-  }
-  
-  /* 6. Date styling */
-  .accordion-content.itinerary .date {
-    font-weight: bold;
-    padding-top: 0.5em;
-    margin: 0;
-  }
-  
-  /* 7. Event title styling */
-  .accordion-content.itinerary .event-title {
-    font-weight: bold;
-    margin-bottom: 0.2em;
-  }
-  
-  /* 8. Button styling */
-  .accordion-content.itinerary .button {
-    display: inline-block;
-    margin-top: 0.5em;
-    padding: 8px 16px;
-    background-color: #7f1d1d;
-    color: white;
-    text-decoration: none;
-    border-radius: 4px;
-  }  
-  
-  /* Custom Header Colors */
-  .header-maroon {
-    background-color: #823640;
-  }
-  
-  .header-olive {
-    background-color: #4f6228;
-  }
-  
-  .header-lightgreen {
-    background-color: #a3c35b;
-  }
-  
-  .header-blue {
-    background-color: #6d8db9;
-  }
-  
-  .header-navy {
-    background-color: #2f3e63;
-  }
-
-/* Best Friend Section Styles */
-
-  #best-friend {
-    padding: 4rem 1rem;
-    background: #7e3c47;
-    color: #fffefa;
-  }
-  
-  .wrap {
-    display: flex;
-    max-width: 1000px;
-    margin: 0 auto;
-    gap: 2rem;
-  }
-  
-  .img {
-    flex: 1;
-  }
-  
-  .img img {
-    width: 100%;
-    height: auto;
-    border-radius: 0.5rem;
-  }
-  
-  .text {
-    flex: 2;
-    color: #fffefa;
-  }
-  
-  .text h1 {
-    margin-bottom: 1rem;
-    font-size: 2rem;
-    font-weight: bold;
-  }
-  
-  .text h2 {
-    margin-bottom: 1rem;
-    font-size: 1.5rem;
-    font-style: italic;
-  }
-  
-  .text p {
-    margin-bottom: 1rem;
-    line-height: 1.6;
-  }
-
-/* Our Journey Section Styling */
-/* Journey Section */
-.journey-section {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 2rem;
-  }
-  
-  /* Card with scalloped edges */
-  .journey-card {
-    background-color: #ffffff;
-    padding: 3rem 2rem;
-    max-width: 700px;
-    text-align: center;
-    border-radius: 2rem;
-    border: 2rem solid #6b84a9;
-    position: relative;
-    clip-path: polygon(
-      5% 0, 10% 6%, 15% 0, 20% 6%, 25% 0, 30% 6%, 35% 0, 40% 6%,
-      45% 0, 50% 6%, 55% 0, 60% 6%, 65% 0, 70% 6%, 75% 0, 80% 6%,
-      85% 0, 90% 6%, 95% 0, 100% 6%, 100% 94%, 95% 100%, 90% 94%,
-      85% 100%, 80% 94%, 75% 100%, 70% 94%, 65% 100%, 60% 94%,
-      55% 100%, 50% 94%, 45% 100%, 40% 94%, 35% 100%, 30% 94%,
-      25% 100%, 20% 94%, 15% 100%, 10% 94%, 5% 100%, 0% 94%, 0% 6%
-    );
-  }
-  
-  /* Static title */
-  .journey-title {
-    font-family: 'Brush Script MT', cursive;
-    font-size: 3rem;
-    color: #6b84a9;
-    margin-bottom: 1rem;
-  }
-  
-  /* Carousel */
-  .carousel {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  .carousel-content {
-    overflow: hidden;
-    width: 100%;
-    max-width: 500px;
-    min-height: 150px;
-    position: relative;
-  }
-  
-  .slide {
-    display: none;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    animation: fade 0.5s ease-in-out;
-  }
-  
-  .slide.active {
-    display: flex;
-  }
-  
-  .icon {
-    width: 50px;
-    margin-bottom: 1rem;
-  }
-  
-  .slide p {
-    color: #101010;
+  position: relative; /* This is crucial for positioning the child element */
+  background-image: url(green-paper-background.jpg);
+  background-attachment: fixed;
+  background-position: center;
+  background-size: cover;
+  height: 90dvh;
 }
-  
-  /* Arrows */
-  .arrow {
-    background: none;
-    border: none;
-    font-size: 2rem;
-    color: #6b84a9;
-    cursor: pointer;
-    padding: 0 1rem;
-    user-select: none;
-  }
-  
-/* Responsive adjustments */
-@media (max-width: 768px) {
-    .hero-title {
-        font-size: 4em; /* Smaller font for mobile */
-    }
 
-    .hero-details {
-        flex-direction: column;
-        align-items: center;
-        margin-bottom: 40px;
-    }
+.welcome-section-label {
+  position: absolute;
+  top: 50px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: "Inria Serif", serif;
+  text-transform: uppercase;
+  font-style: italic;
+  letter-spacing: 0.2rem;
+  color: #9ea173;
+}
 
-    .hero-location,
-    .hero-date {
-        text-align: center;
-        margin-bottom: 10px;
-    }
+.welcome-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f6f5f1;
+  padding: 4rem;
+  width: 1000px;
+  height: 70%;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
 
-    .hero-images {
-        flex-direction: column;
-        gap: 20px;
-    }
+.welcome-img {
+  flex-basis: 40%;
+  padding-right: 2rem;
+  overflow: hidden;
+  aspect-ratio: 4/5;
+  max-height: 100%;
+}
 
-    .hero-image {
-        width: 80%; /* Make images wider on small screens */
-        height: auto; /* Adjust height automatically */
-        max-width: 250px; /* Max width to prevent overly large images */
-    }
+.welcome-img img {
+ width: 100%; /* Make the image responsive within its container */
+ max-height: 100%; /* Ensure the image doesn't exceed the container's height */
+ object-fit: cover; /* Maintain aspect ratio and cover the area */
+ display: block; /* Remove any extra space below the image */
+}
 
-    .hero-images img:nth-child(1),
-    .hero-images img:nth-child(2),
-    .hero-images img:nth-child(3) {
-        transform: none; /* Remove rotation for better stacking on mobile */
-    }
+/* Styling for the text column */
+.welcome-text {
+  flex-basis: 60%;
+  padding-left: 2rem;
+  text-align: center;
+}
+
+/* Styles for the headline and body text */
+.intro-heading {
+  font-family: "Kapakana", cursive;
+  font-size: 3rem;
+  line-height: 1.2;
+  color: #727a4d;
+  text-align: right;
+}
+
+.intro-body, .event-details {
+  font-family: "Inria Serif", serif;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: #555;
+  margin-top: 1.5rem;
+  text-align: left;
+}
+
+.event-details {
+  margin-top: 2rem;
+  font-weight: bold;
+}
+
+/* Styling for the entire Details section */
+.details-section {
+  background-color: #f6f5f1;
+  padding: 50px 2rem 8rem; /* Updated padding-top to 50px */
+  text-align: center;
+}
+
+/* Styling for the "Details" label */
+.section-label {
+  font-family: "Inria Serif", serif;
+  text-transform: uppercase;
+  font-style: italic;
+  letter-spacing: 0.2rem;
+  color: #bcbdb5;
+  margin-bottom: 2rem;
+}
+
+/* Styling for the accordion menu list */
+.accordion-menu {
+  list-style: none; /* Removes the bullet points */
+  padding: 0;
+  margin: 0 auto;
+  max-width: 800px; /* Limits the width of the list */
+}
+
+/* Styling for each accordion item */
+.accordion-item {
+  border-bottom: 1px solid #728fb5;
+}
+
+.accordion-item:last-child {
+  border-bottom: none; /* Removes the border from the last item */
+}
+
+/* Styling for the clickable button */
+.accordion-toggle {
+  display: flex; /* Aligns the text and arrow */
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  background: none;
+  border: none;
+  padding-top: 2.5rem;
+  padding-bottom: 0.5rem;
+  padding-right: 0rem;
+  padding-left: 0rem;
+  cursor: pointer;
+  font-family: "Kapakana", cursive;
+  font-size: 2.5rem;
+  color: #728fb5;
+  text-align: left;
+}
+
+/* Styling for the down arrow icon */
+.arrow-icon::after {
+  content: ' ';
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-right: 2px solid #728fb5;
+  border-bottom: 2px solid #728fb5;
+  transform: rotate(45deg);
+}
+
+/* Default state for the accordion content (hidden) */
+.accordion-content {
+  display: none;
+  padding: 1rem 0;
+  text-align: left;
+  font-family: "Inria Serif", serif;
+  color: #728fb5;
+}
+
+/* This class would be added via JavaScript to show the content */
+.accordion-content.active {
+  display: block;
+}
+
+/* OUR STORY SECTION */
+
+.our-story-section {
+  background-color: #9aacc4;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 50px 0; /* Removed horizontal padding */
+  position: relative;
+  gap: 0px;
+  height: 600px;
+}
+
+.our-story-section .section-label {
+  color: white;
+  position: absolute;
+  top: 50px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: "Inria Serif", serif;
+  text-transform: uppercase;
+  font-style: italic;
+  letter-spacing: 0.2rem;
+}
+
+.intro-column {
+  flex: 2;
+  text-align: center;
+  padding: 0 20px;
+  max-width: 70vw;
+}
+
+.image-column {
+  /* This targets the left and right photo columns */
+  flex: 0 250px; /* Gives the photo columns a smaller, fixed width */
+  padding: 0;
+  aspect-ratio: 2/3;
+}
+
+.intro-column img {
+  max-width: 100%;
+  height: auto;
+}
+
+.intro-quote {
+  font-family: "Kapakana", cursive;
+  font-size: 3rem;
+  font-weight: 400;
+  line-height: 1.2;
+  margin: 10px 0;
+  color: white;
+}
+
+.intro-quote .pre-quote {
+  font-family: "Inria Serif", serif; /* This font overrides the Great Vibes font for just "They say" */
+  font-size: 2.2rem; /* Adjusted font size for better visual balance */
+  font-style: normal;
+}
+
+.intro-text {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: white;
+  max-width: 80%;
+  margin: 20px auto;
+  text-align: center;
+}
+
+.monogram-middle {
+  position: absolute;
+  bottom: -70px; /* Adjust to control overlap with the next section */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 120px;
+  height: auto;
+}
+
+/* -------------------- TIMELINE SECTION -------------------- */
+.timeline-section {
+  background-color: #8b8e59; /* Sage green background color */
+  padding: 100px 20px 50px;
+}
+
+.timeline-container {
+  background-color: transparent;
+  border: 2px solid white; /* Simple border approximation */
+  padding: 40px 20px;
+  max-width: 900px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.timeline {
+  display: flex;
+  justify-content: space-around;
+  list-style: none;
+  padding: 0;
+  margin: 30px 0 0;
+  gap: 20px;
+}
+
+.timeline-item {
+  text-align: center;
+  flex: 1;
+  padding: 0 10px;
+  color: white;
+}
+
+.timeline-year {
+  font-weight: 500;
+  font-size: 1.2rem;
+  margin: 0 0 5px;
+}
+
+.timeline-event-name {
+  font-family: "Kapakana", cursive;
+  font-size: 2.2rem;
+  font-weight: 400;
+  line-height: 1.2;
+  margin: 0 0 10px;
+}
+
+.timeline-event-description {
+  font-size: 1rem;
+  opacity: 0.9;
 }

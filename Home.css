@@ -57,40 +57,6 @@ body.modal-active {
     margin-bottom: 15px;
 }
 
-/* Playlist Link Styling */
-.playlist-link-container {
-    margin-top: 25px; /* Space above the playlist paragraph */
-    margin-bottom: 30px; /* Space below the playlist paragraph */
-}
-
-.playlist-link {
-    display: inline-block; /* Makes it button-like */
-    margin-top: 5px; /* Space below the preceding text line */
-    padding: 10px 20px;
-    background-color: #1DB954; /* Official Spotify Green */
-    color: #ffffff;
-    text-decoration: none;
-    border-radius: 50px; /* Pill shape */
-    font-weight: bold;
-    transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth transition */
-    border: none; /* Remove default border */
-    cursor: pointer;
-}
-
-.playlist-link:hover,
-.playlist-link:focus {
-    background-color: #1AA34A; /* Darker Spotify Green */
-    color: #ffffff; /* Ensure text color remains */
-    transform: scale(1.03); /* Slight grow effect */
-    text-decoration: none; /* Remove underline on hover */
-}
-
-.playlist-link i.bi-spotify {
-    margin-left: 8px; /* Space between text and icon */
-    vertical-align: -2px; /* Fine-tune icon alignment */
-    font-size: 1.1em; /* Slightly larger icon */
-}
-
 /* Separator Line */
 .password-separator {
     border: 0;
@@ -195,540 +161,449 @@ body.modal-active {
     font-style: italic;
 }
 
-.pinyon-script-regular {
-    font-family: "Pinyon Script", cursive;
+/* Fonts */
+.kapakana-regular {
+    font-family: "Kapakana", cursive;
+    font-optical-sizing: auto;
     font-weight: 400;
     font-style: normal;
   }
-
-
-.ibarra-real-nova {
-  font-family: "Ibarra Real Nova", serif;
-  font-optical-sizing: auto;
-  font-weight: 400;
-  font-style: normal;
-}
-
+  .inria-serif-light {
+    font-family: "Inria Serif", serif;
+    font-weight: 300;
+    font-style: normal;
+  }
   
-  
-body {
-    margin: 0;
-    font-family: sans-serif;
-    color: rgb(0, 0, 0);
-    background-color: #f5f5f5;
-}
-
-h1, h2, h3 {
-    font-family: 'DancingInTheRain', serif !important;
-    font-weight: normal !important; /* Add !important to override any bolding */
-    line-height: 1.2;
-}
-
-
-.content-wrapper{
-    transition: transform 0.3s ease-in-out;
-    transform: translateX(0);
-}
-
-
-/* Hero Section */
-.hero {
-    background: url('Content/HeroImg.jpg') no-repeat center center fixed;
-    background-size: cover;
+  .inria-serif-regular {
+    font-family: "Inria Serif", serif;
     font-weight: 400;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-    text-align: center;
-    color: white;
-}
-
-.hero-content {
-    position: absolute;
-    top: 50%; /* Vertically center the content */
-    left: 50%;
-    transform: translate(-50%, -50%); /* Center content horizontally and vertically */
-    text-align: center;
-    z-index: 1; /* Ensures content stays on top of the overlay */
+    font-style: normal;
+  }
+  
+  .inria-serif-bold {
+    font-family: "Inria Serif", serif;
+    font-weight: 700;
+    font-style: normal;
+  }
+  
+  .inria-serif-light-italic {
+    font-family: "Inria Serif", serif;
+    font-weight: 300;
+    font-style: italic;
+  }
+  
+  .inria-serif-regular-italic {
+    font-family: "Inria Serif", serif;
+    font-weight: 400;
+    font-style: italic;
+  }
+  
+  .inria-serif-bold-italic {
+    font-family: "Inria Serif", serif;
+    font-weight: 700;
+    font-style: italic;
+  }
+  
+  /* Universal Styles */
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .html {
+    max-width: 100vw;
+    overflow-x: hidden;
+  }
+  
+  .body {
     padding: 0;
     margin: 0;
-    width: 70%;
-}
-
-.hero-subtitle {
-    font-family: 'DancingInTheRain', serif !important;
-    font-size: 4rem;
-    text-transform: uppercase;
-    letter-spacing: .2rem;
-    color: white; /* Or black, depending on background */
-    margin-top: 0.83em; /* Adjust as needed */
-    margin-bottom: 0px;
-}
-
-.hero-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100vh;
-    background: linear-gradient(to bottom, 
-        rgba(0, 0, 0, 0.2) 0%,   /* Top: Semi-transparent black */
-        rgba(0, 0, 0, 0) 10%,    /* Fade to fully transparent in the middle */
-        rgba(0, 0, 0, 0.3) 80%); /* Bottom: Fade back to semi-transparent black */
-}
-
-.hero-header {
-    display: flex;
-    align-items: center;
-    justify-content: center; /* this doesn't matter as much with fixed column widths, but nice to have */
-    padding: 1rem 2rem;
-    width: 100%;
-    box-sizing: border-box;
-}
-
-.hero-col {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-width: 0;
-}
-
-.hero-col.left {
-    justify-content: flex-start;
-}
-
-.hero-col.right {
-    justify-content: flex-end;
-}
-
-.hero-col.center {
-    flex-grow: 1 !important;     /* Let the center column take up the remaining space */
-    text-align: right !important; /* Title aligned right */
-    white-space: nowrap !important;  /* Prevent wrapping */
-    overflow: hidden !important;     /* Hide overflow text */
-    text-overflow: ellipsis !important; /* Optionally add ellipsis if text overflows */
-}
-
-  .menu-icon {
-    font-size: 3rem;
-    cursor: pointer;
-    color: rgb(255, 255, 255);
+    max-width: 100vw;
+    overflow-x: hidden;
   }
   
-
-.hero-title {
-    font-size: 2rem;
-    font-family: 'DancingInTheRain', serif;
-    transform: translateY(8px);
-    text-transform: uppercase;
-    letter-spacing: 0.2rem;
-    line-height: 1.2;
+  /* Nabar Styles */
+  
+  #navbar {
+    position: sticky;
+    top: 0;
+    background-color: transparent;
+    width: 100%;
+    z-index: 1000;
+    height: 80px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding-top: 50px;
+  }
+  
+  .navbar .logo-link {
+    /* You may want to center the image inside its anchor tag */
     text-align: center;
-    color: white; /* Or black, depending on background */
-    margin-right: 0px; /* Adjust margin as needed */
-    width: auto !important;        /* Allow title to take as much space as needed */
-    margin-block-start: 0px; /* Remove default margin */
-    margin-block-end: 0px; /* Remove default margin */
-  }
-
-  .hero-title a {
-    text-decoration: none;
-    color: inherit;
-  }
-
-  .rsvp-button {
-    padding: 15px 30px;
-    border: 2px solid rgb(255, 255, 255);
-    background: transparent;
-    color: rgb(255, 255, 255);
-    border-radius: 15px;
-    cursor: pointer;
-    font-size: 0.8rem;
-    transition: 1s ease-in-out;
   }
   
-  .rsvp-button:hover {
-    background: rgb(255, 255, 255);
-    color: rgb(0, 0, 0);
-  }
-
-/* Sidebar Styles */
-.sidebar {
-    position: fixed;
-    top: 0;
-    left: -500px; /* Hide off-screen initially */
-    width: 500px;
-    height: 100%;
-    background-color: white;
-    color: black;
-    transition: left 0.3s ease-in-out;
-    transform: translateX(0);
-    padding-top: 7%;
-    text-transform: uppercase;
-}
-
-.sidebar.active {
-    left: 0; /* Slide in when active */
-}
-
-.sidebar .close-icon {
-    position: absolute;
-    top: 5%;
-    right: 5%;
-    font-size: 3rem;
-    color: black;
-    cursor: pointer;
-}
-
-.sidebar ul {
-    list-style-type: none;
-    padding: 3%;
-    margin: 0;
-}
-
-.sidebar li {
-    padding: 15px 20px;
-    font-size: 1.2rem;
-}
-
-.sidebar a {
-    color: black;
-    text-decoration: none;
-    display: block;
-    padding-left: 10%;
-    size: 2rem;
-}
-
-.sidebar .dropdown-content {
-    display: none;
-    padding-left: 5%;
-}
-
-
-/* Style for the dropdown toggle */
-.sidebar .dropdown-toggle {
-    background: none;
-    border: none;
-    font-size: 1.2rem;
-    padding-left: 10%;
-    text-align: left;
-    width: 100%;
-    cursor: pointer;
-    color: black;
-  }
-  
-  .sidebar .arrow {
-    margin-left: 8px;
-    transition: transform 0.3s ease;
-  }
-  
-  /* When open, rotate the arrow */
-  .sidebar .dropdown.open .arrow {
-    transform: rotate(180deg);
-  }
-  
-  .dropdown-toggle {
-    text-transform: uppercase;
-  }  
-
-/* Overlay (Darkens the Page when Menu is Active) */
-/* Overlay (background) for when sidebar is open */
-.overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    opacity: 0; /* Initially hidden */
-    pointer-events: none; /* Prevent interaction when hidden */
-    transition: opacity 0.3s ease-in-out; /* Smooth transition */
-    z-index: 999;
-}
-
-/* When sidebar is open, overlay becomes visible */
-.overlay.active {
-    opacity: 1; /* Full opacity */
-    visibility: visible; /* Make it visible */
-    pointer-events: auto; /* Allow interaction when visible */
-    z-index: 999;   /* Ensure it's on top */
-}
-
-/* Content sliding effect */
-.content-slide {
-    transform: translateX(500px); /* Move the content to the left by 500px when sidebar is open */
-    transition: transform 0.3s ease-in-out;
-}
-
-/* Explore Section */
-.explore {
-    padding-top: 80px;
-    padding-bottom: 80px;
-    padding-left: 0px;
-    margin-right: 0px;
-    overflow: auto;
-    position: relative;
-}
-
-.carousel-wrapper {
-    /* Define the default padding, adjust based on your needs */
-    padding-left: 0px;
-    transition: padding-left 0.3s ease; /* Smooth transition */
-}
-
-.carousel-container {
-    width: 100%;
-    overflow: hidden; 
-    position: relative;
-}
-
-.card-container {
-    display: flex;
-    gap: 10px;
-    width: fit-content; /* let the width be dictated by the cards */
-    transition: transform 0.5s ease-in-out;
-}
-
-.card-container::-webkit-scrollbar {
-    display: none; /* Hide scrollbar for Chrome, Safari */
-}
-
-.card {
-    flex: 0 0 30%; /* Keeps each card at 30% of the container width */
-    height: 35vw; /* Adjust as needed */
-    aspect-ratio: 415 / 552; /* Keeps the container's 4:5 aspect ratio */
-    position: relative;
-    background-size: cover;
-    overflow: hidden;
-    box-sizing: border-box;
-}
-
-/* Padding only for the first card */
-.card-link:first-child {
-    margin-left: 65px;
-}
-
-/* Card Image */
-.card img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover; /* Ensures the image maintains its aspect ratio and is cropped */
-    transition: transform 2s ease; /* Adds a smooth transition for zoom effect */
-}
-
-/* Hover Effect */
-.card:hover img {
-    transform: scale(1.1); /* Zooms in the image by 10%, without affecting the card size */
-}
-
-.card-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient( to top, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0) 20%);
-}
-
-.card-link {
-    display: block;
-    width: 100%;  /* Ensures it takes up the full width of the card */
-    height: 100%; /* Makes it cover the entire height of the card */
-    text-decoration: none; /* Remove default link styling */
-    color: inherit; /* Keep text color as per the card styles */
-}
-
-.card-title {
-    font-family: 'DancingInTheRain';
-    text-transform: uppercase;
-    line-height: 1;
-    position: absolute;
-    text-align: center;
-    color: white;
-    font-size: 2.5rem;
-    letter-spacing: .2rem;
-    width: 100%;
-    bottom: 10px;
-    margin: 0;
-}
-
-/* Carousel Arrows */
-.carousel-arrow {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background: black;
-    outline: white;
-    border-radius: 50%;
-    padding: 0px;
-    cursor: pointer;
-    z-index: 2;
-    transition: 0.3s ease;
-    max-height: 45px;
-    max-width: 45px;
-}
-
-.carousel-arrow:hover {
-    background: rgba(0, 0, 0, 0.8);
-}
-
-.left {
-    left: 0;
-}
-
-.right {
-    right: 0;
-}
-
-.carousel-arrow svg {
-    width:45px;
-    height: 45px;
-    color: white;
-    align-items: center;
-}
-
-.carousel-arrow.left {
-    display: none; /* Initially hide the left arrow */
-    position: absolute;
-    top: 50%;
-    left: 30px;
-    transform: translateY(-50%);
-    cursor: pointer;
-    z-index: 10;
-}
-
-.carousel-arrow.right {
-    position: absolute;
-    top: 50%;
-    right: 30px;
-    transform: translateY(-50%);
-    cursor: pointer;
-    z-index: 10;
-}
-
-/* About Section */
-.about {
-    background-color: #707F5B;
-    padding: 50px 20px;
-  }
-  
-  .about-inner {
-    display: flex;
-    align-items: center;
-    max-width: 1200px;
-    margin: 0 auto;
-    gap: 40px;
-  }
-  
-  /* Left column = 1/3 of width (but image itself can be smaller) */
-  .about-image {
-    flex: 0 0 45%;
-    display: flex;
-    justify-content: center;  /* center the image within its column */
-  }
-  .about-image img {
-    max-width: 90%;            /* image will only fill 80% of that column */
+  .navbar .logo {
+    width: 300px; /* Use a fixed pixel value for better control */
     height: auto;
   }
   
-  /* Right column = 2/3 of width */
-  .about-text-container {
-    flex: 1;                   /* takes remaining 2/3 */
-    color: #fff;
-  }
-  .about-heading {
-    font-family: serif;
+  .navbar .nav-link {
+    font-family: "inria-bold-italic", serif;
+    font-style: italic;
     text-transform: uppercase;
-    font-size: 3rem;
-    margin-bottom: 1rem;
-  }
-  .about-text p {
-    line-height: 1.6;
-    margin-bottom: 1rem;
+    letter-spacing: 0.2rem;
+    color: white;
+    text-decoration: none;
   }
   
-/* Debugging styles */
-/* .about, .about-logo, .about-heading, .about-text {
-    border: 1px solid red; /* Add a border temporarily to debug */
-/* } */   
-
-/* Squares Section */
-.squares {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1fr 1fr;
-    min-height: 80vh;
-    margin-top: 80px;
-    margin-bottom: 80px;
-    background: #f5f5f5;
-}
-
-.square {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-}
-
-.square img {
+  /* Hero Section Styles */
+  .hero-section {
+    background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.33), rgba(0, 0, 0, 0) 62%), url('ethanandemmaengagement-1.jpg');
+    height: 100dvh;
+    width: 100vw;
+    background-size: cover;
+    background-position: center;
+    margin-top: -80px;
+  }
+  
+  .hero-foreground {
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
-    object-fit: cover;
-    aspect-ratio: 1 / 1;
-}
-
-.top-left, .bottom-right {
-    background: #f5f5f5;
-    flex-direction: column;
-}
-
-.pre-heading {
-    font-family: sans-serif;
+    object-fit: cover; /* Ensures the image covers the container */
+    z-index: 2; /* The foreground image will be on top */
+  }
+  
+  .hero-text span {
+    position: absolute;
+    color: white;
+  }
+  
+  .line-1, .line-3 {
+    font-family: "Inria Serif", serif;
     text-transform: uppercase;
-    margin-bottom: 5px;
-}
-
-.square-heading {
-    font-family: serif;
+    font-style: italic;
+    font-weight: normal;
+  }
+  
+  .line-2, .line-4 {
+    font-family: "Kapakana", cursive;
+    font-weight: normal;
+  }
+  
+  .line-1 {
+    top: 35%;
+    left: 5%;
+    font-size: 7rem;
+  }
+  
+  .line-2 {
+    top: 50%;
+    left: 15%;
+    font-size: 12rem;
+  }
+  
+  .line-3 {
+    top: 42%;
+    right: 5%;
+    font-size: 7rem;
+  }
+  
+  .line-4 {
+    bottom: 23%;
+    right: 10%;
+    font-size: 12rem;
+  }
+  
+  .welcome-section {
+    position: relative; /* This is crucial for positioning the child element */
+    background-image: url(green-paper-background.jpg);
+    background-attachment: fixed;
+    background-position: center;
+    background-size: cover;
+    height: 90dvh;
+  }
+  
+  .welcome-section-label {
+    position: absolute;
+    top: 50px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: "Inria Serif", serif;
     text-transform: uppercase;
-    font-size: 24px;
-    margin-bottom: 10px;
-}
-
-.square-link {
-    font-family: sans-serif;
-    text-transform: uppercase;
-    text-decoration: none;
-    color: black;
-}
-
-/* Footer */
-.footer {
-    background: white;
-    padding: 20px 0;
+    font-style: italic;
+    letter-spacing: 0.2rem;
+    color: #9ea173;
+  }
+  
+  .welcome-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f6f5f1;
+    padding: 4rem;
+    width: 1000px;
+    height: 70%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+  }
+  
+  .welcome-img {
+    flex-basis: 40%;
+    padding-right: 2rem;
+    overflow: hidden;
+    aspect-ratio: 4/5;
+    max-height: 100%;
+  }
+  
+  .welcome-img img {
+   width: 100%; /* Make the image responsive within its container */
+   max-height: 100%; /* Ensure the image doesn't exceed the container's height */
+   object-fit: cover; /* Maintain aspect ratio and cover the area */
+   display: block; /* Remove any extra space below the image */
+  }
+  
+  /* Styling for the text column */
+  .welcome-text {
+    flex-basis: 60%;
+    padding-left: 2rem;
     text-align: center;
-    margin-top: 20px;
-    min-height: 25%;
-}
-
-.footer ul {
+  }
+  
+  /* Styles for the headline and body text */
+  .intro-heading {
+    font-family: "Kapakana", cursive;
+    font-size: 3rem;
+    line-height: 1.2;
+    color: #727a4d;
+    text-align: right;
+  }
+  
+  .intro-body, .event-details {
+    font-family: "Inria Serif", serif;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: #555;
+    margin-top: 1.5rem;
+    text-align: left;
+  }
+  
+  .event-details {
+    margin-top: 2rem;
+    font-weight: bold;
+  }
+  
+  /* Styling for the entire Details section */
+  .details-section {
+    background-color: #f6f5f1;
+    padding: 50px 2rem 8rem; /* Updated padding-top to 50px */
+    text-align: center;
+  }
+  
+  /* Styling for the "Details" label */
+  .section-label {
+    font-family: "Inria Serif", serif;
+    text-transform: uppercase;
+    font-style: italic;
+    letter-spacing: 0.2rem;
+    color: #bcbdb5;
+    margin-bottom: 2rem;
+  }
+  
+  /* Styling for the accordion menu list */
+  .accordion-menu {
+    list-style: none; /* Removes the bullet points */
+    padding: 0;
+    margin: 0 auto;
+    max-width: 800px; /* Limits the width of the list */
+  }
+  
+  /* Styling for each accordion item */
+  .accordion-item {
+    border-bottom: 1px solid #728fb5;
+  }
+  
+  .accordion-item:last-child {
+    border-bottom: none; /* Removes the border from the last item */
+  }
+  
+  /* Styling for the clickable button */
+  .accordion-toggle {
+    display: flex; /* Aligns the text and arrow */
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    background: none;
+    border: none;
+    padding-top: 2.5rem;
+    padding-bottom: 0.5rem;
+    padding-right: 0rem;
+    padding-left: 0rem;
+    cursor: pointer;
+    font-family: "Kapakana", cursive;
+    font-size: 2.5rem;
+    color: #728fb5;
+    text-align: left;
+  }
+  
+  /* Styling for the down arrow icon */
+  .arrow-icon::after {
+    content: ' ';
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-right: 2px solid #728fb5;
+    border-bottom: 2px solid #728fb5;
+    transform: rotate(45deg);
+  }
+  
+  /* Default state for the accordion content (hidden) */
+  .accordion-content {
+    display: none;
+    padding: 1rem 0;
+    text-align: left;
+    font-family: "Inria Serif", serif;
+    color: #728fb5;
+  }
+  
+  /* This class would be added via JavaScript to show the content */
+  .accordion-content.active {
+    display: block;
+  }
+  
+  /* OUR STORY SECTION */
+  
+  .our-story-section {
+    background-color: #9aacc4;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 50px 0; /* Removed horizontal padding */
+    position: relative;
+    gap: 0px;
+    height: 600px;
+  }
+  
+  .our-story-section .section-label {
+    color: white;
+    position: absolute;
+    top: 50px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: "Inria Serif", serif;
+    text-transform: uppercase;
+    font-style: italic;
+    letter-spacing: 0.2rem;
+  }
+  
+  .intro-column {
+    flex: 2;
+    text-align: center;
+    padding: 0 20px;
+    max-width: 70vw;
+  }
+  
+  .image-column {
+    /* This targets the left and right photo columns */
+    flex: 0 250px; /* Gives the photo columns a smaller, fixed width */
+    padding: 0;
+    aspect-ratio: 2/3;
+  }
+  
+  .intro-column img {
+    max-width: 100%;
+    height: auto;
+  }
+  
+  .intro-quote {
+    font-family: "Kapakana", cursive;
+    font-size: 3rem;
+    font-weight: 400;
+    line-height: 1.2;
+    margin: 10px 0;
+    color: white;
+  }
+  
+  .intro-quote .pre-quote {
+    font-family: "Inria Serif", serif; /* This font overrides the Great Vibes font for just "They say" */
+    font-size: 2.2rem; /* Adjusted font size for better visual balance */
+    font-style: normal;
+  }
+  
+  .intro-text {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: white;
+    max-width: 80%;
+    margin: 20px auto;
+    text-align: center;
+  }
+  
+  .monogram-middle {
+    position: absolute;
+    bottom: -70px; /* Adjust to control overlap with the next section */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120px;
+    height: auto;
+  }
+  
+  /* -------------------- TIMELINE SECTION -------------------- */
+  .timeline-section {
+    background-color: #8b8e59; /* Sage green background color */
+    padding: 100px 20px 50px;
+  }
+  
+  .timeline-container {
+    background-color: transparent;
+    border: 2px solid white; /* Simple border approximation */
+    padding: 40px 20px;
+    max-width: 900px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  
+  .timeline {
+    display: flex;
+    justify-content: space-around;
     list-style: none;
     padding: 0;
-}
-
-.footer ul li {
-    display: inline;
-    margin: 0 10px;
-}
-
-.footer ul li a {
-    text-decoration: none;
-    color: black;
-    font-family: sans-serif;
-}
+    margin: 30px 0 0;
+    gap: 20px;
+  }
+  
+  .timeline-item {
+    text-align: center;
+    flex: 1;
+    padding: 0 10px;
+    color: white;
+  }
+  
+  .timeline-year {
+    font-weight: 500;
+    font-size: 1.2rem;
+    margin: 0 0 5px;
+  }
+  
+  .timeline-event-name {
+    font-family: "Kapakana", cursive;
+    font-size: 2.2rem;
+    font-weight: 400;
+    line-height: 1.2;
+    margin: 0 0 10px;
+  }
+  
+  .timeline-event-description {
+    font-size: 1rem;
+    opacity: 0.9;
+  }
 
 /* Mobile-specific Styles */
 @media (max-width: 640px) {
