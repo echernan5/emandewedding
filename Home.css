@@ -407,7 +407,7 @@ body.modal-active {
   
   .event-details {
     margin-top: 2rem;
-    font-weight: bold;
+    font-weight: normal;
   }
   
   /* Styling for the entire Details section */
@@ -457,6 +457,7 @@ body.modal-active {
     font-size: 2.5rem;
     color: #728fb5;
     text-align: left;
+    padding-right: 5px;
   }
   
   /* Styling for the down arrow icon */
@@ -564,7 +565,7 @@ body.modal-active {
   /* -------------------- TIMELINE SECTION -------------------- */
   .timeline-section {
     background-color: #8b8e59; /* Sage green background color */
-    padding: 100px 20px 50px;
+    padding: 100px 50px;
   }
   
   .timeline-container {
