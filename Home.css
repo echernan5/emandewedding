@@ -616,6 +616,9 @@ body.modal-active {
 /* The main container for the section */
 .registry-section {
   background-color: #f8f6f1; /* A light, off-white color to match the background */
+  background-image: url('PK_PAPER_8 copy.jpg');
+  background-position: center;
+  background-size: cover;
   padding: 80px 20px;
   text-align: center; /* Centers the "Registry" label */
 }
