@@ -50,3 +50,56 @@ document.addEventListener('DOMContentLoaded', () => {
     lastScrollY = currentScrollY;
   });
 });
+
+
+// Timeline Carousel Functionality
+document.addEventListener('DOMContentLoaded', () => {
+  // Select the timeline and arrows from the DOM
+  const timeline = document.querySelector('.timeline');
+  const prevArrow = document.querySelector('.timeline-arrow.prev');
+  const nextArrow = document.querySelector('.timeline-arrow.next');
+
+  // Get all the timeline items
+  const items = document.querySelectorAll('.timeline-item');
+  const totalItems = items.length;
+  let currentIndex = 0;
+
+  // This function updates the carousel's position
+  const showItem = (index) => {
+      // Find the width of one item to calculate the translation distance
+      // The `offsetWidth` includes padding and border
+      const itemWidth = items[0].offsetWidth;
+      
+      // Use the gap value from your CSS to calculate the correct spacing
+      // `getComputedStyle` gets the applied styles from the CSS
+      const gap = parseInt(window.getComputedStyle(timeline).gap, 10);
+      
+      // Calculate the translation value to show the item at the given index
+      const translateValue = -((itemWidth + gap) * index);
+      
+      // Apply the transform to the timeline element
+      timeline.style.transform = `translateX(${translateValue}px)`;
+  };
+
+  // This function handles the 'Next' arrow click
+  const nextItem = () => {
+      // Loop back to the start if we reach the end
+      currentIndex = (currentIndex + 1) % (totalItems - 2); 
+      showItem(currentIndex);
+  };
+
+  // This function handles the 'Previous' arrow click
+  const prevItem = () => {
+      // Loop back to the end if we go past the start
+      currentIndex = (currentIndex - 1 + (totalItems - 2)) % (totalItems - 2);
+      showItem(currentIndex);
+  };
+
+  // Add event listeners to the arrows
+  if (nextArrow) {
+      nextArrow.addEventListener('click', nextItem);
+  }
+  if (prevArrow) {
+      prevArrow.addEventListener('click', prevItem);
+  }
+});
