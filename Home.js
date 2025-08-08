@@ -26,32 +26,27 @@ document.addEventListener("DOMContentLoaded", function() {
 
 )
 
-  document.addEventListener('DOMContentLoaded', () => {
-    const navbar = document.getElementById('navbar');
-    const welcomeSection = document.getElementById('hero');
-    let lastScrollY = window.scrollY;
+// Navbar Scroll Behavior
+document.addEventListener('DOMContentLoaded', () => {
+  const navbar = document.getElementById('navbar');
+  let lastScrollY = window.scrollY;
 
-    const isPastWelcomeSection = () => {
-      const welcomeSectionBottom = welcomeSection.offsetTop + welcomeSection.offsetHeight;
-      return window.scrollY > welcomeSectionBottom;
-    };
+  window.addEventListener('scroll', () => {
+    const currentScrollY = window.scrollY;
 
-    window.addEventListener('scroll', () => {
-      const currentScrollY = window.scrollY;
+    if (currentScrollY > 0) {
+      navbar.classList.add('scrolled');
 
-      if (isPastWelcomeSection()) {
-        navbar.classList.add('scrolled');
-
-        if (currentScrollY > lastScrollY && currentScrollY > 80) {
-          navbar.classList.add('hide-on-scroll-down');
-        } else {
-          navbar.classList.remove('hide-on-scroll-down');
-        }
+      if (currentScrollY > lastScrollY && currentScrollY > 80) {
+        navbar.classList.add('hide-on-scroll-down');
       } else {
-        navbar.classList.remove('scrolled');
         navbar.classList.remove('hide-on-scroll-down');
       }
+    } else {
+      navbar.classList.remove('scrolled');
+      navbar.classList.remove('hide-on-scroll-down');
+    }
 
-      lastScrollY = currentScrollY;
-    });
+    lastScrollY = currentScrollY;
   });
+});

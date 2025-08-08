@@ -211,9 +211,8 @@ body.modal-active {
     padding: 0;
   }
   
-  .html {
-    max-width: 100vw;
-    overflow-x: hidden;
+  html {
+    scroll-behavior: smooth; /* Smooth scrolling */
   }
   
   .body {
@@ -231,11 +230,22 @@ body.modal-active {
     background-color: transparent;
     width: 100%;
     z-index: 1000;
-    height: 80px;
+    height: 90px;
     display: flex;
     justify-content: space-around;
     align-items: center;
     padding-top: 50px;
+    transition: background-color 0.8s ease, transform 0.8s ease;
+  }
+
+  #navbar.scrolled {
+    background-color: #9aacc4;
+    transform: translateY(0);
+    padding-top: 0;
+  }
+
+  #navbar.hide-on-scroll-down {
+    transform: translateY(-100%);
   }
   
   .navbar .logo-link {
@@ -244,8 +254,8 @@ body.modal-active {
   }
   
   .navbar .logo {
-    width: 300px; /* Use a fixed pixel value for better control */
-    height: auto;
+    max-height: 70px; /* Use a fixed pixel value for better control */
+    width: auto;
   }
   
   .navbar .nav-link {
@@ -264,7 +274,7 @@ body.modal-active {
     width: 100vw;
     background-size: cover;
     background-position: center;
-    margin-top: -80px;
+    margin-top: -90px;
   }
   
   .hero-foreground {
@@ -601,245 +611,142 @@ body.modal-active {
     opacity: 0.9;
   }
 
-/* Mobile-specific Styles */
-@media (max-width: 640px) {
-    /* Adjust hero header layout on mobile */
-    .hero-header {
-        display: flex;
-        justify-content: space-between;  /* Spread out content */
-        align-items: center;
-        padding: 1rem 2rem;
-        width: 100%;
-        box-sizing: border-box;
-    }
+  /* REGISTRY SECTION */
 
-    /* Adjust the hero-col class to take minimal space for left column */
-    .hero-col {
-        flex: 0 1 auto; /* Allow columns to shrink, but not expand */
-        min-width: 0;
-    }
-
-    /* Hide the third column by setting width to 0 */
-    .hero-col.right {
-        width: 0;  /* Set width to 0 to hide the RSVP button */
-        flex: 0;   /* Ensure the column doesn’t take up space */
-        padding: 0; /* Optional: remove padding if needed */
-        margin: 0;  /* Optional: remove any margin */
-    }
-
-    /* Allow the title to take up just as much space as needed */
-    .hero-title {
-        font-size: 1.5rem;  /* Smaller title size */
-        text-align: right;   /* Align title to the right */
-        white-space: nowrap; /* Prevent wrapping of the text */
-        width: auto;         /* Let the title take only as much width as it needs */
-        margin-right: 0px;  /* Space on the right */
-        text-transform: uppercase;
-        letter-spacing: 0.2rem;
-        color: white;
-        overflow: hidden;    /* Prevent overflow of long text */
-        line-height: 1.2; /* Adjust line height */
-        transform: none; /* Remove the translateY */
-    }
-
-    .hero-title a {
-        text-decoration: none;
-        color: inherit;
-    }
-
-    /* Hide RSVP button on mobile */
-    .rsvp-button {
-        display: none;
-    }
-
-    .hero-content {
-        width: 90%; /* Adjust width for mobile */
-    }
-
-    /* Adjust the subtitle on mobile */
-    .hero-subtitle {
-        font-family: 'DancingInTheRain', serif !important;
-        font-size: 3rem;  /* Smaller subtitle size */
-        text-transform: uppercase;
-        letter-spacing: .2rem;
-        color: white;
-        margin-top: 0.83em;
-        margin-bottom: 0px;
-    }
-
-    /* Adjust content's padding and margins for mobile */
-    .hero-description {
-        font-size: 1rem;
-        color: white;
-    }
-
-    .sidebar {
-        width: 80vw; /* Set the sidebar width to 80% of viewport */
-        left: -80vw; /* Initially hide the sidebar off-screen */
-    }
-
-    .sidebar.active {
-        left: 0; /* Slide in when active */
-    }
-
-    .content-slide {
-        /* Match the transform distance to the mobile sidebar width */
-        transform: translateX(80vw);
-    }
-
-    .explore {
-        padding-top: 50px;
-        padding-bottom: 50px;
-    }
-
-    .about {
-        padding: 50px auto;
-        padding-bottom: 50px !important;
-    }
-
-    .about-text-container {
-        width: 80vw; /* Adjust width for tablet */
-        margin: 0 auto;
-    }
-
-    .about-heading {
-        margin: 0;
-        width: 100%;
-        max-width: 100%;
-        padding-bottom: 0;
-        font-size:2rem;
-    }
-
-    .about-text {
-        font-size: 0.8rem; /* Adjust font size for tablet */
-        margin: 0;
-        width: 100%;
-        padding-bottom: 0;
-    }
-      
-
+/* The main container for the section */
+.registry-section {
+  background-color: #f8f6f1; /* A light, off-white color to match the background */
+  padding: 80px 20px;
+  text-align: center; /* Centers the "Registry" label */
 }
 
+/* The label at the top of the section */
+.section-label {
+  font-family: "Inria Serif", serif;
+  text-transform: uppercase;
+  font-style: italic;
+  font-weight: 300;
+  letter-spacing: 0.2rem;
+  color: #bcbdb5; /* A subtle gray color */
+  margin-bottom: 2rem;
+}
 
-/* For Tablet-sized devices (iPad Air and similar) */
-@media (max-width: 1024px) and (min-width: 641px) {
-    .hero {
-        max-height: 100vh; /* Ensure the hero section doesn't exceed 100vh */
-    }
+/* The container for the two main columns */
+.registry-container {
+  display: flex;
+  justify-content: center; /* Centers the columns horizontally */
+  align-items: center; /* Aligns items vertically */
+  max-width: 1100px; /* Limits the width on large screens */
+  margin: 0 auto;
+  gap: 80px; /* Creates space between the text and photo columns */
+  text-align: left; /* Aligns content inside the columns to the left */
+}
 
-    .hero-overlay {
-        background: linear-gradient(to bottom, 
-            rgba(0, 0, 0, 0.5) 0%,   /* Top: Semi-transparent black */
-            rgba(0, 0, 0, 0.2) 20%,    /* Fade to fully transparent in the middle */
-            rgba(0, 0, 0, 0.3) 80%); /* Bottom: Fade back to semi-transparent black */
-    }
+/* Styles for the text column */
+.registry-text-column {
+  flex: 1; /* Allows this column to grow */
+  max-width: 500px;
+}
 
-    .hero-header {
-        display: flex !important;
-        justify-content: space-between;
-        align-items: center;
-        padding: 1rem 2rem;
-        width: 100%;
-        box-sizing: border-box;
-    }
+/* Styles for the registry heading */
+.registry-heading {
+  font-family: "Inria Serif", serif;
+  font-weight: 400;
+  font-size: 3rem;
+  line-height: 1.2;
+  color: #75793d;
+  margin-bottom: 20px;
+}
 
-    /* Adjust the left column to be smaller */
-    .hero-col.left {
-        flex-basis: 15% !important;  /* Set the left column width to 15% */
-        max-width: 15% !important;   /* Ensure it doesn't stretch more than 15% */
-    }
+/* Styles for the registry body text */
+.registry-body {
+  font-family: "Inria Serif", serif;
+  font-weight: 300;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: #75793d;
+  margin-bottom: 25px;
+  margin-left: 20px;
+}
 
-    /* Adjust the right column to be smaller */
-    .hero-col.right {
-        flex-basis: 15% !important;  /* Set the right column width to 15% */
-        max-width: 15% !important;   /* Ensure it doesn't stretch more than 15% */
-    }
+/* Styles for the "Explore Registry" button/link */
+.registry-button {
+  font-family: "Inria Serif", serif;
+  text-transform: uppercase;
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: 0.15rem;
+  color: #75793d;
+  text-decoration: none;
+  border-bottom: 1px solid #75793d; /* Adds a subtle underline */
+  padding-bottom: 4px;
+  display: inline-block;
+  margin-top: 10px;
+  margin-left: 20px;
+}
 
-    /* Make the center column take more space */
-    .hero-col.center {
-        flex-grow: 1 !important;     /* Let the center column take up the remaining space */
-        text-align: right !important; /* Title aligned right */
-        white-space: nowrap !important;  /* Prevent wrapping */
-        overflow: hidden !important;     /* Hide overflow text */
-        text-overflow: ellipsis !important; /* Optionally add ellipsis if text overflows */
-    }
+/* Styles for the photo column */
+.registry-photo-column {
+  flex: 1; /* Allows this column to grow */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
-    .menu-icon {
-        font-size: 4rem !important; /* Adjust icon size for tablet */
-    }
+/* Styles for the photo itself */
+.registry-photo {
+  max-width: 400px;
+  height: auto;
+}
 
-    /* Ensure title does not wrap */
-    .hero-content {
-        width: 80%;
-    }
+/* FOOTER SECTION */
 
-    .hero-title {
-        margin-right: 0px !important; /* Adjust margin as needed */
-        width: auto !important;        /* Allow title to take as much space as needed */
-        font-size: 2rem !important;  /* Adjust font size for tablet */
-    }
+.site-footer {
+  /* Set the background image and positioning */
+  background-image: url('Content/Untitled design (14) 2.webp'); /* Replace with your background image path */
+  background-attachment: fixed;
+  background-size: cover;
+  background-position: center;
+  
+  /* Flexbox for the layout */
+  display: flex;
+  justify-content: space-between; /* Pushes the logo to the left and the link to the right */
+  align-items: center; /* Vertically centers the content */
+  
+  /* Spacing and dimensions */
+  padding: 100px 150px; /* Adjust top/bottom and left/right padding as needed */
+}
 
-    .hero-description {
-        font-size: 1.5rem;
-    }
+.footer-logo {
+  max-height: 80px; /* Set a maximum height for the logo */
+  width: auto; /* Maintain the logo's aspect ratio */
+}
 
-    .rsvp-button {
-        font-size: 1.2rem !important; /* Adjust font size for tablet */
-        transition: 0s ease-in-out; /* Remove transition for tablet */
-        min-height: 44px; /* Ensure button has a minimum height */
-    }
+.return-to-top {
+  /* Text and link styling */
+  font-family: "Inria Serif", serif; /* Use a font that matches your design */
+  font-size: 1.2rem;
+  color: white;
+  text-decoration: none; /* Removes the default underline */
+  font-style: italic;
+  text-transform: uppercase;
+  letter-spacing: 0.15rem;
+  
+  /* Create the underline */
+  border-bottom: 1px solid white;
+  padding-bottom: 5px;
+  
+  /* Flexbox to align the text and arrow */
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Space between the text and the arrows */
+}
 
-    .sidebar .close-icon {
-        min-width: 50px; /* Ensure close icon has a minimum width */
-        min-height: 50px; /* Ensure close icon has a minimum height */
-    }
-
-    .close-icon {
-        min-width: 50px; /* Ensure close icon has a minimum width */
-        min-height: 50px; /* Ensure close icon has a minimum height */
-    }
-
-    .about-text-container {
-        width: 80vw; /* Adjust width for tablet */
-        margin: 0 auto;
-    }
-
-    .about-text {
-        font-size: 1.2rem; /* Adjust font size for tablet */
-    }
-
-    .carousel-wrapper {
-        overflow: visible;
-        justify-content: center;
-        margin-left: 30px;
-        margin-right: 30px;
-      }
-    
-      .carousel-container {
-        overflow: visible;
-        justify-content: center;
-      }
-    
-      .card-container {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(25vw, 1fr));
-        gap: 20px;
-        justify-content: center;
-        width: 100%;
-      }
-      
-      .card {
-        flex: unset;
-        height: auto;
-        width: 100%; /* Let the grid control sizing */
-        aspect-ratio: 415 / 552;
-      }
-    
-      .carousel-arrow {
-        display: none !important;
-      }
-    
-      .card-link:first-child {
-        margin-left: 0; /* Reset extra spacing */
-      }
-    }
+/* Create the arrows using a pseudo-element */
+.return-to-top::before,
+.return-to-top::after {
+  content: '↑'; /* Unicode character for an up arrow */
+  font-size: 1.2rem;
+  line-height: 1;
+  transform: translateY(-2px); /* Adjust vertical position */
+}
