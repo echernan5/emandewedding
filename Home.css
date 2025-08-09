@@ -415,7 +415,7 @@ body.modal-active {
   
   /* Styling for each accordion item */
   .accordion-item {
-    border-bottom: 1px solid #728fb5;
+    border-bottom: 1px solid #212121;
   }
   
   /* Styling for the clickable button */
@@ -433,7 +433,7 @@ body.modal-active {
     cursor: pointer;
     font-family: "Kapakana", cursive;
     font-size: 2.5rem;
-    color: #728fb5;
+    color: #212121;
     text-align: left;
     padding-right: 5px;
   }
@@ -444,25 +444,52 @@ body.modal-active {
     display: inline-block;
     width: 10px;
     height: 10px;
-    border-right: 2px solid #728fb5;
-    border-bottom: 2px solid #728fb5;
+    border-right: 2px solid #212121;
+    border-bottom: 2px solid #212121;
     transform: rotate(45deg);
   }
   
   /* Default state for the accordion content (hidden) */
   .accordion-content {
-    display: none;
-    padding: 1rem 0;
+    /* Remove 'display: none;' */
+    max-height: 0; /* Starts at 0 height, making it invisible */
+    overflow: hidden; /* Hides any content that goes beyond max-height */
+    transition: max-height 0.4s ease-in-out, padding 0.4s ease-in-out; /* Animates the max-height property */
+    padding: 0 0; /* Adjust padding for the closed state */
     text-align: left;
     font-family: "Inria Serif", serif;
-    color: #728fb5;
-  }
+    color: #212121;
+ }
   
   /* This class would be added via JavaScript to show the content */
   .accordion-content.active {
-    display: block;
-  }
-  
+    max-height: 1000px; /* Increase this value */
+    padding: 10px 0px 20px 0px; /* Adds some space at the bottom */
+}
+
+/* Rotate the arrow icon when the accordion is open */
+.accordion-toggle.active-toggle .arrow-icon::after {
+  transform: rotate(225deg);
+}
+
+/* Optional: Add a transition for a smooth animation */
+.arrow-icon::after {
+  transition: transform 0.2s ease-in-out;
+}
+
+.accordion-content p {
+  margin-left: 10px;
+}
+
+.details-block,
+.reception-note {
+  margin-top: 1em; /* Adds space above these elements */
+}
+
+.accordion-intro {
+  margin-bottom: 1em; /* Ensures space after the first line */
+}
+
   /* OUR STORY SECTION */
   
   .our-story-section {
@@ -505,8 +532,16 @@ body.modal-active {
   .intro-column img {
     max-width: 100%;
     height: auto;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
   }
-  
+
+  .intro-column img.fade-in {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
   .intro-quote {
     font-family: "Kapakana", cursive;
     font-size: 3rem;
@@ -695,7 +730,7 @@ body.modal-active {
   font-weight: 400;
   font-size: 3rem;
   line-height: 1.2;
-  color: #75793d;
+  color: #212121;
   margin-bottom: 20px;
 }
 
@@ -705,7 +740,7 @@ body.modal-active {
   font-weight: 300;
   font-size: 1.1rem;
   line-height: 1.6;
-  color: #75793d;
+  color: #212121;
   margin-bottom: 25px;
   margin-left: 20px;
 }
@@ -717,13 +752,19 @@ body.modal-active {
   font-style: italic;
   font-weight: 400;
   letter-spacing: 0.15rem;
-  color: #75793d;
+  color: #212121;
   text-decoration: none;
-  border-bottom: 1px solid #75793d; /* Adds a subtle underline */
+  border-bottom: 1px solid #212121; /* Adds a subtle underline */
   padding-bottom: 4px;
   display: inline-block;
   margin-top: 10px;
   margin-left: 20px;
+}
+
+.registry-button:hover {
+  color: #75793d;
+  border-bottom: 1px solid #75793d; /* Adds a subtle underline */
+  transition: color 0.3s ease, border-bottom-color 0.3s ease;
 }
 
 /* Styles for the photo column */

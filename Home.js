@@ -51,6 +51,51 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
+//Accordion Functionality
+document.addEventListener('DOMContentLoaded', function() {
+  const accordionToggles = document.querySelectorAll('.accordion-toggle');
+
+  accordionToggles.forEach(toggle => {
+    toggle.addEventListener('click', () => {
+      // Find the parent .accordion-item
+      const accordionItem = toggle.parentElement;
+      // Find the .accordion-content within that item
+      const accordionContent = accordionItem.querySelector('.accordion-content');
+
+      // Toggle the 'active' class on the content
+      accordionContent.classList.toggle('active');
+
+      // Optional: Add a class to the button to change the arrow icon's direction
+      toggle.classList.toggle('active-toggle');
+    });
+  });
+});
+
+//Our Story Photo Animation
+document.addEventListener('DOMContentLoaded', () => {
+  const images = document.querySelectorAll('.our-story-section .intro-column img');
+  const ourStorySection = document.getElementById('our-story');
+
+  const handleScroll = () => {
+      // Get the position of the our-story-section relative to the viewport
+      const rect = ourStorySection.getBoundingClientRect();
+      
+      // Check if the section is in the viewport
+      if (rect.top < window.innerHeight && rect.bottom >= 0) {
+          images.forEach(img => {
+              img.classList.add('fade-in');
+          });
+          // Optional: Remove the scroll event listener once the animation is done
+          window.removeEventListener('scroll', handleScroll);
+      }
+  };
+
+  // Add the scroll event listener
+  window.addEventListener('scroll', handleScroll);
+
+  // Run once on page load to check if the section is already visible
+  handleScroll();
+});
 
 // Timeline Carousel Functionality
 document.addEventListener('DOMContentLoaded', () => {
