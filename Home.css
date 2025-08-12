@@ -1,3 +1,8 @@
+/* Hide mobile-specific content on desktop */
+.mobile-only {
+  display: none;
+}
+
 body.modal-active {
     overflow: hidden;
 }

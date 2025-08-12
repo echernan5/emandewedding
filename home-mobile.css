@@ -1,0 +1,274 @@
+/* Universal Styles */
+.mobile-only {
+    display: inline !important; 
+}
+
+.desktop-only {
+    display: none;
+}
+
+body {
+    overflow-x: hidden;
+}
+
+/* Navbar */
+.navbar {
+    display: none; /* Hide the desktop navbar */
+}
+
+#navbar {
+    display: none;
+}
+
+/* Hero Section */
+.hero-section {
+    height: 100lvh;
+    margin-top: 0;
+}
+
+.hero-text {
+    position: relative;
+    top: 50%;
+    transform: translateY(50%);
+    width: 100%;
+}
+
+.hero-text span {
+    position: relative;
+    display: block;
+    text-align: center;
+}
+
+.line-1, .line-3 {
+    font-size: 2.5rem;
+}
+
+.line-2, .line-4 {
+    font-size: 5rem;
+}
+
+.line-1 {
+    top: 0;
+    left: 0;
+}
+
+.line-2 {
+    top: 0;
+    left: 0;
+}
+
+.line-3 {
+    top: 0;
+    right: 0;
+}
+
+.line-4 {
+    top: 0;
+    right: 0;
+}
+
+/* Welcome Section */
+/* WELCOME SECTION */
+.welcome-section {
+    height: auto; /* Allow the height to adjust based on content */
+    padding: 20px
+}
+
+.welcome-section-label {
+    position: static; /* Remove absolute positioning on mobile */
+    transform: none; /* Reset any previous transformations */
+    text-align: center;
+}
+
+.welcome-container {
+    flex-direction: column; /* Stack the image and text vertically */
+    position: static; /* Remove absolute positioning */
+    transform: none;
+    width: auto; /* Adjust to a percentage for responsiveness */
+    height: auto;
+    padding: 2rem;
+    box-shadow: none; /* Remove the box shadow for a cleaner look */
+    margin: 30px; /* Center the container with margin */
+}
+
+.welcome-img {
+    display: none; /* Hide the image on mobile */
+}
+
+.welcome-img img {
+   max-width: 100%;
+   height: auto;
+}
+
+.welcome-text {
+    flex-basis: auto;
+    padding-left: 0;
+    text-align: center; /* Center the text content */
+    width: 100%; /* Ensure the text takes full width */
+}
+
+.intro-heading {
+    font-size: 2.2rem;
+    text-align: right;
+}
+
+.intro-body, .event-details {
+    font-size: 1rem;
+    text-align: left;
+    margin-top: 1rem;
+}
+
+/* Details Section */
+.details-section {
+    padding: 50px 1rem 8rem;
+}
+
+.accordion-menu {
+    max-width: 90%;
+}
+
+.accordion-toggle {
+    font-size: 1.5rem;
+    padding-top: 1.5rem;
+}
+
+/* Our Story Section */
+.our-story-section {
+    flex-direction: column;
+    padding: 50px 10px 100px;
+    height: auto;
+}
+
+.image-column {
+    flex: 1 1 100%;
+    width: 90%;
+    max-width: 400px;
+    aspect-ratio: 3/2;
+}
+
+.intro-column {
+    padding: 0 10px;
+    max-width: 100%;
+}
+
+.intro-photo-left, .intro-photo-right {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    margin: 10px auto;
+}
+
+.intro-quote {
+    font-size: 2rem;
+}
+
+.intro-quote .pre-quote {
+    font-size: 1.5rem;
+}
+
+.intro-text {
+    font-size: 1rem;
+    max-width: 90%;
+}
+
+/* Timeline Section */
+.timeline-section {
+    padding: 50px 20px;
+}
+
+.timeline-container {
+    width: 90vw;
+    height: auto;
+}
+
+.timeline-carousel {
+    padding: 0;
+}
+
+.timeline {
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px 0;
+    margin: 0;
+}
+
+.timeline-item {
+    flex: 0 0 100%;
+    padding: 0;
+}
+
+.decorative-border, .timeline-controls {
+    display: none; /* Hide the border and arrows on mobile */
+}
+
+.timeline-header {
+    flex-direction: column;
+    align-items: flex-start;
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+.timeline-year {
+    font-size: 1rem;
+}
+
+.timeline-event-name {
+    font-size: 1.8rem;
+}
+
+.timeline-event-description {
+    font-size: 0.9rem;
+    text-align: left;
+    margin-left: 0;
+}
+
+/* Registry Section */
+.registry-container {
+    flex-direction: column;
+    gap: 40px;
+    text-align: center;
+}
+
+.registry-text-column {
+    max-width: 90%;
+    margin: 0 auto;
+}
+
+.registry-heading {
+    font-size: 2.2rem;
+    text-align: center;
+}
+
+.registry-body {
+    font-size: 1rem;
+    text-align: center;
+    margin-left: 0;
+}
+
+.registry-button {
+    margin-left: 0;
+}
+
+.registry-photo-column {
+    width: 100%;
+}
+
+.registry-photo {
+    max-width: 90%;
+}
+
+/* Footer */
+.site-footer {
+    flex-direction: column;
+    padding: 50px 20px;
+}
+
+.footer-logo {
+    max-height: 60px;
+    margin-bottom: 20px;
+}
+
+.return-to-top {
+    font-size: 1rem;
+    letter-spacing: 0.1rem;
+}
