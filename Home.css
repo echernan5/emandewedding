@@ -310,6 +310,10 @@ body.modal-active {
     right: 10%;
     font-size: 12rem;
   }
+
+  .welcome-background-mobile {
+    display: none;
+  }
   
   .welcome-section {
     position: relative; /* This is crucial for positioning the child element */
