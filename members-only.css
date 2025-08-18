@@ -1,0 +1,341 @@
+/* Core Styles */
+:root {
+    --color-background-light: #f6f5f1;
+    --color-secondary-light: #d8e2ef;
+    --color-primary-blue: #9aacc4;
+    --color-primary-green: #727a4d;
+    --color-accent-gold: #bcbdb5;
+    --color-text-dark: #212121;
+}
+
+body {
+    font-family: 'Inria Serif', serif;
+    background-color: var(--color-background-light);
+    color: var(--color-text-dark);
+    margin: 0;
+    padding: 0;
+}
+
+.members-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+/* Typography */
+.members-header .header-title {
+    font-family: 'Kapakana', cursive;
+    font-size: 3rem;
+    color: var(--color-primary-green);
+    margin: 0;
+}
+
+.members-header .header-subtitle {
+    font-size: 1.2rem;
+    color: #555;
+    font-style: italic;
+    margin: 0.5rem 0 0;
+}
+
+.card-heading, .column-heading {
+    font-family: 'Kapakana', cursive;
+    font-size: 2rem;
+    color: var(--color-primary-blue);
+    margin-bottom: 1.5rem;
+}
+
+/* Header & Footer */
+.members-header {
+    background-color: var(--color-secondary-light);
+    padding: 3rem 2rem;
+    text-align: center;
+    position: relative;
+}
+
+.home-button {
+    display: inline-block;
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    padding: 0.5rem 1rem;
+    background-color: transparent;
+    border: 1px solid var(--color-text-dark);
+    color: var(--color-text-dark);
+    text-decoration: none;
+    font-size: 0.9rem;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+}
+
+.home-button:hover {
+    background-color: var(--color-text-dark);
+    color: white;
+}
+
+.members-footer {
+    text-align: center;
+    padding: 2rem;
+    font-style: italic;
+    color: #777;
+}
+
+/* Info Grid & Cards */
+.info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.info-card {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+.rsvp-stats {
+    display: flex;
+    justify-content: space-around;
+    text-align: center;
+}
+
+.stat-number {
+    display: block;
+    font-family: 'Kapakana', cursive;
+    font-size: 2.5rem;
+    color: var(--color-primary-green);
+}
+
+.stat-label {
+    font-size: 1rem;
+    color: #777;
+    margin: 0;
+}
+
+.dates-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.dates-list li {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    border-bottom: 1px dashed #ddd;
+    padding-bottom: 0.5rem;
+}
+
+.date-label {
+    font-weight: bold;
+    color: var(--color-primary-blue);
+}
+
+.date-event {
+    font-style: italic;
+}
+
+/* Action Buttons */
+.action-buttons {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    margin-bottom: 3rem;
+}
+
+.action-button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem 1rem;
+    background-color: var(--color-primary-blue);
+    color: white;
+    text-decoration: none;
+    border-radius: 10px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.action-button:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.action-button i {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.action-button span {
+    font-weight: bold;
+}
+
+/* Kanban Board */
+.kanban-board {
+    display: flex;
+    flex-direction: column; /* Stacks controls on top of columns wrapper */
+    gap: 2rem;
+}
+
+.kanban-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--color-secondary-light);
+    padding: 1rem 1.5rem;
+    border-radius: 10px;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.kanban-columns-display { /* Applied to the new HTML wrapper */
+    display: flex;
+    gap: 2rem;
+    overflow-x: auto; /* Enables horizontal scrolling when content is too wide */
+    padding-bottom: 1rem; /* Add padding for scrollbar if needed */
+    flex-wrap: nowrap; /* Prevents columns from wrapping to the next line */
+}
+
+.filter-group, .add-task-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.filter-label {
+    font-size: 1rem;
+    color: var(--color-text-dark);
+    font-weight: bold;
+}
+
+.filter-select, .new-task-input {
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--color-primary-blue);
+    border-radius: 5px;
+    font-family: 'Inria Serif', serif;
+    font-size: 1rem;
+    background-color: white;
+    color: var(--color-text-dark);
+}
+
+.new-task-input {
+    flex-grow: 1;
+    min-width: 150px;
+}
+
+.add-task-button {
+    background-color: var(--color-primary-green);
+    color: white;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-family: 'Inria Serif', serif;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.add-task-button:hover {
+    background-color: #555b37;
+}
+
+/* --- IMPORTANT CHANGE HERE --- */
+/* Wrapper for Kanban columns to ensure they stay side-by-side with scroll */
+.kanban-columns-wrapper {
+    display: flex; /* Changed from grid to flex for explicit horizontal scrolling */
+    gap: 2rem;
+    overflow-x: auto; /* Enables horizontal scrolling when content is too wide */
+    padding-bottom: 1rem; /* Add padding for scrollbar if needed */
+    flex-wrap: nowrap; /* <<<--- NEW: Prevents columns from wrapping to the next line */
+    /* Removed grid-template-columns here */
+}
+
+/* Kanban Column Styling */
+.kanban-column {
+    background-color: var(--color-secondary-light);
+    padding: 1rem;
+    border-radius: 10px;
+    min-height: 400px;
+    transition: background-color 0.2s ease;
+    /* --- IMPORTANT CHANGE HERE: Use flex for uniform width --- */
+    flex: 1 0 300px; /* flex-grow: 1, flex-shrink: 0, flex-basis: 300px */
+}
+
+.kanban-column.drag-over {
+    background-color: #c9d7e5;
+}
+
+.kanban-column#column-todo .column-heading { color: #d67a7a; }
+.kanban-column#column-in-progress .column-heading { color: #d6b87a; }
+.kanban-column#column-done .column-heading { color: #7ad68b; }
+
+/* Kanban Task Styling */
+.kanban-task {
+    background-color: white;
+    padding: 1rem;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    margin-bottom: 1rem;
+    cursor: grab;
+    transition: transform 0.2s ease;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.kanban-task p {
+    margin-bottom: 0;
+}
+
+.task-assignee {
+    font-size: 0.75rem;
+    background-color: var(--color-primary-blue);
+    color: white;
+    padding: 0.25rem 0.5rem;
+    border-radius: 3px;
+    align-self: flex-start;
+    margin-top: 0.5rem;
+    opacity: 0.8;
+}
+
+.kanban-task:active {
+    cursor: grabbing;
+}
+
+.kanban-task:hover {
+    transform: translateY(-2px);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .members-container {
+        padding: 1rem;
+    }
+
+    .info-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .action-buttons {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .kanban-board {
+        gap: 1.5rem;
+    }
+
+    .kanban-controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .filter-group, .add-task-group {
+        flex-direction: column;
+        align-items: stretch;
+        width: 100%;
+    }
+
+    /* It will maintain its horizontal layout with overflow */
+}
