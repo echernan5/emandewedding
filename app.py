@@ -1,7 +1,7 @@
 import os
 import uuid
 import psycopg2
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template
 from flask_cors import CORS
 from psycopg2 import sql
 
@@ -227,6 +227,10 @@ def get_calendar_events():
             }
         })
     return jsonify(formatted_events)
+
+@app.route('/')
+def home():
+    return render_template('index.html')
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
