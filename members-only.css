@@ -1,11 +1,14 @@
 /* Core Styles */
 :root {
-    --color-background-light: #f6f5f1;
+    --color-background-light: #fafafa;
     --color-secondary-light: #d8e2ef;
-    --color-primary-blue: #9aacc4;
+    --color-primary-blue: #8b9fb9;
     --color-primary-green: #727a4d;
     --color-accent-gold: #bcbdb5;
     --color-text-dark: #212121;
+    --color-accent-green-tag: #727a4d;
+    --color-card-bg: #e6e6e6; /* slightly darker than page bg, lighter than white */
+    --color-card-border: #e6e6e6;
 }
 
 body {
@@ -16,6 +19,16 @@ body {
     padding: 0;
 }
 
+.roboto {
+    font-family: "Roboto", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 500;
+    font-style: normal;
+    font-variation-settings:
+      "wdth" 100;
+  }
+  
+
 .members-container {
     max-width: 1200px;
     margin: 0 auto;
@@ -24,52 +37,60 @@ body {
 
 /* Typography */
 .members-header .header-title {
-    font-family: 'Kapakana', cursive;
-    font-size: 3rem;
-    color: var(--color-primary-green);
+    font-family: 'Roboto', sans-serif;
+    font-size: 1rem;
+    color: #777;
+    text-transform: uppercase;
+    letter-spacing: 0.1rem;
+    font-weight: normal;
     margin: 0;
 }
 
 .members-header .header-subtitle {
-    font-size: 1.2rem;
+    font-size: 2.5rem;
     color: #555;
-    font-style: italic;
+    font-style: normal;
+    font-weight: bold;
     margin: 0.5rem 0 0;
 }
 
 .card-heading, .column-heading {
-    font-family: 'Kapakana', cursive;
-    font-size: 2rem;
+    font-family: 'Inria Serif', serif;
+    font-size: 1.8rem;
     color: var(--color-primary-blue);
-    margin-bottom: 1.5rem;
+    margin-bottom: 0;
+    margin-top: 0;
 }
 
 /* Header & Footer */
 .members-header {
-    background-color: var(--color-secondary-light);
-    padding: 3rem 2rem;
-    text-align: center;
+    background-color: rgb(255, 255, 255);
+    text-align: left;
     position: relative;
+    padding: 3rem 3rem;
+    border-bottom: 1px solid rgb(230, 230, 230);
 }
 
 .home-button {
     display: inline-block;
     position: absolute;
-    top: 1rem;
-    right: 1rem;
-    padding: 0.5rem 1rem;
+    top: 3rem;
+    right: 3rem;
+    padding: 0.75rem 1rem;
     background-color: transparent;
-    border: 1px solid var(--color-text-dark);
-    color: var(--color-text-dark);
+    border: 1px solid var(--color-primary-green);
+    color: #6c7545;
     text-decoration: none;
-    font-size: 0.9rem;
+    font-size: 1rem;
     border-radius: 5px;
     transition: all 0.3s ease;
+    font-weight: bold;
 }
 
 .home-button:hover {
-    background-color: var(--color-text-dark);
+    background-color: var(--color-primary-green);
     color: white;
+    border: 1px solid var(--color-primary-green);
 }
 
 .members-footer {
@@ -87,30 +108,38 @@ body {
     margin-bottom: 2rem;
 }
 
+.info-grid h2.card-heading {
+    margin-bottom: 1.5rem;
+}
+
 .info-card {
     background-color: white;
     padding: 2rem;
     border-radius: 10px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e6e6e6;
 }
 
 .rsvp-stats {
     display: flex;
     justify-content: space-around;
     text-align: center;
+    padding-top: 10px;
 }
 
 .stat-number {
     display: block;
-    font-family: 'Kapakana', cursive;
+    font-family: 'Inria Serif', serif;
     font-size: 2.5rem;
-    color: var(--color-primary-green);
+    color: var(--color-primary-blue);
 }
 
 .stat-label {
-    font-size: 1rem;
+    font-size: 0.8rem;
     color: #777;
     margin: 0;
+    font-family: 'Roboto', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.1rem;
 }
 
 .dates-list {
@@ -128,8 +157,12 @@ body {
 }
 
 .date-label {
-    font-weight: bold;
-    color: var(--color-primary-blue);
+    font-weight: normal;
+    color: #555;
+    font-family: 'Roboto', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.1rem;
+    font-size: 0.8rem;
 }
 
 .date-event {
@@ -154,11 +187,11 @@ body {
     color: white;
     text-decoration: none;
     border-radius: 10px;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .action-button:hover {
-    transform: translateY(-5px);
+    background-color: var(--color-primary-green);
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
 }
 
@@ -174,27 +207,376 @@ body {
 /* Kanban Board */
 .kanban-board {
     display: flex;
-    flex-direction: column; /* Stacks controls on top of columns wrapper */
+    flex-direction: column;
+    gap: 0;
+    color: var(--color-background-light);
+}
+
+/* Tab Navigation Styles */
+.dashboard-tabs {
+    display: flex;
+    border-bottom: 2px solid #e6e6e6;
+    margin-bottom: 2rem;
+}
+
+.tab-link {
+    padding: 1rem 1.5rem;
+    cursor: pointer;
+    background: none;
+    border: none;
+    font-family: 'Inria Serif', serif;
+    font-size: 1rem;
+    color: var(--color-text-dark);
+    opacity: 0.6;
+    position: relative;
+    bottom: -2px;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s ease-in-out;
+}
+
+.tab-link:hover {
+    opacity: 1;
+}
+
+.tab-link.active {
+    opacity: 1;
+    border-bottom-color: var(--color-primary-green);
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* Info Grid & Cards */
+.info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     gap: 2rem;
+    margin-bottom: 2rem;
 }
 
 .kanban-controls {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: var(--color-secondary-light);
-    padding: 1rem 1.5rem;
-    border-radius: 10px;
-    flex-wrap: wrap;
-    gap: 1rem;
+    padding-bottom: 1.5rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid #e6e6e6;
 }
 
-.kanban-columns-display { /* Applied to the new HTML wrapper */
+.kanban-columns-display {
     display: flex;
     gap: 2rem;
-    overflow-x: auto; /* Enables horizontal scrolling when content is too wide */
-    padding-bottom: 1rem; /* Add padding for scrollbar if needed */
-    flex-wrap: nowrap; /* Prevents columns from wrapping to the next line */
+    overflow-x: auto;
+    padding-bottom: 1rem;
+}
+
+.kanban-column {
+    background-color: transparent; /* Changed from solid color */
+    border: 2px solid #e6e6e6;
+    padding: 1rem;
+    border-radius: 10px;
+    min-height: 400px;
+    flex: 1 0 300px;
+}
+
+.kanban-column .column-heading {
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+}
+
+.kanban-task {
+    background-color: white;
+    padding: 1rem;
+    border-radius: 5px;
+    border: 1px solid #e6e6e6; /* Added dashed border */
+    box-shadow: 0 2px 5px rgba(228, 220, 220, 0.05);
+    margin-bottom: 1rem;
+    cursor: grab;
+    transition: transform 0.2s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.kanban-task:hover {
+    transform: translateY(-2px);
+}
+
+.kanban-task p {
+    margin: 0 0 0.75rem 0;
+    font-weight: normal;
+    font-size: 1.2rem;
+    color: #212121;
+}
+
+.task-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.task-tag {
+    font-size: 0.75rem;
+    color: white;
+    padding: 0.25rem 0.6rem;
+    border-radius: 4px;
+    font-weight: bold;
+}
+
+.task-tag.assignee {
+    background-color: var(--color-primary-blue);
+}
+
+.task-tag.category {
+    background-color: var(--color-accent-green-tag);
+}
+
+/* --- GUEST ADDRESS SECTION STYLES --- */
+.guest-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.guest-list-item {
+    display: grid;
+    grid-template-columns: 2fr 3fr 1fr; /* Creates the 3 columns */
+    gap: 2rem;
+    align-items: center;
+    padding: 1.5rem;
+    border: 1px solid #e6e6e6;
+    background-color: white;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+}
+
+.guest-list-item h3 {
+    font-family: 'Roboto', sans-serif;
+    font-size: 0.7rem;
+    font-weight: normal; /* Removes bolding */
+    text-transform: uppercase;
+    letter-spacing: 0.1rem;
+    margin: 0 0 0.5rem 0;
+    color: #a1a1a1; /* Lighter gray color */
+}
+
+.guest-list-item p {
+    margin: 0;
+    font-size: 1.1rem; /* Larger font size for the info */
+    color: var(--color-text-dark); /* Main dark text color */
+    font-weight: 600; /* Bolder font weight */
+    line-height: 1.5;
+}
+
+.guest-list-item .address-info.missing p {
+    color: #999;
+}
+
+.edit-address-btn {
+    background-color: var(--color-primary-green);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    font-family: 'Inria Serif', serif;
+    font-weight: bold;
+    transition: background-color 0.2s ease;
+    width: 100%;
+    font-size: 1rem;
+}
+
+.edit-address-btn:hover {
+    background-color: #555b37;
+}
+
+.panel-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.panel-overlay.is-visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+.side-panel {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 100%;
+    max-width: 500px;
+    height: 100%;
+    background-color: var(--color-background-light);
+    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    transform: translateX(100%);
+    transition: transform 0.3s ease-in-out;
+    display: flex;
+    flex-direction: column;
+}
+
+.side-panel.is-open {
+    transform: translateX(0);
+}
+
+.panel-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid #e6e6e6;
+    background-color: white;
+}
+
+#panelTitle {
+    display: flex;
+    flex-direction: column; /* Stacks the title elements */
+    gap: 0.25rem;
+    font-size: 1rem; /* Reset base font size */
+    font-weight: normal;
+    margin: 0;
+    line-height: 1.2;
+}
+
+.panel-title-label {
+    font-family: 'Roboto', sans-serif;
+    text-transform: uppercase;
+    font-weight: normal;
+    color: #888;
+    font-size: 0.8rem;
+    letter-spacing: 0.1rem;
+}
+
+.panel-title-name {
+    font-family: 'INRIA SERIF', serif;
+    color: var(--color-primary-blue);
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.close-panel-btn {
+    background: none;
+    border: none;
+    font-size: 2rem;
+    cursor: pointer;
+    color: #888;
+    line-height: 1;
+    padding: 0;
+}
+
+.panel-body {
+    padding: 1.5rem;
+    overflow-y: auto;
+    flex-grow: 1;
+}
+
+.form-group {
+    margin-bottom: 1.25rem;
+}
+
+.form-group label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    color: var(--color-text-dark);
+}
+
+.form-group input[type="text"],
+.form-group input[type="date"],
+.form-group textarea,
+.form-group select { /* Added select for the new dropdown */
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-family: 'Inria Serif', serif;
+    font-size: 1rem;
+    box-sizing: border-box;
+    background-color: white;
+}
+
+/* NEW: Styles for side-by-side form fields */
+.form-row {
+    display: flex;
+    gap: 1rem;
+    border-bottom: 1px solid #e6e6e6;
+}
+
+.form-row .form-group {
+    flex: 1; /* Each group takes up equal space */
+}
+
+.form-actions {
+    text-align: right;
+    margin-top: 2rem;
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+}
+
+.save-task-btn, .delete-task-btn {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-family: 'Inria Serif', serif;
+    font-weight: bold;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+}
+
+.save-task-btn {
+    background-color: var(--color-primary-green);
+    color: white;
+}
+.save-task-btn:hover {
+    background-color: #555b37;
+}
+.delete-task-btn {
+    background-color: #e0e0e0;
+    color: var(--color-text-dark);
+}
+.delete-task-btn:hover {
+    background-color: #c7c7c7;
+}
+
+.form-info-display {
+    background-color: #e9ecef;
+    padding: 0.75rem 1rem;
+    border-radius: 5px;
+    margin-bottom: 1.5rem;
+    border: 1px solid #ddd;
+}
+.form-info-display p {
+    margin: 0 0 0.5rem 0;
+    font-size: 0.95rem;
+}
+.form-info-display p:last-child {
+    margin-bottom: 0;
+}
+.form-info-display strong {
+    color: var(--color-primary-green);
+}
+
+/* Other shared styles */
+
+.filter-container {
+    position: relative;
 }
 
 .filter-group, .add-task-group {
@@ -204,108 +586,710 @@ body {
 }
 
 .filter-label {
-    font-size: 1rem;
-    color: var(--color-text-dark);
-    font-weight: bold;
+    font-family: 'Roboto';
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.1rem;
+    font-size: 0.8rem;
+    color: #888;
 }
 
-.filter-select, .new-task-input {
-    padding: 0.5rem 0.75rem;
-    border: 1px solid var(--color-primary-blue);
-    border-radius: 5px;
-    font-family: 'Inria Serif', serif;
+.filter-select {
+    font-family: 'Inria Serif';
+    text-align: center;
     font-size: 1rem;
-    background-color: white;
-    color: var(--color-text-dark);
-}
-
-.new-task-input {
-    flex-grow: 1;
-    min-width: 150px;
+    background: transparent;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    border-color: #888;
 }
 
 .add-task-button {
     background-color: var(--color-primary-green);
     color: white;
-    padding: 0.5rem 1rem;
     border: none;
     border-radius: 5px;
+    padding: 0.75rem 1rem;
     cursor: pointer;
     font-family: 'Inria Serif', serif;
     font-weight: bold;
-    transition: background-color 0.3s ease;
-}
-
-.add-task-button:hover {
-    background-color: #555b37;
-}
-
-/* --- IMPORTANT CHANGE HERE --- */
-/* Wrapper for Kanban columns to ensure they stay side-by-side with scroll */
-.kanban-columns-wrapper {
-    display: flex; /* Changed from grid to flex for explicit horizontal scrolling */
-    gap: 2rem;
-    overflow-x: auto; /* Enables horizontal scrolling when content is too wide */
-    padding-bottom: 1rem; /* Add padding for scrollbar if needed */
-    flex-wrap: nowrap; /* <<<--- NEW: Prevents columns from wrapping to the next line */
-    /* Removed grid-template-columns here */
-}
-
-/* Kanban Column Styling */
-.kanban-column {
-    background-color: var(--color-secondary-light);
-    padding: 1rem;
-    border-radius: 10px;
-    min-height: 400px;
     transition: background-color 0.2s ease;
-    /* --- IMPORTANT CHANGE HERE: Use flex for uniform width --- */
-    flex: 1 0 300px; /* flex-grow: 1, flex-shrink: 0, flex-basis: 300px */
+    width: 100%;
+    font-size: 1rem;
 }
 
-.kanban-column.drag-over {
-    background-color: #c9d7e5;
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    padding-bottom: 1.5rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid #e6e6e6;
 }
 
-.kanban-column#column-todo .column-heading { color: #d67a7a; }
-.kanban-column#column-in-progress .column-heading { color: #d6b87a; }
-.kanban-column#column-done .column-heading { color: #7ad68b; }
+.filter-controls {
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+    margin-left: auto; /* This pushes the controls to the far right */
+}
 
-/* Kanban Task Styling */
-.kanban-task {
-    background-color: white;
-    padding: 1rem;
-    border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-    margin-bottom: 1rem;
-    cursor: grab;
-    transition: transform 0.2s ease;
+.search-group {
     position: relative;
     display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
+    align-items: center;
+    flex-grow: 1;
+    max-width: 250px;
 }
 
-.kanban-task p {
+.search-group .bi-search {
+    position: absolute;
+    left: 12px;
+    color: #999;
+}
+
+.search-input {
+    width: 100%;
+    padding: 0.75rem 1rem 0.75rem 2.5rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-family: 'Inria Serif', serif;
+    font-size: 1rem;
+}
+
+.modal-actions-right {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-left: auto; /* This pushes the whole group to the right */
+}
+
+.filter-btn {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    font-family: 'Inria Serif', serif;
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+
+.filter-btn:hover {
+    background-color: #555b37;;
+    color: white;
+}
+
+.filter-popover {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    width: 400px;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+    padding: 1.5rem;
+    z-index: 10;
+    display: none;
+}
+
+.filter-popover.visible {
+    display: block;
+}
+
+.filter-popover .form-group {
+    margin-bottom: 1.5rem;
+}
+
+.filter-popover label {
+    font-weight: normal;
+    display: block;
+    margin-bottom: 0.5rem;
+    font-family: 'Roboto';
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1rem;
+    color: #8a8a8a;
+}
+
+.radio-group {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.radio-group label {
+    margin-bottom: 0px;
+    font-family: 'Inria Serif';
+    color: black;
+    text-transform: capitalize;
+    letter-spacing: 0rem;
+    font-size: 1rem;
+    padding-right: 10px;
+}
+.radio-group input[type="radio"] {
+    margin-right: 0.25rem;
+}
+
+.popover-actions {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.popover-actions button {
+    width: 100%;
+    padding: 0.75rem;
+    border-radius: 5px;
+    font-size: 1rem;
+    font-family: 'Inria Serif', serif;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.clear-btn {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    color: var(--color-text-dark);
+}
+
+.apply-btn {
+    background-color: var(--color-primary-green);
+    border: 1px solid var(--color-primary-green);
+    color: white;
+}
+
+/* MODAL STYLES - GUEST LIST*/
+/* --- MODAL STYLES --- */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    z-index: 1999;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+.modal-overlay.is-visible {
+    opacity: 1;
+    visibility: visible;
+}
+.modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.95);
+    width: 90%;
+    max-width: 1200px;
+    height: 90vh;
+    background-color: var(--color-background-light);
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    z-index: 2000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
+    display: flex;
+    flex-direction: column;
+}
+.modal.is-visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(-50%, -50%) scale(1);
+}
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid #e6e6e6;
+    background-color: white;
+    border-top-right-radius: 10px;
+    border-top-left-radius: 10px;
+}
+.modal-title {
+    font-family: 'Inria Serif', serif;
+    font-size: 1.5rem;
+    color: var(--color-primary-blue);
+    margin: 0;
+}
+.modal-close-btn {
+    background: none;
+    border: none;
+    font-size: 2rem;
+    cursor: pointer;
+    color: #888;
+}
+.modal-body {
+    padding: 1.5rem;
+    overflow-y: hidden;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+.guest-summary-stats {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    font-family: 'Roboto', sans-serif;
+    color: #777;
+    text-transform: uppercase;
+    letter-spacing: 0.1rem;
+    margin-bottom: 1.5rem;
+}
+.guest-summary-stats span {
+    font-weight: bold;
+    color: var(--color-primary-green);
+}
+
+/* Modal Controls */
+.modal-controls {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+.view-switcher {
+    display: flex;
+    background-color: #e9ecef;
+    border-radius: 8px;
+    padding: 4px;
+}
+.view-btn {
+    background: transparent;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: 'Inria Serif', serif;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.2s ease;
+}
+.view-btn.active {
+    background: white;
+    color: var(--color-primary-green);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+}
+.modal-select {
+    font-family: 'Inria Serif';
+    font-size: 1rem;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: white;
+}
+
+    .export-btn {
+        background-color: var(--color-primary-green);
+        color: white;
+        border: none;
+        border-radius: 5px;
+        padding: 0.75rem 1rem;
+        cursor: pointer;
+        font-family: 'Inria Serif', serif;
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: background-color 0.2s ease;
+        font-size: 1rem;
+    }
+
+    .export-btn:hover {
+        background-color: #555b37;
+    }
+    /* --- NEW EXPORT DROPDOWN STYLES --- */
+    .export-group {
+        position: relative; /* This is crucial for positioning the dropdown */
+    }
+
+    .export-options {
+        position: absolute;
+        top: 100%;
+        right: 0;
+        background-color: white;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        z-index: 20;
+        width: 200px;
+        padding: 0.5rem 0;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(10px);
+        transition: all 0.2s ease;
+    }
+
+    .export-options.visible {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+    }
+
+    .export-options ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .export-options li {
+        padding: 0.75rem 1rem;
+        cursor: pointer;
+        font-size: 0.9rem;
+    }
+
+    .export-options li:hover {
+        background-color: #f8f9fa;
+    }
+
+    .export-options li.separator {
+        height: 1px;
+        background-color: #e9ecef;
+        margin: 0.5rem 0;
+        padding: 0;
+    }
+
+/* Guest List Container */
+.guest-list-container {
+    flex-grow: 1;
+    overflow-y: auto;
+    border-radius: 8px;
+    background-color: white;
+}
+
+.guest-list-container:has(> .guest-table) {
+    border: 1px solid #e6e6e6;
+    border-radius: 8px;
+}
+
+.guest-list-container .party-group {
+    position: relative;            /* for the accent pseudo-element */
+    border: 1px solid var(--color-card-border);
+    border-radius: 10px;
+    padding: 0;                    /* inner sections handle padding */
+    margin-bottom: 1rem;
+    box-shadow: 0 6px 18px rgba(16,24,40,0.04);
+    overflow: hidden;
+    /* remove the old blue bottom line if present */
+    border-bottom: 1px solid var(--color-card-border);
+    border: 1px solid var(--color-card-border);
+  }
+
+  .guest-list-container .party-group::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 6px;
+  }
+
+  .guest-list-container .party-header {
+    background: transparent;      /* let the card bg show through */
+    padding: 0.75rem 1rem;        /* comfortable spacing */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    border-bottom: 1px solid rgba(0,0,0,0.03);
+    background-color: #fafafa;
+  }
+  
+  /* make the subheader row (labels) feel inset */
+  .guest-list-container .party-guest-subheader {
+    padding: 0.5rem 1rem;
+    background: transparent;
+    border-bottom: 1px solid rgba(0,0,0,0.03);
+  }
+  
+  /* party items: remove full-white rows and use subtle dividers */
+  .guest-list-container .party-guest-item {
+    display: grid;
+    grid-template-columns: 2.5fr 1.5fr 2fr 1fr;
+    gap: 1rem;
+    padding: 0.5rem 1rem;
+    background: transparent; /* important — card provides the background */
+    border-bottom: 1px solid rgba(0,0,0,0.03);
+  }
+  
+  /* last item in group shouldn't show an extra divider */
+  .guest-list-container .party-guest-list li:last-child .party-guest-item,
+  .guest-list-container .party-guest-list li:last-child {
+    border-bottom: none;
+  }
+  
+  /* optional: slightly brighter name color so it reads on the card */
+  .party-name { color: var(--color-primary-blue); }
+  
+/* Individual View Table */
+.guest-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+.guest-table thead {
+    position: sticky;
+    top: 0;
+    background-color: #f8f9fa;
+    z-index: 1;
+}
+.guest-table th {
+    padding: 1rem;
+    text-align: left;
+    font-family: 'Roboto', sans-serif;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.05rem;
+    color: #6c757d;
+    border-bottom: 2px solid #e6e6e6;
+    font-weight: normal;
+}
+.guest-table td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #e6e6e6;
+    vertical-align: middle;
+}
+.guest-table tbody tr:last-child td {
+    border-bottom: none;
+}
+.rsvp-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: bold;
+}
+.rsvp-status.yes { color: #28a745; }
+.rsvp-status.no { color: #dc3545; }
+.rsvp-status.pending { color: #ffc107; }
+
+/* Party View */
+.party-group {
+    border-bottom: 2px solid var(--color-primary-blue);
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+}
+.party-group:last-child {
+    border-bottom: none;
     margin-bottom: 0;
 }
 
-.task-assignee {
-    font-size: 0.75rem;
-    background-color: var(--color-primary-blue);
-    color: white;
-    padding: 0.25rem 0.5rem;
-    border-radius: 3px;
-    align-self: flex-start;
-    margin-top: 0.5rem;
-    opacity: 0.8;
+.party-guest-subheader {
+    display: grid;
+    grid-template-columns: 2.5fr 1.5fr 2fr 1fr; /* Matches the guest item layout */
+    gap: 1rem;
+    padding: 0.25rem 1rem 0.5rem 1rem;
+    border-bottom: 1px solid #e9ecef;
+    font-family: 'Roboto', sans-serif;
+    font-size: 0.7rem;
+    font-weight: normal;
+    text-transform: uppercase;
+    color: #a1a1a1;
+    letter-spacing: 0.05rem;
 }
 
-.kanban-task:active {
-    cursor: grabbing;
+.party-header {
+    background-color: #f8f9fa;
+    padding: 0.75rem 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'Inria Serif', serif;
+}
+.party-name {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--color-primary-blue);
+}
+.party-rsvp-summary {
+    font-size: 0.9rem;
+    font-weight: bold;
+    color: #717269;
+}
+.party-guest-list {
+    list-style: none;
+    margin: 0;
+    padding: 0.5rem 0.5rem 1rem 0.5rem;
 }
 
-.kanban-task:hover {
-    transform: translateY(-2px);
+.party-guest-item {
+    display: grid;
+    grid-template-columns: 2.5fr 1.5fr 2fr 1fr;
+    gap: 1rem;
+    padding: 0.5rem 1rem;
+}
+.party-guest-item:nth-child(odd) {
+    background-color: #fdfdfd;
+}
+.party-guest-name {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.party-guest-name .bi-check-circle-fill {
+    color: var(--color-primary-green);
+    font-size: 0.8rem;
+}
+
+/* --- ADD TO THE END OF YOUR CSS FILE --- */
+
+/* Styles for sortable table headers */
+.guest-table th[data-sort] {
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    user-select: none; /* Prevents text selection when clicking */
+}
+
+.guest-table th[data-sort]:hover {
+    background-color: #e9ecef;
+}
+
+.guest-table th .bi {
+    margin-left: 0.5rem;
+    color: #adb5bd; /* Light gray for inactive icons */
+}
+
+.guest-table th.sort-active {
+    color: var(--color-primary-green);
+}
+
+.guest-table th.sort-active .bi {
+    color: var(--color-primary-green);
+}
+
+/* Styling for new filter checkboxes */
+.checkbox-group {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding-top: 0;
+}
+.checkbox-group label {
+    font-family: 'Inria Serif';
+    color: black;
+    text-transform: capitalize;
+    letter-spacing: 0rem;
+    font-size: 1rem;
+    margin-bottom: 0;
+    padding-left: 5px;
+}
+.checkbox-group input[type="checkbox"] {
+    margin-right: -1.25rem; /* Pulls label closer to its checkbox */
+    transform: scale(1.2);
+}
+
+.export-options li.disabled {
+    color: #adb5bd; /* Lighter, grayed-out text */
+    cursor: not-allowed;
+    background-color: transparent !important; /* Overrides hover effect */
+}
+
+.stat-loader {
+    display: none; /* Hidden by default */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 5;
+    border-radius: 10px;
+}
+
+.spinner {
+    border: 4px solid #f3f3f3; /* Light grey */
+    border-top: 4px solid var(--color-primary-blue); /* Blue */
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* --- ADD TO THE END OF YOUR CSS FILE --- */
+
+/* Calendar Modal Styles */
+#calendarContainer {
+    height: 100%; /* Make the calendar fill the modal body */
+}
+
+.fc .fc-button {
+    font-weight: bold;
+    font-size: 1rem;
+    padding: 0.75rem 1rem;
+}
+
+.fc .fc-button-primary {
+    background-color: #e9ecef;
+    border-color: #dee2e6;
+    color: #495057;
+}
+
+.fc .fc-toolbar-chunk:first-child .fc-button-group {
+    background-color: #e9ecef;
+    border-radius: 8px;
+    padding: 4px;
+}
+
+/* Style all buttons within that container to be transparent */
+.fc .fc-toolbar-chunk:first-child .fc-button {
+    background: transparent;
+    border: none;
+    color: #495057;
+    box-shadow: none !important; /* Removes the click/focus shadow */
+    margin: 0 !important;
+    padding: 0.5rem 1rem;
+    transition: all 0.2s ease;
+}
+
+/* Style only the ACTIVE button to have a white background and shadow */
+.fc .fc-toolbar-chunk:first-child .fc-button-active {
+    background: white;
+    color: var(--color-primary-green);
+    border-radius: 6px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.08) !important;
+}
+
+/* Make the inactive button slightly bolder on hover */
+.fc .fc-toolbar-chunk:first-child .fc-button:not(.fc-button-active):hover {
+    color: #212121;
+}
+
+.fc .fc-button-primary:hover {
+    background-color: var(--color-primary-green);
+    border-color: var(--color-primary-green);
+    color: var(--fc-button-text-color);
+}
+
+.fc .fc-button:focus,
+.fc .fc-button:active {
+    box-shadow: none !important;
+}
+
+.fc .fc-dayGridMonth-button,
+.fc .fc-listYear-button,
+.fc .fc-today-button {
+    text-transform: capitalize;
 }
 
 /* Responsive Design */
@@ -332,10 +1316,14 @@ body {
     }
 
     .filter-group, .add-task-group {
-        flex-direction: column;
-        align-items: stretch;
         width: 100%;
     }
 
-    /* It will maintain its horizontal layout with overflow */
+    .add-task-group {
+        display: grid; /* Makes button full width */
+    }
+
+    .side-panel {
+        max-width: 320px; /* Slightly smaller panel on mobile */
+    }
 }
