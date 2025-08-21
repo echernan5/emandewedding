@@ -27,7 +27,6 @@ document.addEventListener("DOMContentLoaded", function() {
 )
 
 // --- NEW Members Only Password Modal ---
-const membersOnlyTrigger = document.getElementById("membersOnlyTrigger");
 const membersOnlyModal = document.getElementById("membersOnlyModal");
 const closeMembersOnlyModal = document.getElementById("closeMembersOnlyModal");
 const membersOnlyPasswordInput = document.getElementById("membersOnlyPasswordInput");
@@ -35,8 +34,9 @@ const submitMembersOnlyPasswordBtn = document.getElementById("submitMembersOnlyP
 const membersOnlyErrorMessage = document.getElementById("membersOnlyErrorMessage");
 
 // Define the URL for the members-only area
-const membersOnlyURL = "https://emma-and-ethans-wedd-ucye.glide.page/dl/eefd76";
+const membersOnlyTrigger = document.getElementById("membersOnlyTrigger");
 // Define the password for the members-only area
+const membersOnlyURL = membersOnlyTrigger.dataset.membersUrl;
 const correctMembersOnlyPassword = "Blackjack2001"; // <<<--- SET YOUR MEMBERS ONLY PASSWORD HERE!
 
 if (membersOnlyTrigger && membersOnlyModal) {
