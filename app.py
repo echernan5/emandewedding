@@ -4,6 +4,7 @@ import psycopg2
 from flask import Flask, jsonify, request, render_template
 from flask_cors import CORS
 from psycopg2 import sql
+from urllib.parse import urlparse
 
 app = Flask(__name__)
 # Use a more permissive CORS for development; restrict in production
