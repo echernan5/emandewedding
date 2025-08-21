@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     // --- Global Variables & State ---
-    const API_BASE_URL = 'http://127.0.0.1:5001/api';
+    const API_BASE_URL = '/api';
     let tasksCache = [];
     let guestsCache = [];
     let fullGuestListCache = []; // NEW: Cache for the detailed guest list
