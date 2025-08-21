@@ -227,7 +227,7 @@ def get_guestlist():
     query = sql.SQL("""
         SELECT
             g.first_name || ' ' || g.last_name AS name,
-            p.party_name AS party,
+            p.party_key AS party,
             g.rsvp_status AS rsvp,
             g.meal_choice AS dietaryRequest,
             g.table_number AS tableNumber,
