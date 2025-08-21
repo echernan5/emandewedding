@@ -232,6 +232,10 @@ def get_calendar_events():
 def home():
     return render_template('index.html')
 
+@app.route('/members_only')
+def members_only():
+    return render_template('members-only.html')
+
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port)
