@@ -4,7 +4,7 @@ import psycopg2
 from flask import Flask, jsonify, request, render_template
 from flask_cors import CORS
 from psycopg2 import sql
-import urllib.parse as urlparse # This is the line you need to add
+import urllib.parse as urlparse
 
 app = Flask(__name__)
 # Use a more permissive CORS for development; restrict in production
@@ -162,19 +162,35 @@ def delete_kanban_task():
         conn.close()
 
 # --- Guest Address Endpoints ---
+# UPDATED: This endpoint now joins the guest_list and parties table to get all address info
 @app.route('/api/guests', methods=['GET'])
 def get_guests():
-    guests, error = get_data_from_query(sql.SQL("SELECT * FROM guests;"))
+    # Correct table name is guest_list, not guests
+    query = sql.SQL("""
+        SELECT
+            g.guest_id AS id,
+            p.party_name AS partyName,
+            p.address_collection_assigned_to_id AS assignedTo,
+            p.address_street AS street,
+            p.address_street2 AS street2,
+            p.address_city AS city,
+            p.address_state AS state,
+            p.address_zip AS zip
+        FROM public.guest_list AS g
+        JOIN public.parties AS p ON g.party_id = p.party_id;
+    """)
+    guests, error = get_data_from_query(query)
     if error:
         return jsonify({"error": error}), 500
     return jsonify(guests)
 
+# UPDATED: This endpoint now correctly updates the parties table, not the guests table
 @app.route('/api/guests/update', methods=['PUT'])
 def update_guest():
     data = request.get_json()
-    guest_id = data.get('id')
-    if not guest_id:
-        return jsonify({"error": "Guest ID is required."}), 400
+    party_id = data.get('id')
+    if not party_id:
+        return jsonify({"error": "Party ID is required."}), 400
     
     conn = get_db_connection()
     if not conn:
@@ -183,7 +199,7 @@ def update_guest():
     try:
         with conn.cursor() as cur:
             cur.execute(sql.SQL(
-                "UPDATE guests SET address_street=%s, address_street2=%s, address_city=%s, address_state=%s, address_zip=%s, is_address_collected=%s WHERE guest_id=%s;"
+                "UPDATE public.parties SET address_street=%s, address_street2=%s, address_city=%s, address_state=%s, address_zip=%s, is_address_collected=%s WHERE party_id=%s;"
             ), (
                 data.get('street'),
                 data.get('street2'),
@@ -191,24 +207,37 @@ def update_guest():
                 data.get('state'),
                 data.get('zip'),
                 data.get('street') is not None, # Boolean logic
-                guest_id
+                party_id
             ))
             conn.commit()
             if cur.rowcount == 0:
-                return jsonify({"error": f"Guest with ID {guest_id} not found."}), 404
-        return jsonify({"message": "Guest address updated successfully!"}), 200
+                return jsonify({"error": f"Party with ID {party_id} not found."}), 404
+        return jsonify({"message": "Party address updated successfully!"}), 200
     except Exception as e:
         conn.rollback()
-        print(f"Error updating guest: {e}")
-        return jsonify({"error": "An internal server error occurred while updating the guest."}), 500
+        print(f"Error updating party: {e}")
+        return jsonify({"error": "An internal server error occurred while updating the party address."}), 500
     finally:
         conn.close()
 
 # --- Guest List Endpoint ---
+# UPDATED: This query now joins the guest_list and parties table correctly and aliases columns
 @app.route('/api/guestlist', methods=['GET'])
 def get_guestlist():
-    # You will need to join your guests and parties tables to get all the data
-    query = sql.SQL("SELECT g.*, p.display_name AS party_display_name FROM guests g JOIN parties p ON g.party_id = p.party_id;")
+    query = sql.SQL("""
+        SELECT
+            g.first_name || ' ' || g.last_name AS name,
+            p.party_name AS party,
+            g.rsvp_status AS rsvp,
+            g.meal_choice AS dietaryRequest,
+            g.table_number AS tableNumber,
+            g.relationship AS relation,
+            g.guest_of AS guestOf,
+            g.is_invited_to_rehearsal_dinner AS rehearsalDinner,
+            g.is_invited_to_bridal_shower AS bridalShower
+        FROM public.guest_list AS g
+        JOIN public.parties AS p ON g.party_id = p.party_id;
+    """)
     guest_list, error = get_data_from_query(query)
     if error:
         return jsonify({"error": error}), 500
