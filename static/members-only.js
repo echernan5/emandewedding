@@ -524,7 +524,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const bIsPending = !b.street;
             if (aIsPending && !bIsPending) return -1;
             if (!aIsPending && bIsPending) return 1;
-            return a.partyName.localeCompare(b.partyName);
+            return (a.partyName ?? '').localeCompare(b.partyName ?? '');
         });
         if (finalFilteredGuests.length === 0) {
             guestList.innerHTML = '<li><p class="no-guests-message">No guests match your filters.</p></li>';
