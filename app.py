@@ -17,11 +17,19 @@ if not DATABASE_URL:
 
 def get_db_connection():
     """
-    Establishes a connection to the PostgreSQL database.
+    Establishes a robust connection to the PostgreSQL database by parsing the URL.
     Returns: A connection object.
     """
     try:
-        conn = psycopg2.connect(DATABASE_URL)
+        url = urlparse.urlparse(os.environ.get('DATABASE_URL'))
+        
+        conn = psycopg2.connect(
+            dbname=url.path[1:],
+            user=url.username,
+            password=url.password,
+            host=url.hostname,
+            port=url.port
+        )
         return conn
     except psycopg2.OperationalError as e:
         print(f"!!! ERROR: Could not connect to database: {e}")
