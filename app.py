@@ -165,25 +165,26 @@ def delete_kanban_task():
 # UPDATED: This endpoint now joins the guest_list and parties table to get all address info
 # In your app.py file, replace the existing get_guests endpoint
 # In your app.py file, replace the existing get_guests endpoint
+# In your app.py file, replace the existing get_guests endpoint
 @app.route('/api/guests', methods=['GET'])
 def get_guests():
+    # This query now returns one record per party, which is what the JS expects
     query = sql.SQL("""
         SELECT
-            party_id AS id,
-            party_name AS partyName,
-            address_collection_assigned_to_name AS assignedTo,
-            address_street AS street,
-            address_street2 AS street2,
-            address_city AS city,
-            address_state AS state,
-            address_zip AS zip
-        FROM public.parties;
+            p.party_id AS id,
+            p.party_name AS partyName,
+            p.address_collection_assigned_to_name AS assignedTo,
+            p.address_street AS street,
+            p.address_street2 AS street2,
+            p.address_city AS city,
+            p.address_state AS state,
+            p.address_zip AS zip
+        FROM public.parties AS p;
     """)
     guests, error = get_data_from_query(query)
     if error:
         return jsonify({"error": error}), 500
     return jsonify(guests)
-
 # UPDATED: This endpoint now correctly updates the parties table, not the guests table
 @app.route('/api/guests/update', methods=['PUT'])
 def update_guest():
