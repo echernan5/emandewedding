@@ -1495,4 +1495,13 @@ body {
     .filter-popover label {
         padding-top: 20px;
     }
+
+    .guest-list-container::-webkit-scrollbar {
+        display: none;
+    }
+
+    .guest-list-container {
+        -ms-overflow-style: none;  /* IE and Edge */
+        scrollbar-width: none;  /* Firefox */
+    }
 }

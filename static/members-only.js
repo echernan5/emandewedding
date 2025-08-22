@@ -810,9 +810,9 @@ async function handleGuestFormSubmit(e) {
                     valA = rsvpOrder[a.rsvp] || 4;
                     valB = rsvpOrder[b.rsvp] || 4;
                     return valA - valB;
-                case 'tableNumber':
-                    valA = parseInt(a.tableNumber, 10) || 999;
-                    valB = parseInt(b.tableNumber, 10) || 999;
+                case 'tablenumber':
+                    valA = parseInt(a.tablenumber, 10) || 999;
+                    valB = parseInt(b.tablenumber, 10) || 999;
                     return valA - valB;
                 default: // Handles name, meal, and the new party column
                     valA = a[sortBy] || '';
@@ -838,11 +838,11 @@ async function handleGuestFormSubmit(e) {
                         <th data-sort="rsvp" class="${sortBy === 'rsvp' ? 'sort-active' : ''}">RSVP Status
                             ${sortBy === 'rsvp' ? (sortOrder === 'asc' ? '<i class="bi bi-sort-up"></i>' : '<i class="bi bi-sort-down"></i>') : '<i class="bi bi-arrow-down-up"></i>'}
                         </th>
-                        <th data-sort="dietaryRequest" class="${sortBy === 'dietaryRequest' ? 'sort-active' : ''}">Meal
-                            ${sortBy === 'dietaryRequest' ? (sortOrder === 'asc' ? '<i class="bi bi-sort-up"></i>' : '<i class="bi bi-sort-down"></i>') : '<i class="bi bi-arrow-down-up"></i>'}
+                        <th data-sort="dietaryrequest" class="${sortBy === 'dietaryrequest' ? 'sort-active' : ''}">Meal
+                            ${sortBy === 'dietaryrequest' ? (sortOrder === 'asc' ? '<i class="bi bi-sort-up"></i>' : '<i class="bi bi-sort-down"></i>') : '<i class="bi bi-arrow-down-up"></i>'}
                         </th>
-                        <th data-sort="tableNumber" class="${sortBy === 'tableNumber' ? 'sort-active' : ''}">Table
-                            ${sortBy === 'tableNumber' ? (sortOrder === 'asc' ? '<i class="bi bi-sort-up"></i>' : '<i class="bi bi-sort-down"></i>') : '<i class="bi bi-arrow-down-up"></i>'}
+                        <th data-sort="tablenumber" class="${sortBy === 'tablenumber' ? 'sort-active' : ''}">Table
+                            ${sortBy === 'tablenumber' ? (sortOrder === 'asc' ? '<i class="bi bi-sort-up"></i>' : '<i class="bi bi-sort-down"></i>') : '<i class="bi bi-arrow-down-up"></i>'}
                         </th>
                     </tr>
                 </thead>
@@ -874,8 +874,8 @@ async function handleGuestFormSubmit(e) {
                                     <div class="party-name-mobile">${guest.party || '-'}</div>
                                 </div>
                             </td>
-                            <td class="meal-column">${guest.dietaryRequest || '-'}</td>
-                            <td class="table-column">${guest.tableNumber || '-'}</td>
+                            <td class="meal-column">${guest.dietaryrequest || '-'}</td>
+                            <td class="table-column">${guest.tablenumber || '-'}</td>
                         </tr>
                     `;
                 } else {
@@ -885,8 +885,8 @@ async function handleGuestFormSubmit(e) {
                             <td>${guest.name || 'N/A'}</td>
                             <td>${guest.party || '-'}</td>
                             <td><span class="rsvp-status ${rsvpClass}">${rsvpIcon} ${rsvp}</span></td>
-                            <td>${guest.dietaryRequest || '-'}</td>
-                            <td>${guest.tableNumber || '-'}</td>
+                            <td>${guest.dietaryrequest || '-'}</td>
+                            <td>${guest.tablenumber || '-'}</td>
                         </tr>
                     `;
                 }
