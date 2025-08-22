@@ -252,12 +252,6 @@ body {
 }
 
 /* Info Grid & Cards */
-.info-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 2rem;
-    margin-bottom: 2rem;
-}
 
 .kanban-controls {
     display: flex;
@@ -1343,5 +1337,171 @@ body {
         flex-shrink: 0;
         width: 90%; /* Adjust as needed for screen size */
         scroll-snap-align: start;
+    }
+
+     /* Hides the entire table header on mobile */
+     .guest-table thead {
+        display: table-header-group;
+    }
+    .guest-table th {
+        padding: 0.5rem;
+        font-size: 12px;
+    }
+
+    /* Sets the table rows to display as full-width blocks, making each one a "card" */
+    .guest-table tr {
+        display: grid;
+        grid-template-columns: 1.9fr .8fr 0.3fr; /* Adjust as needed */
+        gap: 0;
+        border-bottom: 1px solid #e6e6e6;
+        padding-top: 20px;
+        padding-bottom: 20px;
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    .modal {
+        width: 100%;
+        height: 100%;
+    }
+
+    .guest-summary-stats {
+        display: none; /* Hides the summary stats on mobile */
+    }
+
+    /* Styles the last row to remove the bottom border */
+    .guest-table tr:last-child {
+        border-bottom: none;
+        padding-bottom: none;
+    }
+
+    /* Sets each table data cell to display as a flex item */
+    .guest-table td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0; /* Remove default padding to allow for a custom layout */
+        border: none; /* Removes all cell borders */
+    }
+
+    .guest-table thead tr {
+        padding-bottom: 0;
+    }
+
+    /* Adjusts the first and last columns for the new layout */
+    .guest-table td:nth-child(1) {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.25rem;
+    }
+
+    /* Hides the Meal, Table, and RSVP Status headers, as their content is moved */
+    .guest-table th:nth-of-type(2){ /* Party column */
+        display: none;
+    }
+
+    .guest-table th:nth-of-type(4),
+    .guest-table th:nth-of-type(5) {
+        display: table-cell;
+    }
+
+    .rsvp-status .status-text {
+        display: none;
+    }
+
+    span.status-text {
+        display: none;
+    }
+
+    .party-name-mobile {
+        font-family: 'Roboto', sans-serif;
+        text-transform: uppercase;
+        letter-spacing: 0.1rem;
+        font-size: 10px;
+        color: grey;
+        padding-top: 5px;
+    }
+
+    .filter-btn .button-text,
+    .export-btn .button-text {
+        display: none;
+    }
+
+    .filter-btn,
+    .export-btn {
+        width: 48px;  /* Or whatever size you prefer */
+        height: 48px; /* Must match the width to be a square */
+        padding: 0;   /* Removes any default padding that might make it rectangular */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .filter-btn > span,
+    .export-btn > span {
+        display: none;
+    }
+
+    .filter-popover {
+        /* Makes the popover a full-screen, fixed panel */
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: white;
+        border-radius: 0; /* Remove border-radius for a seamless look */
+        padding: 1.5rem;
+        overflow-y: auto; /* Adds scrolling for long forms */
+        box-shadow: none; /* Removes the shadow for a clean look */
+        z-index: 20; /* Ensure it is above other content */
+        box-sizing: border-box;
+    }
+
+    /* Adjust form group margins for a better mobile layout */
+    .filter-popover .form-group {
+        margin-bottom: 1rem;
+    }
+
+    /* Make the filter sections stack vertically */
+    .filter-popover .form-row {
+        flex-direction: column;
+        gap: 0;
+        border: none;
+    }
+    
+    /* Make the buttons at the bottom of the popover full-width */
+    .popover-actions {
+        flex-direction: column;
+    }
+    .popover-actions button {
+        width: 100%;
+    }
+
+    .checkbox-group input[type="checkbox"] {
+        transform: scale(1.5);
+    }
+
+    .checkbox-group label {
+        font-size: 16px; /* Slightly smaller font for mobile */
+        padding-top: 0px !important;
+    }
+
+    .radio-group label {
+        font-size: 16px; /* Slightly smaller font for mobile */
+        padding-top: 0px !important;
+    }
+
+    .filter-popover label {
+        padding-top: 20px;
+    }
+
+    .guest-list-container::-webkit-scrollbar {
+        display: none;
+    }
+
+    .guest-list-container {
+        -ms-overflow-style: none;  /* IE and Edge */
+        scrollbar-width: none;  /* Firefox */
     }
 }

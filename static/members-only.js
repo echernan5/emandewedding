@@ -128,6 +128,13 @@ document.addEventListener('DOMContentLoaded', () => {
             renderGuestListModal();
         });
 
+        window.addEventListener('resize', () => {
+            // Check if the modal is currently open before re-rendering
+            if (guestListModal.classList.contains('is-visible')) {
+                renderGuestListModal();
+            }
+        });
+
         openGuestListModalBtn.addEventListener('click', (e) => {
             e.preventDefault();
             openGuestListModal();
@@ -734,8 +741,8 @@ async function handleGuestFormSubmit(e) {
         const mealFilter = document.getElementById('filterMeal');
         const tableFilter = document.getElementById('filterTable');
     
-        const uniqueMeals = [...new Set(fullGuestListCache.map(g => g.dietaryRequest).filter(Boolean))];
-        const uniqueTables = [...new Set(fullGuestListCache.map(g => g.tableNumber).filter(Boolean))].sort((a,b) => a - b);
+        const uniqueMeals = [...new Set(fullGuestListCache.map(g => g.dietaryrequest).filter(Boolean))];
+        const uniqueTables = [...new Set(fullGuestListCache.map(g => g.tablenumber).filter(Boolean))].sort((a,b) => a - b);
     
         uniqueMeals.forEach(meal => {
             mealFilter.innerHTML += `<option value="${meal}">${meal}</option>`;
@@ -772,10 +779,10 @@ async function handleGuestFormSubmit(e) {
             filtered = filtered.filter(g => (g.rsvp || 'Pending') === guestListState.status);
         }
         if (guestListState.meal !== 'all') {
-            filtered = filtered.filter(g => g.dietaryRequest === guestListState.meal);
+            filtered = filtered.filter(g => g.dietaryrequest === guestListState.meal);
         }
         if (guestListState.table !== 'all') {
-            filtered = filtered.filter(g => g.tableNumber === guestListState.table);
+            filtered = filtered.filter(g => g.tablenumber === guestListState.table);
         }
     
         // --- NEW: Search Query Filter (applied last) ---
@@ -789,7 +796,10 @@ async function handleGuestFormSubmit(e) {
     } 
     
     function renderIndividualView(guests) {
-        // Sorting logic (no changes needed here)
+        // Check if the user is on a mobile device based on your breakpoint
+        const isMobile = window.innerWidth <= 768; 
+    
+        // Sorting logic (no changes needed)
         const { sortBy, sortOrder } = guestListState;
         const rsvpOrder = { 'Yes': 1, 'Pending': 2, 'No': 3 };
     
@@ -800,9 +810,9 @@ async function handleGuestFormSubmit(e) {
                     valA = rsvpOrder[a.rsvp] || 4;
                     valB = rsvpOrder[b.rsvp] || 4;
                     return valA - valB;
-                case 'tableNumber':
-                    valA = parseInt(a.tableNumber, 10) || 999;
-                    valB = parseInt(b.tableNumber, 10) || 999;
+                case 'tablenumber':
+                    valA = parseInt(a.tablenumber, 10) || 999;
+                    valB = parseInt(b.tablenumber, 10) || 999;
                     return valA - valB;
                 default: // Handles name, meal, and the new party column
                     valA = a[sortBy] || '';
@@ -815,30 +825,32 @@ async function handleGuestFormSubmit(e) {
             guests.reverse();
         }
     
-        // Dynamic header generation
-        const getHeaderClass = (key) => (sortBy === key ? 'sort-active' : '');
-        const getHeaderIcon = (key) => {
-            if (sortBy !== key) return '<i class="bi bi-arrow-down-up"></i>';
-            return sortOrder === 'asc' ? '<i class="bi bi-sort-up"></i>' : '<i class="bi bi-sort-down"></i>';
-        };
-    
         let tableHTML = `
             <table class="guest-table">
                 <thead>
                     <tr>
-                        <th data-sort="name" class="${getHeaderClass('name')}">Name ${getHeaderIcon('name')}</th>
-                        <th data-sort="party" class="${getHeaderClass('party')}">Party ${getHeaderIcon('party')}</th>
-                        <th data-sort="rsvp" class="${getHeaderClass('rsvp')}">RSVP Status ${getHeaderIcon('rsvp')}</th>
-                        <th data-sort="dietaryRequest" class="${getHeaderClass('dietaryRequest')}">Meal ${getHeaderIcon('dietaryRequest')}</th>
-                        <th data-sort="tableNumber" class="${getHeaderClass('tableNumber')}">Table ${getHeaderIcon('tableNumber')}</th>
+                        <th data-sort="name" class="${sortBy === 'name' ? 'sort-active' : ''}">Name
+                            ${sortBy === 'name' ? (sortOrder === 'asc' ? '<i class="bi bi-sort-up"></i>' : '<i class="bi bi-sort-down"></i>') : '<i class="bi bi-arrow-down-up"></i>'}
+                        </th>
+                        ${!isMobile ? `<th data-sort="party" class="${sortBy === 'party' ? 'sort-active' : ''}">Party
+                            ${sortBy === 'party' ? (sortOrder === 'asc' ? '<i class="bi bi-sort-up"></i>' : '<i class="bi bi-sort-down"></i>') : '<i class="bi bi-arrow-down-up"></i>'}
+                        </th>` : ''}
+                        <th data-sort="rsvp" class="${sortBy === 'rsvp' ? 'sort-active' : ''}">RSVP Status
+                            ${sortBy === 'rsvp' ? (sortOrder === 'asc' ? '<i class="bi bi-sort-up"></i>' : '<i class="bi bi-sort-down"></i>') : '<i class="bi bi-arrow-down-up"></i>'}
+                        </th>
+                        <th data-sort="dietaryrequest" class="${sortBy === 'dietaryrequest' ? 'sort-active' : ''}">Meal
+                            ${sortBy === 'dietaryrequest' ? (sortOrder === 'asc' ? '<i class="bi bi-sort-up"></i>' : '<i class="bi bi-sort-down"></i>') : '<i class="bi bi-arrow-down-up"></i>'}
+                        </th>
+                        <th data-sort="tablenumber" class="${sortBy === 'tablenumber' ? 'sort-active' : ''}">Table
+                            ${sortBy === 'tablenumber' ? (sortOrder === 'asc' ? '<i class="bi bi-sort-up"></i>' : '<i class="bi bi-sort-down"></i>') : '<i class="bi bi-arrow-down-up"></i>'}
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
         `;
     
         if (guests.length === 0) {
-            // Colspan is updated from 4 to 5
-            tableHTML += '<tr><td colspan="5" style="text-align:center; padding: 2rem;">No guests match the current filters.</td></tr>';
+            tableHTML += `<tr><td colspan="${isMobile ? 3 : 5}" style="text-align:center; padding: 2rem;">No guests match the current filters.</td></tr>`;
         } else {
             guests.forEach(guest => {
                 const rsvp = guest.rsvp || 'Pending';
@@ -848,18 +860,39 @@ async function handleGuestFormSubmit(e) {
                     'No': '<i class="bi bi-x-circle-fill"></i>',
                     'Pending': '<i class="bi bi-question-circle-fill"></i>'
                 }[rsvp];
-    
-                tableHTML += `
-                    <tr>
-                        <td>${guest.name || 'N/A'}</td>
-                        <td>${guest.party || '-'}</td>
-                        <td><span class="rsvp-status ${rsvpClass}">${rsvpIcon} ${rsvp}</span></td>
-                        <td>${guest.dietaryRequest || '-'}</td>
-                        <td>${guest.tableNumber || '-'}</td>
-                    </tr>
-                `;
+                
+                if (isMobile) {
+                    // Mobile-specific row layout
+                    tableHTML += `
+                        <tr>
+                            <td>
+                                <div class="guest-name-mobile-container">
+                                    <div class="name-and-status">
+                                        <span>${guest.name || 'N/A'}</span>
+                                        <span class="rsvp-status ${rsvpClass}">${rsvpIcon} <span class="status-text">${rsvp}</span></span>
+                                    </div>
+                                    <div class="party-name-mobile">${guest.party || '-'}</div>
+                                </div>
+                            </td>
+                            <td class="meal-column">${guest.dietaryrequest || '-'}</td>
+                            <td class="table-column">${guest.tablenumber || '-'}</td>
+                        </tr>
+                    `;
+                } else {
+                    // Desktop-specific row layout
+                    tableHTML += `
+                        <tr>
+                            <td>${guest.name || 'N/A'}</td>
+                            <td>${guest.party || '-'}</td>
+                            <td><span class="rsvp-status ${rsvpClass}">${rsvpIcon} ${rsvp}</span></td>
+                            <td>${guest.dietaryrequest || '-'}</td>
+                            <td>${guest.tablenumber || '-'}</td>
+                        </tr>
+                    `;
+                }
             });
         }
+    
         tableHTML += '</tbody></table>';
         guestListContainer.innerHTML = tableHTML;
     }
@@ -914,8 +947,8 @@ async function handleGuestFormSubmit(e) {
                     <li class="party-guest-item">
                         <span class="party-guest-name">${member.name}</span>
                         <span class="rsvp-status ${rsvpClass}">${rsvpIcon} ${rsvp}</span>
-                        <span>${member.dietaryRequest || '-'}</span>
-                        <span>${member.tableNumber || '-'}</span>
+                        <span>${member.dietaryrequest || '-'}</span>
+                        <span>${member.tablenumber || '-'}</span>
                     </li>
                 `;
             });
@@ -930,8 +963,8 @@ async function handleGuestFormSubmit(e) {
             Name: g.name,
             Party: g.party,
             RSVP: g.rsvp,
-            Meal: g.dietaryRequest,
-            Table: g.tableNumber,
+            Meal: g.dietaryrequest,
+            Table: g.tablenumber,
             Relation: g.relation,
             'Guest Of': g.guestOf,
             'Rehearsal Dinner': String(g.rehearsalDinner).toLowerCase() === 'true' ? 'Yes' : 'No',
@@ -959,8 +992,8 @@ async function handleGuestFormSubmit(e) {
                 guest.name,
                 guest.party,
                 guest.rsvp || 'Pending',
-                guest.dietaryRequest || '-',
-                guest.tableNumber || '-'
+                guest.dietaryrequest || '-',
+                guest.tablenumber || '-'
             ];
             tableRows.push(guestData);
         });

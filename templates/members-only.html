@@ -29,32 +29,31 @@
         
         <!-- Quick Stats / RSVP Tracker -->
         <section class="info-grid">
-                <div class="info-card rsvp-card">
-                    <h2 class="card-heading">RSVP Status</h2>
-                    <div class="rsvp-stats">
-                        <div class="stat-loader" id="rsvpLoader">
-                            <div class="spinner"></div>
-                        </div>
-                        <div class="stat">
-                            <span id="totalInvited" class="stat-number">0</span>
-                            <p class="stat-label">Invited</p>
-                        </div>
-                        <div class="stat">
-                            <span id="totalYes" class="stat-number">0</span>
-                            <p class="stat-label">Yes</p>
-                        </div>
-                        <div class="stat">
-                            <span id="totalNo" class="stat-number">0</span>
-                            <p class="stat-label">No</p>
-                        </div>
-                        <div class="stat">
-                            <span id="totalPending" class="stat-number">0</span>
-                            <p class="stat-label">Pending</p>
-                        </div>
+            <div class="info-card rsvp-card">
+                <h2 class="card-heading">RSVP Status</h2>
+                <div class="rsvp-stats">
+                    <div class="stat-loader" id="rsvpLoader">
+                        <div class="spinner"></div>
+                    </div>
+                    <div class="stat">
+                        <span id="totalInvited" class="stat-number">0</span>
+                        <p class="stat-label">Invited</p>
+                    </div>
+                    <div class="stat">
+                        <span id="totalYes" class="stat-number">0</span>
+                        <p class="stat-label">Yes</p>
+                    </div>
+                    <div class="stat">
+                        <span id="totalNo" class="stat-number">0</span>
+                        <p class="stat-label">No</p>
+                    </div>
+                    <div class="stat">
+                        <span id="totalPending" class="stat-number">0</span>
+                        <p class="stat-label">Pending</p>
                     </div>
                 </div>
+            </div>
 
-            <!-- Important Dates -->
             <div class="info-card dates-card">
                 <h2 class="card-heading">Important Dates</h2>
                 <ul class="dates-list">
@@ -235,7 +234,8 @@
 
                     <div class="filter-container">
                         <button id="guestListModalFilterBtn" class="filter-btn">
-                            <i class="bi bi-funnel"></i> Filter
+                            <i class="bi bi-funnel"></i>
+                            <span class="button-text">Filter</span>
                         </button>
                         <div class="filter-popover" id="guestListFilterPopover">
                             <div class="form-group">
@@ -308,7 +308,8 @@
 
                     <div class="export-group">
                         <button id="exportBtn" class="export-btn">
-                            <i class="bi bi-download"></i> Export
+                            <i class="bi bi-download"></i>
+                            <span class="button-text">Export</span>
                         </button>
                         <div class="export-options" id="exportOptions">
                             <ul>
