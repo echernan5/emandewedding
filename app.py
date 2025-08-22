@@ -1,4 +1,7 @@
 import os
+from dotenv import load_dotenv
+
+import os
 import uuid
 import psycopg2
 from flask import Flask, jsonify, request, render_template
@@ -47,11 +50,24 @@ def get_data_from_query(query, params=None):
     try:
         with conn.cursor() as cur:
             cur.execute(query, params)
+            
+            # --- START DEBUGGING AND FIX ---
+            rows = cur.fetchall() # FETCH DATA HERE ONCE AND STORE IT
+            
+            print("--- DEBUGGING DATABASE QUERY ---")
+            print("Query:", cur.query.decode('utf-8'))
+            
             column_names = [desc[0] for desc in cur.description]
-            data = [dict(zip(column_names, row)) for row in cur.fetchall()]
+            print("Column names:", column_names)
+            
+            print("Raw rows (truncated to first 5):", rows[:5])
+            print("----------------------------------")
+            # --- END DEBUGGING AND FIX ---
+            
+            data = [dict(zip(column_names, row)) for row in rows] # USE THE STORED 'rows' VARIABLE
         return data, None
     except Exception as e:
-        print(f"Error executing query: {e}")
+        print(f"!!! ERROR: Could not get data from query: {e}")
         return None, "An internal server error occurred."
     finally:
         conn.close()
@@ -76,6 +92,7 @@ def add_kanban_task():
     
     try:
         with conn.cursor() as cur:
+            
             # Use UUIDs as the default value is set in the database
             cur.execute(sql.SQL(
                 "INSERT INTO tasks (status, description, assignee, category, due_date, related_vendors, comments) VALUES (%s, %s, %s, %s, %s, %s, %s) RETURNING task_id;"
@@ -184,6 +201,9 @@ def get_guests():
     guests, error = get_data_from_query(query)
     if error:
         return jsonify({"error": error}), 500
+    
+    print("Data returned from DB query:", guests) 
+
     return jsonify(guests)
 # UPDATED: This endpoint now correctly updates the parties table, not the guests table
 @app.route('/api/guests/update', methods=['PUT'])

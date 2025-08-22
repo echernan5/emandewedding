@@ -517,14 +517,17 @@ document.addEventListener('DOMContentLoaded', () => {
             return false;
         });
         const finalFilteredGuests = searchQuery
-            ? statusFiltered.filter(g => g.partyName.toLowerCase().includes(searchQuery))
+            ? statusFiltered.filter(g => g.partyname.toLowerCase().includes(searchQuery))
             : statusFiltered;
+
+            console.log("Final guests to render:", finalFilteredGuests);
+
         finalFilteredGuests.sort((a, b) => {
             const aIsPending = !a.street;
             const bIsPending = !b.street;
             if (aIsPending && !bIsPending) return -1;
             if (!aIsPending && bIsPending) return 1;
-            return (a.partyName ?? '').localeCompare(b.partyName ?? '');
+            return (a.partyname ?? '').localeCompare(b.partyname ?? '');
         });
         if (finalFilteredGuests.length === 0) {
             guestList.innerHTML = '<li><p class="no-guests-message">No guests match your filters.</p></li>';
@@ -542,7 +545,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 addressHtml = `<p>No address has been entered yet.</p>`;
             }
             listItem.innerHTML = `
-                <div class="guest-info"><h3>Guest(s)</h3><p>${guest.partyName}</p></div>
+                <div class="guest-info"><h3>Guest(s)</h3><p>${guest.partyname ?? '-'}</p></div>
                 <div class="address-info ${!guest.street ? 'missing' : ''}"><h3>Address</h3>${addressHtml}</div>
                 <div class="action-info"><button class="edit-address-btn" data-guest-id="${guest.id}">${buttonText}</button></div>
             `;
@@ -552,42 +555,51 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function openGuestPanel(guest) {
         if (!guest) return;
-        panelTitle.innerHTML = `<span class="panel-title-label">Address for </span><span class="panel-title-name">${guest.partyName}</span>`;
+        panelTitle.innerHTML = `<span class="panel-title-label">Address for </span><span class="panel-title-name">${guest.partyname}</span>`;
         panelBody.innerHTML = getGuestFormHTML(guest);
         document.getElementById('guestForm').addEventListener('submit', handleGuestFormSubmit);
         openPanel();
     }
 
-    async function handleGuestFormSubmit(e) {
-        e.preventDefault();
-        const form = e.target;
-        const guestId = form.dataset.guestId;
-        const originalGuest = guestsCache.find(g => g.id === guestId);
-        const guestData = {
-            id: guestId,
-            partyName: originalGuest.partyName,
-            assignedTo: originalGuest.assignedTo,
-            street: form.querySelector('#street').value,
-            street2: form.querySelector('#street2').value,
-            city: form.querySelector('#city').value,
-            state: form.querySelector('#state').value,
-            zip: form.querySelector('#zip').value,
-            status: (form.querySelector('#street').value) ? 'Complete' : 'Pending'
-        };
-        try {
-            await fetchWithRetry(`${API_BASE_URL}/guests/update`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(guestData)
-            });
-            const guestIndex = guestsCache.findIndex(g => g.id === guestId);
-            if (guestIndex !== -1) {
-                guestsCache[guestIndex] = guestData;
-            }
-            closePanel();
-            renderGuestsFromCache();
-        } catch (error) { console.error("Error updating guest:", error); }
-    }
+    // JS Code - handleGuestFormSubmit function
+async function handleGuestFormSubmit(e) {
+    e.preventDefault();
+    const form = e.target;
+    const guestId = form.dataset.guestId;
+    const originalGuest = guestsCache.find(g => g.id === guestId);
+    
+    // Create the data object to send to the server
+    const guestData = {
+        id: guestId,
+        street: form.querySelector('#street').value,
+        street2: form.querySelector('#street2').value,
+        city: form.querySelector('#city').value,
+        state: form.querySelector('#state').value,
+        zip: form.querySelector('#zip').value,
+    };
+    
+    try {
+        await fetchWithRetry(`${API_BASE_URL}/guests/update`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(guestData)
+        });
+        
+        // Find the guest in the cache and update only the relevant fields.
+        const guestIndex = guestsCache.findIndex(g => g.id === guestId);
+        if (guestIndex !== -1) {
+            // Keep the existing partyname and assignedTo, and update the others
+            guestsCache[guestIndex].street = guestData.street;
+            guestsCache[guestIndex].street2 = guestData.street2;
+            guestsCache[guestIndex].city = guestData.city;
+            guestsCache[guestIndex].state = guestData.state;
+            guestsCache[guestIndex].zip = guestData.zip;
+        }
+
+        closePanel();
+        renderGuestsFromCache();
+    } catch (error) { console.error("Error updating guest:", error); }
+}
 
     function getGuestFormHTML(guest) {
         const states = [ 'AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA', 'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD', 'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ', 'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC', 'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY' ];
@@ -597,7 +609,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ).join('');
         return `
             <div class="form-info-display">
-                <p><strong>Party Name:</strong> ${guest.partyName}</p>
+                <p><strong>Party Name:</strong> ${guest.partyname}</p>
                 <p><strong>Assigned To:</strong> ${guest.assignedTo}</p>
             </div>
             <form id="guestForm" data-guest-id="${guest.id}" autocomplete="off">
@@ -860,23 +872,23 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     
         const guestsByParty = guests.reduce((acc, guest) => {
-            const partyName = guest.party || 'Unassigned';
-            if (!acc[partyName]) {
-                acc[partyName] = [];
+            const partyname = guest.party || 'Unassigned';
+            if (!acc[partyname]) {
+                acc[partyname] = [];
             }
-            acc[partyName].push(guest);
+            acc[partyname].push(guest);
             return acc;
         }, {});
     
         let partyHTML = '';
-        for (const partyName in guestsByParty) {
-            const partyMembers = guestsByParty[partyName];
+        for (const partyname in guestsByParty) {
+            const partyMembers = guestsByParty[partyname];
             const attendingCount = partyMembers.filter(p => p.rsvp === 'Yes').length;
     
             partyHTML += `
                 <div class="party-group">
                     <div class="party-header">
-                        <span class="party-name">${partyName}</span>
+                        <span class="party-name">${partyname}</span>
                         <span class="party-rsvp-summary">${attendingCount} / ${partyMembers.length} Attending</span>
                     </div>
                     <ul class="party-guest-list">
