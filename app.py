@@ -56,14 +56,8 @@ def get_data_from_query(query, params=None):
             # --- START DEBUGGING AND FIX ---
             rows = cur.fetchall() # FETCH DATA HERE ONCE AND STORE IT
             
-            print("--- DEBUGGING DATABASE QUERY ---")
-            print("Query:", cur.query.decode('utf-8'))
-            
             column_names = [desc[0] for desc in cur.description]
             print("Column names:", column_names)
-            
-            print("Raw rows (truncated to first 5):", rows[:5])
-            print("----------------------------------")
             # --- END DEBUGGING AND FIX ---
             
             data = [dict(zip(column_names, row)) for row in rows] # USE THE STORED 'rows' VARIABLE
@@ -252,12 +246,12 @@ def get_guestlist():
             g.first_name || ' ' || g.last_name AS name,
             p.party_key AS party,
             g.rsvp_status AS rsvp,
-            g.meal_choice AS dietaryRequest,
-            g.table_number AS tableNumber,
+            g.meal_choice AS dietaryrequest,
+            g.table_number AS tablenumber,
             g.relationship AS relation,
-            g.guest_of AS guestOf,
-            g.is_invited_to_rehearsal_dinner AS rehearsalDinner,
-            g.is_invited_to_bridal_shower AS bridalShower
+            g.guest_of AS guestof,
+            g.is_invited_to_rehearsal_dinner AS rehearsaldinner,
+            g.is_invited_to_bridal_shower AS bridalshower
         FROM public.guest_list AS g
         JOIN public.parties AS p ON g.party_id = p.party_id;
     """)
@@ -296,6 +290,37 @@ def home():
 @app.route('/members_only')
 def members_only():
     return render_template('members-only.html')
+
+@app.route('/create-pdf', methods=['POST'])
+def create_pdf():
+    # 1. Get guest data from your database or session
+    guests_data = get_guests_from_db()
+
+    # 2. Generate the full HTML for the PDF page
+    html_to_render = generate_html_from_template(guests_data)
+
+    # 3. Send the HTML to the Node.js microservice
+    pdf_service_url = 'http://localhost:3001/generate-pdf'
+    
+    try:
+        response = requests.post(
+            pdf_service_url,
+            json={'htmlContent': html_to_render},
+            timeout=30 # Set a timeout for the request
+        )
+        response.raise_for_status() # Raise an exception for bad status codes
+
+        # 4. Return the PDF received from the service
+        return send_file(
+            io.BytesIO(response.content),
+            mimetype='application/pdf',
+            as_attachment=True,
+            download_name='guest-list.pdf'
+        )
+
+    except requests.exceptions.RequestException as e:
+        print(f"Error communicating with PDF service: {e}")
+        return jsonify({"error": "Failed to generate PDF."}), 500
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))

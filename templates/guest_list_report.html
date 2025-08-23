@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Guest List Report</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='static/styles.css') }}">
+</head>
+<body>
+    <div class="header">
+        <h1>Emma & Ethan's Wedding Guest List</h1>
+        <p class="date">Report generated on {{ date }}</p>
+    </div>
+    <div class="summary">
+        <div>Attending: {{ attending }}</div>
+        <div>Pending: {{ pending }}</div>
+    </div>
+    <table class="guest-table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Party</th>
+                <th>RSVP</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for guest in guests %}
+            <tr>
+                <td>{{ guest.name }}</td>
+                <td>{{ guest.party }}</td>
+                <td>{{ guest.rsvp }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

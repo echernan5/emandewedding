@@ -107,6 +107,28 @@ document.addEventListener('DOMContentLoaded', () => {
         await fetchAndRenderCalendar();
     }
 
+    // Normalize when you set fullGuestListCache (run once after fetch)
+    function normalizeGuest(g) {
+        return {
+        name: g.name || '',
+        party: g.party || '',
+        rsvp: g.rsvp || 'Pending',
+        dietaryrequest: g.dietaryrequest || '',
+        // make table a string so comparisons are consistent
+        tablenumber: g.tablenumber == null ? '' : String(g.tablenumber),
+        relation: g.relation || '',
+        guestOf: g.guestOf ?? g.guestof ?? '',
+        rehearsalDinner: (typeof g.rehearsalDinner !== 'undefined') 
+                            ? Boolean(g.rehearsalDinner)
+                            : (String(g.rehearsaldinner) === 'true'),
+        bridalShower: (typeof g.bridalShower !== 'undefined') 
+                        ? Boolean(g.bridalShower)
+                        : (String(g.bridalshower) === 'true')
+        };
+    }
+    
+  
+
     // --- Tab Navigation Logic ---
     function setupTabNavigation() {
         tabLinks.forEach(link => {
@@ -194,15 +216,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             exportOptions.classList.toggle('visible');
         });
-        document.getElementById('exportPdfFiltered').addEventListener('click', (e) => {
-            if (e.target.classList.contains('disabled')) return;
-            exportToPDF(false);
-            exportOptions.classList.remove('visible');
-        });
-        document.getElementById('exportPdfMaster').addEventListener('click', () => {
-            exportToPDF(true);
-            exportOptions.classList.remove('visible');
-        });
         document.getElementById('exportXlsxFiltered').addEventListener('click', (e) => {
             if (e.target.classList.contains('disabled')) return;
             exportToXLSX(false);
@@ -289,6 +302,20 @@ document.addEventListener('DOMContentLoaded', () => {
             toggleFilterPopover();
         });
         guestSearchInput.addEventListener('input', renderGuestsFromCache);
+
+        document.getElementById('exportPdfFiltered').addEventListener('click', () => {
+            // Call the new exportToPDF function with 'false' for filtered data.
+            exportToPDF(false);
+            // Hide the export options menu.
+            exportOptions.classList.remove('visible');
+        });
+        
+        document.getElementById('exportPdfMaster').addEventListener('click', () => {
+            // Call the new exportToPDF function with 'true' for all data.
+            exportToPDF(true);
+            // Hide the export options menu.
+            exportOptions.classList.remove('visible');
+        });
 
         // --- LIST ITEM CLICK LISTENERS ---
         guestList.addEventListener('click', (e) => {
@@ -507,6 +534,199 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (error) { console.error("Error fetching guests after multiple retries:", error); }
     }
 
+    // Add this function definition
+    async function exportToPDF(useMasterList) {
+        const guestsToExport = useMasterList ? fullGuestListCache : getFilteredGuests();
+    
+        // NEW: Convert guest data to an HTML string. This is the crucial step.
+        const htmlContent = generateGuestListHtml(guestsToExport, useMasterList);
+    
+        try {
+            const response = await fetch('http://localhost:3001/generate-pdf', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    htmlContent: htmlContent // Now sending the correct variable name
+                }),
+            });
+    
+            if (!response.ok) {
+                throw new Error(`Server responded with ${response.status}: ${response.statusText}`);
+            }
+    
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `EmmaAndEthan_GuestList_${useMasterList ? 'Master' : 'Filtered'}.pdf`;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            window.URL.revokeObjectURL(url);
+        } catch (error) {
+            console.error("Error exporting PDF:", error);
+            alert('There was an error generating the PDF. Please try again later.');
+        }
+    }
+
+    // members-only.js
+    function generateGuestListHtml(guests, guestListState) {
+        const today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }).toUpperCase();
+        const isFiltered = guestListState.view !== 'individual';
+        const subtitleText = isFiltered ? 'Filtered list' : 'Master list';
+
+        const tableRows = guests.map(guest => `
+            <tr>
+                <td>${guest.name || '-'}</td>
+                <td>${guest.party || '-'}</td>
+                <td>${guest.rsvp || 'Pending'}</td>
+                <td>${guest.dietaryrequest || '-'}</td>
+                <td>${guest.tablenumber || '-'}</td>
+            </tr>
+        `).join('');
+
+        return `
+            <!DOCTYPE html>
+            <html lang="en">
+            <head>
+                <meta charset="UTF-8">
+                <title>Wedding Guest List</title>
+                <link rel="preconnect" href="https://fonts.googleapis.com">
+                <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+                <link href="https://fonts.googleapis.com/css2?family=Inria+Serif:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Kapakana:wght@300..400&display=swap" rel="stylesheet">
+                <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+                <style>
+                    @page {
+                        size: A4;
+                        /* Set top/left/right margins to 1cm and a larger bottom margin */
+                        margin: 1cm 1cm 3cm 1cm; 
+                    }
+                    body {
+                        font-family: 'Inria Serif', serif;
+                        font-size: 11px;
+                        line-height: 1.5;
+                        color: #333;
+                    }
+                    /* HEADER STYLES */
+                    .header {
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        border-bottom: 1px solid black;
+                        padding-bottom: 5px;
+                        margin-bottom: 20px;
+                    }
+                    .header-left {
+                        font-family: 'Roboto', sans-serif;
+                        font-size: 9px;
+                        font-weight: 400;
+                        letter-spacing: 1px;
+                    }
+                    .header-right img {
+                        height: 25px; /* Adjust size of monogram image */
+                        width: auto;
+                    }
+
+                    /* TITLE AND SUBTITLE STYLES */
+                    .document-title {
+                        font-size: 22px;
+                        font-weight: 700;
+                        margin: 0;
+                        color: #6C734C;
+                    }
+                    .document-subtitle {
+                        font-size: 14px;
+                        font-weight: 400;
+                        margin-top: 5px;
+                        color: #555;
+                    }
+
+                    /* TABLE STYLES */
+                    table {
+                        width: 100%;
+                        border-collapse: collapse;
+                    }
+                    thead tr {
+                        border-bottom: 1px solid black;
+                    }
+                    th, td {
+                        padding: 7px 10px;
+                        text-align: left;
+                        font-family: 'Inria Serif', serif;
+                    }
+                    th {
+                        font-family: 'Roboto', sans-serif;
+                        font-size: 9px;
+                        font-weight: 400;
+                        text-transform: uppercase;
+                        letter-spacing: 0.1rem;
+                        color: #000;
+                    }
+                    tr:nth-child(odd) {
+                        background-color: #f9f9f9;
+                    }
+                    
+                    /* FOOTER STYLES */
+                    .footer {
+                        position: fixed;
+                        bottom: 0;
+                        left: 0;
+                        width: 100%;
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        padding: 10px 40px; /* Match body padding */
+                        box-sizing: border-box;
+                    }
+                    .footer-left img {
+                        height: 15px; /* Adjust size of logotype image */
+                        width: auto;
+                    }
+                    .footer-right {
+                        font-family: 'Roboto', sans-serif;
+                        font-size: 12px;
+                        font-weight: 400;
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="header">
+                    <div class="header-left">${today}</div>
+                    <div class="header-right">
+                    </div>
+                </div>
+
+                <h1 class="document-title">Wedding Guest List</h1>
+                <p class="document-subtitle">${subtitleText}</p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>NAME</th>
+                            <th>PARTY</th>
+                            <th>RSVP</th>
+                            <th>MEAL</th>
+                            <th>TABLE</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${tableRows}
+                    </tbody>
+                </table>
+
+                <div class="footer">
+                    <div class="footer-left">
+                    </div>
+                    <div class="footer-right">
+                        <span>Page</span>
+                    </div>
+                </div>
+            </body>
+            </html>
+        `;
+    }
+
     function renderGuestsFromCache() {
         if (!guestList) return;
         guestList.innerHTML = '';
@@ -666,25 +886,27 @@ async function handleGuestFormSubmit(e) {
 
     async function fetchAndRenderFullGuestList() {
         isGuestListLoading = true;
-        updateDashboardStats(); // Show the spinner
+        updateDashboardStats(); // Show spinner
     
         try {
             const data = await fetchWithRetry(`${API_BASE_URL}/guestlist`);
-            fullGuestListCache = Array.isArray(data) ? data : [];
+            const apiData = Array.isArray(data) ? data : [];
+            // Normalize incoming rows to the shape your UI expects
+            fullGuestListCache = apiData.map(normalizeGuest);
+            console.log("Full Guest List Cache:", fullGuestListCache);
         } catch (error) {
             console.error("Error fetching full guest list:", error);
             fullGuestListCache = [];
         } finally {
             isGuestListLoading = false;
-            updateDashboardStats(); // Hide spinner and show data
+            updateDashboardStats(); // Hide spinner and update counts
             populateFilterOptions();
-            
-            // If the modal is already open, refresh its content with the new data
             if (guestListModal.classList.contains('is-visible')) {
                 renderGuestListModal();
             }
         }
     }
+    
 
     function updateDashboardStats() {
         const rsvpLoader = document.getElementById('rsvpLoader');
@@ -754,46 +976,66 @@ async function handleGuestFormSubmit(e) {
 
     // Replace this entire function
     function getFilteredGuests() {
+        console.log('--- getFilteredGuests START ---');
+        console.log('guestListState:', JSON.parse(JSON.stringify(guestListState)));
+        console.log('fullGuestListCache length:', fullGuestListCache.length);
         let filtered = [...fullGuestListCache];
-    
-        // Checkboxes for "Guest Of"
+      
+        const steps = [];
+      
+        // guestOf
         if (guestListState.guestOf.length > 0) {
-            filtered = filtered.filter(g => guestListState.guestOf.includes(g.guestOf));
+          filtered = filtered.filter(g => guestListState.guestOf.includes(g.guestOf));
         }
-    
-        // Checkboxes for "Relation"
+        steps.push({ step: 'guestOf', count: filtered.length });
+      
+        // relation
         if (guestListState.relationType.length > 0) {
-            filtered = filtered.filter(g => guestListState.relationType.includes(g.relation));
+          filtered = filtered.filter(g => guestListState.relationType.includes(g.relation));
         }
-    
-        // Checkboxes for Events
+        steps.push({ step: 'relationType', count: filtered.length });
+      
+        // rehearsal + bridal
         if (guestListState.filterByRehearsal) {
-            filtered = filtered.filter(g => String(g.rehearsalDinner).toLowerCase() === 'true');
+          filtered = filtered.filter(g => g.rehearsalDinner === true);
         }
+        steps.push({ step: 'filterByRehearsal', count: filtered.length });
+      
         if (guestListState.filterByBridal) {
-            filtered = filtered.filter(g => String(g.bridalShower).toLowerCase() === 'true');
+          filtered = filtered.filter(g => g.bridalShower === true);
         }
-    
-        // Other dropdown/radio filters
+        steps.push({ step: 'filterByBridal', count: filtered.length });
+      
+        // status
         if (guestListState.status !== 'all') {
-            filtered = filtered.filter(g => (g.rsvp || 'Pending') === guestListState.status);
+          filtered = filtered.filter(g => (g.rsvp || 'Pending') === guestListState.status);
         }
+        steps.push({ step: 'status', count: filtered.length });
+      
+        // meal
         if (guestListState.meal !== 'all') {
-            filtered = filtered.filter(g => g.dietaryrequest === guestListState.meal);
+          filtered = filtered.filter(g => g.dietaryrequest === guestListState.meal);
         }
+        steps.push({ step: 'meal', count: filtered.length });
+      
+        // table
         if (guestListState.table !== 'all') {
-            filtered = filtered.filter(g => g.tablenumber === guestListState.table);
+          filtered = filtered.filter(g => String(g.tablenumber) === String(guestListState.table));
         }
-    
-        // --- NEW: Search Query Filter (applied last) ---
+        steps.push({ step: 'table', count: filtered.length });
+      
+        // search
         if (guestListState.searchQuery) {
-            filtered = filtered.filter(g => 
-                g.name.toLowerCase().includes(guestListState.searchQuery)
-            );
+          const q = guestListState.searchQuery.toLowerCase();
+          filtered = filtered.filter(g => (g.name || '').toLowerCase().includes(q));
         }
-    
+        steps.push({ step: 'searchQuery', count: filtered.length });
+      
+        console.log('filter steps:', steps);
+        console.log('--- getFilteredGuests END, returning:', filtered.length, 'items ---');
         return filtered;
-    } 
+      }      
+      
     
     function renderIndividualView(guests) {
         // Check if the user is on a mobile device based on your breakpoint
@@ -975,96 +1217,6 @@ async function handleGuestFormSubmit(e) {
         const workbook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(workbook, worksheet, "GuestList");
         XLSX.writeFile(workbook, "EmmaAndEthan_GuestList.xlsx");
-    }
-
-    // Replace this entire function
-    // Replace this entire function
-    function exportToPDF(useMasterList = false) {
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF();
-        const guestsToExport = useMasterList ? fullGuestListCache : getFilteredGuests();
-
-        const tableColumn = ["NAME", "PARTY", "RSVP", "MEAL", "TABLE"];
-        const tableRows = [];
-
-        guestsToExport.forEach(guest => {
-            const guestData = [
-                guest.name,
-                guest.party,
-                guest.rsvp || 'Pending',
-                guest.dietaryrequest || '-',
-                guest.tablenumber || '-'
-            ];
-            tableRows.push(guestData);
-        });
-
-        const leftMargin = 15;
-        doc.setFont('times', 'normal');
-        doc.setFontSize(22);
-        doc.text('Wedding Guest List', leftMargin, 35);
-        
-        doc.setFontSize(14);
-        doc.text(useMasterList ? 'Master list' : 'Filtered list', leftMargin, 43);
-
-
-        doc.autoTable({
-            head: [tableColumn],
-            body: tableRows,
-            startY: 55,
-            margin: { top: 35, bottom: 20 },
-            
-            didDrawPage: function (data) {
-                // --- HEADER ---
-                doc.setFillColor(108, 115, 76);
-                doc.rect(0, 0, doc.internal.pageSize.getWidth(), 8, 'F');
-                const today = new Date();
-                const dateStr = today.toLocaleDateString('en-US', { 
-                    year: 'numeric', month: 'long', day: 'numeric' 
-                }).toUpperCase();
-                doc.setFont('helvetica', 'normal');
-                doc.setFontSize(9);
-                doc.setTextColor(0, 0, 0);
-                doc.text(dateStr, data.settings.margin.left, 20, { charSpace: 1 });
-
-                // MODIFIED: Monogram size changed to 0.25x0.25 inches (18x18 points)
-                doc.addImage('monogram.jpg', 'JPG', doc.internal.pageSize.getWidth() - data.settings.margin.right - 6, 15, 7, 7);
-
-                // --- FOOTER ---
-                const pageHeight = doc.internal.pageSize.getHeight();
-                const pageWidth = doc.internal.pageSize.getWidth();
-                
-                // MODIFIED: Logotype size changed to 2.11x0.27 inches (151.92x19.44 points)
-                doc.addImage('logotype.jpg', 'JPG', data.settings.margin.left, pageHeight - 15, 49, 6.23);
-                
-                const footerTitle = "GUEST LIST";
-                doc.setFont('helvetica', 'normal');
-                doc.setFontSize(9);
-                doc.setTextColor(0, 0, 0);
-                doc.text(footerTitle, pageWidth / 2, pageHeight - 10, { 
-                    charSpace: 1, 
-                    align: 'center' 
-                });
-
-                const pageNumStr = String(data.pageNumber);
-                doc.setFont('helvetica', 'normal');
-                doc.setFontSize(9);
-                doc.text(pageNumStr, pageWidth - data.settings.margin.right, pageHeight - 10, { align: 'right' });
-            },
-            
-            theme: 'plain',
-            styles: { font: 'times', fontSize: 9 },
-            headStyles: { font: 'helvetica', fontStyle: 'normal', textColor: [0, 0, 0], fontSize: 8 },
-            bodyStyles: { cellPadding: { top: 3, bottom: 3 } },
-            didDrawCell: function(data) {
-                if (data.section === 'body') {
-                    doc.setDrawColor(220, 220, 220);
-                    doc.line(data.cell.x, data.cell.y + data.cell.height, data.cell.x + data.cell.width, data.cell.y + data.cell.height);
-                }
-            }
-        });
-
-        const fileName = `EmmaAndEthan_GuestList_${useMasterList ? 'Master' : 'Filtered'}.pdf`;
-        doc.save(fileName);
     }
     
     // --- Assignee Input & Drag/Drop & Filter Logic (Helper functions) ---
