@@ -1,0 +1,93 @@
+/* Core Styles */
+:root {
+    --color-background-light: #fafafa;
+    --color-primary-blue: #8b9fb9;
+    --color-primary-green: #727a4d;
+    --color-text-dark: #212121;
+    --color-error: #dc3545;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: var(--color-background-light);
+    color: var(--color-text-dark);
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.auth-container {
+    width: 100%;
+    max-width: 400px;
+    padding: 2rem;
+}
+
+.auth-card {
+    background-color: white;
+    padding: 2.5rem;
+    border-radius: 10px;
+    border: 1px solid #e6e6e6;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+}
+
+.auth-card h2 {
+    font-family: 'Inria Serif', serif;
+    font-size: 2rem;
+    color: var(--color-primary-blue);
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+}
+
+.auth-card p {
+    text-align: center;
+    color: #777;
+    margin-bottom: 2rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-family: 'Roboto', sans-serif;
+    font-size: 1rem;
+    box-sizing: border-box;
+}
+
+.auth-button {
+    width: 100%;
+    padding: 0.85rem;
+    background-color: var(--color-primary-green);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.auth-button:hover {
+    background-color: #555b37;
+}
+
+.error-message {
+    color: var(--color-error);
+    margin-top: 1rem;
+    text-align: center;
+    font-size: 0.9rem;
+    display: none; /* Hidden by default */
+}

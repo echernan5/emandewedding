@@ -1,0 +1,841 @@
+/* Core Styles */
+:root {
+    --color-background-light: #fafafa;
+    --color-secondary-light: #d8e2ef;
+    --color-primary-blue: #8b9fb9;
+    --color-primary-green: #727a4d;
+    --color-accent-gold: #bcbdb5;
+    --color-text-dark: #212121;
+    --color-card-border: #e6e6e6;
+    --sidebar-width: 100px;
+}
+
+body {
+    font-family: 'Inria Serif', serif;
+    background-color: var(--color-background-light);
+    color: var(--color-text-dark);
+    margin: 0;
+}
+
+.roboto {
+    font-family: "Roboto", sans-serif;
+    font-weight: 500;
+}
+
+.page-content-wrapper {
+    margin-left: var(--sidebar-width);
+    width: calc(100% - var(--sidebar-width));
+    transition: margin-left 0.3s ease, width 0.3s ease;
+}
+
+.members-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2.5rem;
+}
+
+.info-card {
+    background-color: white;
+    padding: 1.5rem;
+    border-radius: 10px;
+    border: 1px solid var(--color-card-border);
+}
+
+.card-heading {
+    font-family: 'Inria Serif', serif;
+    font-size: 1.5rem;
+    color: var(--color-primary-blue);
+    margin: 0;
+}
+
+/* Sidebar */
+.sidebar {
+    position: fixed; top: 0; left: 0; height: 100%;
+    background-color: white; border-right: 1px solid #e6e6e6;
+    display: flex; flex-direction: column; justify-content: space-between;
+    width: var(--sidebar-width); box-sizing: border-box; z-index: 1000;
+    padding: 1.5rem 0; align-items: center;
+}
+.sidebar-logo-img {
+    width: 100%; max-width: 45px; display: block;
+    margin: 0 auto 2rem auto; border-bottom: 1px solid #e6e6e6;
+    padding-bottom: 2rem;
+}
+.sidebar-menu {
+    list-style: none; padding: 0; margin: 0;
+    display: flex; flex-direction: column; gap: 0.5rem;
+}
+.menu-link {
+    display: flex; align-items: center; justify-content: center;
+    padding: 0.75rem 1rem; border-radius: 10px;
+    color: var(--color-primary-blue); text-decoration: none;
+    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+}
+.menu-link:hover { background-color: var(--color-primary-green); color: white; }
+.menu-link .material-icons-round { font-size: 28px; }
+.sidebar-footer { padding-top: 1rem; border-top: 1px solid #e6e6e6; }
+.logout-link { margin-top: 1rem; width: 100%; box-sizing: border-box; }
+
+/* Vendor Dashboard Layout */
+.vendor-dashboard-grid {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 2.5rem;
+    align-items: start;
+}
+.vendor-dashboard-sidebar {
+    top: 2.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* Summary Dashboard Styles */
+.summary-title {
+    font-family: 'Inria Serif', serif; font-size: 1.2rem;
+    color: var(--color-text-dark); margin: 0 0 1.5rem 0;
+}
+.progress-ring {
+    position: relative; display: flex; align-items: center;
+    justify-content: center; margin: 0 auto 1.5rem auto;
+}
+.progress-ring__svg { transform: rotate(-90deg); }
+.progress-ring__circle { transition: stroke-dashoffset 0.5s ease-in-out; }
+.progress-ring__text {
+    position: absolute; display: flex; flex-direction: column;
+    align-items: center; line-height: 1.2;
+}
+.progress-ring__number {
+    font-family: 'Inria Serif', serif; font-size: 2rem;
+    font-weight: bold; color: var(--color-primary-green);
+}
+.progress-ring__label {
+    font-family: 'Roboto', sans-serif; font-size: 0.8rem;
+    color: #777; text-transform: uppercase;
+}
+.summary-stats {
+    display: flex; justify-content: space-around; text-align: center;
+    border-top: 1px solid #e6e6e6; padding-top: 1rem;
+}
+.stat-item { font-family: 'Roboto', sans-serif; color: #555; font-size: 0.9rem; }
+.stat-item span { display: block; font-weight: bold; font-size: 1.2rem; }
+.upcoming-payments-list {
+    list-style: none; padding: 0; margin: 0;
+    display: flex; flex-direction: column; gap: 1rem;
+}
+.upcoming-payments-list li {
+    display: grid; grid-template-columns: 1fr auto;
+    grid-template-areas: "vendor amount" "date amount";
+    font-family: 'Roboto', sans-serif; font-size: 0.9rem;
+}
+.payment-date { grid-area: date; font-size: 0.8rem; color: #777; }
+.payment-vendor { grid-area: vendor; font-weight: bold; color: var(--color-text-dark); }
+.payment-amount { grid-area: amount; font-weight: bold; color: var(--color-primary-green); }
+
+/* Vendor Checklist */
+/* Vendor Checklist */
+.checklist-card { 
+    margin-bottom: 2.5rem; 
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 1rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid var(--color-card-border);
+}
+
+.checklist-header {
+    display: grid;
+    grid-template-columns: 150px 1fr;
+    gap: 1.5rem;
+    padding: 0 1rem;
+    font-family: 'Roboto', sans-serif;
+    font-size: 0.7rem;
+    font-weight: bold;
+    color: #777;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.5rem;
+}
+
+/* DEFINITIVE Header and Milestone Alignment */
+/* DEFINITIVE Header and Milestone Alignment */
+.header-statuses {
+    position: relative;
+    height: 20px;
+}
+
+.milestone-dots {
+    z-index: 1;
+    display: flex;
+    width: calc(100% - 16px);
+    margin: 0 8px;
+}
+
+.header-statuses span,
+.milestone-dot {
+    position: absolute; /* Positions each item individually */
+    top: 50%;
+    transform: translate(-50%, -50%); /* Centers the item on its 'left' coordinate */
+}
+
+/* Position each header label */
+.header-statuses span:nth-child(1) { left: 33%; }
+.header-statuses span:nth-child(2) { left: 66%; }
+.header-statuses span:nth-child(3) { left: 100%; }
+
+/* Position each milestone dot */
+.milestone-dot:nth-child(1) { left: 33%; }
+.milestone-dot:nth-child(2) { left: 66%; }
+.milestone-dot:nth-child(3) { left: 100%; }
+
+/* General Checklist Styles */
+.vendor-checklist {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.checklist-item {
+    display: grid;
+    grid-template-columns: 150px 1fr;
+    gap: 1.5rem;
+    align-items: center;
+    padding: 0.75rem 1rem;
+}
+
+.checklist-category {
+    font-family: 'Inria Serif', serif;
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: var(--color-text-dark);
+}
+
+.milestone-tracker {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.milestone-line {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 6px;
+    background-color: var(--color-card-border);
+    border-radius: 3px;
+    transform: translateY(-50%);
+}
+
+.milestone-line-progress {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    height: 6px;
+    background-color: var(--color-primary-blue);
+    border-radius: 3px;
+    transform: translateY(-50%);
+    width: 0;
+    transition: width 0.4s ease-in-out;
+}
+
+.milestone-dot {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background-color: white;
+    border: 3px solid var(--color-card-border);
+    transition: border-color 0.4s ease;
+    z-index: 1; /* Ensures dots are on top of the line */
+}
+
+.milestone-dot.active {
+    border-color: var(--color-primary-blue);
+}
+
+.milestone-dot.complete {
+    border-color: var(--color-primary-green);
+}
+
+/* --- NEW: Tabbed Interface Styles --- */
+.tabs-header {
+    display: flex;
+    justify-content: flex-start;
+    border-bottom: 2px solid var(--color-card-border);
+    margin-bottom: 1.5rem;
+}
+
+.tab-button {
+    background: none;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    font-family: 'Roboto', sans-serif;
+    font-size: 1rem;
+    font-weight: bold;
+    color: #999;
+    cursor: pointer;
+    transition: color 0.3s ease;
+    position: relative;
+    top: 2px;
+}
+
+.tab-button.active {
+    color: var(--color-primary-green);
+    border-bottom: 2px solid var(--color-primary-green);
+}
+
+.tab-button:hover:not(.active) {
+    color: var(--color-primary-blue);
+}
+
+/* --- NEW: Accordion Styles for Prospective Vendors --- */
+.vendor-accordion {
+    width: 100%;
+}
+
+.accordion-item {
+    border-bottom: 1px solid var(--color-card-border);
+}
+
+.accordion-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    cursor: pointer;
+    background-color: transparent;
+    transition: background-color 0.2s ease;
+    font-family: 'Inria Serif', serif;
+    font-size: 1.25rem;
+    color: var(--color-text-dark);
+}
+
+.accordion-header:hover {
+    background-color: #f9f9f9;
+}
+
+/* New CSS for the wrapper */
+.accordion-header .category-and-count {
+    display: flex; /* Make the new container a flexbox */
+    align-items: center; /* Align items vertically */
+    gap: 0.5rem; /* Add a small gap between the category and count */
+}
+
+.accordion-header .category-name {
+    font-weight: bold;
+    color: var(--color-primary-blue);
+}
+
+.accordion-header .vendor-count {
+    font-family: 'Roboto', sans-serif;
+    font-size: 0.9rem;
+    font-weight: normal;
+    color: #999;
+}
+
+.accordion-header .material-icons-round {
+    transition: transform 0.3s ease;
+}
+
+.accordion-item.open .accordion-header .material-icons-round {
+    transform: rotate(180deg);
+}
+
+.vendor-management .section-header {
+    margin: 0px;
+}
+
+.accordion-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-in-out;
+    padding: 0 1.5rem; /* Add padding to match the header */
+}
+
+.accordion-body.open {
+    max-height: 5000px; /* A large value to allow for dynamic content */
+    padding: 1.5rem; /* Add top/bottom padding when open */
+}
+
+/* --- NEW: Prospective Vendor Card Styles --- */
+.prospective-vendor-card {
+    display: block;
+    grid-template-columns: 80px 1fr;
+    gap: 1.5rem;
+    padding: 1rem;
+    border: 1px solid var(--color-card-border);
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    background-color: white;
+    width: 100%;
+}
+
+.prospective-vendor-card .vendor-image {
+    width: 80px;
+    height: 80px;
+    border-radius: 5px;
+    object-fit: cover;
+    background-color: var(--color-secondary-light);
+}
+
+.prospective-vendor-card .vendor-details {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.prospective-vendor-card .vendor-details h4 {
+    font-family: 'Inria Serif', serif;
+    font-size: 1.2rem;
+    color: var(--color-primary-green);
+    margin: 0 0 0.25rem 0;
+}
+
+.prospective-vendor-card .vendor-details p {
+    font-family: 'Roboto', sans-serif;
+    font-size: 0.9rem;
+    color: #555;
+    margin: 0.25rem 0;
+}
+
+.prospective-vendor-card .card-actions {
+    margin-top: 1rem;
+    display: flex;
+    gap: 0.5rem;
+}
+
+.prospective-vendor-card .card-actions button {
+    background-color: var(--color-primary-blue);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    font-family: 'Roboto', sans-serif;
+    font-size: 0.9rem;
+    transition: background-color 0.2s ease;
+}
+
+.prospective-vendor-card .card-actions button:hover {
+    background-color: #7286a1;
+}
+
+/* Ensure the booked vendors container uses a single-column layout */
+#booked-vendors-container {
+    display: block; /* Reverts to the default block-level display */
+}
+
+/* --- NEW: Grid Layout for PROSPECTIVE Vendor Cards --- */
+.vendor-accordion .accordion-body {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* Creates 3 equal-width columns */
+    gap: 1.5rem; /* Adds space between the cards */
+}
+
+.prospective-vendor-card .vendor-placeholder {
+    width: 80px;
+    height: 80px;
+    border-radius: 5px;
+    background-color: var(--color-secondary-light); /* Or any color you prefer */
+}
+
+/* Base styles for the "No Vendors" message */
+.no-vendors-message {
+    padding: 1rem;
+    text-align: center;
+    color: #777;
+    font-family: 'Roboto', sans-serif;
+    font-style: italic;
+}
+
+/* --- NEW: Modal Styles for a Two-Mode System --- */
+
+/* Modal Overlays (already mostly correct) */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.modal-overlay.is-visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Modal Containers */
+.modal-container {
+    background-color: var(--color-background-light);
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    position: relative;
+    max-width: 650px; /* Wider for better organization */
+    width: 90%;
+    transform: translateY(20px);
+    transition: transform 0.3s ease;
+    overflow-y: auto;
+    max-height: 90vh;
+}
+
+.modal-overlay.is-visible .modal-container {
+    transform: translateY(0);
+}
+
+.close-modal-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.5em;
+    color: #999;
+    padding: 5px;
+    border-radius: 50%;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.close-modal-btn:hover {
+    background-color: #f0f0f0;
+    color: #333;
+}
+
+/* --- View Mode (Read-Only) Styling --- */
+#vendor-view-mode {
+    display: block;
+}
+
+#vendor-view-mode .modal-header h3 {
+    margin: 0;
+    font-size: 2em;
+    font-weight: 600;
+}
+
+.vendor-details-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.detail-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.detail-group.full-width {
+    grid-column: 1 / -1;
+}
+
+.detail-label {
+    font-weight: 600;
+    color: #666;
+    text-transform: uppercase;
+    font-size: 0.85em;
+    letter-spacing: 0.5px;
+    margin-bottom: 5px;
+}
+
+#vendor-view-mode p,
+#vendor-view-mode a,
+#vendor-view-mode span {
+    font-size: 1.1em;
+    color: #333;
+    word-wrap: break-word;
+}
+
+/* --- Edit Mode Styling --- */
+#edit-vendor-form.hidden {
+    display: none;
+}
+
+.modal-header {
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--color-card-border);
+}
+
+.modal-header h3 {
+    margin: 0;
+    font-size: 1.8em;
+    color: var(--color-text-dark);
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: var(--color-text-dark);
+    font-size: 0.95em;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--color-card-border);
+    border-radius: 8px;
+    font-size: 1em;
+    color: var(--color-text-dark);
+    background-color: white;
+    box-sizing: border-box;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    border-color: var(--color-primary-green);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(114, 122, 77, 0.2);
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.submit-btn, .action-btn {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.submit-btn {
+    background-color: var(--color-primary-green);
+    color: #fff;
+}
+
+.submit-btn:hover {
+    background-color: #5d613e;
+}
+
+.cancel-btn {
+    background-color: #f0f0f0;
+    color: #333;
+}
+
+.cancel-btn:hover {
+    background-color: #e0e0e0;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* NEW: Customizations for Book Now Modal */
+#bookVendorModalOverlay .modal-container {
+    max-width: 450px;
+}
+
+/* Vendor Contact Modal Specifics */
+.vendor-contact-modal {
+    width: 90%;
+    max-width: 900px; /* Adjust as needed */
+    padding: 2.5rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto 1fr auto;
+    gap: 2rem;
+    grid-template-areas:
+        "header header"
+        "main-left main-right"
+        "footer footer";
+}
+
+.modal-header {
+    grid-area: header;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 1.5rem;
+}
+
+.modal-title-wrapper {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    align-items: baseline;
+}
+
+.modal-title-wrapper .vendor-name-title {
+    font-family: 'Kapakana', serif;
+    font-size: 2rem;
+    font-weight: 300;
+    color: var(--color-text-dark);
+}
+
+.quote-info {
+    font-family: 'Inria Serif', serif;
+    font-size: 1.25rem;
+    font-style: italic;
+    color: var(--color-text-dark);
+    font-weight: 400;
+}
+
+.modal-body {
+    grid-area: main-left;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.contact-info-section, .files-section {
+    border-bottom: 1px solid #e6e6e6;
+    padding-bottom: 1rem;
+}
+
+.vendor-contact-modal h3 {
+    font-family: 'Inria Serif', serif;
+    font-weight: 700;
+    font-size: 1.25rem;
+    color: var(--color-primary-green);
+    margin-bottom: 1rem;
+}
+
+.info-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.info-item {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 45%;
+}
+
+.info-item.full-width {
+    flex: 1 1 100%;
+}
+
+.info-item label {
+    font-family: 'Roboto', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: #999;
+    text-transform: uppercase;
+    margin-bottom: 0.25rem;
+}
+
+.info-item p, .info-item a {
+    font-family: 'Inria Serif', serif;
+    font-size: 1rem;
+    color: var(--color-text-dark);
+    line-height: 1.5;
+}
+
+.file-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.file-list li {
+    font-family: 'Inria Serif', serif;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+/* Right side content */
+.notes-section, .appointments-section, .payments-section {
+    grid-area: main-right;
+}
+
+.appointments-table, .payments-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'Roboto', sans-serif;
+    font-size: 0.9rem;
+    color: var(--color-text-dark);
+}
+
+.appointments-table th, .payments-table th {
+    text-align: left;
+    font-weight: 500;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #e6e6e6;
+}
+
+.appointments-table td, .payments-table td {
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+/* Modal Footer & Buttons */
+.modal-footer {
+    grid-area: footer;
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e6e6e6;
+}
+
+.edit-btn {
+    background: #f0f0f0;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: background-color 0.2s ease;
+}
+
+.edit-btn:hover {
+    background-color: #e6e6e6;
+}
+
+.edit-btn .material-icons-round {
+    font-size: 20px;
+}
+
+/* State changes (for JavaScript) */
+.hidden {
+    display: none !important;
+}
+
+.modal-body.edit-mode .view-mode-content {
+    display: none;
+}
+
+.modal-body.edit-mode .edit-mode-content {
+    display: block; /* or flex, or grid */
+}

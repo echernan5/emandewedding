@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vendors - Emma & Ethan</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='vendors.css') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.14/index.global.min.js'></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.14/main.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inria+Serif:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Kapakana:wght@300..400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+
+    <script>
+        // These will be populated by your backend framework (e.g., Flask)
+        const SUPABASE_URL = "{{ supabase_url }}";
+        const SUPABASE_ANON_KEY = "{{ supabase_anon_key }}";
+    </script>
+</head>
+<body>
+
+    <nav class="sidebar">
+        <div class="sidebar-top">
+            <img src="{{ url_for('static', filename='Content/monogramcopy.jpg') }}" alt="Emma & Ethan Wedding Logo" class="sidebar-logo-img">
+            <ul class="sidebar-menu">
+                <li class="menu-item"><a href="/members_only" class="menu-link"><span class="material-icons-round">home</span></a></li>
+                <li class="menu-item"><a href="/guests" class="menu-link"><span class="material-icons-round">groups</span></a></li>
+                <li class="menu-item"><a href="/vendors" class="menu-link"><span class="material-icons-round">handshake</span></a></li>
+                <li class="menu-item"><a href="/budget" class="menu-link"><span class="material-icons-round">request_quote</span></a></li>
+                <li class="menu-item"><a href="/logistics" class="menu-link"><span class="material-icons-round">assignment</span></a></li>
+            </ul>
+        </div>
+        <div class="sidebar-footer">
+            <a href="#" class="menu-link logout-link"><span class="material-icons-round">logout</span></a>
+        </div>
+    </nav>
+
+    <div class="page-content-wrapper">
+        <main class="members-container">
+            <div class="vendor-dashboard-grid">
+                <aside class="vendor-dashboard-sidebar">
+                    <div class="info-card summary-card">
+                        <h3 class="summary-title">Progress Overview</h3>
+                        <div class="progress-ring">
+                            <svg class="progress-ring__svg" width="120" height="120">
+                                <circle class="progress-ring__circle-bg" stroke="#e6e6e6" stroke-width="8" fill="transparent" r="52" cx="60" cy="60"/>
+                                <circle class="progress-ring__circle" stroke="var(--color-primary-green)" stroke-width="8" fill="transparent" r="52" cx="60" cy="60"/>
+                            </svg>
+                            <div class="progress-ring__text">
+                                <span class="progress-ring__number">0</span>
+                                <span class="progress-ring__label">Booked</span>
+                            </div>
+                        </div>
+                        <div class="summary-stats"></div>
+                    </div>
+                    <div class="info-card upcoming-payments-card">
+                        <h3 class="summary-title">Upcoming Payments</h3>
+                        <ul class="upcoming-payments-list"></ul>
+                    </div>
+                </aside>
+
+                <div class="vendor-main-content">
+                    <section class="info-card checklist-card">
+                        <div class="section-header">
+                            <h2 class="card-heading">Your Vendor Checklist</h2>
+                        </div>
+                        <div class="checklist-header">
+                            <div class="header-category">CATEGORY</div>
+                            <div class="header-statuses">
+                                <span>Researching</span>
+                                <span>Booked</span>
+                                <span>Paid</span>
+                            </div>
+                        </div>
+                        <ul class="vendor-checklist" id="vendor-checklist"></ul>
+                    </section>
+
+                    <section class="vendor-management">
+                        <div class="tabs-header">
+                            <button class="tab-button active" data-tab="booked">Booked Vendors</button>
+                            <button class="tab-button" data-tab="prospective">Prospective Vendors</button>
+                        </div>
+                        <div class="section-header">
+                            <h2 class="card-heading" id="vendor-section-title">Booked Vendors</h2>
+                            <button class="action-btn" id="add-vendor-btn">
+                                <span class="material-icons-round">add</span>
+                                Add Prospective Vendor
+                            </button>
+                        </div>
+                        <div id="tab-content-container">
+                            </div>
+                    </section>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div class="modal-overlay" id="addVendorModalOverlay">
+        <div class="modal" id="addVendorModal">
+            <div class="modal-header">
+                <h2 class="modal-title">Add a Vendor to Research</h2>
+                <button class="modal-close-btn" id="addVendorModalCloseBtn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="add-vendor-form">
+                    <div class="form-group"><label for="vendor-category">Category</label><select id="vendor-category" name="vendor-category" required><option value="" disabled selected>Select...</option></select></div>
+                    <div class="form-group"><label for="vendor-name">Vendor Name</label><input type="text" id="vendor-name" name="vendor-name" required></div>
+                    <div class="form-group"><label for="vendor-website">Website (Optional)</label><input type="url" id="vendor-website" name="vendor-website"></div>
+                    <div class="modal-actions"><button type="submit" class="modal-button-primary">Save Vendor</button></div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="vendorDetailModalOverlay">
+        <div class="modal vendor-contact-modal" id="vendorDetailModal">
+            <div class="modal-header">
+                <div class="modal-title-wrapper">
+                    <h2 class="modal-title vendor-name-title" id="view-vendor-name"></h2>
+                    <div class="quote-info">Quote: <span class="quote-value" id="view-vendor-quote"></span></div>
+                </div>
+                <button class="modal-close-btn" id="vendorDetailModalCloseBtn">&times;</button>
+            </div>
+
+            <div class="modal-body">
+                <div id="view-mode-content">
+                    <div class="contact-info-section">
+                        <h3>Contact Info</h3>
+                        <div class="info-group">
+                            <div class="info-item"><label>CONTACT NAME</label><p id="view-contact-name"></p></div>
+                            <div class="info-item"><label>PHONE NUMBER</label><p id="view-phone"></p></div>
+                        </div>
+                        <div class="info-group">
+                            <div class="info-item full-width"><label>EMAIL</label><p id="view-email"></p></div>
+                        </div>
+                        <div class="info-group">
+                            <div class="info-item full-width"><label>WEBSITE</label><p><a id="view-website" href="#" target="_blank"></a></p></div>
+                        </div>
+                    </div>
+                    <div class="files-section">
+                        <h3>Files</h3>
+                        <ul class="file-list" id="view-file-list"></ul>
+                    </div>
+                    <div class="notes-section">
+                        <h3>Notes</h3>
+                        <p class="notes-content" id="view-notes"></p>
+                    </div>
+                    <div class="appointments-section">
+                        <h3>Upcoming Appointments</h3>
+                        <table class="appointments-table">
+                            <thead><tr><th>DATE & TIME</th><th>DESCRIPTION</th></tr></thead>
+                            <tbody id="view-appointments-body"></tbody>
+                        </table>
+                    </div>
+                    <div class="payments-section">
+                        <h3>Payment Schedule</h3>
+                        <table class="payments-table">
+                            <thead><tr><th>AMOUNT</th><th>DUE</th><th>DESCRIPTION</th></tr></thead>
+                            <tbody id="view-payments-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="edit-mode-content" class="hidden">
+                    <form id="edit-vendor-form">
+                        <input type="hidden" id="edit-vendor-id">
+                        <div class="form-grid">
+                            <div class="form-group"><label for="edit-vendor-name">Vendor Name</label><input type="text" id="edit-vendor-name" required></div>
+                            <div class="form-group"><label for="edit-vendor-category">Category</label><select id="edit-vendor-category" required></select></div>
+                            <div class="form-group"><label for="edit-vendor-contact-name">Contact Name</label><input type="text" id="edit-vendor-contact-name"></div>
+                            <div class="form-group"><label for="edit-vendor-phone">Phone</label><input type="tel" id="edit-vendor-phone"></div>
+                            <div class="form-group full-width"><label for="edit-vendor-email">Email</label><input type="email" id="edit-vendor-email"></div>
+                            <div class="form-group full-width"><label for="edit-vendor-website">Website</label><input type="url" id="edit-vendor-website"></div>
+                            <div class="form-group"><label for="edit-vendor-quote">Quote ($)</label><input type="number" id="edit-vendor-quote" placeholder="e.g., 5000"></div>
+                            <div class="form-group"><label for="edit-vendor-status">Status</label><select id="edit-vendor-status"><option value="researching">Researching</option><option value="booked">Booked</option><option value="paid">Paid</option></select></div>
+                            <div class="form-group full-width"><label for="edit-vendor-notes">Notes</label><textarea id="edit-vendor-notes" rows="4"></textarea></div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="action-btn book-btn hidden" id="book-vendor-btn">Book This Vendor</button>
+                <button class="edit-btn" id="edit-vendor-btn"><span class="material-icons-round">edit</span></button>
+                <div class="edit-actions hidden">
+                    <button class="modal-button-secondary" id="cancel-edit-btn">Cancel</button>
+                    <button class="modal-button-primary" type="submit" form="edit-vendor-form">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="{{ url_for('static', filename='vendors.js') }}"></script>
+</body>
+</html>
