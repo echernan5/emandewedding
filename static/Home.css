@@ -1,3 +1,53 @@
+/* FONTS */
+@font-face {
+  font-family: 'DarlineScript';
+  src: url('/static/fonts/WOFF/DarlineScript-Aged.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'DarlineScript';
+  src: url('/static/fonts/WOFF/DarlineScript-AgedSlanted.woff') format('woff');
+  font-weight: normal;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'DarlineScript';
+  src: url('/static/fonts/WOFF/DarlineScript-Regular.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'DarlineScript';
+  src: url('/static/fonts/WOFF/DarlineScript-Slanted.woff') format('woff');
+  font-weight: normal;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'DarlineSerif';
+  src: url('/static/fonts/WOFF/DarlineSerif-Bold.woff') format('woff');
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'DarlineSerif';
+  src: url('/static/fonts/WOFF/DarlineSerif-Light.woff') format('woff');
+  font-weight: 300; /* Light */
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'DarlineSerif';
+  src: url('/static/fonts/WOFF/DarlineSerif-Regular.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
 /* Hide mobile-specific content on desktop */
 .mobile-only {
   display: none;
@@ -143,49 +193,6 @@ body.modal-active {
 }
 
 /* General Styles */
-
-/* Fonts */
-.kapakana-regular {
-    font-family: "Kapakana", cursive;
-    font-optical-sizing: auto;
-    font-weight: 400;
-    font-style: normal;
-  }
-  .inria-serif-light {
-    font-family: "Inria Serif", serif;
-    font-weight: 300;
-    font-style: normal;
-  }
-  
-  .inria-serif-regular {
-    font-family: "Inria Serif", serif;
-    font-weight: 400;
-    font-style: normal;
-  }
-  
-  .inria-serif-bold {
-    font-family: "Inria Serif", serif;
-    font-weight: 700;
-    font-style: normal;
-  }
-  
-  .inria-serif-light-italic {
-    font-family: "Inria Serif", serif;
-    font-weight: 300;
-    font-style: italic;
-  }
-  
-  .inria-serif-regular-italic {
-    font-family: "Inria Serif", serif;
-    font-weight: 400;
-    font-style: italic;
-  }
-  
-  .inria-serif-bold-italic {
-    font-family: "Inria Serif", serif;
-    font-weight: 700;
-    font-style: italic;
-  }
   
   /* Universal Styles */
   * {
@@ -201,7 +208,7 @@ body.modal-active {
   .body {
     padding: 0;
     margin: 0;
-    max-width: 100vw;
+    max-width: 100%;
     overflow-x: hidden;
   }
   
@@ -309,14 +316,14 @@ body.modal-active {
   }
   
   .line-1, .line-3 {
-    font-family: "Inria Serif", serif;
+    font-family: "DarlineSerif", serif;
     text-transform: uppercase;
     font-style: italic;
     font-weight: normal;
   }
   
   .line-2, .line-4 {
-    font-family: "Kapakana", cursive;
+    font-family: "DarlineScript", cursive;
     font-weight: normal;
   }
   
@@ -362,7 +369,7 @@ body.modal-active {
     top: 50px;
     left: 50%;
     transform: translateX(-50%);
-    font-family: "Inria Serif", serif;
+    font-family: "DarlineSerif", serif;
     text-transform: uppercase;
     font-style: italic;
     letter-spacing: 0.2rem;
@@ -409,7 +416,7 @@ body.modal-active {
   
   /* Styles for the headline and body text */
   .intro-heading {
-    font-family: "Kapakana", cursive;
+    font-family: "DarlineScript", cursive;
     font-size: 3rem;
     line-height: 1.2;
     color: #727a4d;
@@ -417,7 +424,7 @@ body.modal-active {
   }
   
   .intro-body, .event-details {
-    font-family: "Inria Serif", serif;
+    font-family: "DarlineSerif", serif;
     font-size: 1rem;
     line-height: 1.5;
     color: #555;
@@ -439,7 +446,7 @@ body.modal-active {
   
   /* Styling for the "Details" label */
   .section-label {
-    font-family: "Inria Serif", serif;
+    font-family: "DarlineSerif", serif;
     text-transform: uppercase;
     font-style: italic;
     letter-spacing: 0.2rem;
@@ -473,7 +480,7 @@ body.modal-active {
     padding-right: 0rem;
     padding-left: 0rem;
     cursor: pointer;
-    font-family: "Kapakana", cursive;
+    font-family: "DarlineScript", cursive;
     font-size: 2.5rem;
     color: #212121;
     text-align: left;
@@ -499,7 +506,7 @@ body.modal-active {
     transition: max-height 0.4s ease-in-out, padding 0.4s ease-in-out; /* Animates the max-height property */
     padding: 0 0; /* Adjust padding for the closed state */
     text-align: left;
-    font-family: "Inria Serif", serif;
+    font-family: "DarlineSerif", serif;
     color: #212121;
  }
   
@@ -551,7 +558,7 @@ body.modal-active {
     top: 50px;
     left: 50%;
     transform: translateX(-50%);
-    font-family: "Inria Serif", serif;
+    font-family: "DarlineSerif", serif;
     text-transform: uppercase;
     font-style: italic;
     letter-spacing: 0.2rem;
@@ -585,7 +592,7 @@ body.modal-active {
   }
 
   .intro-quote {
-    font-family: "Kapakana", cursive;
+    font-family: "DarlineScript", cursive;
     font-size: 3rem;
     font-weight: 400;
     line-height: 1.2;
@@ -594,7 +601,7 @@ body.modal-active {
   }
   
   .intro-quote .pre-quote {
-    font-family: "Inria Serif", serif; /* This font overrides the Great Vibes font for just "They say" */
+    font-family: "DarlineSerif", serif; /* This font overrides the Great Vibes font for just "They say" */
     font-size: 2.2rem; /* Adjusted font size for better visual balance */
     font-style: normal;
   }
@@ -692,7 +699,7 @@ body.modal-active {
 }
 
 .timeline-event-name {
-  font-family: "Kapakana", cursive;
+  font-family: "DarlineScript", cursive;
   font-size: 2.2rem;
   font-weight: 400;
   line-height: 1.2;
@@ -740,7 +747,7 @@ body.modal-active {
 
 /* The label at the top of the section */
 .section-label {
-  font-family: "Inria Serif", serif;
+  font-family: "DarlineSerif", serif;
   text-transform: uppercase;
   font-style: italic;
   font-weight: 300;
@@ -768,7 +775,7 @@ body.modal-active {
 
 /* Styles for the registry heading */
 .registry-heading {
-  font-family: "Inria Serif", serif;
+  font-family: "DarlineSerif", serif;
   font-weight: 400;
   font-size: 3rem;
   line-height: 1.2;
@@ -778,7 +785,7 @@ body.modal-active {
 
 /* Styles for the registry body text */
 .registry-body {
-  font-family: "Inria Serif", serif;
+  font-family: "DarlineSerif", serif;
   font-weight: 300;
   font-size: 1.1rem;
   line-height: 1.6;
@@ -789,7 +796,7 @@ body.modal-active {
 
 /* Styles for the "Explore Registry" button/link */
 .registry-button {
-  font-family: "Inria Serif", serif;
+  font-family: "DarlineSerif", serif;
   text-transform: uppercase;
   font-style: italic;
   font-weight: 400;
@@ -848,7 +855,7 @@ body.modal-active {
 
 .return-to-top {
   /* Text and link styling */
-  font-family: "Inria Serif", serif; /* Use a font that matches your design */
+  font-family: "DarlineSerif", serif; /* Use a font that matches your design */
   font-size: 1.2rem;
   color: white;
   text-decoration: none; /* Removes the default underline */
@@ -901,7 +908,7 @@ body.modal-active {
   width: 100%;
   text-align: center;
   position: relative;
-  font-family: "Inria Serif", serif; /* Use a classy font */
+  font-family: "DarlineSerif", serif; /* Use a classy font */
 }
 
 .close-button {
@@ -920,7 +927,7 @@ body.modal-active {
 }
 
 .modal-title {
-  font-family: "Kapakana", cursive; /* Use your decorative font */
+  font-family: "DarlineScript", cursive; /* Use your decorative font */
   font-size: 2.5rem;
   color: #727a4d;
   margin-bottom: 1rem;
@@ -967,7 +974,7 @@ body.modal-active {
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  font-family: "Inria Serif", serif;
+  font-family: "DarlineSerif", serif;
   font-style: italic;
   font-size: 1.1rem;
   text-transform: uppercase;
@@ -986,4 +993,416 @@ body.modal-active {
   margin-top: 1rem;
   display: none; /* Hidden by default */
   font-weight: bold;
+}
+
+/* Using a more elegant, serif font for the main headings */
+.fade-in-text h1 {
+  font-family: 'DarlineScript', cursive; /* Using your script font for the main heading */
+}
+
+/* The main container for the scroll-triggered animations */
+.scroll-section {
+  position: relative;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto;
+}
+
+/* Each image panel serves as a background and a trigger for animations */
+.image-panel {
+  height: 100vh;
+  width: 100%;
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed; /* Creates a simple parallax effect */
+}
+
+/* The sticky container holds the text that will appear over the images */
+.text-container {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  pointer-events: none; /* Allows scrolling 'through' the text layer */
+}
+
+/* The text blocks that will fade in and out */
+.fade-in-text {
+  color: white;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+  max-width: 90%;
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 1.2s cubic-bezier(0.165, 0.84, 0.44, 1), transform 1.2s cubic-bezier(0.165, 0.84, 0.44, 1);
+  pointer-events: auto; /* Re-enable pointer events for the text itself */
+}
+
+/* The class that JavaScript will add to make the text visible */
+.fade-in-text.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ---- Map Section ---- */
+
+.map-section {
+  width: 100%;
+  max-width: 1050px; /* Set a max width for large screens */
+  margin: 50px auto; /* Center the map component */
+  padding: 0 20px; /* Adds some space on mobile */
+  box-sizing: border-box;
+  position: relative; /* Allows z-index to work */
+  z-index: 5;
+}
+
+/* ---- Map Section ---- */
+
+.map-container {
+  position: relative; 
+  /* That's it! No background-image, no padding-top, no height. */
+  /* The image inside will give it its size. */
+}
+
+/* This styles your new title */
+.map-title {
+  font-family: "DarlineScript", cursive; /* Or your preferred title font */
+  font-size: 3rem;
+  text-align: center;
+  color: #6587ab; /* Or your preferred color */
+  margin-bottom: 50px;
+  font-weight: 400;
+}
+
+/* This makes the map image responsive */
+.map-image {
+  width: 100%; /* Makes the image fill the .map-section width */
+  height: auto; /* Maintains the correct aspect ratio */
+  display: block; /* Fixes a small gap that can appear under images */
+}
+
+.map-marker {
+  /* This positions the marker *inside* the relative container */
+  position: absolute; 
+  z-index: 10;
+  
+  /* This centers the pin *on* the coordinate */
+  /* It shifts the pin left by 50% of its own width */
+  /* and up by 100% of its own height. */
+  transform: translate(-50%, -100%);
+  
+  /* Style the link itself */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.map-marker:hover {
+  transform: translate(-50%, -100%) scale(1.1); /* Slightly enlarge on hover */
+  z-index: 11; /* Bring to front on hover */
+}
+
+.map-marker img {
+  /* Set the size of your icon image */
+  width: 325px; 
+  /* This prevents the alt text from showing up as a broken box if the image is missing */
+  font-size: 0; 
+  color: transparent;
+}
+
+a#marker-hotel img {
+  max-width: 275px !important;
+}
+
+.map-marker span {
+  /* Style for the label */
+  display: block;
+  margin-top: 5px;
+  padding: 3px 8px;
+  background-color: rgba(255, 255, 255, 0.9);
+  color: #333;
+  font-family: Arial, sans-serif; /* Choose your site's font */
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  white-space: nowrap; /* Prevents "Welcome Party" from breaking into two lines */
+}
+
+/* --- Location Section --- */
+.location-section {
+  background-color: #f6f5f1; /* Light background */
+  padding: 80px 20px; /* Vertical padding, some horizontal for mobile */
+  text-align: center; /* Centers the "Location" label and the button */
+  position: relative; /* If any elements need absolute positioning within */
+  overflow: hidden; /* Ensures nothing spills out */
+}
+
+/* Reusing your existing section label style */
+.location-section .section-label {
+  font-family: "DarlineScript", cursive; /* Assuming 'Location' is in script font */
+  font-size: 3rem; /* Adjust as needed */
+  color: #a8a8a8; /* A light, subtle color for the label */
+  margin-bottom: 60px; /* Space below the label */
+  display: block; /* Ensure it takes its own line */
+}
+
+.location-content-container {
+  display: flex; /* Arranges children horizontally */
+  justify-content: center; /* Centers items if there's extra space */
+  align-items: center; /* Vertically aligns items in the middle */
+  gap: 3vw; /* Responsive gap between elements */
+  margin-bottom: 60px; /* Space above the button */
+  flex-wrap: wrap; /* Allows items to wrap on smaller screens */
+  max-width: 1200px; /* Max width for the content row */
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.location-info-left,
+.location-info-right {
+  flex-basis: 25%; /* Give left/right columns a base width */
+  min-width: 150px; /* Ensure they don't get too small */
+  text-align: center; /* Align text within their boxes */
+  padding: 0 10px;
+}
+
+.location-link {
+  font-family: "DarlineSerif", serif; /* Use your preferred serif font */
+  font-weight: 500; /* Medium weight */
+  font-size: 1.6rem; /* Adjust size as needed */
+  color: #7a8293; /* A soft blue color */
+  text-decoration: none; /* Remove default underline */
+  border-bottom: 1px solid #7a8293; /* Subtle underline */
+  padding-bottom: 3px; /* Space between text and underline */
+  display: inline-block; /* Allows padding and bottom border to work */
+  line-height: 1.3; /* Adjust line height for multiline text */
+  transition: color 0.3s ease, border-color 0.3s ease;
+}
+
+.location-link:hover {
+  color: #5d6675; /* Darken on hover */
+  border-color: #5d6675;
+}
+
+.location-illustration-container {
+  flex-shrink: 0; /* Prevents the illustration from shrinking too much */
+  max-width: 400px; /* Max width for the illustration */
+  width: 100%; /* Becomes 100% of available space up to max-width */
+  text-align: center; /* Ensures image is centered within its flex item */
+}
+
+.location-illustration {
+  max-width: 100%; /* Ensures image fits within its container */
+  height: auto; /* Maintains aspect ratio */
+  display: block; /* Removes extra space below image */
+  margin: 0 auto; /* Centers the image if container is wider */
+}
+
+.travel-stay-button {
+  display: inline-block; /* Allows padding and sizing */
+  padding: 15px 35px;
+  background-color: #9aacc4; /* Match your navbar scrolled color or another brand color */
+  color: white;
+  font-family: "DarlineSerif", serif; /* Consistent button font */
+  font-weight: 400;
+  font-style: italic;
+  font-size: 1.1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  text-decoration: none;
+  border-radius: 5px; /* Slightly rounded corners */
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.travel-stay-button:hover {
+  background-color: #7a8293; /* Darker blue on hover */
+  transform: translateY(-2px); /* Slight lift effect */
+}
+
+
+/* --- Responsive Adjustments --- */
+@media (max-width: 768px) {
+  .location-section {
+    padding: 60px 15px; /* Less padding on smaller screens */
+  }
+
+  .location-section .section-label {
+    font-size: 2.5rem;
+    margin-bottom: 40px;
+  }
+
+  .location-content-container {
+    flex-direction: column; /* Stack items vertically on small screens */
+    gap: 30px; /* Adjust vertical gap */
+    margin-bottom: 40px;
+  }
+
+  .location-info-left,
+  .location-info-right {
+    flex-basis: auto; /* Let items take natural width */
+    width: 100%; /* Fill available width */
+    text-align: center; /* Center text */
+    padding: 0; /* Remove horizontal padding */
+  }
+
+  .location-illustration-container {
+    max-width: 80%; /* Make illustration fill more width */
+    order: -1; /* Place illustration above text on mobile */
+  }
+
+  .location-link {
+    font-size: 1.4rem; /* Smaller font for links */
+  }
+
+  .travel-stay-button {
+    font-size: 1rem;
+    padding: 12px 25px;
+  }
+}
+
+@media (max-width: 480px) {
+  .location-section .section-label {
+    font-size: 2rem;
+  }
+  .location-link {
+    font-size: 1.2rem;
+  }
+}
+
+/* --- Weekend Celebration Section --- */
+.weekend-celebration-section {
+  /* Using the blue-gray color from your button/theme */
+  background-color: #9aacc4; 
+  /* Using your off-white color for all text */
+  color: #ffffff; 
+  padding: 80px 20px;
+  position: relative; /* Needed for the decorative lines */
+  text-align: center;
+}
+
+/* These are the thin lines at the very top and bottom */
+.decorative-line {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  /* A semi-transparent white */
+  background-color: #ffffff; 
+}
+.decorative-line.top {
+  top: 0;
+}
+.decorative-line.bottom {
+  bottom: 0;
+}
+
+/* The intro text: "We would be delighted..." */
+.weekend-intro {
+  font-family: "inria-bold-italic", serif;
+  font-size: 1.3rem; /* 1.3x the base font size */
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+
+/* The small horizontal line under the intro */
+.divider-line {
+  width: 50px; /* Small width */
+  height: 1px;
+  background-color: #ffffff;
+  margin: 0 auto 60px auto; /* Centers it and adds space below */
+}
+
+/* Container for the two event columns */
+.events-container {
+  display: flex;
+  justify-content: center;
+  gap: 5vw; /* Responsive gap between columns */
+  max-width: 1100px;
+  margin: 0 auto;
+  text-align: left; /* Overrides the section's center-align */
+  flex-wrap: wrap; /* Allows columns to stack on mobile */
+}
+
+.event-column {
+  flex: 1; /* Each column takes up equal space */
+  min-width: 300px; /* Won't get smaller than 300px before stacking */
+  padding: 0 15px; /* A little space within the column */
+  text-align: center;
+  font-family: "inria-bold-italic", serif;
+}
+
+/* The cursive titles: "Welcome Party" */
+.event-title-script {
+  font-family: "DarlineScript", cursive;
+  font-size: 3rem;
+  font-weight: normal;
+  margin-bottom: 25px;
+  color: #f6f5f1; /* Ensure it's the light color */
+}
+
+/* The bold location names: "Charlton Park Pavilion" */
+.event-location-name {
+  font-family: "DarlineSerif", serif;
+  font-weight: 600; /* Bolder */
+  font-size: 1.3rem;
+  margin-bottom: 8px;
+}
+
+/* Styling for address, time, and description paragraphs */
+.event-address,
+.event-time,
+.event-description {
+  font-family: "DarlineSerif", serif;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  margin-bottom: 18px;
+  opacity: 0.9; /* Makes it slightly softer than the title */
+}
+
+/* The fine-print note at the bottom */
+.event-note {
+  font-family: "DarlineSerif", serif;
+  font-size: 0.9rem;
+  font-style: italic;
+  line-height: 1.5;
+  margin-top: 20px;
+  opacity: 0.8; /* Even more subtle */
+}
+
+/* --- Responsive Adjustments --- */
+@media (max-width: 768px) {
+  .weekend-celebration-section {
+    padding: 60px 15px;
+  }
+
+  .events-container {
+    flex-direction: column; /* Stack columns vertically */
+    gap: 50px; /* Space between the stacked items */
+  }
+
+  /* Center-align text within columns on mobile */
+  .event-column {
+    text-align: center;
+  }
+
+  .event-title-script {
+    font-size: 2.5rem; /* Slightly smaller title */
+  }
+
+  .weekend-intro,
+  .event-location-name,
+  .event-address,
+  .event-time,
+  .event-description {
+    font-size: 1rem; /* Standardize font size on mobile */
+  }
 }

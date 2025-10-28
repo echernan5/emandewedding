@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Emma & Ethan</title>
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='static/boatfavicon.webp') }}">
     
     <link rel="stylesheet" href="{{ url_for('static', filename='Home.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='home-mobile.css') }}" media="(max-width: 768px)">
@@ -20,6 +21,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Inria+Serif:ital,wght@0,300;0,400;0,700;1,300;0,400;0,700&family=Kapakana:wght@300..400&display=swap" rel="stylesheet">
     <link rel="preload" as="font" href="https://fonts.gstatic.com/s/inriaserif/v11/g-pl3YM-D-z-c3jR8TzH5g.woff2" crossorigin>
     <link rel="preload" as="font" href="https://fonts.gstatic.com/s/monsieurladoulaise/v14/vF0xWttGCE9l-S-v-p3E_v3pXq_j.woff2" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inria+Serif:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Monsieur+La+Doulaise&display=swap" rel="stylesheet">
 </head>
 <body>
 
@@ -71,83 +74,102 @@
           </div>
         </header>
         
-        <section class="welcome-section" id="welcome">
-          <p class="welcome-section-label">Welcome</p>
-          <div class="welcome-container">
-            <div class="welcome-img">
-              <img src="{{ url_for('static', filename='Screenshot 2025-08-06 at 7.20.59 PM.png') }}" alt="Emma & Ethan holding hands">
+        <section class="weekend-celebration-section">
+          <!-- Thin decorative line at the top -->
+          <div class="decorative-line top"></div>
+        
+          <p class="weekend-intro">
+            We would be delighted for you to
+            <br class="mobile-only">
+            join us for a weekend celebration
+          </p>
+          
+          <!-- Small divider line below the intro -->
+          <div class="divider-line"></div>
+        
+          <div class="events-container">
+            
+            <!-- Welcome Party Column -->
+            <div class="event-column">
+              <h2 class="event-title-script">Welcome Party</h2>
+              
+              <h3 class="event-location-name">Charlton Park Pavilion</h3>
+              <p class="event-address">
+                2545 S Charlton Park Rd<br>
+                Hastings Township, MI 49058
+              </p>
+              
+              <p class="event-time">
+                Thursday, June 17th<br>
+                6:00 PM
+              </p>
+              
+              <p class="event-description">
+                For those in town early, join us for a casual night of pizza and lawn games!
+              </p>
+              
+              <p class="event-note">
+                *As the drive is long, we want to offer a relaxed dinner for anyone already settling in on Thursday. Please join only if it fits your existing travel plans.*
+              </p>
             </div>
-              <div class="welcome-text">
-                <p class="intro-heading">
-                    <span class="desktop-only">Let’s celebrate love,<br>laughter,<br>and happily ever after!</span>
-                    <span class="mobile-only">Let's celebrate!</span>
-                </p>
-                <p class="intro-body">
-                    <span class="desktop-only">Your company would mean the world to us<br>as we celebrate the start of our new life together.</p></span>
-                <p class="event-details">
-                    <span class="desktop-only">Saturday, the 4th of September<br>Ionia, Michigan<br>Ceremony begins at 5:30 PM</span>
-                    <span class="mobile-only">Saturday, September 4th<br>Ionia, Michigan<br>Ceremony at 5:30 PM</span>
-                </p>
+        
+            <!-- Ceremony & Reception Column -->
+            <div class="event-column">
+              <h2 class="event-title-script">Ceremony & Reception</h2>
+              
+              <h3 class="event-location-name">Bay Pointe Inn</h3>
+              <p class="event-address">
+                11456 Marsh Rd<br>
+                Shelbyville, MI 49344
+              </p>
+              
+              <p class="event-time">
+                Friday, June 18th<br>
+                4:30 PM
+              </p>
+              
+              <p class="event-description">
+                Please join us for our wedding ceremony followed by dinner, drinks, and dancing.
+              </p>
             </div>
-            </div>
+        
           </div>
+        
+          <!-- Thin decorative line at the bottom -->
+          <div class="decorative-line bottom"></div>
         </section>
 
         <div class="welcome-background-mobile-wrapper mobile-only">
           <div class="welcome-background-mobile"></div>
         </div>
         
-        <section class="details-section" id="details">
-          <p class="section-label">Details</p>
-          <ul class="accordion-menu">
-            <li class="accordion-item">
-              <button class="accordion-toggle">Ceremony and Reception <span class="arrow-icon"></span></button>
-              <div class="accordion-content">
-                <p class="accordion-intro">We invite you to join us for our wedding ceremony and reception, both celebrated at:</p>
-                
-                <div class="details-block">
-                  <p class="venue-name"><strong>Le Home</strong></p>
-                  <p class="address">
-                    1275 Jefferson Rd<br>
-                    Ionia, MI 48846
-                  </p>
-                </div>
-
-                <div class="details-block">
-                  <p class="event-date"><strong>Saturday, September 4, 2027</strong></p>
-                  <p class="event-time">at five thirty in the evening</p>
-                </div>
-
-                <p class="reception-note"><em>Dinner, drinks, and dancing to follow.</em></p>
-              </div>
-            </li>
-            <li class="accordion-item">
-              <button class="accordion-toggle">Accommodations <span class="arrow-icon"></span></button>
-              <div class="accordion-content">
-                </div>
-            </li>
-            <li class="accordion-item">
-              <button class="accordion-toggle">Transportation <span class="arrow-icon"></span></button>
-              <div class="accordion-content">
-                </div>
-            </li>
-            <li class="accordion-item">
-              <button class="accordion-toggle">Weekend Events <span class="arrow-icon"></span></button>
-              <div class="accordion-content">
-                </div>
-            </li>
-            <li class="accordion-item">
-              <button class="accordion-toggle">Attire <span class="arrow-icon"></span></button>
-              <div class="accordion-content">
-                </div>
-            </li>
-            <li class="accordion-item">
-              <button class="accordion-toggle">Local Attractions <span class="arrow-icon"></span></button>
-              <div class="accordion-content">
-                </div>
-            </li>
-          </ul>
-        </section>
+        <div class="map-section">
+  
+          <h2 class="map-title">The Lay of the Land</h2>
+          
+          <div class="map-container">
+            
+            <img src="{{ url_for('static', filename='Content/Venue Map.webp') }}" 
+                 alt="Map of wedding event locations" 
+                 class="map-image">
+            
+            <a href="/venue-details" class="map-marker" id="marker-venue" 
+               style="top: 95%; left: 40%;">
+              <img src="{{ url_for('static', filename='Content/Bay Pointe.png') }}" alt="Wedding Venue">
+            </a>
+            
+            <a href="/hotel-details" class="map-marker" id="marker-hotel" 
+               style="top: 35%; left: 8%;">
+              <img src="{{ url_for('static', filename='Content/Gun Lake Casino.png') }}" alt="Hotel Block">
+            </a>
+            
+            <a href="/welcome-party-details" class="map-marker" id="marker-welcome" 
+               style="top: 60%; left: 95%;">
+              <img src="{{ url_for('static', filename='Content/Charlton Park.png') }}" alt="Welcome Party">
+            </a>
+        
+          </div>
+        </div>
         
         <section class="our-story-section" id="our-story">
           <div class="intro-column image-column">

@@ -201,3 +201,38 @@ document.addEventListener('DOMContentLoaded', () => {
       prevArrow.addEventListener('click', prevItem);
   }
 });
+
+// --- NEW: Scrolling Invitation Section ---
+document.addEventListener('DOMContentLoaded', () => {
+    // Select all the text containers and image panels for the invitation
+    const textElements = [
+        document.querySelector('#text-1 .fade-in-text'),
+        document.querySelector('#text-2 .fade-in-text'),
+        document.querySelector('#text-3 .fade-in-text')
+    ].filter(el => el !== null); // Filter out nulls if elements don't exist
+
+    const imagePanels = document.querySelectorAll('.image-panel');
+
+    // Only run if the necessary elements are on the page
+    if (textElements.length > 0 && imagePanels.length > 0) {
+        const fadeInObserver = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                // Find the index of the target panel
+                const index = Array.from(imagePanels).indexOf(entry.target);
+                if (index !== -1) {
+                    if (entry.isIntersecting) {
+                        textElements[index].classList.add('is-visible');
+                    } else {
+                        textElements[index].classList.remove('is-visible');
+                    }
+                }
+            });
+        }, {
+            threshold: 0.5 
+        });
+
+        imagePanels.forEach(panel => {
+            fadeInObserver.observe(panel);
+        });
+    }
+});

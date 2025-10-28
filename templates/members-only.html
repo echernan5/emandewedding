@@ -14,18 +14,60 @@
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Inria+Serif:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Kapakana:wght@300..400&display=swap" rel="stylesheet">
         <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     </head>    
 <body>
 
-    <header class="members-header">
-        <div class="members-header-content">
-            <h1 class="header-title">Welcome to Emma and Ethan's</h1>
-            <p class="header-subtitle">Wedding Planning Portal</p>
-        </div>
-        <a href="index.html" class="home-button">Back to Main Site</a>
-    </header>
+    
+    <nav class="sidebar">
+        <div class="sidebar-top">
+            <!-- Replaced header text with an image -->
+            <img src="{{ url_for('static', filename='Content/monogramcopy.jpg') }}" alt="Emma & Ethan Wedding Logo" class="sidebar-logo-img">
 
-    <main class="members-container">
+            <!-- Menu Items -->
+            <ul class="sidebar-menu">
+                <!-- Home -->
+                <li class="menu-item">
+                    <a href="/members_only" class="menu-link">
+                        <span class="material-icons-round">home</span>
+                    </a>
+                </li>
+                <!-- Guestbook -->
+                <li class="menu-item">
+                    <a href="/guests" class="menu-link">
+                        <span class="material-icons-round">groups</span>
+                    </a>
+                </li>
+                <!-- Vendors -->
+                <li class="menu-item">
+                    <a href="/vendors" class="menu-link">
+                        <span class="material-icons-round">handshake</span>
+                    </a>
+                </li>
+                <!-- Budget -->
+                <li class="menu-item">
+                    <a href="/budget" class="menu-link">
+                        <span class="material-icons-round">request_quote</span>
+                    </a>
+                </li>
+                <!-- Logistics -->
+                <li class="menu-item">
+                    <a href="/logistics" class="menu-link">
+                        <span class="material-icons-round">assignment</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <div class="sidebar-footer">
+            <!-- Added Logout button -->
+            <a href="#" class="menu-link logout-link">
+                <span class="material-icons-round">logout</span>
+            </a>
+        </div>
+    </nav>
+
+    <div class="page-content-wrapper">
+         <main class="members-container">
         
         <!-- Quick Stats / RSVP Tracker -->
         <section class="info-grid">
@@ -326,6 +368,7 @@
 
             <div class="guest-list-container" id="guestListContainer">
                 </div>
+        </div>
         </div>
     </div>
 

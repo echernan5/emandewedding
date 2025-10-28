@@ -287,40 +287,44 @@ def get_calendar_events():
 def home():
     return render_template('index.html')
 
+@app.route('/login')
+def login():
+    # --- START DEBUGGING ---
+    # Add these two lines to see what Python is reading from your .env file
+    print("DEBUG: SUPABASE_URL from .env is:", os.environ.get('SUPABASE_URL'))
+    print("DEBUG: SUPABASE_ANON_KEY from .env is:", os.environ.get('SUPABASE_ANON_KEY'))
+    # --- END DEBUGGING ---
+
+    # Pass the public keys to the template
+    return render_template(
+        'login.html',
+        supabase_url=os.environ.get('SUPABASE_URL'),
+        supabase_anon_key=os.environ.get('SUPABASE_ANON_KEY')
+    )
+
 @app.route('/members_only')
 def members_only():
     return render_template('members-only.html')
 
-@app.route('/create-pdf', methods=['POST'])
-def create_pdf():
-    # 1. Get guest data from your database or session
-    guests_data = get_guests_from_db()
+@app.route('/vendors')
+def vendors():
+    # This reads the keys from .env and passes them to the HTML template
+    return render_template(
+        'vendors.html', 
+        supabase_url=os.environ.get('SUPABASE_URL'),
+        supabase_anon_key=os.environ.get('SUPABASE_ANON_KEY')
+    )
 
-    # 2. Generate the full HTML for the PDF page
-    html_to_render = generate_html_from_template(guests_data)
-
-    # 3. Send the HTML to the Node.js microservice
-    pdf_service_url = 'http://localhost:3001/generate-pdf'
+@app.route('/api/vendors', methods=['GET'])
+def get_vendors():
+    vendors, error = get_data_from_query(sql.SQL("SELECT * FROM public.vendors;"))
+    if error:
+        return jsonify({"error": error}), 500
     
-    try:
-        response = requests.post(
-            pdf_service_url,
-            json={'htmlContent': html_to_render},
-            timeout=30 # Set a timeout for the request
-        )
-        response.raise_for_status() # Raise an exception for bad status codes
-
-        # 4. Return the PDF received from the service
-        return send_file(
-            io.BytesIO(response.content),
-            mimetype='application/pdf',
-            as_attachment=True,
-            download_name='guest-list.pdf'
-        )
-
-    except requests.exceptions.RequestException as e:
-        print(f"Error communicating with PDF service: {e}")
-        return jsonify({"error": "Failed to generate PDF."}), 500
+    # Optional: Add a print statement for debugging
+    print("Fetched vendors data:", vendors) 
+    
+    return jsonify(vendors)
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))

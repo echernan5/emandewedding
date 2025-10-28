@@ -9,6 +9,7 @@
     --color-accent-green-tag: #727a4d;
     --color-card-bg: #e6e6e6; /* slightly darker than page bg, lighter than white */
     --color-card-border: #e6e6e6;
+    --sidebar-width: 100px;
 }
 
 body {
@@ -16,7 +17,6 @@ body {
     background-color: var(--color-background-light);
     color: var(--color-text-dark);
     margin: 0;
-    padding: 0;
 }
 
 .roboto {
@@ -26,9 +26,94 @@ body {
     font-style: normal;
     font-variation-settings:
       "wdth" 100;
-  }
-  
+}
 
+.page-content-wrapper {
+    /* This pushes the entire content area to the right of the sidebar */
+    margin-left: var(--sidebar-width); 
+    
+    /* This ensures the wrapper takes up the remaining width */
+    width: calc(100% - var(--sidebar-width)); 
+    
+    /* Smooth transition for when the sidebar width changes on smaller screens */
+    transition: margin-left 0.3s ease, width 0.3s ease; 
+}
+
+
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    background-color: white;
+    border-right: 1px solid #e6e6e6;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: var(--sidebar-width);
+    box-sizing: border-box;
+    z-index: 1000;
+    padding: 1.5rem 0; /* Vertical padding, no horizontal */
+    align-items: center; /* Center all content horizontally */
+}
+
+
+.sidebar-logo-img {
+    width: 100%;
+    max-width: 45px;
+    display: block;
+    margin: 0 auto 2rem auto;
+    border-bottom: 1px solid #e6e6e6;
+    padding-bottom: 2rem;
+}
+
+.sidebar-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.menu-item {
+    position: relative;
+}
+
+.menu-link {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem 1rem;
+    border-radius: 10px;
+    color: var(--color-primary-blue);
+    text-decoration: none;
+    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+    font-size: 1.1rem;
+    font-weight: bold;
+}
+
+.menu-link:hover {
+    background-color: var(--color-primary-green);
+    color: white;
+}
+
+.menu-link .material-icons-round {
+    font-size: 28px;
+}
+
+.sidebar-footer {
+    padding-top: 1rem;
+    border-top: 1px solid #e6e6e6;
+}
+
+.logout-link {
+    margin-top: 1rem;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* OLD STUFF */
 .members-container {
     max-width: 1200px;
     margin: 0 auto;
