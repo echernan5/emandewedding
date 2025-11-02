@@ -26,59 +26,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
 )
 
-// --- NEW Members Only Password Modal ---
-const membersOnlyModal = document.getElementById("membersOnlyModal");
-const closeMembersOnlyModal = document.getElementById("closeMembersOnlyModal");
-const membersOnlyPasswordInput = document.getElementById("membersOnlyPasswordInput");
-const submitMembersOnlyPasswordBtn = document.getElementById("submitMembersOnlyPassword");
-const membersOnlyErrorMessage = document.getElementById("membersOnlyErrorMessage");
-
-// Define the URL for the members-only area
-const membersOnlyTrigger = document.getElementById("membersOnlyTrigger");
-// Define the password for the members-only area
-const membersOnlyURL = membersOnlyTrigger.dataset.membersUrl;
-const correctMembersOnlyPassword = "Blackjack2001"; // <<<--- SET YOUR MEMBERS ONLY PASSWORD HERE!
-
-if (membersOnlyTrigger && membersOnlyModal) {
-  membersOnlyTrigger.addEventListener("click", function(event) {
-    event.preventDefault(); // Prevent default link behavior
-    membersOnlyModal.style.display = "flex"; // Show the modal
-    // Optionally disable body scroll when this modal is open, if not already handled by initial modal
-    // document.body.style.overflow = "hidden";
-    membersOnlyPasswordInput.focus(); // Focus on the input field
-  });
-
-  closeMembersOnlyModal.addEventListener("click", function() {
-    membersOnlyModal.style.display = "none"; // Hide the modal
-    membersOnlyErrorMessage.style.display = "none"; // Hide error message
-    membersOnlyPasswordInput.value = ""; // Clear input
-    // Optionally re-enable body scroll
-    // document.body.style.overflow = "";
-  });
-
-  submitMembersOnlyPasswordBtn.addEventListener("click", function() {
-    const enteredPassword = membersOnlyPasswordInput.value.trim();
-    if (enteredPassword === correctMembersOnlyPassword) {
-      window.open(membersOnlyURL, '_blank'); // Open link in new tab
-      membersOnlyModal.style.display = "none"; // Hide the modal
-      membersOnlyErrorMessage.style.display = "none"; // Hide error message
-      membersOnlyPasswordInput.value = ""; // Clear input
-      // Optionally re-enable body scroll
-      // document.body.style.overflow = "";
-    } else {
-      membersOnlyErrorMessage.style.display = "block"; // Show error message
-      membersOnlyPasswordInput.value = ""; // Clear input
-      membersOnlyPasswordInput.focus(); // Keep focus for re-entry
-    }
-  });
-
-  membersOnlyPasswordInput.addEventListener("keypress", (event) => {
-    if (event.key === "Enter") {
-      submitMembersOnlyPasswordBtn.click();
-    }
-  });
-}
-
 // Navbar Scroll Behavior
 document.addEventListener('DOMContentLoaded', () => {
   const navbar = document.getElementById('navbar');
@@ -235,4 +182,45 @@ document.addEventListener('DOMContentLoaded', () => {
             fadeInObserver.observe(panel);
         });
     }
+});
+
+// --- UPDATED: Parallax Background Effect for Celebration Section ---
+document.addEventListener('DOMContentLoaded', () => {
+
+  const section = document.querySelector('.celebration-section');
+  if (!section) return; // Exit if the section isn't here
+
+  document.addEventListener('scroll', function() {
+    const rect = section.getBoundingClientRect();
+    const viewportHeight = window.innerHeight;
+
+    // === NEW LOGIC ===
+    // 1. Calculate total scroll distance for the effect:
+    //    (viewportHeight) = distance to get the section's top to the viewport's top
+    //    (rect.height)    = additional distance to get the section's bottom to the viewport's top
+    const totalScrollDistance = viewportHeight + rect.height;
+
+    // 2. Calculate how far we've scrolled *into* this total distance
+    //    (viewportHeight - rect.top) = pixels scrolled since the top of the
+    //                                  section first appeared at the bottom of the screen.
+    const scrollProgress = viewportHeight - rect.top;
+
+    // 3. Calculate the fraction (0 to 1) of how far we are through the effect
+    let scrollFraction = scrollProgress / totalScrollDistance;
+    // === END NEW LOGIC ===
+
+    
+    // Clamp the value between 0 and 1 (so it doesn't go below 0 or above 1)
+    let clampedFraction = Math.max(0, Math.min(1, scrollFraction));
+
+    // This is the same as before:
+    // It maps your 0-1 progress to a -50px to +50px range.
+    // (0 * 100) - 50 = -50px (start)
+    // (1 * 100) - 50 = +50px (end)
+    let offset = (clampedFraction * 150) - 75;
+
+    // Apply this new pixel value to the CSS variable
+    section.style.setProperty('--bg-y-offset', `${offset}px`);
+  });
+
 });

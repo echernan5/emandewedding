@@ -1,17 +1,6 @@
-/* FONTS */
-@font-face {
-  font-family: 'DarlineScript';
-  src: url('/static/fonts/WOFF/DarlineScript-Aged.woff') format('woff');
-  font-weight: normal;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'DarlineScript';
-  src: url('/static/fonts/WOFF/DarlineScript-AgedSlanted.woff') format('woff');
-  font-weight: normal;
-  font-style: italic;
-}
+/* =================================================================== */
+/* 1. FONTS
+/* =================================================================== */
 
 @font-face {
   font-family: 'DarlineScript';
@@ -48,171 +37,177 @@
   font-style: normal;
 }
 
+.inria-serif-light {
+  font-family: "Inria Serif", serif;
+  font-weight: 300;
+  font-style: normal;
+}
+
+.inria-serif-regular {
+  font-family: "Inria Serif", serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.inria-serif-bold {
+  font-family: "Inria Serif", serif;
+  font-weight: 700;
+  font-style: normal;
+}
+
+.inria-serif-light-italic {
+  font-family: "Inria Serif", serif;
+  font-weight: 300;
+  font-style: italic;
+}
+
+.inria-serif-regular-italic {
+  font-family: "Inria Serif", serif;
+  font-weight: 400;
+  font-style: italic;
+}
+
+.inria-serif-bold-italic {
+  font-family: "Inria Serif", serif;
+  font-weight: 700;
+  font-style: italic;
+}
+
+
+/* =================================================================== */
+/* 2. GLOBAL & UTILITY STYLES
+/* =================================================================== */
+
+/* Universal Styles */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth; /* Smooth scrolling */
+  overflow-x: hidden; /* Prevent horizontal scroll */
+}
+
+body {
+  padding: 0;
+  margin: 0;
+  max-width: 100%;
+}
+
+/* Hides the modal scrollbar from the body */
+body.modal-active {
+  overflow: hidden;
+}
+
 /* Hide mobile-specific content on desktop */
 .mobile-only {
   display: none;
 }
 
-body.modal-active {
-    overflow: hidden;
+/* Re-usable class for section labels */
+.section-label {
+  font-family: "DarlineSerif", serif;
+  text-transform: uppercase;
+  font-style: italic;
+  letter-spacing: 0.2rem;
+  color: #bcbdb5;
+  margin-bottom: 2rem;
 }
 
-/* Styles for the updated Password Modal Content */
+
+/* =================================================================== */
+/* 3. PASSWORD MODAL
+/* =================================================================== */
+
 #passwordModal {
-    /* Core Modal Positioning & Overlay */
-    position: fixed; /* Takes it out of flow, relative to viewport */
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-image: url('Content/Untitled design (14) 2.webp');
-    background-repeat: no-repeat, repeat;
-    background-size: cover, cover; /* Cover the entire viewport */
-    background-position: center center; /* Center the background image */   
-    z-index: 1050; /* Ensures it's on top of other content */
-
-    /* Centering the Content Box */
-    display: flex;
-    align-items: center; /* Vertically center */
-    justify-content: center; /* Horizontally center */
-
-    /* Ensures modal itself can scroll if content overflows viewport height */
-    overflow-y: auto;
-
-    /* Assuming the modal should be visible by default on this temp page */
-    /* If controlled by JS later, you might start with display: none; */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('Content/Untitled design (14) 2.webp');
+  background-repeat: no-repeat, repeat;
+  background-size: cover, cover;
+  background-position: center center;
+  z-index: 1050;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow-y: auto;
 }
 
 .password-modal-content {
-    /* Keep or adjust existing modal content styles like background, padding, border-radius, box-shadow */
-    padding: 30px 40px; /* Example */
-    text-align: center; /* Center aligns all content */
-    max-width: 550px; /* Adjust as needed */
-    margin: auto; /* Helps center if not already handled */
+  padding: 30px 40px;
+  text-align: center;
+  max-width: 550px;
+  margin: auto;
 }
 
 .construction-illustration {
-    display: block; /* Allows margin auto to work */
-    max-width: 300px; /* Adjust based on illustration */
-    height: auto; /* Maintain aspect ratio */
-    margin: 0 auto 25px auto; /* Center illustration and add space below */
-}
-
-.password-modal-content h2 {
-    font-size: 1.7em; /* Example */
-    font-weight: normal; /* Or match site style */
-    margin-bottom: 15px;
-    color: #333; /* Example - Match site text color */
-}
-
-.password-modal-content p {
-    font-size: 1em; /* Example */
-    line-height: 1.6;
-    color: #555; /* Example - Match site text color */
-    margin-bottom: 15px;
-}
-
-/* Separator Line */
-.password-separator {
-    border: 0;
-    height: 1px;
-    background-color: #e0e0e0; /* Light gray line */
-    margin: 35px auto; /* Generous spacing */
-    width: 75%; /* Doesn't span full width */
-}
-
-/* Password Prompt Text */
-.password-prompt {
-    font-size: 0.9em;
-    color: #777; /* Lighter text color */
-    margin-bottom: 10px;
-    font-style: italic;
+  display: block;
+  max-width: 300px;
+  height: auto;
+  margin: 0 auto 25px auto;
 }
 
 /* Password Input & Button Styling */
 #passwordInput {
-    display: block; /* Take full width */
-    width: 80%; /* Adjust width as needed */
-    max-width: 300px; /* Prevent getting too wide */
-    margin: 0 auto 15px auto; /* Center and add space below */
-    padding: 12px;
-    border: 1px solid #ccc;
-    border-radius: 4px; /* Match site style */
-    font-size: 1em;
-    box-sizing: border-box;
+  display: block;
+  width: 80%;
+  max-width: 300px;
+  margin: 0 auto 15px auto;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1em;
+  box-sizing: border-box;
 }
 
 #submitPassword {
-    padding: 12px 25px;
-    background-color: #444; /* Example: Dark gray - Match site button style */
-    color: white;
-    border: none;
-    border-radius: 4px; /* Match site style */
-    cursor: pointer;
-    font-size: 1em;
-    font-weight: bold;
-    transition: background-color 0.3s ease;
+  padding: 12px 25px;
+  background-color: #444;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1em;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
 }
 
 #submitPassword:hover,
 #submitPassword:focus {
-    background-color: #222; /* Darker hover */
+  background-color: #222;
 }
 
 #errorMessage {
-    margin-top: 15px;
-    font-size: 0.9em;
-    font-weight: bold;
-    /* Color is set inline via JS - or you can style it here */
-    /* color: #D8000C; */ /* Example error color */
+  margin-top: 15px;
+  font-size: 0.9em;
+  font-weight: bold;
 }
 
 /* Basic Responsive Adjustments */
 @media (max-width: 600px) {
-    .password-modal-content {
-        padding: 25px 20px;
-        max-width: 90%;
-    }
+  .password-modal-content {
+    padding: 25px 20px;
+    max-width: 90%;
+  }
 
-    .construction-illustration {
-        max-width: 60vw; /* Smaller illustration on mobile */
-        margin-bottom: 20px;
-    }
+  .construction-illustration {
+    max-width: 60vw;
+    margin-bottom: 20px;
+  }
 
-    .password-modal-content h2 {
-        font-size: 1.4em;
-    }
-
-    .password-modal-content p {
-        font-size: 0.9em;
-    }
-
-    #passwordInput {
-        width: 90%; /* Wider input on mobile */
-    }
+  #passwordInput {
+    width: 90%;
+  }
 }
 
-/* General Styles */
-  
-  /* Universal Styles */
-  * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-  }
-  
-  html {
-    scroll-behavior: smooth; /* Smooth scrolling */
-  }
-  
-  .body {
-    padding: 0;
-    margin: 0;
-    max-width: 100%;
-    overflow-x: hidden;
-  }
-  
-  /* Nabar Styles */
+/* =================================================================== */
+/* 4. NAVIGATION BAR
+/* =================================================================== */
 
 #navbar {
   position: sticky;
@@ -222,415 +217,491 @@ body.modal-active {
   z-index: 1000;
   height: 90px;
   display: flex;
-  justify-content: space-around; /* This is the key change! */
+  justify-content: space-around;
   align-items: center;
   padding-top: 50px;
-  transition: background-color 0.8s ease, transform 0.8s ease;
+  transition: background-color 0.8s ease, transform 0.8s ease, padding-top 0.8s ease;
 }
 
-  /* New CSS for the nav groups */
-  .nav-links {
-    display: flex; /* Make the nav links a flex container */
-    gap: 8vw; /* Add space between the links */
+#navbar.scrolled {
+  background-color: #9aacc4;
+  transform: translateY(0);
+  padding-top: 0;
+}
+
+#navbar.hide-on-scroll-down {
+  transform: translateY(-100%);
+}
+
+.navbar .logo-link {
+  text-align: center;
+}
+
+.navbar .logo {
+  max-height: 70px;
+  width: auto;
+}
+
+.nav-links {
+  display: flex;
+  gap: 60px;
+}
+
+.navbar .nav-link {
+  font-family: "inria-bold-italic", serif; /* NOTE: Make sure this font is loaded or defined */
+  font-style: italic;
+  text-transform: uppercase;
+  letter-spacing: 0.2rem;
+  color: white;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.navbar .nav-link:hover {
+  color: #f0f0f0; /* Slight fade on hover */
+}
+
+.nav-icons {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.icon-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.search-icon {
+  width: 24px;
+  height: 24px;
+  fill: white;
+}
+
+/* CLEANUP: Removed all .dropdown, .dropdown-content, and .dropbtn styles */
+
+/* =================================================================== */
+/* 5. HERO SECTION
+/* =================================================================== */
+
+.hero-section {
+  background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.37), rgba(0, 0, 0, 0) 62%), url('ethanandemmaengagement-1.jpg');
+  height: 100dvh; /* dvh is good for mobile */
+  width: 100vw;
+  background-size: cover;
+  background-position: center;
+  margin-top: -90px; /* Pulls up behind the transparent nav */
+  position: relative; /* For text positioning */
+  will-change: transform;
+}
+
+.hero-foreground {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -1; /* Place it behind the text */
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  height: 100%;
+  width: 100%;
+}
+
+.hero-text span {
+  position: absolute;
+  color: white;
+}
+
+.line-1, .line-3 {
+  font-family: "DarlineSerif", serif;
+  text-transform: uppercase;
+  font-style: italic;
+  font-weight: normal;
+}
+
+.line-2, .line-4 {
+  font-family: "DarlineScript", cursive;
+  font-weight: normal;
+}
+
+.line-1 {
+  top: 35%;
+  left: 5%;
+  font-size: 7rem;
+}
+
+.line-2 {
+  top: 50%;
+  left: 15%;
+  font-size: 12rem;
+}
+
+.line-3 {
+  top: 42%;
+  right: 5%;
+  font-size: 7rem;
+}
+
+.line-4 {
+  bottom: 23%;
+  right: 10%;
+  font-size: 12rem;
+}
+
+/* =================================================================== */
+/* 6. CELEBRATION SECTION
+/* =================================================================== */
+/* =================================================================== */
+/* 6. CELEBRATION SECTION
+/* =================================================================== */
+
+.celebration-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: -1; 
+
+  /* Your background image */
+  background-image: url('Content/Final background.webp');
+  background-size: cover;
+  background-position: center; /* Keep it centered horizontally */
+  
+  /* 1. FIX THE REPEATING TILE */
+  background-repeat: no-repeat; 
+  
+  /* 2. FIX THE GLITCH & ADD "ROOM" TO MOVE */
+  /* We scale it (1.1 = 10% bigger) so there's image to move */
+  /* We use translateY (with your JS variable) which is super smooth */
+  transform: scale(1.1) translateY(var(--bg-y-offset));
+
+  /* 3. APPLY SMOOTHING TO THE (new) TRANSFORM PROPERTY */
+  transition: transform 0.1s linear;
+}
+
+.celebration-section {
+  /* All perspective/transform rules are gone */
+  
+  color: #ffffff;
+  padding: 50px 20px;
+  position: relative;
+  text-align: center;
+  overflow: hidden;
+}
+
+.decorative-line {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: #ffffff;
+}
+
+.decorative-line.top {
+  top: 25px !important;
+}
+
+.decorative-line.bottom {
+  bottom: 25px !important;
+}
+
+.events-container {
+  display: flex;
+  justify-content: center;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.event-column {
+  /* This is the new blue circle */
+  background-color: #9aacc4;
+  border-radius: 50%;
+  border: 2px solid #ffffff;
+  
+  /* Create the circle shape */
+  width: 100%; /* Will be constrained by max-width */
+  max-width: 500px;
+  min-width: 280px; /* Adjusted for smaller screens */
+  aspect-ratio: 1 / 1.3; /* Ensures it's always a circle */
+  
+  /* Center text inside the circle */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  
+  /* Spacing */
+  padding: 40px;
+  margin: 0 auto;
+  box-sizing: border-box; /* Include padding in width/height */
+  
+  flex: 0 1 auto;
+  font-family: "inria-bold-italic", serif; /* Base font, overridden by children */
+}
+
+.event-title-script {
+  font-family: "DarlineScript", cursive;
+  font-size: 3rem;
+  font-weight: normal;
+  margin-bottom: 25px;
+  color: #f6f5f1;
+}
+
+.event-location-name {
+  font-family: "DarlineSerif", serif;
+  font-weight: 600;
+  font-size: 1.3rem;
+  margin-bottom: 8px;
+}
+
+.event-address,
+.event-time,
+.event-description {
+  font-family: "InriaSerif", serif;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  margin-bottom: 18px;
+  opacity: 0.9;
+}
+
+.event-description {
+  max-width: 70%;
+}
+
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .celebration-section {
+    padding: 60px 15px;
+  }
+  
+  .event-column {
+    padding: 30px; /* Reduce padding on smaller circles */
   }
 
-  .nav-icons {
-    display: flex; /* Make the icon group a flex container */
-    align-items: center;
-    gap: 15px; /* Add space between the icon and button */
-  }
-
-  /* Styles for the new elements */
-  .icon-button {
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 0;
-  }
-
-  .search-icon {
-    width: 24px;
-    height: 24px;
-    fill: white;
-  }
-
-  /* New CSS for the members icon */
-  .members-icon {
-    width: 24px;
-    height: 24px;
-    fill: white;
-  }
-
-  /* Original styles below */
-  #navbar.scrolled {
-    background-color: #9aacc4;
-    transform: translateY(0);
-    padding-top: 0;
-  }
-
-  #navbar.hide-on-scroll-down {
-    transform: translateY(-100%);
-  }
-
-  .navbar .logo-link {
-    text-align: center;
-  }
-
-  .navbar .logo {
-    max-height: 70px;
-    width: auto;
-  }
-
-  .navbar .nav-link {
-    font-family: "inria-bold-italic", serif;
-    font-style: italic;
-    text-transform: uppercase;
-    letter-spacing: 0.2rem;
-    color: white;
-    text-decoration: none;
-  }
-  
-  /* Hero Section Styles */
-  .hero-section {
-    background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.37), rgba(0, 0, 0, 0) 62%), url('ethanandemmaengagement-1.jpg');
-    height: 100dvh;
-    width: 100vw;
-    background-size: cover;
-    background-position: center;
-    margin-top: -90px;
-  }
-  
-  .hero-foreground {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover; /* Ensures the image covers the container */
-    z-index: 2; /* The foreground image will be on top */
-  }
-  
-  .hero-text span {
-    position: absolute;
-    color: white;
-  }
-  
-  .line-1, .line-3 {
-    font-family: "DarlineSerif", serif;
-    text-transform: uppercase;
-    font-style: italic;
-    font-weight: normal;
-  }
-  
-  .line-2, .line-4 {
-    font-family: "DarlineScript", cursive;
-    font-weight: normal;
-  }
-  
-  .line-1 {
-    top: 35%;
-    left: 5%;
-    font-size: 7rem;
-  }
-  
-  .line-2 {
-    top: 50%;
-    left: 15%;
-    font-size: 12rem;
-  }
-  
-  .line-3 {
-    top: 42%;
-    right: 5%;
-    font-size: 7rem;
-  }
-  
-  .line-4 {
-    bottom: 23%;
-    right: 10%;
-    font-size: 12rem;
-  }
-
-  .welcome-background-mobile {
-    display: none;
-  }
-  
-  .welcome-section {
-    position: relative; /* This is crucial for positioning the child element */
-    background-image: url(green-paper-background.jpg);
-    background-attachment: fixed;
-    background-position: center;
-    background-size: cover;
-    height: 90dvh;
-  }
-  
-  .welcome-section-label {
-    position: absolute;
-    top: 50px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-family: "DarlineSerif", serif;
-    text-transform: uppercase;
-    font-style: italic;
-    letter-spacing: 0.2rem;
-    color: #9ea173;
-  }
-  
-  .welcome-container {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #f6f5f1;
-    padding: 4rem;
-    width: 1000px;
-    height: 70%;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-  }
-  
-  .welcome-img {
-    flex-basis: 40%;
-    padding-right: 2rem;
-    overflow: hidden;
-    aspect-ratio: 4/5;
-    max-height: 100%;
-  }
-  
-  .welcome-img img {
-   width: 100%; /* Make the image responsive within its container */
-   max-height: 100%; /* Ensure the image doesn't exceed the container's height */
-   object-fit: cover; /* Maintain aspect ratio and cover the area */
-   display: block; /* Remove any extra space below the image */
-  }
-  
-  /* Styling for the text column */
-  .welcome-text {
-    flex-basis: 60%;
-    padding-left: 2rem;
-    text-align: center;
-  }
-  
-  /* Styles for the headline and body text */
-  .intro-heading {
-    font-family: "DarlineScript", cursive;
-    font-size: 3rem;
-    line-height: 1.2;
-    color: #727a4d;
-    text-align: right;
-  }
-  
-  .intro-body, .event-details {
-    font-family: "DarlineSerif", serif;
-    font-size: 1rem;
-    line-height: 1.5;
-    color: #555;
-    margin-top: 1.5rem;
-    text-align: left;
-  }
-  
-  .event-details {
-    margin-top: 2rem;
-    font-weight: normal;
-  }
-  
-  /* Styling for the entire Details section */
-  .details-section {
-    background-color: #f6f5f1;
-    padding: 50px 2rem 8rem; /* Updated padding-top to 50px */
-    text-align: center;
-  }
-  
-  /* Styling for the "Details" label */
-  .section-label {
-    font-family: "DarlineSerif", serif;
-    text-transform: uppercase;
-    font-style: italic;
-    letter-spacing: 0.2rem;
-    color: #bcbdb5;
-    margin-bottom: 2rem;
-  }
-  
-  /* Styling for the accordion menu list */
-  .accordion-menu {
-    list-style: none; /* Removes the bullet points */
-    padding: 0;
-    margin: 0 auto;
-    max-width: 800px; /* Limits the width of the list */
-  }
-  
-  /* Styling for each accordion item */
-  .accordion-item {
-    border-bottom: 1px solid #212121;
-  }
-  
-  /* Styling for the clickable button */
-  .accordion-toggle {
-    display: flex; /* Aligns the text and arrow */
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    background: none;
-    border: none;
-    padding-top: 2.5rem;
-    padding-bottom: 0.5rem;
-    padding-right: 0rem;
-    padding-left: 0rem;
-    cursor: pointer;
-    font-family: "DarlineScript", cursive;
+  .event-title-script {
     font-size: 2.5rem;
-    color: #212121;
-    text-align: left;
-    padding-right: 5px;
+    margin-bottom: 20px;
   }
-  
-  /* Styling for the down arrow icon */
-  .arrow-icon::after {
-    content: ' ';
-    display: inline-block;
-    width: 10px;
-    height: 10px;
-    border-right: 2px solid #212121;
-    border-bottom: 2px solid #212121;
-    transform: rotate(45deg);
+
+  .event-location-name,
+  .event-address,
+  .event-time,
+  .event-description {
+    font-size: 1rem;
+    margin-bottom: 15px;
   }
-  
-  /* Default state for the accordion content (hidden) */
-  .accordion-content {
-    /* Remove 'display: none;' */
-    max-height: 0; /* Starts at 0 height, making it invisible */
-    overflow: hidden; /* Hides any content that goes beyond max-height */
-    transition: max-height 0.4s ease-in-out, padding 0.4s ease-in-out; /* Animates the max-height property */
-    padding: 0 0; /* Adjust padding for the closed state */
-    text-align: left;
-    font-family: "DarlineSerif", serif;
-    color: #212121;
- }
-  
-  /* This class would be added via JavaScript to show the content */
-  .accordion-content.active {
-    max-height: 1000px; /* Increase this value */
-    padding: 10px 0px 20px 0px; /* Adds some space at the bottom */
 }
 
-/* Rotate the arrow icon when the accordion is open */
-.accordion-toggle.active-toggle .arrow-icon::after {
-  transform: rotate(225deg);
+/* =================================================================== */
+/* 7. MOBILE BACKGROUND WRAPPER (FOR PARALLAX)
+/* =================================================================== */
+
+.welcome-background-mobile {
+  display: none; /* Likely overridden in mobile CSS */
 }
 
-/* Optional: Add a transition for a smooth animation */
-.arrow-icon::after {
-  transition: transform 0.2s ease-in-out;
+/* =================================================================== */
+/* 8. MAP SECTION
+/* =================================================================== */
+
+.map-section {
+  width: 100%;
+  max-width: 1050px;
+  margin: 50px auto;
+  padding: 0 20px;
+  box-sizing: border-box;
+  position: relative;
+  z-index: 5;
 }
 
-.accordion-content p {
-  margin-left: 10px;
+.map-container {
+  position: relative;
 }
 
-.details-block,
-.reception-note {
-  margin-top: 1em; /* Adds space above these elements */
+/* This is the new container for all three lines */
+.map-title-container {
+  text-align: center;
+  margin-bottom: 50px; /* Kept your original margin */
+  /* This prevents the large script from adding too much space */
+  line-height: 1; 
 }
 
-.accordion-intro {
-  margin-bottom: 1em; /* Ensures space after the first line */
+/* This styles the small top line */
+.map-subtitle {
+  display: block; /* Puts it on its own line */
+  font-family: "Inria Serif", serif; /* Using your loaded font */
+  font-weight: 400; /* Light */
+  font-style: italic;
+  text-transform: uppercase;
+  letter-spacing: 0.15rem;
+  font-size: 0.9rem;
+  color: #6587ab; /* A lighter blue */
+  margin-bottom: 15px;
 }
 
-  /* OUR STORY SECTION */
-  
-  .our-story-section {
-    background-color: #9aacc4;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 50px 0; /* Removed horizontal padding */
-    position: relative;
-    gap: 0px;
-    height: 600px;
-  }
-  
-  .our-story-section .section-label {
-    color: #d8e2ef;
-    position: absolute;
-    top: 50px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-family: "DarlineSerif", serif;
-    text-transform: uppercase;
-    font-style: italic;
-    letter-spacing: 0.2rem;
-  }
-  
-  .intro-column {
-    flex: 2;
-    text-align: center;
-    padding: 0 20px;
-    max-width: 70vw;
-  }
-  
-  .image-column {
-    /* This targets the left and right photo columns */
-    flex: 0 250px; /* Gives the photo columns a smaller, fixed width */
-    padding: 0;
-    aspect-ratio: 2/3;
-  }
-  
-  .intro-column img {
-    max-width: 100%;
-    height: auto;
-    opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
-  }
+/* This styles "Our Wedding" */
+.map-title-main {
+  font-family: "DarlineSerif", serif;
+  font-weight: normal;
+  text-transform: uppercase;
+  font-size: 3.5rem;
+  color: #6587ab;
+  letter-spacing: 0.1rem;
+  margin: 0;
+  transform: translateX(-50px);
+}
 
-  .intro-column img.fade-in {
-    opacity: 1;
-    transform: translateY(0);
-  }
+/* This styles "Weekend" */
+.map-title-script {
+  display: block; /* Puts it on its own line */
+  font-family: "DarlineScript", cursive; /* Using your script font */
+  font-weight: normal;
+  font-size: 4.5rem; /* Much larger */
+  color: #6587ab; /* Your original color */
+  transform: translateX(100px);
+  margin-top: -15px; 
+}
 
-  .intro-quote {
-    font-family: "DarlineScript", cursive;
-    font-size: 3rem;
-    font-weight: 400;
-    line-height: 1.2;
-    margin: 10px 0;
-    color: white;
-  }
-  
-  .intro-quote .pre-quote {
-    font-family: "DarlineSerif", serif; /* This font overrides the Great Vibes font for just "They say" */
-    font-size: 2.2rem; /* Adjusted font size for better visual balance */
-    font-style: normal;
-  }
-  
-  .intro-text {
-    font-size: 1.1rem;
-    line-height: 1.6;
-    color: white;
-    max-width: 80%;
-    margin: 20px auto;
-    text-align: center;
-  }
-  
-  .monogram-middle {
-    position: absolute;
-    bottom: -70px; /* Adjust to control overlap with the next section */
-    left: 50%;
-    transform: translateX(-50%);
-    width: 120px;
-    height: auto;
-    z-index: 998
-  }
-  
-/* -------------------- TIMELINE SECTION -------------------- */
+.map-image {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.map-marker {
+  position: absolute;
+  z-index: 10;
+  transform: translate(-50%, -100%); /* Centers pin on coordinate */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.map-marker:hover {
+  transform: translate(-50%, -100%) scale(1.1);
+  z-index: 11;
+}
+
+.map-marker img {
+  width: 325px;
+  font-size: 0; /* Hides broken image alt text */
+  color: transparent;
+}
+
+a#marker-hotel img {
+  max-width: 275px !important;
+}
+
+/* CLEANUP: Removed .map-marker span style, as it's not in the HTML */
+
+/* =================================================================== */
+/* 9. OUR STORY SECTION
+/* =================================================================== */
+
+.our-story-section {
+  background-color: #9aacc4;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 50px 0;
+  position: relative;
+  gap: 0px;
+  height: 600px;
+}
+
+.our-story-section .section-label {
+  color: #d8e2ef;
+  position: absolute;
+  top: 50px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.intro-column {
+  flex: 2;
+  text-align: center;
+  padding: 0 20px;
+  max-width: 70vw;
+}
+
+.image-column {
+  flex: 0 250px;
+  padding: 0;
+  aspect-ratio: 2/3;
+  overflow: hidden; /* Ensure images respect the aspect ratio box */
+}
+
+.intro-column img {
+  width: 100%; /* Changed from max-width */
+  height: 100%;
+  object-fit: cover; /* Ensures image fills the container */
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.intro-column img.fade-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.intro-quote {
+  font-family: "DarlineScript", cursive;
+  font-size: 3rem;
+  font-weight: 400;
+  line-height: 1.2;
+  margin: 10px 0;
+  color: white;
+}
+
+.intro-quote .pre-quote {
+  font-family: "DarlineSerif", serif;
+  font-size: 2.2rem;
+  font-style: normal;
+}
+
+.intro-text {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: white;
+  max-width: 80%;
+  margin: 20px auto;
+  text-align: center;
+}
+
+.monogram-middle {
+  position: absolute;
+  bottom: -70px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 120px;
+  height: auto;
+  z-index: 998;
+}
+
+/* =================================================================== */
+/* 10. TIMELINE SECTION
+/* =================================================================== */
+
 .timeline-section {
-  background-color: #8b8e59; /* Sage green background color */
+  background-color: #8b8e59;
   padding: 100px 50px;
   position: relative;
-  border-top: #e1e6cd 2px solid; /* Top border for the section */
+  border-top: #e1e6cd 2px solid;
 }
 
 .timeline-section .section-label {
@@ -640,19 +711,19 @@ body.modal-active {
 
 .timeline-container {
   background-color: transparent;
-  width: 79vw; /* Fixed width for the timeline container */
-  height: 51vh; /* Fixed height for the timeline container */
+  width: 79vw;
+  height: 51vh;
   margin: 0 auto;
-  position: relative; /* This is the positioning context for the absolute arrows */
+  position: relative;
 }
 
 .timeline-carousel {
   position: relative;
   display: flex;
-  align-items: center; /* Vertically centers the timeline events */
+  align-items: center;
   width: 100%;
   height: 100%;
-  overflow: hidden; /* Hides any overflow content */
+  overflow: hidden;
   padding: 40px 20px;
 }
 
@@ -662,8 +733,8 @@ body.modal-active {
   left: 0;
   width: 100%;
   height: 100%;
-  object-fit: fill; /* This will stretch the image to fit the container */
-  z-index: 1; /* Puts the image behind the content */
+  object-fit: fill;
+  z-index: 1;
 }
 
 .timeline {
@@ -672,13 +743,13 @@ body.modal-active {
   padding: 0;
   margin: 40px 40px;
   gap: 60px;
-  z-index: 2; /* Puts the timeline on top of the border */
+  z-index: 2;
   transition: transform 0.5s ease-in-out;
   transform: translateX(0);
 }
 
 .timeline-item {
-  flex: 0 0 calc((100% / 3) - 40px); /* Each item takes up 1/5 of the total list width */
+  flex: 0 0 calc((100% / 3) - 40px);
   padding: 0 10px;
   color: white;
 }
@@ -715,65 +786,55 @@ body.modal-active {
 }
 
 .timeline-controls {
-  /* The key fix: absolute positioning */
   position: absolute;
   bottom: 30px;
   left: 50%;
-  transform: translateX(-50%); /* This horizontally centers the element */
-  z-index: 3; /* Ensures the arrows are visible on top of other content */
+  transform: translateX(-50%);
+  z-index: 3;
   display: flex;
-  gap: 30px; /* Space between the arrows */
+  gap: 30px;
   align-items: center;
 }
 
 .timeline-arrow {
   cursor: pointer;
-  width: 30px; /* Or whatever size you prefer */
+  width: 30px;
   height: auto;
   transition: transform 0.2s ease-in-out;
 }
 
-  /* REGISTRY SECTION */
+/* =================================================================== */
+/* 11. REGISTRY SECTION
+/* =================================================================== */
 
-/* The main container for the section */
 .registry-section {
-  background-color: #f8f6f1; /* A light, off-white color to match the background */
-  background-image: url('PK_PAPER_8 copy.jpg');
+  background-color: #f8f6f1;
+  background-image: url('PK_PAPER_8 copy.jpg'); /* NOTE: Verify this path */
   background-position: center;
   background-size: cover;
   padding: 80px 20px;
-  text-align: center; /* Centers the "Registry" label */
+  text-align: center;
 }
 
-/* The label at the top of the section */
-.section-label {
-  font-family: "DarlineSerif", serif;
-  text-transform: uppercase;
-  font-style: italic;
-  font-weight: 300;
-  letter-spacing: 0.2rem;
-  color: #bcbdb5; /* A subtle gray color */
-  margin-bottom: 2rem;
-}
+/* Re-uses .section-label global style */
 
-/* The container for the two main columns */
 .registry-container {
   display: flex;
-  justify-content: center; /* Centers the columns horizontally */
-  align-items: center; /* Aligns items vertically */
-  max-width: 1100px; /* Limits the width on large screens */
+  justify-content: center;
+  align-items: center;
+  max-width: 1100px;
   margin: 0 auto;
-  gap: 80px; /* Creates space between the text and photo columns */
-  text-align: left; /* Aligns content inside the columns to the left */
+  gap: 80px;
+  text-align: left;
+  flex-wrap: wrap; /* Allow wrapping on mobile */
 }
 
-/* Styles for the text column */
 .registry-text-column {
-  flex: 1; /* Allows this column to grow */
+  flex: 1;
   max-width: 500px;
+  min-width: 300px; /* Prevent it from getting too squished */
 }
 
-/* Styles for the registry heading */
 .registry-heading {
   font-family: "DarlineSerif", serif;
   font-weight: 400;
@@ -783,7 +844,6 @@ body.modal-active {
   margin-bottom: 20px;
 }
 
-/* Styles for the registry body text */
 .registry-body {
   font-family: "DarlineSerif", serif;
   font-weight: 300;
@@ -794,7 +854,6 @@ body.modal-active {
   margin-left: 20px;
 }
 
-/* Styles for the "Explore Registry" button/link */
 .registry-button {
   font-family: "DarlineSerif", serif;
   text-transform: uppercase;
@@ -803,7 +862,7 @@ body.modal-active {
   letter-spacing: 0.15rem;
   color: #212121;
   text-decoration: none;
-  border-bottom: 1px solid #212121; /* Adds a subtle underline */
+  border-bottom: 1px solid #212121;
   padding-bottom: 4px;
   display: inline-block;
   margin-top: 10px;
@@ -812,597 +871,63 @@ body.modal-active {
 
 .registry-button:hover {
   color: #75793d;
-  border-bottom: 1px solid #75793d; /* Adds a subtle underline */
+  border-bottom: 1px solid #75793d;
   transition: color 0.3s ease, border-bottom-color 0.3s ease;
 }
 
-/* Styles for the photo column */
 .registry-photo-column {
-  flex: 1; /* Allows this column to grow */
+  flex: 1;
   display: flex;
   justify-content: center;
   align-items: center;
+  min-width: 300px;
 }
 
-/* Styles for the photo itself */
 .registry-photo {
   max-width: 400px;
+  width: 100%; /* Make image responsive */
   height: auto;
 }
 
-/* FOOTER SECTION */
+/* =================================================================== */
+/* 12. FOOTER SECTION
+/* =================================================================== */
 
 .site-footer {
-  /* Set the background image and positioning */
-  background-image: url('Content/Untitled design (14) 2.webp'); /* Replace with your background image path */
-  background-attachment: fixed;
+  background-image: url('Content/Untitled design (14) 2.webp');
+  /* background-attachment: fixed; */
   background-size: cover;
   background-position: center;
-  
-  /* Flexbox for the layout */
   display: flex;
-  justify-content: space-between; /* Pushes the logo to the left and the link to the right */
-  align-items: center; /* Vertically centers the content */
-  
-  /* Spacing and dimensions */
-  padding: 100px 150px; /* Adjust top/bottom and left/right padding as needed */
+  justify-content: space-between;
+  align-items: center;
+  padding: 100px 150px;
 }
 
 .footer-logo {
-  max-height: 80px; /* Set a maximum height for the logo */
-  width: auto; /* Maintain the logo's aspect ratio */
+  max-height: 80px;
+  width: auto;
 }
 
 .return-to-top {
-  /* Text and link styling */
-  font-family: "DarlineSerif", serif; /* Use a font that matches your design */
+  font-family: "DarlineSerif", serif;
   font-size: 1.2rem;
   color: white;
-  text-decoration: none; /* Removes the default underline */
+  text-decoration: none;
   font-style: italic;
   text-transform: uppercase;
   letter-spacing: 0.15rem;
-  
-  /* Create the underline */
   border-bottom: 1px solid white;
   padding-bottom: 5px;
-  
-  /* Flexbox to align the text and arrow */
   display: flex;
   align-items: center;
-  gap: 10px; /* Space between the text and the arrows */
+  gap: 10px;
 }
 
-/* Create the arrows using a pseudo-element */
 .return-to-top::before,
 .return-to-top::after {
-  content: '↑'; /* Unicode character for an up arrow */
+  content: '↑';
   font-size: 1.2rem;
   line-height: 1;
-  transform: translateY(-2px); /* Adjust vertical position */
-}
-
-/* MEMBERS ONLY PASSWORD MODAL*/
-/* NEW Members Only Password Modal Styles */
-.members-only-modal {
-  display: none; /* HIDDEN BY DEFAULT */
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.7); /* Darker overlay */
-  z-index: 1060; /* Higher than the main password modal */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 1rem;
-}
-
-.members-only-modal-content {
-  background-color: #f6f5f1; /* Light paper-like background */
-  padding: 2.5rem;
-  border-radius: 10px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
-  max-width: 450px;
-  width: 100%;
-  text-align: center;
-  position: relative;
-  font-family: "DarlineSerif", serif; /* Use a classy font */
-}
-
-.close-button {
-  position: absolute;
-  top: 15px;
-  right: 20px;
-  font-size: 2rem;
-  color: #9aacc4; /* Match navbar color */
-  cursor: pointer;
-  line-height: 1;
-  transition: color 0.3s ease;
-}
-
-.close-button:hover {
-  color: #727a4d; /* Darker hover */
-}
-
-.modal-title {
-  font-family: "DarlineScript", cursive; /* Use your decorative font */
-  font-size: 2.5rem;
-  color: #727a4d;
-  margin-bottom: 1rem;
-  font-weight: normal;
-}
-
-.modal-description {
-  font-size: 1.1rem;
-  color: #555;
-  margin-bottom: 1.5rem;
-  line-height: 1.5;
-}
-
-.modal-separator {
-  border: 0;
-  height: 1px;
-  background-color: #d8e2ef; /* Light separator line */
-  margin: 1.5rem auto;
-  width: 70%;
-}
-
-.modal-prompt {
-  font-size: 1rem;
-  color: #666;
-  margin-bottom: 1rem;
-  font-style: italic;
-}
-
-#membersOnlyPasswordInput {
-  width: 80%;
-  padding: 0.75rem 1rem;
-  margin-bottom: 1.5rem;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  font-size: 1.1rem;
-  color: #333;
-  text-align: center;
-}
-
-#submitMembersOnlyPassword {
-  background-color: #9aacc4; /* Match a brand color */
-  color: white;
-  padding: 0.8rem 2rem;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-family: "DarlineSerif", serif;
-  font-style: italic;
-  font-size: 1.1rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05rem;
-  transition: background-color 0.3s ease, transform 0.2s ease;
-}
-
-#submitMembersOnlyPassword:hover {
-  background-color: #727a4d; /* Darker hover */
   transform: translateY(-2px);
-}
-
-.error-message {
-  color: #D8000C; /* Error red */
-  font-size: 0.9em;
-  margin-top: 1rem;
-  display: none; /* Hidden by default */
-  font-weight: bold;
-}
-
-/* Using a more elegant, serif font for the main headings */
-.fade-in-text h1 {
-  font-family: 'DarlineScript', cursive; /* Using your script font for the main heading */
-}
-
-/* The main container for the scroll-triggered animations */
-.scroll-section {
-  position: relative;
-  width: 100%;
-  display: grid;
-  grid-template-columns: 1fr;
-  grid-template-rows: auto;
-}
-
-/* Each image panel serves as a background and a trigger for animations */
-.image-panel {
-  height: 100vh;
-  width: 100%;
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed; /* Creates a simple parallax effect */
-}
-
-/* The sticky container holds the text that will appear over the images */
-.text-container {
-  position: sticky;
-  top: 0;
-  height: 100vh;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  pointer-events: none; /* Allows scrolling 'through' the text layer */
-}
-
-/* The text blocks that will fade in and out */
-.fade-in-text {
-  color: white;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
-  max-width: 90%;
-  opacity: 0;
-  transform: translateY(30px);
-  transition: opacity 1.2s cubic-bezier(0.165, 0.84, 0.44, 1), transform 1.2s cubic-bezier(0.165, 0.84, 0.44, 1);
-  pointer-events: auto; /* Re-enable pointer events for the text itself */
-}
-
-/* The class that JavaScript will add to make the text visible */
-.fade-in-text.is-visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* ---- Map Section ---- */
-
-.map-section {
-  width: 100%;
-  max-width: 1050px; /* Set a max width for large screens */
-  margin: 50px auto; /* Center the map component */
-  padding: 0 20px; /* Adds some space on mobile */
-  box-sizing: border-box;
-  position: relative; /* Allows z-index to work */
-  z-index: 5;
-}
-
-/* ---- Map Section ---- */
-
-.map-container {
-  position: relative; 
-  /* That's it! No background-image, no padding-top, no height. */
-  /* The image inside will give it its size. */
-}
-
-/* This styles your new title */
-.map-title {
-  font-family: "DarlineScript", cursive; /* Or your preferred title font */
-  font-size: 3rem;
-  text-align: center;
-  color: #6587ab; /* Or your preferred color */
-  margin-bottom: 50px;
-  font-weight: 400;
-}
-
-/* This makes the map image responsive */
-.map-image {
-  width: 100%; /* Makes the image fill the .map-section width */
-  height: auto; /* Maintains the correct aspect ratio */
-  display: block; /* Fixes a small gap that can appear under images */
-}
-
-.map-marker {
-  /* This positions the marker *inside* the relative container */
-  position: absolute; 
-  z-index: 10;
-  
-  /* This centers the pin *on* the coordinate */
-  /* It shifts the pin left by 50% of its own width */
-  /* and up by 100% of its own height. */
-  transform: translate(-50%, -100%);
-  
-  /* Style the link itself */
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-decoration: none;
-  cursor: pointer;
-  transition: transform 0.2s ease;
-}
-
-.map-marker:hover {
-  transform: translate(-50%, -100%) scale(1.1); /* Slightly enlarge on hover */
-  z-index: 11; /* Bring to front on hover */
-}
-
-.map-marker img {
-  /* Set the size of your icon image */
-  width: 325px; 
-  /* This prevents the alt text from showing up as a broken box if the image is missing */
-  font-size: 0; 
-  color: transparent;
-}
-
-a#marker-hotel img {
-  max-width: 275px !important;
-}
-
-.map-marker span {
-  /* Style for the label */
-  display: block;
-  margin-top: 5px;
-  padding: 3px 8px;
-  background-color: rgba(255, 255, 255, 0.9);
-  color: #333;
-  font-family: Arial, sans-serif; /* Choose your site's font */
-  font-size: 13px;
-  font-weight: 600;
-  border-radius: 4px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-  white-space: nowrap; /* Prevents "Welcome Party" from breaking into two lines */
-}
-
-/* --- Location Section --- */
-.location-section {
-  background-color: #f6f5f1; /* Light background */
-  padding: 80px 20px; /* Vertical padding, some horizontal for mobile */
-  text-align: center; /* Centers the "Location" label and the button */
-  position: relative; /* If any elements need absolute positioning within */
-  overflow: hidden; /* Ensures nothing spills out */
-}
-
-/* Reusing your existing section label style */
-.location-section .section-label {
-  font-family: "DarlineScript", cursive; /* Assuming 'Location' is in script font */
-  font-size: 3rem; /* Adjust as needed */
-  color: #a8a8a8; /* A light, subtle color for the label */
-  margin-bottom: 60px; /* Space below the label */
-  display: block; /* Ensure it takes its own line */
-}
-
-.location-content-container {
-  display: flex; /* Arranges children horizontally */
-  justify-content: center; /* Centers items if there's extra space */
-  align-items: center; /* Vertically aligns items in the middle */
-  gap: 3vw; /* Responsive gap between elements */
-  margin-bottom: 60px; /* Space above the button */
-  flex-wrap: wrap; /* Allows items to wrap on smaller screens */
-  max-width: 1200px; /* Max width for the content row */
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.location-info-left,
-.location-info-right {
-  flex-basis: 25%; /* Give left/right columns a base width */
-  min-width: 150px; /* Ensure they don't get too small */
-  text-align: center; /* Align text within their boxes */
-  padding: 0 10px;
-}
-
-.location-link {
-  font-family: "DarlineSerif", serif; /* Use your preferred serif font */
-  font-weight: 500; /* Medium weight */
-  font-size: 1.6rem; /* Adjust size as needed */
-  color: #7a8293; /* A soft blue color */
-  text-decoration: none; /* Remove default underline */
-  border-bottom: 1px solid #7a8293; /* Subtle underline */
-  padding-bottom: 3px; /* Space between text and underline */
-  display: inline-block; /* Allows padding and bottom border to work */
-  line-height: 1.3; /* Adjust line height for multiline text */
-  transition: color 0.3s ease, border-color 0.3s ease;
-}
-
-.location-link:hover {
-  color: #5d6675; /* Darken on hover */
-  border-color: #5d6675;
-}
-
-.location-illustration-container {
-  flex-shrink: 0; /* Prevents the illustration from shrinking too much */
-  max-width: 400px; /* Max width for the illustration */
-  width: 100%; /* Becomes 100% of available space up to max-width */
-  text-align: center; /* Ensures image is centered within its flex item */
-}
-
-.location-illustration {
-  max-width: 100%; /* Ensures image fits within its container */
-  height: auto; /* Maintains aspect ratio */
-  display: block; /* Removes extra space below image */
-  margin: 0 auto; /* Centers the image if container is wider */
-}
-
-.travel-stay-button {
-  display: inline-block; /* Allows padding and sizing */
-  padding: 15px 35px;
-  background-color: #9aacc4; /* Match your navbar scrolled color or another brand color */
-  color: white;
-  font-family: "DarlineSerif", serif; /* Consistent button font */
-  font-weight: 400;
-  font-style: italic;
-  font-size: 1.1rem;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  text-decoration: none;
-  border-radius: 5px; /* Slightly rounded corners */
-  transition: background-color 0.3s ease, transform 0.2s ease;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-}
-
-.travel-stay-button:hover {
-  background-color: #7a8293; /* Darker blue on hover */
-  transform: translateY(-2px); /* Slight lift effect */
-}
-
-
-/* --- Responsive Adjustments --- */
-@media (max-width: 768px) {
-  .location-section {
-    padding: 60px 15px; /* Less padding on smaller screens */
-  }
-
-  .location-section .section-label {
-    font-size: 2.5rem;
-    margin-bottom: 40px;
-  }
-
-  .location-content-container {
-    flex-direction: column; /* Stack items vertically on small screens */
-    gap: 30px; /* Adjust vertical gap */
-    margin-bottom: 40px;
-  }
-
-  .location-info-left,
-  .location-info-right {
-    flex-basis: auto; /* Let items take natural width */
-    width: 100%; /* Fill available width */
-    text-align: center; /* Center text */
-    padding: 0; /* Remove horizontal padding */
-  }
-
-  .location-illustration-container {
-    max-width: 80%; /* Make illustration fill more width */
-    order: -1; /* Place illustration above text on mobile */
-  }
-
-  .location-link {
-    font-size: 1.4rem; /* Smaller font for links */
-  }
-
-  .travel-stay-button {
-    font-size: 1rem;
-    padding: 12px 25px;
-  }
-}
-
-@media (max-width: 480px) {
-  .location-section .section-label {
-    font-size: 2rem;
-  }
-  .location-link {
-    font-size: 1.2rem;
-  }
-}
-
-/* --- Weekend Celebration Section --- */
-.weekend-celebration-section {
-  /* Using the blue-gray color from your button/theme */
-  background-color: #9aacc4; 
-  /* Using your off-white color for all text */
-  color: #ffffff; 
-  padding: 80px 20px;
-  position: relative; /* Needed for the decorative lines */
-  text-align: center;
-}
-
-/* These are the thin lines at the very top and bottom */
-.decorative-line {
-  position: absolute;
-  left: 0;
-  width: 100%;
-  height: 1px;
-  /* A semi-transparent white */
-  background-color: #ffffff; 
-}
-.decorative-line.top {
-  top: 0;
-}
-.decorative-line.bottom {
-  bottom: 0;
-}
-
-/* The intro text: "We would be delighted..." */
-.weekend-intro {
-  font-family: "inria-bold-italic", serif;
-  font-size: 1.3rem; /* 1.3x the base font size */
-  line-height: 1.5;
-  margin-bottom: 20px;
-}
-
-/* The small horizontal line under the intro */
-.divider-line {
-  width: 50px; /* Small width */
-  height: 1px;
-  background-color: #ffffff;
-  margin: 0 auto 60px auto; /* Centers it and adds space below */
-}
-
-/* Container for the two event columns */
-.events-container {
-  display: flex;
-  justify-content: center;
-  gap: 5vw; /* Responsive gap between columns */
-  max-width: 1100px;
-  margin: 0 auto;
-  text-align: left; /* Overrides the section's center-align */
-  flex-wrap: wrap; /* Allows columns to stack on mobile */
-}
-
-.event-column {
-  flex: 1; /* Each column takes up equal space */
-  min-width: 300px; /* Won't get smaller than 300px before stacking */
-  padding: 0 15px; /* A little space within the column */
-  text-align: center;
-  font-family: "inria-bold-italic", serif;
-}
-
-/* The cursive titles: "Welcome Party" */
-.event-title-script {
-  font-family: "DarlineScript", cursive;
-  font-size: 3rem;
-  font-weight: normal;
-  margin-bottom: 25px;
-  color: #f6f5f1; /* Ensure it's the light color */
-}
-
-/* The bold location names: "Charlton Park Pavilion" */
-.event-location-name {
-  font-family: "DarlineSerif", serif;
-  font-weight: 600; /* Bolder */
-  font-size: 1.3rem;
-  margin-bottom: 8px;
-}
-
-/* Styling for address, time, and description paragraphs */
-.event-address,
-.event-time,
-.event-description {
-  font-family: "DarlineSerif", serif;
-  font-size: 1.1rem;
-  line-height: 1.6;
-  margin-bottom: 18px;
-  opacity: 0.9; /* Makes it slightly softer than the title */
-}
-
-/* The fine-print note at the bottom */
-.event-note {
-  font-family: "DarlineSerif", serif;
-  font-size: 0.9rem;
-  font-style: italic;
-  line-height: 1.5;
-  margin-top: 20px;
-  opacity: 0.8; /* Even more subtle */
-}
-
-/* --- Responsive Adjustments --- */
-@media (max-width: 768px) {
-  .weekend-celebration-section {
-    padding: 60px 15px;
-  }
-
-  .events-container {
-    flex-direction: column; /* Stack columns vertically */
-    gap: 50px; /* Space between the stacked items */
-  }
-
-  /* Center-align text within columns on mobile */
-  .event-column {
-    text-align: center;
-  }
-
-  .event-title-script {
-    font-size: 2.5rem; /* Slightly smaller title */
-  }
-
-  .weekend-intro,
-  .event-location-name,
-  .event-address,
-  .event-time,
-  .event-description {
-    font-size: 1rem; /* Standardize font size on mobile */
-  }
 }

@@ -13,7 +13,7 @@
     
     <link rel="preload" as="image" href="{{ url_for('static', filename='Content/Untitled design (14) 2.webp') }}">
 
-    <meta name="description" content="A brief description of your website or project.">
+    <meta name="description" content="Join Emma Hernandez and Ethan Wlodarczyk as they celebrate their wedding on June 18, 2027, at the Bay Pointe Inn in Shelbyville, Michigan.">
     <meta name="keywords" content="Emma Hernandez, Ethan Wlodarczyk, Wedding, Emma and Ethan, Emma Hernandez and Ethan Wlodarczyk">
     <meta name="author" content="Emma Hernandez and Ethan Wlodarczyk">
 
@@ -40,9 +40,10 @@
           <img src="{{ url_for('static', filename='Long logo with rose.png') }}" alt="Emma & Ethan Logo" class="logo">
       </a>
       <div class="nav-links">
-          <a href="#welcome" class="nav-link">Welcome</a>
-          <a href="#details" class="nav-link">Details</a>
+          <a href="/travel" class="nav-link">Travel & Stay</a>
           <a href="#our-story" class="nav-link">Our Story</a>
+          <a href="/events" class="nav-link">Weekend Events</a>
+          <a href="/faq" class="nav-link">FAQs</a>
           <a href="#registry" class="nav-link">Registry</a>
       </div>
       <div class="nav-icons">
@@ -51,18 +52,12 @@
                 <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"></path>
             </svg>
         </button>
-        <a href="{{ url_for('members_only') }}"
-          id="membersOnlyTrigger"
-          data-members-url="{{ url_for('members_only') }}"
-          class="icon-link"
-          aria-label="Members area">
-          <svg class="icon members-icon" viewBox="0 0 24 24">
-              <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"></path>
-          </svg>
-        </a>
-    </div>
-  </nav>
-        <header class="hero-section " id="hero">
+      </div>
+    </nav>
+
+    <main>
+
+        <header class="hero-section" id="hero">
           <img src="{{ url_for('static', filename='ethanandemmaengagement-1-subj.png') }}" alt="Emma and Ethan" class="hero-foreground">
           <div class="hero-content">
             <h1 class="hero-text">
@@ -74,57 +69,22 @@
           </div>
         </header>
         
-        <section class="weekend-celebration-section">
-          <!-- Thin decorative line at the top -->
+        <section class="celebration-section" id="celebration">
           <div class="decorative-line top"></div>
-        
-          <p class="weekend-intro">
-            We would be delighted for you to
-            <br class="mobile-only">
-            join us for a weekend celebration
-          </p>
-          
-          <!-- Small divider line below the intro -->
-          <div class="divider-line"></div>
         
           <div class="events-container">
             
-            <!-- Welcome Party Column -->
-            <div class="event-column">
-              <h2 class="event-title-script">Welcome Party</h2>
-              
-              <h3 class="event-location-name">Charlton Park Pavilion</h3>
-              <p class="event-address">
-                2545 S Charlton Park Rd<br>
-                Hastings Township, MI 49058
-              </p>
-              
-              <p class="event-time">
-                Thursday, June 17th<br>
-                6:00 PM
-              </p>
-              
-              <p class="event-description">
-                For those in town early, join us for a casual night of pizza and lawn games!
-              </p>
-              
-              <p class="event-note">
-                *As the drive is long, we want to offer a relaxed dinner for anyone already settling in on Thursday. Please join only if it fits your existing travel plans.*
-              </p>
-            </div>
-        
-            <!-- Ceremony & Reception Column -->
             <div class="event-column">
               <h2 class="event-title-script">Ceremony & Reception</h2>
               
               <h3 class="event-location-name">Bay Pointe Inn</h3>
               <p class="event-address">
                 11456 Marsh Rd<br>
-                Shelbyville, MI 49344
+                Shelbyville, Michigan 49344
               </p>
               
               <p class="event-time">
-                Friday, June 18th<br>
+                Friday, June 18th, 2027br>
                 4:30 PM
               </p>
               
@@ -135,7 +95,6 @@
         
           </div>
         
-          <!-- Thin decorative line at the bottom -->
           <div class="decorative-line bottom"></div>
         </section>
 
@@ -145,7 +104,11 @@
         
         <div class="map-section">
   
-          <h2 class="map-title">The Lay of the Land</h2>
+          <div class="map-title-container">
+            <span class="map-subtitle">Click on a location to explore</span>
+            <h2 class="map-title-main">Our Wedding</h2>
+            <span class="map-title-script">Weekend</span>
+          </div>
           
           <div class="map-container">
             
@@ -253,26 +216,16 @@
           </div>
         </section>
         
-        <footer class="site-footer">
-          <a href="#hero" class="logo-link">
-            <img src="{{ url_for('static', filename='Long logo with rose.png') }}" alt="Emma & Ethan Logo" class="footer-logo">
-          </a>
-          <a href="#hero" class="return-to-top">Return to the top</a>
-        </footer>
+    </main>
+    
+    <footer class="site-footer">
+      <a href="#hero" class="logo-link">
+        <img src="{{ url_for('static', filename='Long logo with rose.png') }}" alt="Emma & Ethan Logo" class="footer-logo">
+      </a>
+      <a href="#hero" class="return-to-top">Return to the top</a>
+    </footer>
 
-      <div id="membersOnlyModal" class="members-only-modal">
-      <div class="members-only-modal-content">
-          <span class="close-button" id="closeMembersOnlyModal">&times;</span>
-          <h2 class="modal-title">A Private Invitation</h2>
-          <p class="modal-description">This space is reserved for our cherished wedding party.</p>
-          <hr class="modal-separator">
-          <p class="modal-prompt">Kindly enter the sacred password to unveil its secrets.</p>
-          <input type="password" id="membersOnlyPasswordInput" placeholder="Password" aria-label="Members Only Password Input">
-          <button type="button" id="submitMembersOnlyPassword">Unlock</button>
-          <p id="membersOnlyErrorMessage" class="error-message">Entry denied. The password is not recognized.</p>
-      </div>
-    </div>
-        
+    
     <script src="{{ url_for('static', filename='Home.js') }}" defer></script>
 </body>
 </html>
