@@ -302,9 +302,9 @@ def login():
         supabase_anon_key=os.environ.get('SUPABASE_ANON_KEY')
     )
 
-@app.route('/members_only')
-def members_only():
-    return render_template('members-only.html')
+@app.route('/travel')
+def travel():
+    return render_template('travel.html')
 
 @app.route('/vendors')
 def vendors():
