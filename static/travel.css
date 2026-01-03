@@ -287,7 +287,7 @@ ACCOMMODATIONS SECTION (UPDATED)
 .accommodations-section {
   background-image: none !important; /* Remove texture */
   background-color: #fcfcfc; /* Clean off-white */
-  padding: 6rem 1.5rem;
+  padding: 4rem 1.5rem;
 }
 
 /* Hide the floral images */
@@ -303,7 +303,7 @@ ACCOMMODATIONS SECTION (UPDATED)
 .accommodations-content .section-title {
   /* Use the exact name from your @font-face definition */
   font-family: 'DarlineScript', 'Darline Script', cursive; 
-  font-size: 4rem; 
+  font-size: 2.8rem; 
   font-weight: normal;
   color: #9aacc4; /* Your dusty blue */
   margin-bottom: 1.5rem;
@@ -782,7 +782,7 @@ TRANSPORTATION: MATCHING WIDTH LAYOUT
 
 .transportation-section {
   /* Match the padding of your Accommodations section (6rem = approx 96px) */
-  padding: 6rem 1.5rem; 
+  padding: 4rem 1.5rem; 
   background-color: #ffffff;
 }
 
@@ -827,7 +827,7 @@ TRANSPORTATION: MATCHING WIDTH LAYOUT
 }
 
 .info-group {
-  margin-bottom: 4rem;
+  margin-bottom: 2rem;
   padding-bottom: 2rem;
   border-bottom: 1px solid #f0f0f0; 
 }
@@ -1250,6 +1250,7 @@ TRAVEL / ACCOMMODATIONS HERO SECTION
 
 /* Text layer */
 .hero-text {
+  font-family: 'DarlineScript', 'Darline Script', cursive; 
   position: fixed;
   top: 30%;
   left: 50%;
@@ -1280,9 +1281,10 @@ TRAVEL / ACCOMMODATIONS HERO SECTION
 /* ===================================================================
    EDITORIAL / THINGS TO DO SECTION
    =================================================================== */
-
-   .things-to-do-section {
-    padding: 6rem 0rem;
+  
+.things-to-do-section {
+    /* MOBILE: 1.5rem side padding prevents edge-touching */
+    padding: 4rem 1.5rem; 
     background-color: #ffffff;
     max-width: 1000px;
     margin: 0 auto;
@@ -1314,6 +1316,11 @@ TRAVEL / ACCOMMODATIONS HERO SECTION
 
 /* Desktop: Split 60% Left / 40% Right */
 @media (min-width: 900px) {
+
+  .things-to-do-section {
+    padding: 4rem 0; 
+   }
+
   .editorial-grid {
       /* This ratio gives the left image more dominance */
       grid-template-columns: 1.4fr 1fr; 
