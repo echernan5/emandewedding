@@ -1,194 +1,131 @@
-document.addEventListener("DOMContentLoaded", function () {
-    const phrases = [
-        "in english class.",
-        "laughing.",
-        "best friends.",
-        "in Italy.",
-        "singing.",
-        "going to college.",
-        "long distance.",
-        "watching Phineas and Ferb.",
-        "short distance",
-        "in the UPC office",
-        "graduating college.",
-        "moving to DC.",
-        "getting married!"
-    ];
-    
-    const animatedText = document.getElementById("animated-text");
-    let index = 0;
-    
-    // Define timing behavior: fast for most, then slow down at the end
-    const speeds = phrases.map((_, i) => 
-        i < phrases.length - 3 ? 250 : (i === phrases.length - 3 ? 500 : i === phrases.length - 2 ? 600 : 1000)
-    );
+document.addEventListener('DOMContentLoaded', () => {
+  // --- 1. Navbar Scroll Behavior (Sticky/Hiding) ---
+  const navbar = document.getElementById('navbar');
+  let lastScrollY = window.scrollY;
 
-    function updateText() {
-        animatedText.textContent = phrases[index];
-        index++;
+  if (navbar) { // Added a check just in case
+    window.addEventListener('scroll', () => {
+        const currentScrollY = window.scrollY;
 
-        if (index < phrases.length) {
-            setTimeout(updateText, speeds[index]); // Use custom speeds for a natural slowdown
+        if (currentScrollY > 0) {
+        navbar.classList.add('scrolled');
+
+        if (currentScrollY > lastScrollY && currentScrollY > 80) {
+            navbar.classList.add('hide-on-scroll-down');
+        } else {
+            navbar.classList.remove('hide-on-scroll-down');
         }
-    }
+        } else {
+        navbar.classList.remove('scrolled');
+        navbar.classList.remove('hide-on-scroll-down');
+        }
 
-    updateText();
-});
-
-const leftButton = document.querySelector('.scroll-left');
-const rightButton = document.querySelector('.scroll-right');
-const timelineContainer = document.querySelector('.timeline-container');
-
-rightButton.addEventListener('click', () => {
-    timelineContainer.scrollBy({
-        left: 900,  
-        behavior: 'smooth',
+        lastScrollY = currentScrollY;
     });
-});
-
-leftButton.addEventListener('click', () => {
-    timelineContainer.scrollBy({
-        left: -900,  
-        behavior: 'smooth',
-    });
-});
-
-
-document.addEventListener("DOMContentLoaded", function() {
-    const menuIcon = document.querySelector(".menu-icon");
-    const sidebar = document.querySelector(".sidebar");
-    const overlay = document.querySelector(".overlay");
-    const contentWrapper = document.querySelector(".content-wrapper");
-    const closeIcon = document.querySelector(".close-icon");
-    const menuToggle = document.querySelector(".menu-toggle");
-    const menu = document.querySelector(".menu");
-    const content = document.querySelector(".content");
-  
-    function openSidebar() {
-        sidebar.classList.add("active"); 
-        overlay.classList.add("active"); 
-        contentWrapper.classList.add("content-slide");
-    }
-  
-    function closeSidebar() {
-        sidebar.classList.remove("active"); 
-        overlay.classList.remove("active"); 
-        contentWrapper.classList.remove("content-slide");
-    }
-  
-    if (menuIcon) {
-        menuIcon.addEventListener("click", function() {
-            if (sidebar.classList.contains("active")) {
-                closeSidebar();
-            } else {
-                openSidebar();
-            }
-        });
-    }
-  
-    if (closeIcon) closeIcon.addEventListener("click", closeSidebar);
-    if (overlay) overlay.addEventListener("click", closeSidebar);
-  
-    if (menuToggle && menu && content) {
-        menuToggle.addEventListener("click", function() {
-            menu.classList.toggle("open");
-            content.classList.toggle("shifted");
-        });
-    }
-  });
-  
-  document.addEventListener('DOMContentLoaded', function () {
-    const dropdown = document.querySelector('.sidebar .dropdown');
-    const toggle = dropdown.querySelector('.dropdown-toggle');
-    const content = dropdown.querySelector('.dropdown-content');
-
-    toggle.addEventListener('click', function () {
-      dropdown.classList.toggle('open');
-      content.style.display = dropdown.classList.contains('open') ? 'block' : 'none';
-    });
-  });
-
-  const container = document.querySelector('.timeline-container');
-const dotsContainer = document.querySelector('.timeline-dots-container');
-const timelineItems = document.querySelectorAll('.timeline-item');
-
-// Create dots for each timeline item
-timelineItems.forEach((item, index) => {
-  const dot = document.createElement('div');
-  dot.classList.add('timeline-dot');
-  dotsContainer.appendChild(dot);
-});
-
-// Function to update the active dot based on scroll position
-function updateActiveDot() {
-  const scrollLeft = container.scrollLeft;
-  const containerCenter = scrollLeft + container.offsetWidth / 2;
-
-  let closestIndex = 0;
-  let minDistance = Infinity;
-
-  timelineItems.forEach((item, index) => {
-    const itemCenter = item.offsetLeft + item.offsetWidth / 2;
-    const distance = Math.abs(containerCenter - itemCenter);
-
-    if (distance < minDistance) {
-      minDistance = distance;
-      closestIndex = index;
-    }
-  });
-
-  // Reset all dots to inactive
-  const dots = document.querySelectorAll('.timeline-dot');
-  dots.forEach(dot => dot.classList.remove('active'));
-
-  // Set the closest one as active
-  dots[closestIndex].classList.add('active');
-}
-
-
-// Listen for scroll event to update the active dot
-container.addEventListener('scroll', updateActiveDot);
-
-// Initial update when the page loads
-updateActiveDot();
-
-// Get modal elements
-const hisStoryModal = document.getElementById("hisStoryModal");
-const herStoryModal = document.getElementById("herStoryModal");
-
-// Get button elements
-const openHisStoryButton = document.getElementById("openHisStory");
-const openHerStoryButton = document.getElementById("openHerStory");
-
-// Get close buttons
-const closeHisStory = hisStoryModal.querySelector(".close");
-const closeHerStory = herStoryModal.querySelector(".close");
-
-// Open modals when buttons are clicked
-openHisStoryButton.onclick = function() {
-  hisStoryModal.style.display = "block";
-};
-
-openHerStoryButton.onclick = function() {
-  herStoryModal.style.display = "block";
-};
-
-// Close modals when the close button is clicked
-closeHisStory.onclick = function() {
-  hisStoryModal.style.display = "none";
-};
-
-closeHerStory.onclick = function() {
-  herStoryModal.style.display = "none";
-};
-
-// Close modals if clicked outside of the modal content
-window.onclick = function(event) {
-  if (event.target === hisStoryModal) {
-    hisStoryModal.style.display = "none";
   }
-  if (event.target === herStoryModal) {
-    herStoryModal.style.display = "none";
-  }
-};
 
+  // ==========================================================
+  // 2. MOBILE NAV TOGGLE LOGIC
+  // ==========================================================
+  const navToggleBtn = document.querySelector('.mobile-nav-toggle');
+  const navMenu = document.getElementById('nav-menu');
+  const body = document.body; // 'body' is already defined, but this is fine
+
+  if (navToggleBtn && navMenu) {
+    navToggleBtn.addEventListener('click', () => {
+        // Toggle the "is-active" class on the menu
+        navMenu.classList.toggle('is-active');
+        
+        // Toggle the aria-expanded attribute for accessibility
+        const isExpanded = navToggleBtn.getAttribute('aria-expanded') === 'true';
+        navToggleBtn.setAttribute('aria-expanded', !isExpanded);
+        
+        // Prevent body scrolling when menu is open
+        if (navMenu.classList.contains('is-active')) {
+            body.classList.add('nav-is-active');
+        } else {
+            body.classList.remove('nav-is-active');
+        }
+    });
+  }
+
+  // --- 2. Our Story Photo Animation (Fade-in on scroll) ---
+  const images = document.querySelectorAll('.our-story-section .intro-column img');
+  const ourStorySection = document.getElementById('our-story');
+
+  if (ourStorySection) {
+    const handleScroll = () => {
+        const rect = ourStorySection.getBoundingClientRect();
+        
+        // Check if the section is in the viewport
+        if (rect.top < window.innerHeight && rect.bottom >= 0) {
+            images.forEach(img => {
+                img.classList.add('fade-in');
+            });
+            // Stop observing once the animation is triggered
+            window.removeEventListener('scroll', handleScroll);
+        }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    // Initial check in case the section is visible on load
+    handleScroll();
+  }
+
+
+  // --- 3. Timeline Carousel Functionality ---
+  const timeline = document.querySelector('.timeline');
+  const prevArrow = document.querySelector('.timeline-arrow.prev');
+  const nextArrow = document.querySelector('.timeline-arrow.next');
+  const items = document.querySelectorAll('.timeline-item');
+
+  // Only run carousel logic if the necessary elements are present
+  if (timeline && items.length > 0) {
+      const totalItems = items.length;
+      // We display 3 items at a time, so the maximum index to scroll to is totalItems - 3.
+      const maxIndex = totalItems > 3 ? totalItems - 3 : 0; 
+      let currentIndex = 0;
+
+      const showItem = (index) => {
+          if (items.length === 0) return;
+
+          // Find the width of one item + the gap to calculate the translation distance
+          const itemWidth = items[0].offsetWidth;
+          
+          // Get the gap value from the CSS
+          const computedStyle = window.getComputedStyle(timeline);
+          const gap = parseInt(computedStyle.gap, 10) || 0; // Use 0 if gap is not set
+          
+          // Calculate the translation value (item width + gap) * index
+          const translateValue = -((itemWidth + gap) * index);
+          
+          timeline.style.transform = `translateX(${translateValue}px)`;
+      };
+
+      const nextItem = () => {
+          if (currentIndex < maxIndex) {
+              currentIndex++;
+          } else {
+              currentIndex = 0; // Loop back to the start
+          }
+          showItem(currentIndex);
+      };
+
+      const prevItem = () => {
+          if (currentIndex > 0) {
+              currentIndex--;
+          } else {
+              currentIndex = maxIndex; // Loop back to the end
+          }
+          showItem(currentIndex);
+      };
+
+      // Add event listeners to the arrows
+      if (nextArrow) {
+          nextArrow.addEventListener('click', nextItem);
+      }
+      if (prevArrow) {
+          prevArrow.addEventListener('click', prevItem);
+      }
+  }
+});

@@ -306,6 +306,10 @@ def login():
 def travel():
     return render_template('travel.html')
 
+@app.route('/our-story')
+def outstory():
+    return render_template('OurStory.html')
+
 @app.route('/vendors')
 def vendors():
     # This reads the keys from .env and passes them to the HTML template

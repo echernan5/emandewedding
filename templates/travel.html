@@ -19,97 +19,302 @@
 
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inria+Serif:ital,wght@0,300;0,400;0,700;1,300;0,400;0,700&family=Kapakana:wght@300..400&display=swap" rel="stylesheet">
-    <link rel="preload" as="font" href="https://fonts.gstatic.com/s/inriaserif/v11/g-pl3YM-D-z-c3jR8TzH5g.woff2" crossorigin>
-    <link rel="preload" as="font" href="https://fonts.gstatic.com/s/monsieurladoulaise/v14/vF0xWttGCE9l-S-v-p3E_v3pXq_j.woff2" crossorigin>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inria+Serif:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Monsieur+La+Doulaise&display=swap" rel="stylesheet">
 </head>
 <body>
     
-    <nav class="navbar" id="navbar">
+  <nav class="navbar" id="navbar">
     <a href="/" class="logo-link">
         <img src="{{ url_for('static', filename='Long logo with rose.png') }}" alt="Emma & Ethan Logo" class="logo">
     </a>
-    <div class="nav-links">
-        <a href="/travel" class="nav-link">Travel & Stay</a>
-        <a href="#our-story" class="nav-link">Our Story</a>
-        <a href="/events" class="nav-link">Weekend Events</a>
-        <a href="/faq" class="nav-link">FAQs</a>
-        <a href="#registry" class="nav-link">Registry</a>
-    </div>
-    <div class="nav-icons">
-      <button class="icon-button" aria-label="Search">
-          <svg class="icon search-icon" viewBox="0 0 24 24">
-              <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"></path>
-          </svg>
-      </button>
+
+    <button class="mobile-nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+    </button>
+
+    <div class="nav-menu" id="nav-menu">
+        <div class="nav-links">
+            <a href="/travel" class="nav-link">Travel & Stay</a>
+            <a href="/our-story" class="nav-link">Our Story</a>
+            <a href="/events" class="nav-link">Weekend Events</a>
+            <a href="/faq" class="nav-link">FAQs</a>
+            <a href="#registry" class="nav-link">Registry</a>
+        </div>
+        <div class="nav-icons">
+          <button class="icon-button" aria-label="Search">
+              <svg class="icon search-icon" viewBox="0 0 24 24">
+                  </svg>
+          </button>
+        </div>
     </div>
   </nav>
 
+  <section class="travel-hero">
+    <!-- Background image -->
+    <div class="hero-layer hero-bg"></div>
+  
+    <!-- Fixed text layer -->
+    <div class="hero-text">
+      <h1>Travel &amp; Stay</h1>
+    </div>
+  
+    <!-- Foreground image (sky cut out, transparent PNG/WebP) -->
+    <div class="hero-layer hero-fg"></div>
+  </section>
+  
   <section class="accommodations-section">
-    
-    <img src="{{ url_for('static', filename='Content/flower1.png') }}" alt="" class="floral-border floral-left">
-    <img src="{{ url_for('static', filename='Content/flower2.png') }}" alt="" class="floral-border floral-right">
-    
     <div class="accommodations-content">
         <h2 class="section-title">Accommodations</h2>
+
+        <div class="accommodation-grid centered-grid">
+    
+            <div class="accommodation-card hotel-style-card">
+                <div class="card-carousel-wrapper">
+                    <div class="card-carousel-images" id="carousel-baypointe">
+                        <img src="{{ url_for('static', filename='Content/Accommodations/BestWestern1.avif') }}" class="active" alt="Best Western Room">
+                        <img src="{{ url_for('static', filename='Content/Accommodations/BestWestern5.jpg') }}" alt="Best Western Suite">
+                        <img src="{{ url_for('static', filename='Content/Accommodations/BestWestern2.webp') }}" alt="Best Western Pool">
+                        <img src="{{ url_for('static', filename='Content/Accommodations/BestWestern4.webp') }}" alt="Best Western Free Breakfast Bar">
+                    </div>
+                    <div class="card-carousel-nav">
+                        <button class="nav-arrow prev-arrow" onclick="moveCardSlide('carousel-baypointe', -1)"><i class="bi bi-arrow-left"></i></button>
+                        <button class="nav-arrow next-arrow" onclick="moveCardSlide('carousel-baypointe', 1)"><i class="bi bi-arrow-right"></i></button>
+                    </div>
+                </div>
+                
+                <div class="hotel-card-details">
+                    <p class="hotel-subtitle">Hotel and Free Breakfast</p>
+                    <h3 class="hotel-title">Best Western Plus</h3>
+                    
+                    <div class="hotel-info-rows">
+                        <p class="info-row">Shuttle Pickup Point</p>
+                        <p class="info-row">20 Mins from the Venue</p>
+                        
+                        <div class="amenities-row">
+                            <span class="amenities-label">Amenities:</span>
+                            <div class="amenities-icons">
+                                <div class="amenity-icon" data-tooltip="Wedding Shuttle Provided">
+                                    <i class="bi bi-bus-front-fill"></i>
+                                </div>
+                                <div class="amenity-icon" data-tooltip="Breakfast Included">
+                                    <i class="bi bi-egg-fried"></i>
+                                </div>
+                                <div class="amenity-icon" data-tooltip="Indoor Pool">
+                                    <i class="bi bi-water"></i>
+                                </div>
+                                <div class="amenity-icon" data-tooltip="EV Charging">
+                                    <i class="bi bi-ev-station-fill"></i>
+                                </div>
+                                <div class="amenity-icon" data-tooltip="Family Friendly">
+                                    <i class="bi bi-people-fill"></i>
+                                </div>
+                            </div>
+                        </div>
         
-        <p class="accommodations-description">
-            We're thrilled to be celebrating at Bay Pointe Inn, which is also where our reception will be held. For your convenience, we have reserved a limited block of rooms there, as well as an additional block at Gun Lake Casino. To reserve a room at either location, please use our discount code Wlodarczyk. Transportation to and from the wedding ceremony will be provided from Gun Lake Casino.
-        </p>
-        <p class="accommodations-description">
-            For an alternative option, there are also several vacation rental accommodations available on the lake, just a short walk or drive from Bay Pointe Inn.
-        </p>
-
-        <div class="accommodation-grid">
-            
-            <div class="accommodation-card">
-                <div class="accommodation-image-frame">
-                    <img src="{{ url_for('static', filename='accommodations/bay-pointe-inn.jpg') }}" alt="Bay Pointe Inn room">
-                </div>
-                <div class="accommodation-details">
-                    <h3>BAY POINTE INN</h3>
-                    <p>On-Site Accommodation</p>
-                    <a href="#" class="website-link">WEBSITE</a>
+                    </div>
+        
+                    <a href="#" class="view-room-link" data-modal-id="bay-pointe">
+                        More Info <i class="bi bi-arrow-right short-arrow"></i>
+                    </a>
                 </div>
             </div>
-
-            <div class="accommodation-card">
-                <div class="accommodation-image-frame">
-                    <img src="{{ url_for('static', filename='accommodations/gun-lake-casino.jpg') }}" alt="Gun Lake Casino hotel room">
+        
+            <div class="accommodation-card hotel-style-card">
+                <div class="card-carousel-wrapper">
+                    <div class="card-carousel-images" id="carousel-gunlake">
+                        <img src="{{ url_for('static', filename='Content/Accommodations/GunLake1.jpg') }}" class="active" alt="Gun Lake Room">
+                        <img src="{{ url_for('static', filename='Content/Accommodations/GunLake2.jpg') }}" alt="Gun Lake Exterior">
+                        <img src="{{ url_for('static', filename='Content/Accommodations/GunLake3.jpg') }}" alt="Gun Lake Pool">
+                    </div>
+                    <div class="card-carousel-nav">
+                        <button class="nav-arrow prev-arrow" onclick="moveCardSlide('carousel-gunlake', -1)"><i class="bi bi-arrow-left"></i></button>
+                        <button class="nav-arrow next-arrow" onclick="moveCardSlide('carousel-gunlake', 1)"><i class="bi bi-arrow-right"></i></button>
+                    </div>
                 </div>
-                <div class="accommodation-details">
-                    <h3>GUN LAKE CASINO</h3>
-                    <p>Wedding Shuttle Provided</p>
-                    <a href="#" class="website-link">WEBSITE</a>
+                
+                <div class="hotel-card-details">
+                    <p class="hotel-subtitle">Resort, Casino, and Spa</p>
+                    <h3 class="hotel-title">Gun Lake Casino</h3>
+                    
+                    <div class="hotel-info-rows">
+                        <p class="info-row">Shuttle Pickup Point</p>
+                        <p class="info-row">15 Mins from the Venue</p>
+                        
+                        <div class="amenities-row">
+                            <span class="amenities-label">Amenities:</span>
+                            <div class="amenities-icons">
+                                <div class="amenity-icon" data-tooltip="Wedding Shuttle Provided">
+                                    <i class="bi bi-bus-front-fill"></i>
+                                </div>
+                                <div class="amenity-icon" data-tooltip="Casino On-Site">
+                                    <i class="bi bi-dice-5-fill"></i>
+                                </div>
+                                <div class="amenity-icon" data-tooltip="Full Spa">
+                                    <i class="bi bi-flower1"></i>
+                                </div>
+                                <div class="amenity-icon" data-tooltip="Room Service">
+                                    <i class="bi bi-bell-fill"></i>
+                                </div>
+                                <div class="amenity-icon" data-tooltip="EV Charging">
+                                    <i class="bi bi-ev-station-fill"></i>
+                                </div>
+                            </div>
+                        </div>
+        
+                    </div>
+        
+                    <a href="#" class="view-room-link" data-modal-id="gun-lake">
+                        More Info <i class="bi bi-arrow-right short-arrow"></i>
+                    </a>
                 </div>
             </div>
-
-            <div class="accommodation-card">
-                <div class="accommodation-image-frame">
-                    <img src="{{ url_for('static', filename='accommodations/vrbo-rental.jpg') }}" alt="VRBO lake view kitchen">
+        
+            <div class="accommodation-card hotel-style-card">
+                <div class="card-carousel-wrapper">
+                    <div class="card-carousel-images" id="carousel-airbnb">
+                        <img src="{{ url_for('static', filename='Content/Accommodations/vrbo2.avif') }}" class="active" alt="Vacation Rental Bedroom">
+                        <img src="{{ url_for('static', filename='Content/Accommodations/vrbo3.avif') }}" alt="Vacation Rental Interior">
+                        <img src="{{ url_for('static', filename='Content/Accommodations/vrbo1.avif') }}" alt="Vacation Rental Hot Tub">
+                        <img src="{{ url_for('static', filename='Content/Accommodations/vrbo4.webp') }}" alt="Vacation Rental Lake View">
+                    </div>
+                    <div class="card-carousel-nav">
+                        <button class="nav-arrow prev-arrow" onclick="moveCardSlide('carousel-airbnb', -1)"><i class="bi bi-arrow-left"></i></button>
+                        <button class="nav-arrow next-arrow" onclick="moveCardSlide('carousel-airbnb', 1)"><i class="bi bi-arrow-right"></i></button>
+                    </div>
                 </div>
-                <div class="accommodation-details">
-                    <h3>VRBO</h3>
-                    <p>Vacation Rentals</p>
-                    <a href="#" class="website-link">WEBSITE</a>
-                </div>
-            </div>
-
-            <div class="accommodation-card">
-                <div class="accommodation-image-frame">
-                    <img src="{{ url_for('static', filename='accommodations/airbnb-rental.jpg') }}" alt="Air BNB living room">
-                </div>
-                <div class="accommodation-details">
-                    <h3>AIR BNB</h3>
-                    <p>Vacation Rentals</p>
-                    <a href="#" class="website-link">WEBSITE</a>
+                
+                <div class="hotel-card-details">
+                    <p class="hotel-subtitle">Private Home on the Lake</p>
+                    <h3 class="hotel-title">Vacation Rentals</h3>
+                    
+                    <div class="hotel-info-rows">
+                        <p class="info-row">Uber/Lyft Recommended</p>
+                        <p class="info-row">Distance Varies by Property</p>
+                        
+                        <div class="amenities-row">
+                            <span class="amenities-label">Amenities:</span>
+                            <div class="amenities-icons">
+                                <div class="amenity-icon" data-tooltip="Entire Home">
+                                    <i class="bi bi-house-door-fill"></i>
+                                </div>
+                                <div class="amenity-icon" data-tooltip="Family Friendly">
+                                    <i class="bi bi-people-fill"></i>
+                                </div>
+                                <div class="amenity-icon" data-tooltip="Full Kitchen">
+                                    <i class="bi bi-fork-knife"></i>
+                                </div>
+                            </div>
+                        </div>
+        
+                    </div>
+        
+                    <a href="#" class="view-room-link" data-modal-id="airbnb">
+                        More Info <i class="bi bi-arrow-right short-arrow"></i>
+                    </a>
                 </div>
             </div>
             
         </div>
     </div>
-</section>
+ </section>
+
+ <section class="transportation-section">
+    <div class="editorial-layout">
+      
+      <div class="editorial-header">
+        <h2 class="section-title">Travel & Transit</h2>
+        <p class="section-description">
+          Ensuring your journey to us is seamless and comfortable is our greatest wish.
+        </p>
+      </div>
+  
+      <div class="editorial-content">
+        
+        <div class="info-group">
+          <h3 class="editorial-subtitle">The Journey</h3>
+          <p>
+            We recommend flying into <strong>Grand Rapids (GRR)</strong> or <strong>Kalamazoo (AZO)</strong>. For a scenic arrival from Chicago, the <strong>Amtrak Wolverine Line</strong> to Kalamazoo is a guest favorite.
+          </p>
+          <p>
+             If you are driving, Bay Pointe Inn is a pleasant route from the city. Complimentary parking is available property-wide upon your arrival.
+          </p>
+        </div>
+  
+        <div class="info-group">
+          <h3 class="editorial-subtitle">Wedding Day</h3>
+          <p>
+            <strong>Shuttle Service:</strong> A private shuttle will run continuously between Best Western, Gun Lake Casino, and the venue throughout the evening.
+          </p>
+          <p>
+            <strong>Local Guests:</strong> For those driving or staying locally, ample complimentary parking is available directly at the Lakefront Pavilion.
+          </p>
+        </div>
+        
+      </div>
+    </div>
+  </section>
+
+<section class="things-to-do-section">
+    <div class="editorial-content">
+        <h2 class="section-title">Local Favorites</h2>
+        
+        <div class="editorial-grid">
+            
+            <div class="feature-item">
+                <a href="#" class="feature-link-wrapper">
+                    <div class="feature-image-container">
+                        <img src="{{ url_for('static', filename='Content/Things to Do/GunLakeImg1.jpg') }}" alt="Gun Lake" class="feature-image">
+                    </div>
+                    
+                    <div class="feature-text-overlay">
+                        <h3 class="editorial-heading">A Day on Gun Lake</h3>
+                        <span class="read-more-btn">Read More &rarr;</span>
+                    </div>
+                </a>
+            </div>
+
+            <div class="editorial-list">
+                
+                <a href="#" class="list-item">
+                    <div class="list-image-wrapper">
+                        <img src="{{ url_for('static', filename='Content/Things to Do/yankeesprings.jpeg') }}" alt="Golf Course" class="list-image">
+                    </div>
+                    <div class="list-text">
+                        <span class="list-category">Recreation</span>
+                        <h4 class="editorial-subheading">Yankee Springs Golf Course</h4>
+                        <span class="read-more-small">View Details</span>
+                    </div>
+                </a>
+
+                <a href="https://www.downtownmarketgr.com/" class="list-item" target="_blank" rel="noopener noreferrer">
+                    <div class="list-image-wrapper">
+                        <img src="{{ url_for('static', filename='Content/Things to Do/downtownmarket.jpeg') }}" alt="Grand Rapids Downtown Market" class="list-image">
+                    </div>
+                    <div class="list-text">
+                        <span class="list-category">Dining & Drinks</span>
+                        <h4 class="editorial-subheading">Grand Rapids Downtown Market</h4>
+                        <span class="read-more-small">View Details</span>
+                    </div>
+                </a>
+
+                <a href="#" class="list-item">
+                    <div class="list-image-wrapper">
+                        <img src="{{ url_for('static', filename='Content/Things to Do/devilssoup.webp') }}" alt="Hiking" class="list-image">
+                    </div>
+                    <div class="list-text">
+                        <span class="list-category">Outdoors</span>
+                        <h4 class="editorial-subheading">Hiking the Devils Soup Bowl</h4>
+                        <span class="read-more-small">View Details</span>
+                    </div>
+                </a>
+
+            </div>
+        </div>
+    </div>
+ </section>
 
 <section class="adventure-section">
     <div class="adventure-header">
@@ -158,7 +363,7 @@
     This part is hidden by default and gets shown by the JavaScript.
     =================================================================== 
   -->
-  <div id="itinerary-modal" class="modal-hidden">
+  <div id="itinerary-modal" class="modal modal-hidden">
     
     <!-- The dark overlay (click to close) -->
     <div class="modal-overlay"></div>
@@ -178,6 +383,101 @@
   
   </div>
 
-  <script src="{{ url_for('static', filename='travel.js') }}" defer></script>
+  <div id="accommodation-modal" class="modal modal-hidden">
+      
+      <div class="modal-overlay"></div>
+      
+      <div class="modal-content">
+        <button class="modal-close">&times;</button>
+        
+        <div id="modal-accommodation-content"></div>
+      </div>
+    
+  </div>
+
+  <script>
+    // This data is now "injected" by the server
+    // so url_for() will work correctly.
+    window.__ACCOMMODATION_DATA__ = {
+      
+      'bay-pointe': {
+          title: 'Bay Pointe Inn',
+          images: [
+              "{{ url_for('static', filename='Content/Accommodations/BayPointe1.jpg') }}",
+              "{{ url_for('static', filename='Content/Accommodations/BayPointe2.jpg') }}",
+              "{{ url_for('static', filename='Content/Accommodations/BayPointe3.jpg') }}",
+              "{{ url_for('static', filename='Content/Accommodations/BayPointe4.jpg') }}"
+          ],
+          highlights: [
+              "This is our main hotel block and where the reception will be held.",
+              "Located directly on Gun Lake with beautiful water views.",
+              "Features an indoor pool and the on-site Terrace Grille restaurant."
+          ],
+          bookingInfo: `
+              <h4>How to Book</h4>
+              <p>We have reserved a limited number of rooms at a special rate. Please call the inn directly at <strong>(269) 672-8111</strong> and mention the <strong>Hernandez/Wlodarczyk</strong> wedding, or use the discount code <strong>Wlodarczyk</strong> when booking online.</p>
+          `
+      },
+
+      'gun-lake': {
+          title: 'Gun Lake Casino',
+          images: [
+              "{{ url_for('static', filename='Content/Accommodations/GunLake1.jpg') }}",
+              "{{ url_for('static', filename='Content/Accommodations/GunLake2.jpg') }}",
+              "{{ url_for('static', filename='Content/Accommodations/GunLake3.jpg') }}",
+              "{{ url_for('static', filename='Content/Accommodations/GunLake4.jpg') }}",
+              "{{ url_for('static', filename='Content/Accommodations/GunLake5.jpg') }}"
+          ],
+          highlights: [
+              "A modern, 4-Diamond hotel with a spa, casino, and multiple restaurants.",
+              "Located a convenient 15-minute drive from the wedding venue.",
+              "Our complimentary wedding shuttle will run to and from this hotel."
+          ],
+          bookingInfo: `
+              <h4>How to Book</h4>
+              <p>You can book directly on their website. Please note that our wedding shuttle will be provided for all guests staying here, running to and from Bay Pointe Inn.</p>
+          `
+      },
+
+      'vrbo': {
+          title: 'VRBO',
+          images: [
+              "{{ url_for('static', filename='Content/Accommodations/vrbo2.avif') }}",
+              "{{ url_for('static', filename='Content/Accommodations/vrbo1.avif') }}",
+              "{{ url_for('static', filename='Content/Accommodations/vrbo3.avif') }}",
+              "{{ url_for('static', filename='Content/Accommodations/vrbo4.webp') }}"
+          ],
+          highlights: [
+              "Ideal for families or groups wanting to stay together.",
+              "Find beautiful lakefront homes with private docks and kitchens.",
+              "Offers a more private, 'home-away-from-home' experience."
+          ],
+          bookingInfo: `
+              <h4>How to Book</h4>
+              <p>We recommend searching for homes in <strong>Shelbyville, MI</strong> on the VRBO website. Remember to opt-in for our Uber voucher on your RSVP if you plan to use it for wedding day transportation!</p>
+          `
+      },
+
+      'airbnb': {
+          title: 'Airbnb',
+          images: [
+              "{{ url_for('static', filename='Content/Accommodations/Airbnb1.jpg') }}",
+              "{{ url_for('static', filename='Content/Accommodations/Airbnb2.jpg') }}"
+          ],
+          highlights: [
+              "A great option for finding unique cottages, apartments, or guest suites.",
+              "Perfect for couples or smaller groups looking for a flexible stay.",
+              "Discover properties with unique amenities and local charm."
+          ],
+          bookingInfo: `
+              <h4>How to Book</h4>
+              <p>Search for listings in <strong>Shelbyville, MI</strong> or nearby towns on the Airbnb website. Remember to opt-in for our Uber voucher on your RSVP if you plan to use it for wedding day transportation!</p>
+          `
+      }
+    };
+</script>
+
+<script src="{{ url_for('static', filename='travel.js') }}" defer></script>
+
 </body>
 </html>

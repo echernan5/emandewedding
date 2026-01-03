@@ -1,789 +1,729 @@
+/* =================================================================== */
+/* 1. FONTS
+/* =================================================================== */
+
 @font-face {
-    font-family: 'Beverly';
-    src: url('Cordon/Cordon.woff') format('woff'),
-         url('Cordon/Cordon.woff2') format('woff2'),
-         url('Cordon/Cordon.ttf') format('truetype'),
-         url('Cordon/Cordon.otf') format('opentype');
-    font-weight: 400 !important;
-    line-height: 1.2;
-    padding-top: 0%;
-    padding-bottom: 0%;
-    font-style: normal;
+  font-family: 'DarlineScript';
+  src: url('/static/fonts/WOFF/DarlineScript-Regular.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'DarlineScript';
+  src: url('/static/fonts/WOFF/DarlineScript-Slanted.woff') format('woff');
+  font-weight: normal;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'DarlineSerif';
+  src: url('/static/fonts/WOFF/DarlineSerif-Bold.woff') format('woff');
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'DarlineSerif';
+  src: url('/static/fonts/WOFF/DarlineSerif-Light.woff') format('woff');
+  font-weight: 300; /* Light */
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'DarlineSerif';
+  src: url('/static/fonts/WOFF/DarlineSerif-Regular.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+.inria-serif-light {
+  font-family: "Inria Serif", serif;
+  font-weight: 300;
+  font-style: normal;
+}
+
+.inria-serif-regular {
+  font-family: "Inria Serif", serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.inria-serif-bold {
+  font-family: "Inria Serif", serif;
+  font-weight: 700;
+  font-style: normal;
+}
+
+.inria-serif-light-italic {
+  font-family: "Inria Serif", serif;
+  font-weight: 300;
+  font-style: italic;
+}
+
+.inria-serif-regular-italic {
+  font-family: "Inria Serif", serif;
+  font-weight: 400;
+  font-style: italic;
+}
+
+.inria-serif-bold-italic {
+  font-family: "Inria Serif", serif;
+  font-weight: 700;
+  font-style: italic;
+}
+
+
+/* =================================================================== */
+/* 2. GLOBAL & UTILITY STYLES
+/* =================================================================== */
+
+/* Universal Styles */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth; /* Smooth scrolling */
+  overflow-x: hidden; /* Prevent horizontal scroll */
 }
 
 body {
-    margin: 0;
-    color: rgb(0, 0, 0);
-    background-color: #f5f5f5;
-    font-family: Arial, Helvetica, sans-serif !important;
-    font-style: normal;
+  padding: 0;
+  margin: 0;
+  max-width: 100%;
 }
 
-h1, h2, h3 {
-    font-family: 'Beverly', serif !important;
-    font-weight: normal !important; /* Add !important to override any bolding */
-    line-height: 1.2;
-    margin: 0;
-    text-transform: uppercase;
-}
-
-/* Menu and Navbar*/
-
-.content-wrapper {
-    width: 100vw;
-}
-
-.hero-header {
-    display: flex;
-    align-items: center;
-    justify-content: center; /* this doesn't matter as much with fixed column widths, but nice to have */
-    padding: 1rem 2rem;
-    width: 100%;
-    box-sizing: border-box;
-  }
-  
-  .hero-header {
-      display: flex;
-      align-items: center;
-      justify-content: center; /* this doesn't matter as much with fixed column widths, but nice to have */
-      padding: 1rem 2rem;
-      width: 100%;
-      box-sizing: border-box;
-  }
-  
-  .hero-col {
-      flex: 1;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-width: 0;
-  }
-  
-  .hero-col.left {
-      justify-content: flex-start;
-  }
-  
-  .hero-col.right {
-      justify-content: flex-end;
-  }
-  
-  .hero-col.center {
-      flex-grow: 1 !important;     /* Let the center column take up the remaining space */
-      text-align: right !important; /* Title aligned right */
-      white-space: nowrap !important;  /* Prevent wrapping */
-      overflow: hidden !important;     /* Hide overflow text */
-      text-overflow: ellipsis !important; /* Optionally add ellipsis if text overflows */
-  }
-  
-    .menu-icon {
-      font-size: 3rem;
-      cursor: pointer;
-      color: rgb(0, 0, 0);
-    }
-    
-  
-  .hero-title {
-      font-size: 2rem;
-      font-family: 'Beverly', serif;
-      transform: translateY(8px);
-      text-transform: uppercase;
-      letter-spacing: 0.2rem;
-      line-height: 1;
-      text-align: center;
-      color: rgb(0, 0, 0); /* Or black, depending on background */
-      margin-right: 0px; /* Adjust margin as needed */
-      width: auto !important;        /* Allow title to take as much space as needed */
-    }
-  
-    .hero-title a {
-      text-decoration: none;
-      color: inherit;
-    }
-  
-    .rsvp-button {
-      padding: 15px 30px;
-      border: 2px solid rgb(0, 0, 0);
-      background: transparent;
-      color: rgb(0, 0, 0);
-      border-radius: 15px;
-      cursor: pointer;
-      font-size: 0.8rem;
-      transition: 1s ease-in-out;
-    }
-    
-    .rsvp-button:hover {
-      background: rgb(0, 0, 0);
-      color: rgb(255, 255, 255);
-    }
-  
-
-/* Sidebar Styles */
-.sidebar {
-    position: fixed;
-    top: 0;
-    left: -500px; /* Hide off-screen initially */
-    width: 500px;
-    height: 100%;
-    background-color: white;
-    color: black;
-    transition: left 0.3s ease-in-out;
-    transform: translateX(0);
-    padding-top: 7%;
-    text-transform: uppercase;
-}
-
-.sidebar.active {
-    left: 0; /* Slide in when active */
-}
-
-.sidebar .close-icon {
-    position: absolute;
-    top: 5%;
-    right: 5%;
-    font-size: 3rem;
-    color: black;
-    cursor: pointer;
-}
-
-.sidebar ul {
-    list-style-type: none;
-    padding: 3%;
-    margin: 0;
-}
-
-.sidebar li {
-    padding: 15px 20px;
-    font-size: 1.2rem;
-}
-
-.sidebar a {
-    color: black;
-    text-decoration: none;
-    display: block;
-    padding-left: 10%;
-    size: 2rem;
-}
-
-.sidebar .dropdown-content {
-    display: none;
-    padding-left: 5%;
-}
-
-
-/* Style for the dropdown toggle */
-.sidebar .dropdown-toggle {
-    background: none;
-    border: none;
-    font-size: 1.2rem;
-    padding-left: 10%;
-    text-align: left;
-    width: 100%;
-    cursor: pointer;
-    color: black;
-  }
-  
-  .sidebar .arrow {
-    margin-left: 8px;
-    transition: transform 0.3s ease;
-  }
-  
-  /* When open, rotate the arrow */
-  .sidebar .dropdown.open .arrow {
-    transform: rotate(180deg);
-  }
-  
-  .dropdown-toggle {
-    text-transform: uppercase;
-  }  
-  
-/* Overlay (Darkens the Page when Menu is Active) */
-/* Overlay (background) for when sidebar is open */
-.overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    opacity: 0; /* Initially hidden */
-    pointer-events: none; /* Prevent interaction when hidden */
-    transition: opacity 0.3s ease-in-out; /* Smooth transition */
-    z-index: 999;
-}
-
-/* When sidebar is open, overlay becomes visible */
-.overlay.active {
-    opacity: 1; /* Full opacity */
-    visibility: visible; /* Make it visible */
-    pointer-events: auto; /* Allow interaction when visible */
-    z-index: 999;   /* Ensure it's on top */
-}
-
-/* Content sliding effect */
-.content-slide {
-    transform: translateX(500px); /* Move the content to the left by 500px when sidebar is open */
-    transition: transform 0.3s ease-in-out;
-}
-
-
-/*Intro Section*/
-.intro {
-    background: url('Content/emandewebsite-1.jpg');
-    background-size: cover;
-    height: 80vh;
-    width: 100%;
-    color: white;
-    margin: 0 auto;
-    align-items: left;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-}
-
-.intro h2#animated-text {
-    font-family: 'Beverly', serif !important;
-    text-transform: uppercase !important;
-    font-size: 5rem;
-    margin-bottom: 10px;
-    text-align: left;
-    letter-spacing: .2rem;
-    align-items: center;
-    padding-left: 200px;
-}
-
-.intro p {
-    font-size: 1.5rem;
-    letter-spacing: .05rem;
-    text-align: left;
-    margin: 0;
-    padding-bottom: 20px;
-    text-transform: uppercase;
-    padding-left: 200px;
-}
-
-.intro-section {
-    padding: 2rem;
-    background-color: #f9f9f9;
-  }
-  
-  .intro-container {
-    display: flex;
-    flex-direction: row; /* Ensure row layout */
-    flex-wrap: nowrap;   /* Prevent wrapping */
-    align-items: center;
-    max-width: 1200px;
-    margin: 0 auto;
-  }  
-
-  .intro-image {
-    flex: 1 1 33%;
-    padding: 1rem;
-  }
-  
-  .intro-image img {
-    width: 100%;
-    height: auto;
-    object-fit: cover;
-  }
-
-  .intro-heading-container {
-    width: 90%;
-  }
-  
-  .intro-text {
-    flex: 1 1 66%;
-    padding: 1rem;
-    padding-left: 2rem;
-  }  
-
-  .intro-text h1 {
-    font-size: 4rem;
-  }
-
-  .intro-text h2 {
-    font-family: Arial, Helvetica, sans-serif !important;
-    text-transform: none !important;
-    font-style: italic;
-  }
-
-/*Timeline Section*/
-.timeline-wrapper {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    overflow: hidden;
-    padding: 2rem;
-    background-color: #f4f4f4;
-    flex-direction: column;
-  }
-  
-  .timeline-container {
-    display: flex;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    scroll-behavior: smooth;
-    gap: 0rem;
-    padding: 0;
-    max-width: 100vw;
-    width: 100vw;
-  }  
-
-  .scroll-container {
-    display: flex;
-    align-items: center; /* Align arrows with the timeline */
-    justify-content: center;
-    position: relative;
-    overflow: hidden;
-    gap: 1rem; /* Space between left arrow, timeline, and right arrow */
-    max-width: 100vw;
-  }
-  
-  .timeline-spacer {
-    flex: 0 0 calc(50vw - 300px); /* half the screen - half the card */
-    height: 1px; /* invisible */
-  }
-  
-  .timeline-item {
-    width: 100%; /* fixed width */
-    flex: 0 0 auto;
-    scroll-snap-align: center;
-    background: transparent;
-    padding: 0rem;
-    text-align: center;
-    border-radius: 12px;
-    }  
-  
-  .timeline-item img {
-    width: 100px;
-    height: 100px;
-    object-fit: contain;
-    margin-bottom: 1rem;
-     }
-  
-  .timeline-item h3 {
-    font-size: 2rem;
-    margin-bottom: 0.5rem;
-  }
-
-  .timeline h2 {
-    font-size: 3rem;
-    margin-bottom: 1rem;
-    text-align: center; /* Add this to center the text */
-    width: 100%; /* Ensure the element takes up the full width of its container */
-    padding-top: 2rem;
-}
-
-  .section-timeline {
-    align-items: center;
-  }
-  
-  .scroll-left,
-  .scroll-right {
-    background-color: transparent;
-    color: rgb(0, 0, 0);
-    border: none;
-    padding: 0.5rem 1rem;
-    cursor: pointer;
-    z-index: 2;
-  }
-
-.arrow-img {
-    width: 40px;
-    height: auto;
-    display: block;
-    object-fit: contain;
-  }
-  
-  .arrow-img.left {
-    transform: rotate(-180deg);
-    padding-right: 10vw;
-  }
-  
-  .arrow-img.right {
-    padding-right: 10vw;
-  }
-
-  .timeline-container::-webkit-scrollbar {
-    display: none;
-  }
-
-  .timeline-container {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
-
-  .timeline-dots-container {
-    display: flex;
-    justify-content: center;
-    gap: 0.5rem;
-    margin-top: 1rem;
-    width: 100%;
-  }
-  
-  .timeline-dot {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    background-color: rgba(0, 0, 0, 0.5); /* Default inactive state */
-    transition: background-color 0.3s;
-  }
-  
-  .timeline-dot.active {
-    background-color: rgba(0, 0, 0, 1); /* Active state */
-  }  
-  
-
-/* Bios Section */
-.bios {
-    display: grid;
-    grid-template-columns: 1fr 1fr; /* Two equal columns */
-    height: 100vh; /* Full screen height */
-    width: 100vw; /* Full screen width */
-    margin: 0;
-    padding-top: 80px;
-    padding-bottom: 80px;
-}
-
-.bio-card {
-    display: block; /* Makes it act like a block element to fill available space */
-    position: relative; /* Context for absolute positioning */
-    width: 100%; /* Takes up full width of its column */
-    background: #f5f5f5; /* Neutral background */
-    aspect-ratio: 721 / 666; /* Forces square shape */
-    overflow: hidden; /* Ensure the image doesn't overflow */
-}
-
-.bio-card img {
-    width: 100%; /* Fill the width */
-    aspect-ratio: 721 / 666; /* Forces square shape */
-    object-fit: cover; /* Ensure the image doesn't stretch or squish */
-    position: absolute; /* Make it fill the card area */
-    top: 0;
-    left: 0;
-}
-
-/* Gradient Overlay */
-.bio-card::before {
-    content: ''; /* Empty content for the overlay */
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(to top, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0) 50%); /* Dark to transparent gradient */
-    z-index: 1; /* Ensure the gradient is below the text and plus icon */
-}
-
-.bio-text {
-    position: absolute;
-    margin: 0;
-    line-height: 1.2;
-    bottom: 20px;
-    left: 20px;
-    color: white; /* Text color */
-    font-size: 2rem; /* Adjust text size */
-    font-weight: normal;
-    z-index: 2; /* Ensures text is above the image */
-}
-
-.bio-plus {
-    position: absolute;
-    bottom: 20px;
-    right: 20px;
-    font-size: 2rem;
-    color: white;
-    cursor: pointer;
-    z-index: 2; /* Ensures it sits above the image */
-}
-
-.story-section {
-  display: flex;
-  justify-content: space-around;
-  align-items: flex-start;
-  padding: 60px 50px;
-  background-color: white;
-  flex-wrap: wrap; /* Stacks cards on small screens */
-}
-
-.story-card {
-  width: 30vw;
-  text-align: left;
-  background: white;
-  overflow: hidden;
-  transition: transform 0.3s ease;
-}
-
-.story-image-container {
-  aspect-ratio: 1/1 !important; /* Forces square shape */
+/* Hides the modal scrollbar from the body */
+body.modal-active {
   overflow: hidden;
 }
 
-.story-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
+/* Hide mobile-specific content on desktop */
+.mobile-only {
+  display: none;
 }
 
-.animated-link {
-  display: block;
-  margin-bottom: 20px;
-  padding-top: 10px;
-  cursor: pointer;
-}
-
-.animated-link a {
-  position: relative;
-  display: inline-block;
-  text-decoration: none;
-  color: black;
-  font-weight: 600;
+/* Re-usable class for section labels */
+.section-label {
+  font-family: "DarlineSerif", serif;
   text-transform: uppercase;
-  letter-spacing: 2px;
-  padding-right: 10px; /* Make space for the arrow */
-  font-family: Beverly, serif !important;
-  font-size: 1.5rem;
-  line-height: 1.2;
+  font-style: italic;
+  letter-spacing: 0.2rem;
+  color: #bcbdb5;
+  margin-bottom: 2rem;
 }
 
-.animated-link .text {
-  display: inline-block;
-  vertical-align: middle;
-}
+/* =================================================================== */
+/* 4. NAVIGATION BAR
+/* =================================================================== */
 
-.story-card .arrow {
-  position: absolute;
-  top: 50%;
-  left: 100%; /* Start the line just outside the link */
-  transform: translateY(-50%); /* Center it vertically */
-  width: 40px; /* Starting with a slightly longer arrow */
-  height: 2px;
-  background-color: black;
-  transition: width 1s ease; /* Animating the width */
-}
+/* =================================================================== */
+/* 4. NAVIGATION BAR (Mobile-First Refactor)
+/* =================================================================== */
 
-.story-card .arrow::after {
-  content: '';
-  position: absolute;
-  top: -3px;
-  right: 0px; /* Slightly offset to match the arrowline */
-  width: 6px;
-  height: 6px;
-  border-top: 2px solid black;
-  border-right: 2px solid black;
-  transform: rotate(45deg);
-  transition: right 2s ease; /* Move arrowhead with the line */
-}
-
-.story-card:hover .arrow {
-  width: 70px; /* Increase the width on hover */
-}
-
-.story-card:hover .arrow::after {
-  right: 0px; /* Move the arrowhead to match the expanding line */
-}
-
-/* Unique button styling */
-.story-button {
-  background-color: #333;
-  color: white;
-  font-size: 16px;
-  border: none;
-  padding: 12px 24px;
-  cursor: pointer;
-  border-radius: 6px;
-  transition: background-color 0.3s ease;
-}
-
-.story-button:hover {
-  background-color: #555;
-}
-
-/* Modal Styles */
-.modal {
-  display: none; /* Hidden by default */
-  position: fixed; /* Fixed position (stay in place) */
-  z-index: 1; /* Sit on top */
-  left: 0;
+/* --- MOBILE STYLES (Base) --- */
+#navbar {
+  position: sticky;
   top: 0;
-  width: 100%; /* Full width */
-  height: 100%; /* Full height */
-  overflow: none; /* Enable scroll if needed */
-  background-color: rgba(0, 0, 0, 0.4); /* Black with opacity */
+  background-color: transparent; /* Your transparent default */
+  width: 100%;
+  z-index: 1000;
+  height: 90px;
+  display: flex;
+  justify-content: space-between; /* Changed for mobile */
+  align-items: center;
+  padding: 0 1.5rem; /* Added for mobile */
+  transition: background-color 0.8s ease, transform 0.8s ease, padding-top 0.8s ease;
+  
+  /* This prevents the transparent navbar from having padding at the top */
+  padding-top: 0; 
+}
+
+/* This class is added by JS */
+#navbar.scrolled {
+  background-color: #9aacc4;
+  transform: translateY(0);
+  padding-top: 0; /* Ensures no padding when scrolled */
+}
+
+/* This class is added by JS */
+#navbar.hide-on-scroll-down {
+  transform: translateY(-100%);
+}
+
+.navbar .logo-link {
+  text-align: center;
+  z-index: 1002; /* Ensure logo is above menu */
+}
+
+.navbar .logo {
+  max-height: 70px;
+  width: auto;
+}
+
+/* --- Hamburger Toggle Button --- */
+.mobile-nav-toggle {
+  display: flex; /* Show on mobile */
+  flex-direction: column;
+  justify-content: space-around;
+  width: 30px;
+  height: 24px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  z-index: 1002; /* Above menu */
+}
+
+.hamburger-line {
+  width: 30px;
+  height: 3px;
+  background-color: white; /* Make sure this is visible on your hero */
+  border-radius: 10px;
+  transition: all 0.3s ease;
+}
+
+/* The mobile menu container */
+.nav-menu {
+  display: none; /* Hidden by default */
+  position: fixed;
+  top: 0; /* Full overlay */
+  left: 0;
+  width: 100%;
+  height: 100vh; /* Full viewport height */
+  background-color: #9aacc4; /* Your blue color */
+  flex-direction: column;
+  align-items: center;
+  justify-content: center; /* Center links vertically */
+  overflow-y: auto;
+  z-index: 1000; /* Behind logo/close button */
   transition: opacity 0.3s ease;
 }
 
-.modal-content {
-  background-color: #fefefe;
-  margin: 15% auto;
-  padding: 20px;
-  border: 1px solid #888;
-  width: 80%; /* Can change to fit content */
-  max-width: 600px;
-  border-radius: 8px;
+/* This class is added by JS to show the menu */
+.nav-menu.is-active {
+  display: flex;
 }
 
-.close {
-  color: #aaa;
-  float: right;
-  font-size: 28px;
-  font-weight: bold;
+/* Mobile link styles */
+.nav-links {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  gap: 2.5rem; /* More space for tapping */
 }
 
-.close:hover,
-.close:focus {
-  color: black;
+.navbar .nav-link {
+  font-family: "inria-bold-italic", serif;
+  font-style: italic;
+  text-transform: uppercase;
+  letter-spacing: 0.2rem;
+  color: white;
   text-decoration: none;
+  transition: color 0.3s ease;
+  font-size: 1.5rem; /* Larger, tappable links */
+}
+
+.navbar .nav-link:hover {
+  color: #f0f0f0;
+}
+
+.nav-icons {
+  display: flex;
+  align-items: center;
+  gap: 20px; /* More space */
+  margin-top: 3rem; /* Space below links */
+}
+
+.icon-button {
+  background: none;
+  border: none;
   cursor: pointer;
+  padding: 0;
+}
+
+.search-icon {
+  width: 28px; /* Slightly larger */
+  height: 28px;
+  fill: white;
 }
 
 
-/* Hide arrows on mobile */
-@media screen and (max-width: 768px) {
-    .scroll-left,
-    .scroll-right {
+/* --- TABLET/DESKTOP BREAKPOINTS --- */
+/* Your old file used 900px, so we'll stick with that. */
+
+@media (min-width: 900px) {
+  #navbar {
+      justify-content: space-around; /* Revert to desktop layout */
+      padding: 0; /* Remove mobile padding */
+      /* This restores your transparent-on-top style */
+      padding-top: 50px;
+  }
+  
+  /* This ensures the padding-top disappears on scroll */
+  #navbar.scrolled {
+      padding-top: 0;
+  }
+
+  /* Hide the hamburger button on desktop */
+  .mobile-nav-toggle {
       display: none;
-    }
+  }
 
-    /* Adjust hero header layout on mobile */
-    .hero-header {
-        display: flex;
-        justify-content: space-between;  /* Spread out content */
-        align-items: center;
-        padding: 1rem 2rem;
-        width: 100%;
-        box-sizing: border-box;
-    }
+  /* Show the nav-menu as a normal flex row */
+  .nav-menu {
+      display: flex;
+      position: static; /* Not fixed */
+      flex-direction: row;
+      width: auto;
+      height: auto;
+      background-color: transparent;
+      z-index: auto;
+      transition: none;
+  }
 
-    /* Adjust the hero-col class to take minimal space for left column */
-    .hero-col {
-        flex: 0 1 auto; /* Allow columns to shrink, but not expand */
-        min-width: 0;
-    }
+  /* Restore your desktop link styles */
+  .nav-links {
+      flex-direction: row;
+      gap: 60px; /* Restore desktop gap */
+  }
 
-    /* Hide the third column by setting width to 0 */
-    .hero-col.right {
-        width: 0;  /* Set width to 0 to hide the RSVP button */
-        flex: 0;   /* Ensure the column doesn’t take up space */
-        padding: 0; /* Optional: remove padding if needed */
-        margin: 0;  /* Optional: remove any margin */
-    }
+  .navbar .nav-link {
+      font-size: initial; /* Reset font size */
+  }
 
-    /* Allow the title to take up just as much space as needed */
-    .hero-title {
-        font-size: 1.5rem;  /* Smaller title size */
-        text-align: right;   /* Align title to the right */
-        white-space: nowrap; /* Prevent wrapping of the text */
-        width: auto;         /* Let the title take only as much width as it needs */
-        margin-right: 0px;  /* Space on the right */
-        text-transform: uppercase;
-        letter-spacing: 0.2rem;
-        color: rgb(0, 0, 0);
-        overflow: hidden;    /* Prevent overflow of long text */
-        line-height: 1.2; /* Adjust line height */
-        transform: none; /* Remove the translateY */
-    }
+  .nav-icons {
+      margin-top: 0;
+      margin-left: 60px; /* Add space between links and icons */
+  }
 
-    .hero-title a {
-        text-decoration: none;
-        color: inherit;
-    }
+  .search-icon {
+      width: 24px; /* Revert to desktop size */
+      height: 24px;
+  }
+}
 
-    /* Hide RSVP button on mobile */
-    .rsvp-button {
-        display: none;
-    }
+/* =================================================================== */
+/* 5. "OUR STORY" HERO VIDEO SECTION (Mobile-First)
+/* --- REVISED CODE ---
+/* =================================================================== */
 
-    .sidebar {
-        width: 80vw;
-        left: -80vw;
-      }
-    
-      .content-slide {
-        transform: translateX(80vw);
-      }
-    
-    .sidebar.active {
-        left: 0; /* Slide in when active */
-    }
+.story-hero-section {
+  position: relative;
+  margin-top: -90px; /* Adjust for navbar height */
+  width: 100%;
+  overflow: hidden; 
+  isolation: isolate;
+}
 
-    .intro-section {
-        padding-bottom: 0px;
-        padding-top: 50px;
-    }
+.story-hero-video {
+  display: block;
+  width: 100%;
+  height: auto; /* Height is automatic by default */
+  
+  /* --- MOBILE-ONLY TALLER STYLES --- */
+  
+  /* 1. Set a minimum height for mobile.
+     Adjust this 450px value until you like the height. */
+  min-height: 450px; 
+  
+  /* 2. This is the magic property.
+     It crops the video to fill the taller space, 
+     preventing squishing or stretching. */
+  object-fit: cover;
+  
+  /* --- END MOBILE STYLES --- */
+}
 
-    .intro p {
-        font-size: 1.2rem; /* Adjust font size for smaller screens */
-        padding-left: 0 !important; /* Remove left padding */
-        text-align: left; /* Center align the text */
-        margin-left: 30px;
-    }
+/* The dark overlay */
+.story-hero-section::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.3);
+  z-index: 1; 
+  pointer-events: none;
+}
 
-    .intro h2#animated-text {
-        font-size: 3rem; /* Adjust font size for smaller screens */
-        padding-left: 0 !important; /* Remove left padding */
-        text-align: left; /* Center align the text */
-        margin-left: 30px;
-    }
+/* The text content wrapper */
+.story-hero-content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 0 1.5rem;
+}
 
-    .overlay {
-        max-width: 100%;
-    }
+/* Text styles (unchanged) */
+.story-hero-content .section-title {
+  color: #FFFFFF;
+  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
+  font-size: 3.5rem;
+  margin-bottom: 0.5rem; 
+}
 
-    .intro-container {
-        flex-direction: column; /* Stack items vertically */
-        align-items: center;    /* Center align items */
-    }
-
-    .intro-heading-container {
-        left: 50%;
-        width: 100%;
-        text-align: left;
-    }
-
-    .intro-image {
-        order: 2; /* Move the image below the text */
-        width: 100vw; /* Adjust image width */
-        margin-top: 2rem; /* Add space between text and image */
-        padding: 0; /* Remove padding */
-        aspect-ratio: 721 / 666; /* Forces square shape */
-    }
-
-    .intro-text {
-        order: 1; /* Keep the text above the image */
-        text-align: left; /* Center text for mobile */
-        padding: 0; /* Remove padding */
-    }
-
-    .intro-text h1 {
-        font-size: 2.5rem;
-      }
+.story-hero-content .section-label {
+  color: #FFFFFF;
+  opacity: 0.9;
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5);
+  margin-bottom: 0;
+  margin-top: 0;
+}
 
 
-    .intro-text h3 {
-        font-size: 1.5rem;
-    }
+/* --- TABLET/DESKTOP BREAKPOINTS --- */
 
-    .intro-image img {
-        min-width: 100%;
-        min-height: 100%;
-    }
+@media (min-width: 600px) {
+  .story-hero-content .section-title {
+    font-size: 4rem; 
+  }
+}
 
-    .timeline {
-        padding-left: 5vw;
-        padding-right: 5vw;
-    }
+/* This is the new part for desktop */
+@media (min-width: 900px) {
+  .story-hero-video {
+    /* This UNDOES the mobile styles for desktop */
+    min-height: 0;
+    object-fit: unset; /* Reverts to default (auto height) */
+  }
+}
 
-    .timeline-container {
-        width: 100%;
-    }
+/* =================================================================== */
+/* 9. OUR STORY SECTION (Mobile-First Refactor)
+/* =================================================================== */
 
-    .timeline-spacer {
-        flex: 0 0 calc(50vw - 150px); /* Reduced value for smaller screens */
-    }
+.our-story-section {
+  background-color: #9aacc4;
+  display: flex;
+  /* MOBILE: Stack vertically by default */
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  /* MOBILE: Use rem-based padding */
+  padding: 4rem 1.5rem;
+  position: relative;
+  /* MOBILE: Let content define height */
+  /* height: 600px;  <-- Removed */
+}
 
-    .timeline-item {
-        width: 90%;
-    }
+.our-story-section .section-label {
+  color: #d8e2ef;
+  /* MOBILE: Make this part of the normal flow */
+  position: static;
+  transform: none;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.intro-column {
+  /* MOBILE: Take up full width */
+  flex: 1;
+  width: 100%;
+  text-align: center;
+  /* MOBILE: Let the image come first */
+  order: 2; 
+}
+
+.image-column {
+  /* MOBILE: Take up full width */
+  flex: 1;
+  width: 100%;
+  max-width: 300px; /* Optional: constrain mobile image size */
+  margin-bottom: 2rem;
+  
+  /* MOBILE: Image comes first */
+  order: 1;
+  
+  aspect-ratio: 2/3;
+  overflow: hidden;
+}
+
+.intro-column img {
+  width: 100%; 
+  height: 100%;
+  object-fit: cover;
+  opacity: 1; /* No fade-in needed on mobile */
+  transform: none;
+}
+
+.intro-quote {
+  font-family: "DarlineScript", cursive;
+  /* MOBILE: Smaller font size */
+  font-size: 2.5rem;
+  font-weight: 400;
+  line-height: 1.2;
+  margin: 10px 0;
+  color: white;
+}
+
+.intro-quote .pre-quote {
+  font-family: "DarlineSerif", serif;
+  font-size: 1.8rem;
+  font-style: normal;
+}
+
+.intro-text {
+  font-size: 1rem; /* Smaller for mobile */
+  line-height: 1.6;
+  color: white;
+  max-width: 100%; /* Full width on mobile */
+  margin: 20px auto;
+  text-align: center;
+}
+
+.monogram-middle {
+  position: absolute;
+  bottom: -60px; /* Adjusted */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100px; /* Smaller for mobile */
+  height: auto;
+  z-index: 998;
+}
+
+/* --- DESKTOP BREAKPOINT --- */
+@media (min-width: 900px) {
+  .our-story-section {
+    /* DESKTOP: Revert to side-by-side */
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 50px 0;
+    /* DESKTOP: Restore fixed height */
+    height: 600px;
+    gap: 0px;
+  }
+
+  .our-story-section .section-label {
+    /* DESKTOP: Restore absolute positioning */
+    position: absolute;
+    top: 50px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .intro-column {
+    flex: 2;
+    text-align: center;
+    padding: 0 20px;
+    max-width: 70vw;
+    order: 1; /* Text on left */
+  }
+
+  .image-column {
+    /* DESKTOP: Restore fixed width */
+    flex: 0 250px;
+    padding: 0;
+    max-width: none;
+    margin-bottom: 0;
+    order: 2; /* Image on right */
+  }
+
+  /* Note: The .intro-column img styles (fade-in)
+     will need JavaScript to apply the .fade-in class.
+     I've left the base styles here.
+  */
+  .intro-column img {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+  }
+  .intro-column img.fade-in {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .intro-quote {
+    font-size: 3rem; /* Restore desktop size */
+  }
+  .intro-quote .pre-quote {
+    font-size: 2.2rem;
+  }
+
+  .intro-text {
+    font-size: 1.1rem;
+    max-width: 80%;
+  }
+
+  .monogram-middle {
+    bottom: -70px;
+    width: 120px;
+  }
+}
+
+/* =================================================================== */
+/* 10. TIMELINE SECTION (Mobile-First Refactor)
+/* =================================================================== */
+
+.timeline-section {
+  background-color: #8b8e59;
+  /* MOBILE: Use rem-based padding, keep top space */
+  padding: 100px 1.5rem 4rem 1.5rem;
+  position: relative;
+  border-top: #e1e6cd 2px solid;
+}
+
+.timeline-section .section-label {
+  text-align: center;
+  color: #e1e6cd;
+}
+
+.timeline-container {
+  background-color: transparent;
+  /* MOBILE: Full width */
+  width: 100%;
+  /* MOBILE: Let content define height */
+  /* height: 51vh; <-- Removed */
+  margin: 0 auto;
+  position: relative;
+}
+
+.timeline-carousel {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  /* MOBILE: Less padding */
+  padding: 20px 0;
+}
+
+.decorative-border {
+  /* This is tricky on mobile. We might need to hide it
+     or use a different asset. For now, we'll let it
+     be contained by the parent.
+  */
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: fill; /* `fill` might stretch, `contain` might be better */
+  z-index: 1;
+}
+
+.timeline {
+  display: flex;
+  list-style: none;
+  padding: 0;
+  /* MOBILE: No large margins */
+  margin: 0;
+  /* MOBILE: Smaller gap */
+  gap: 30px;
+  z-index: 2;
+  transition: transform 0.5s ease-in-out;
+  transform: translateX(0);
+}
+
+.timeline-item {
+  /* MOBILE: Show ONE item at a time */
+  flex: 0 0 100%;
+  padding: 0; /* No extra padding */
+  color: white;
+}
+
+.timeline-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 5px;
+  border-bottom: 1px solid white;
+}
+
+.timeline-year {
+  font-weight: 500;
+  font-size: 1.1rem; /* Mobile size */
+  margin: 0;
+}
+
+.timeline-event-name {
+  font-family: "DarlineScript", cursive;
+  font-size: 1.8rem; /* Mobile size */
+  font-weight: 400;
+  line-height: 1.2;
+  margin: 0;
+}
+
+.timeline-event-description {
+  font-size: 0.9rem; /* Mobile size */
+  opacity: 0.9;
+  text-align: left;
+  margin-top: 10px;
+  line-height: 1.4;
+}
+
+.timeline-controls {
+  position: absolute;
+  bottom: 0; /* Adjusted position */
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 3;
+  display: flex;
+  gap: 30px;
+  align-items: center;
+}
+
+.timeline-arrow {
+  cursor: pointer;
+  width: 30px;
+  height: auto;
+  transition: transform 0.2s ease-in-out;
+}
+
+/* --- DESKTOP BREAKPOINT --- */
+@media (min-width: 900px) {
+  .timeline-section {
+    padding: 100px 50px; /* Restore desktop padding */
+  }
+
+  .timeline-container {
+    width: 79vw; /* Restore desktop width */
+    height: 51vh; /* Restore desktop height */
+  }
+  
+  .timeline-carousel {
+    padding: 40px 20px; /* Restore desktop padding */
+  }
+
+  .timeline {
+    margin: 40px 40px; /* Restore desktop margins */
+    gap: 60px; /* Restore desktop gap */
+  }
+
+  .timeline-item {
+    /* DESKTOP: Show THREE items */
+    flex: 0 0 calc((100% / 3) - 40px);
+    padding: 0 10px;
+  }
+
+  .timeline-year {
+    font-size: 1.2rem;
+  }
+  
+  .timeline-event-name {
+    font-size: 2.2rem;
+  }
+
+  .timeline-event-description {
+    font-size: 1rem;
+  }
+  
+  .timeline-controls {
+    bottom: 30px; /* Restore desktop position */
+  }
 }

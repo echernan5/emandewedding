@@ -3,68 +3,68 @@
   =================================================================== 
 */
 @font-face {
-    font-family: 'DarlineScript';
-    src: url('/static/fonts/WOFF/DarlineScript-Regular.woff') format('woff');
-    font-weight: normal;
-    font-style: normal;
-  }
-  
-  @font-face {
-    font-family: 'DarlineSerif';
-    src: url('/static/fonts/WOFF/DarlineSerif-Regular.woff') format('woff');
-    font-weight: normal;
-    font-style: normal;
-  }
-  
-  @font-face {
-    font-family: 'DarlineSerif';
-    src: url('/static/fonts/WOFF/DarlineSerif-Bold.woff') format('woff');
-    font-weight: bold;
-    font-style: normal;
-  }
-  
-  @font-face {
-    font-family: 'DarlineSerif';
-    src: url('/static/fonts/WOFF/DarlineSerif-Light.woff') format('woff');
-    font-weight: 300; /* Light */
-    font-style: normal;
-  }
+  font-family: 'DarlineScript';
+  src: url('/static/fonts/WOFF/DarlineScript-Regular.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
 
-  .inria-serif-light {
-    font-family: "Inria Serif", serif;
-    font-weight: 300;
-    font-style: normal;
-  }
-  
-  .inria-serif-regular {
-    font-family: "Inria Serif", serif;
-    font-weight: 400;
-    font-style: normal;
-  }
-  
-  .inria-serif-bold {
-    font-family: "Inria Serif", serif;
-    font-weight: 700;
-    font-style: normal;
-  }
-  
-  .inria-serif-light-italic {
-    font-family: "Inria Serif", serif;
-    font-weight: 300;
-    font-style: italic;
-  }
-  
-  .inria-serif-regular-italic {
-    font-family: "Inria Serif", serif;
-    font-weight: 400;
-    font-style: italic;
-  }
-  
-  .inria-serif-bold-italic {
-    font-family: "Inria Serif", serif;
-    font-weight: 700;
-    font-style: italic;
-  }
+@font-face {
+  font-family: 'Inria Serif';
+  src: url('/static/fonts/WOFF/Inria Serif-Regular.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Inria Serif';
+  src: url('/static/fonts/WOFF/Inria Serif-Bold.woff') format('woff');
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Inria Serif';
+  src: url('/static/fonts/WOFF/Inria Serif-Light.woff') format('woff');
+  font-weight: 300; /* Light */
+  font-style: normal;
+}
+
+.inria-serif-light {
+  font-family: "Inria Serif", serif;
+  font-weight: 300;
+  font-style: normal;
+}
+
+.inria-serif-regular {
+  font-family: "Inria Serif", serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.inria-serif-bold {
+  font-family: "Inria Serif", serif;
+  font-weight: 700;
+  font-style: normal;
+}
+
+.inria-serif-light-italic {
+  font-family: "Inria Serif", serif;
+  font-weight: 300;
+  font-style: italic;
+}
+
+.inria-serif-regular-italic {
+  font-family: "Inria Serif", serif;
+  font-weight: 400;
+  font-style: italic;
+}
+
+.inria-serif-bold-italic {
+  font-family: "Inria Serif", serif;
+  font-weight: 700;
+  font-style: italic;
+}
 
 /* =================================================================== */
 /* 2. GLOBAL & UTILITY STYLES
@@ -72,629 +72,1409 @@
 
 /* Universal Styles */
 * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-  }
-  
-  html {
-    scroll-behavior: smooth; /* Smooth scrolling */
-    overflow-x: hidden; /* Prevent horizontal scroll */
-  }
-  
-  body {
-    padding: 0;
-    margin: 0;
-    max-width: 100%;
-  }
-  
-  /* Hides the modal scrollbar from the body */
-  body.modal-active {
-    overflow: hidden;
-  }
-  
-  /* Hide mobile-specific content on desktop */
-  .mobile-only {
-    display: none;
-  }
-  
-  /* Re-usable class for section labels */
-  .section-label {
-    font-family: "Inria Serif", serif;
-    text-transform: uppercase;
-    font-style: italic;
-    letter-spacing: 0.2rem;
-    color: #bcbdb5;
-    margin-bottom: 2rem;
-  }
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth; /* Smooth scrolling */
+  overflow-x: hidden; /* Prevent horizontal scroll */
+}
+
+body {
+  padding: 0;
+  margin: 0;
+  max-width: 100%;
+}
+
+/* Hides the modal scrollbar from the body */
+body.modal-active,
+body.nav-is-active { /* Added to support mobile nav overlay */
+  overflow: hidden;
+}
+
+/* Re-usable class for section labels */
+.section-label {
+  font-family: "Inria Serif", serif;
+  text-transform: uppercase;
+  font-style: italic;
+  letter-spacing: 0.2rem;
+  color: #bcbdb5;
+  margin-bottom: 2rem;
+}
 
 
 /* =================================================================== */
-/* 4. NAVIGATION BAR
+/* 4. NAVIGATION BAR (MOBILE-FIRST REFACTOR)
 /* =================================================================== */
 
+/* --- MOBILE STYLES (Base) --- */
 #navbar {
-    position: sticky;
-    top: 0;
-    background-color: #9aacc4;
-    width: 100%;
-    z-index: 1000;
-    height: 90px;
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    transition: background-color 0.8s ease, transform 0.8s ease, padding-top 0.8s ease;
+  position: sticky;
+  top: 0;
+  background-color: #9aacc4;
+  width: 100%;
+  z-index: 1000;
+  height: 90px;
+  display: flex;
+  justify-content: space-between; /* Changed for mobile */
+  align-items: center;
+  padding: 0 1.5rem; /* Added for mobile */
+  transition: background-color 0.8s ease, transform 0.8s ease;
+}
+
+#navbar.scrolled {
+  background-color: #9aacc4;
+  transform: translateY(0);
+}
+
+#navbar.hide-on-scroll-down {
+  transform: translateY(-100%);
+}
+
+.navbar .logo-link {
+  text-align: center;
+  z-index: 1002; /* Ensure logo is above menu */
+}
+
+.navbar .logo {
+  max-height: 70px;
+  width: auto;
+}
+
+/* The mobile menu container */
+.nav-menu {
+  display: none; /* Hidden by default */
+  position: fixed;
+  top: 0; /* Changed from 90px to 0 for full overlay */
+  left: 0;
+  width: 100%;
+  height: 100vh; /* Full viewport height */
+  background-color: #9aacc4; 
+  flex-direction: column;
+  align-items: center;
+  justify-content: center; /* Center links vertically */
+  overflow-y: auto;
+  z-index: 1000; /* Behind logo/close button */
+  transition: opacity 0.3s ease;
+}
+
+/* This class is added by JS to show the menu */
+.nav-menu.is-active {
+  display: flex;
+}
+
+/* Mobile link styles */
+.nav-links {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  gap: 2.5rem; /* More space for tapping */
+}
+
+.navbar .nav-link {
+  font-family: "inria-bold-italic", serif;
+  font-style: italic;
+  text-transform: uppercase;
+  letter-spacing: 0.2rem;
+  color: white;
+  text-decoration: none;
+  transition: color 0.3s ease;
+  font-size: 1.5rem; /* Larger, tappable links */
+}
+
+.navbar .nav-link:hover {
+  color: #f0f0f0;
+}
+
+.nav-icons {
+  display: flex;
+  align-items: center;
+  gap: 20px; /* More space */
+  margin-top: 3rem; /* Space below links */
+}
+
+.icon-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.search-icon {
+  width: 28px; /* Slightly larger */
+  height: 28px;
+  fill: white;
+}
+
+/* --- Hamburger Toggle Button --- */
+.mobile-nav-toggle {
+  display: flex; /* Show on mobile */
+  flex-direction: column;
+  justify-content: space-around;
+  width: 30px;
+  height: 24px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  z-index: 1002; /* Above menu */
+}
+
+.hamburger-line {
+  width: 30px;
+  height: 3px;
+  background-color: white;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+}
+
+/* --- TABLET/DESKTOP BREAKPOINTS --- */
+@media (min-width: 900px) {
+  #navbar {
+      justify-content: space-around; /* Revert to desktop layout */
+      padding: 0; /* Remove mobile padding */
   }
-  
-  #navbar.scrolled {
-    background-color: #9aacc4;
-    transform: translateY(0);
-    padding-top: 0;
+
+  /* Hide the hamburger button on desktop */
+  .mobile-nav-toggle {
+      display: none;
   }
-  
-  #navbar.hide-on-scroll-down {
-    transform: translateY(-100%);
+
+  /* Show the nav-menu as a normal flex row */
+  .nav-menu {
+      display: flex;
+      position: static; /* Not fixed */
+      flex-direction: row;
+      width: auto;
+      height: auto;
+      background-color: transparent;
+      padding-top: 0;
+      z-index: auto;
+      transition: none;
   }
-  
-  .navbar .logo-link {
-    text-align: center;
-  }
-  
-  .navbar .logo {
-    max-height: 70px;
-    width: auto;
-  }
-  
+
+  /* Restore your desktop link styles */
   .nav-links {
-    display: flex;
-    gap: 60px;
+      flex-direction: row;
+      gap: 60px; /* Restore desktop gap */
   }
-  
+
   .navbar .nav-link {
-    font-family: "inria-bold-italic", serif; /* NOTE: Make sure this font is loaded or defined */
-    font-style: italic;
-    text-transform: uppercase;
-    letter-spacing: 0.2rem;
-    color: white;
-    text-decoration: none;
-    transition: color 0.3s ease;
+      font-size: initial; /* Reset font size */
   }
-  
-  .navbar .nav-link:hover {
-    color: #f0f0f0; /* Slight fade on hover */
-  }
-  
+
   .nav-icons {
-    display: flex;
-    align-items: center;
-    gap: 15px;
+      margin-top: 0;
+      margin-left: 60px; /* Add space between links and icons */
   }
-  
-  .icon-button {
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 0;
-  }
-  
+
   .search-icon {
-    width: 24px;
-    height: 24px;
-    fill: white;
+      width: 24px; /* Revert to desktop size */
+      height: 24px;
   }
+}
 
 
 /*
 ========================================
-ACCOMMODATIONS SECTION
+ACCOMMODATIONS SECTION (UPDATED)
 ========================================
 */
 
+/* --- CLEAN BACKGROUND OVERRIDE --- */
 .accommodations-section {
-    position: relative;
-    padding: 50px 2rem;
-    background-image: url('/Users/emmahernandez/EmandEWedding/static/Content/PK_PAPER_5.jpg');
-    background-repeat: repeat;
+  background-image: none !important; /* Remove texture */
+  background-color: #fcfcfc; /* Clean off-white */
+  padding: 6rem 1.5rem;
 }
 
-/* Decorative floral borders */
+/* Hide the floral images */
 .floral-border {
-    position: absolute;
-    top: 0;
-    width: auto;
-    max-height: 900px; /* Adjust as needed */
-    z-index: 1;
-    pointer-events: none; /* Prevents images from being clicked */
+  display: none !important;
 }
 
-.floral-left {
-    left: -40px;
-    top: -20px;
-}
-
-.floral-right {
-    right: -40px;
-}
-
-/* Main content wrapper */
+/* --- RESTORED TEXT STYLING --- */
 .accommodations-content {
-    position: relative; /* Stays on top of the floral borders */
-    z-index: 2;
-    max-width: 950px; /* Content width */
-    margin: 0 auto; /* Centered */
-    text-align: center;
+  text-align: center; /* Ensures text is centered */
 }
 
-/* The script title "Accommodations" */
 .accommodations-content .section-title {
-    font-family: 'Darline Script', cursive;
-    font-size: 4rem; /* Large and elegant */
-    font-weight: 400;
-    color: #9aacc4; /* Dusty blue/grey from screenshot */
-    margin-bottom: 1.5rem;
-    line-height: 1;
-    text-shadow: 0px -1px 1px rgba(0, 0, 0, 0.3), /* Dark top edge (softened) */
-                 0px 1px 1px rgba(255, 255, 255, 0.75); /* Light bottom edge */
+  /* Use the exact name from your @font-face definition */
+  font-family: 'DarlineScript', 'Darline Script', cursive; 
+  font-size: 4rem; 
+  font-weight: normal;
+  color: #9aacc4; /* Your dusty blue */
+  margin-bottom: 1.5rem;
+  line-height: 1.2;
 }
 
-/* The description paragraphs */
 .accommodations-description {
-    font-family: 'Inria Serif', serif;
-    font-size: 1rem;
-    line-height: 1.6;
-    color: #555;
-    max-width: 750px; /* Keeps text block readable */
-    margin-left: auto;
-    margin-right: auto;
-    margin-bottom: 1rem;
+  font-family: 'Inria Serif', serif;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: #555;
+  max-width: 800px; 
+  margin: 0 auto 3rem auto; /* Centers the text block */
 }
 
-.accommodations-description:last-of-type {
-    margin-bottom: 3rem; /* Space above the grid */
+/* --- GRID ADJUSTMENTS (3 Columns Horizontal) --- */
+.accommodation-grid.centered-grid {
+  display: grid;
+  /* Default to 3 columns side-by-side */
+  grid-template-columns: repeat(3, 1fr); 
+  gap: 2rem;
+  /* Increased width so cards stay large */
+  max-width: 1000px; 
+  margin: 0 auto;
+  justify-content: center;
 }
 
-/* Grid container for the 4 cards */
-.accommodation-grid {
+/* Only stack them vertically on actual mobile phones */
+@media (max-width: 850px) {
+  .accommodation-grid.centered-grid {
+      grid-template-columns: 1fr; /* Stack on mobile/small tablet */
+      max-width: 500px;
+  }
+}
+
+/* --- NEW CARD STYLING (Hotel Facade Look) --- */
+.hotel-style-card {
+  text-align: left; /* Align text left inside the centered grid */
+  background: transparent;
+  box-shadow: none; /* Clean look */
+  width: 100%;
+}
+
+/* Carousel Wrapper */
+.card-carousel-wrapper {
+  position: relative;
+  width: 100%;
+  /* Standard rectangular aspect ratio */
+  aspect-ratio: 4/3; 
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+  background-color: #eee;
+}
+
+.card-carousel-images {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.card-carousel-images img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.card-carousel-images img.active {
+  opacity: 1;
+  z-index: 1;
+}
+
+/* --- THE "WHITE BOX" ARROWS --- */
+.card-carousel-nav {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background-color: white;
+  display: flex;
+  z-index: 10;
+  padding: 0;
+}
+
+.nav-arrow {
+  background: white;
+  border: none;
+  cursor: pointer;
+  width: 45px; /* Slightly larger targets */
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #555;
+  transition: background-color 0.2s;
+  font-size: 1.2rem;
+}
+
+.nav-arrow:hover {
+  background-color: #f0f0f0;
+  color: #000;
+}
+
+/* --- TYPOGRAPHY UPDATES --- */
+.hotel-card-details {
+  padding: 0 0.5rem;
+}
+
+/* Subtitle (above title) */
+.hotel-subtitle {
+  font-family: 'Inria Serif', serif;
+  font-style: italic;
+  font-size: 1rem;
+  color: #8D9BA8; /* Muted blue/gray */
+  margin-bottom: 0.4rem;
+}
+
+/* Title (Main Name) */
+.hotel-title {
+  font-family: 'Inria Serif', serif;
+  font-weight: normal;
+  font-size: 1.5rem; /* Slightly larger */
+  color: #333;
+  margin-bottom: 1rem;
+  letter-spacing: 0.05rem;
+}
+
+/* Info Rows */
+.hotel-info-rows {
+  margin-bottom: 1.5rem;
+  border-top: 1px solid #eee;
+  padding-top: 1rem;
+}
+
+.info-row {
+  font-family: 'Inria Serif', serif;
+  font-size: 0.8rem;
+  color: #666;
+  margin-bottom: 0.4rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05rem;
+}
+
+/* View Room Link */
+.view-room-link {
+  font-family: 'Inria Serif', serif;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15rem;
+  text-decoration: none;
+  color: #333;
+  border-bottom: 1px solid transparent;
+  transition: all 0.3s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.view-room-link:hover {
+  color: #8D9BA8;
+  gap: 12px; /* Slight movement animation */
+}
+
+.short-arrow {
+  font-size: 1rem;
+}
+
+/* --- AMENITIES ROW STYLING --- */
+.amenities-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 0.8rem;
+  padding-top: 0.8rem;
+  border-top: 1px dashed #eee; /* Subtle separator */
+}
+
+.amenities-label {
+  font-family: 'Inria Serif', serif;
+  font-size: 0.8rem;
+  color: #999;
+  text-transform: uppercase;
+  letter-spacing: 0.05rem;
+}
+
+.amenities-icons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* Individual Icon Wrapper */
+.amenity-icon {
+  position: relative; /* Essential for tooltip positioning */
+  cursor: help;
+  color: #888;
+  font-size: 1rem;
+  transition: color 0.3s ease;
+}
+
+.amenity-icon:hover {
+  color: #6587ab; /* Your Wedding Blue */
+}
+
+/* --- TOOLTIP POPUP --- */
+.amenity-icon::after {
+  content: attr(data-tooltip); /* Grabs text from HTML */
+  
+  position: absolute;
+  bottom: 140%; /* Position above the icon */
+  left: 50%;
+  transform: translateX(-50%);
+  
+  background-color: #333;
+  color: #fff;
+  font-family: "Inria Serif", serif;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  padding: 5px 10px;
+  border-radius: 4px;
+  
+  /* Hidden by default */
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s, visibility 0.3s;
+  pointer-events: none;
+  z-index: 100;
+}
+
+/* Little triangle arrow at bottom of tooltip */
+.amenity-icon::before {
+  content: '';
+  position: absolute;
+  bottom: 120%;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 5px;
+  border-style: solid;
+  border-color: #333 transparent transparent transparent;
+  
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s, visibility 0.3s;
+  z-index: 100;
+}
+
+/* Show Tooltip on Hover */
+.amenity-icon:hover::after,
+.amenity-icon:hover::before {
+  opacity: 1;
+  visibility: visible;
+}
+
+/*
+========================================
+ACCOMMODATION MODAL STYLES (NEW)
+========================================
+*/
+
+/* --- Slideshow Container --- */
+.slideshow-container {
+  position: relative;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  background-color: #f0f0f0;
+  
+  /* THIS IS THE CHANGE: */
+  border-radius: 50%; 
+  
+  overflow: hidden;
+  height: 0;
+  padding-top: 60%; /* This keeps your 16:9 ratio */
+  border: 4px solid #8D9BA8;
+}
+
+.slide {
+  /* Stacks all slides on top of each other */
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  
+  /* Fade-in/out settings */
+  opacity: 0;
+  transition: opacity 1.5s ease-in-out; /* This is your fade speed */
+  
+  /* This ensures the image inside behaves */
+  overflow: hidden; 
+}
+
+/* This new class will be added by JS to show a slide */
+.slide.is-active {
+  opacity: 1;
+}
+
+.slide img {
+  /* Make the image fill the slide container */
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* This will crop, 'contain' will letterbox */
+}
+
+/* Next & previous buttons */
+.prev, .next {
+  display: none; /* Hidden on mobile */
+  cursor: pointer;
+  position: absolute;
+  top: 50%;
+  width: auto;
+  padding: 16px;
+  margin-top: -30px; /* Center vertically */
+  color: white;
+  font-weight: bold;
+  font-size: 20px;
+  transition: 0.3s ease;
+  border-radius: 0 3px 3px 0;
+  user-select: none;
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+/* Position the "next button" to the right */
+.next {
+  right: 0;
+  border-radius: 3px 0 0 3px;
+}
+
+.prev:hover, .next:hover {
+  background-color: rgba(0, 0, 0, 0.6);
+}
+
+/* Dots */
+.dot-container {
+  display: none;
+  text-align: center;
+  padding: 12px 0;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+}
+
+.dot {
+  cursor: pointer;
+  height: 10px;
+  width: 10px;
+  margin: 0 4px;
+  background-color: rgba(255, 255, 255, 0.5);
+  border-radius: 50%;
+  display: inline-block;
+  transition: background-color 0.3s ease;
+}
+
+.dot.active, .dot:hover {
+  background-color: #ffffff;
+}
+
+@keyframes fade {
+  from { opacity: 0.4 }
+  to { opacity: 1 }
+}
+
+/* --- Modal Content Text --- */
+.modal-accomm-content {
+  padding-top: 20px;
+}
+
+.modal-accomm-title {
+  font-family: "Inria Serif", serif;
+  font-weight: bold;
+  font-size: 1.8rem;
+  color: #6587ab;
+  margin: 0 0 15px 0;
+  text-align: left;
+}
+
+.modal-accomm-highlights {
+  font-family: "Inria Serif", serif;
+  font-weight: 300;
+  line-height: 1.6;
+  color: #333;
+  text-align: left;
+  padding-left: 20px;
+  margin-bottom: 25px;
+}
+
+.modal-accomm-highlights li {
+  margin-bottom: 8px;
+}
+
+.modal-accomm-booking {
+  text-align: left;
+  font-family: "Inria Serif", serif;
+  font-weight: 300;
+  line-height: 1.6;
+  color: #333;
+  background-color: #f8f8f8;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  padding: 15px 20px;
+}
+
+.modal-accomm-booking h4 {
+  font-family: "Inria Serif", serif;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.1rem;
+  color: #9aacc4;
+  margin-top: 0;
+  margin-bottom: 10px;
+  font-size: 0.9rem;
+}
+
+.modal-accomm-booking p {
+  margin: 0;
+}
+
+/*
+========================================
+ACCOMMODATIONS - TABLET/DESKTOP BREAKPOINTS
+========================================
+*/
+
+@media (min-width: 600px) {
+  /* Stack to a 2x2 grid */
+  .accommodation-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 2rem;
+      max-width: 600px; /* Constrain grid width */
+  }
+
+  .accommodations-content .section-title {
+      font-size: 4rem; /* Enlarge title */
+  }
+
+  .slideshow-container {
+    padding-top: 40%; 
+  }
+
+}
+
+@media (min-width: 900px) {
+  .accommodations-section {
+      padding: 80px 2rem; /* Revert to desktop padding */
+  }
+
+  /* On desktops, show the large florals */
+  .floral-border {
+      display: block;
+  }
+
+  /* Go to 4-column grid */
+  .accommodation-grid {
+    /* 1. Change to 3 columns so your 3 cards fill the whole width */
+    grid-template-columns: repeat(3, 1fr); 
+    
+    /* 2. Increase the gap for that luxurious "air" */
+    gap: 3rem; 
+    
+    /* 3. Increase max-width to match your Transportation section */
+    max-width: 1400px; 
+  }
+
+  .slideshow-container {
+    padding-top: 40%; 
+  }
+}
+
+/* ========================================
+TRANSPORTATION: MATCHING WIDTH LAYOUT
+========================================
+*/
+
+.transportation-section {
+  /* Match the padding of your Accommodations section (6rem = approx 96px) */
+  padding: 6rem 1.5rem; 
+  background-color: #ffffff;
+}
+
+.editorial-layout {
+  /* MATCHING WIDTH: Exactly the same as your Accommodation Grid */
+  max-width: 1000px; 
+  margin: 0 auto;
+  
+  /* Mobile Default: Stacked */
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+}
+
+/* --- Left Side (Header) --- */
+.editorial-header {
+  text-align: left;
+}
+
+.transportation-section .section-title {
+  font-family: 'Darline Script', cursive;
+  font-size: 4rem; 
+  font-weight: 400;
+  color: #9aacc4;
+  margin-bottom: 1.5rem;
+  line-height: 1;
+}
+
+.transportation-section .section-description {
+  font-family: 'Inria Serif', serif;
+  font-size: 1rem;
+  font-style: italic;
+  color: #777;
+  max-width: 450px; 
+  margin: 0; 
+  line-height: 1.6;
+}
+
+/* --- Right Side (Content) --- */
+.editorial-content {
+  text-align: left;
+}
+
+.info-group {
+  margin-bottom: 4rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid #f0f0f0; 
+}
+.info-group:last-child {
+  margin-bottom: 0;
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.editorial-subtitle {
+  font-family: 'Inria Serif', serif;
+  font-size: 1.25rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: #6587ab;
+  margin-bottom: 1.5rem;
+  display: block;
+  font-style: italic;
+}
+
+/* THE FIX: Ensure text spans the full width of its column */
+.editorial-content p {
+  font-family: 'Inria Serif', serif;
+  font-size: 1rem;
+  line-height: 1.8;
+  color: #444;
+  margin-bottom: 1.25rem;
+  width: 100%; 
+  max-width: none; /* Removes any restriction */
+}
+
+.editorial-content strong {
+  font-weight: 600;
+  color: #222;
+}
+
+/* ========================================
+DESKTOP ALIGNMENT (The Match)
+=======================================
+*/
+@media (min-width: 900px) {
+  .transportation-section {
+      /* Match the 80px padding from Accommodations desktop view */
+      padding: 80px 2rem; 
+  }
+
+  .editorial-layout {
     display: grid;
-    /* Creates 4 equal columns */
-    grid-template-columns: repeat(4, 1fr);
-    gap: 1.5rem; /* Space between cards */
-}
-
-/* Individual accommodation card */
-.accommodation-card {
-    text-align: center;
-}
-
-/* The image frame with the unique shape */
-.accommodation-image-frame {
-    /* This uses an inline SVG as a 'mask' to clip the 
-     image into the special shape from your screenshot.
+    /* Here is the alignment fix:
+       25% for Title | 5% Gap | 70% for Content
+       This ensures the content column is very wide (like your cards).
     */
-    --mask-url: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 130'%3E%3Cpath d='M 0,25 C 0,10 10,0 25,0 H 175 C 190,0 200,10 200,25 V 105 C 200,120 190,130 175,130 H 25 C 10,130 0,120 0,105 V 25 Z'/%3E%3C/svg%3E");
-    
-    -webkit-mask-image: var(--mask-url);
-    mask-image: var(--mask-url);
-    -webkit-mask-size: 100% 100%;
-    mask-size: 100% 100%;
-    -webkit-mask-repeat: no-repeat;
-    mask-repeat: no-repeat;
-    
-    background-color: #f0f0f0; /* Fallback color */
-    overflow: hidden; /* Clips the image inside */
-    margin-bottom: 1.25rem;
-    
-    /* This forces the frame to keep the mask's aspect ratio */
-    aspect-ratio: 200 / 130; 
+    grid-template-columns: 30% 65%; 
+    gap: 5%; 
+    align-items: start; 
+  }
+
+  .editorial-header {
+    margin-top: 0.5rem; 
+  }
 }
 
-.accommodation-image-frame img {
+/* ===================================================================
+ADVENTURE SECTION STYLES (MOBILE-FIRST REFACTOR)
+=================================================================== 
+*/
+
+.adventure-section {
+  width: 100%;
+  margin: 0px auto;
+  padding: 60px 20px;
+  box-sizing: border-box;
+  text-align: center;
+  background-image: repeating-linear-gradient(
+    90deg, 
+    #eff4fa, /* Your light blue */
+    #eff4fa 60px, 
+    #ffffff 60px, /* A lighter blue/white */
+    #ffffff 120px
+  );
+}
+
+/* --- MOBILE STYLES (Base) --- */
+.adventure-header {
+  margin-bottom: 40px;
+  display: inline-block; 
+  padding: 15px 25px; /* Mobile padding */
+  max-width: 90%;
+}
+
+.adventure-title {
+  font-family: "DarlineScript", cursive;
+  font-size: 2.5rem; /* Mobile font size */
+  font-weight: normal;
+  color: #9aacc4; /* Your blue */
+  margin: 0;
+  line-height: 1.2;
+}
+
+.adventure-subtitle {
+  font-family: "Inria Serif", serif;
+  font-size: 1.1rem;
+  font-style: italic;
+  color: #888;
+  margin-top: 10px;
+}
+
+.adventure-chooser {
+  display: flex;
+  flex-direction: column; /* Stack vertically on mobile */
+  align-items: center; /* Center stacked cards */
+  gap: 20px; /* Mobile gap */
+  padding-top: 20px;
+}
+
+.adventure-card {
+  background: none;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  background-color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  align-items: center; 
+  justify-content: center; 
+  
+  width: 100%;
+  max-width: 80%; /* Use % for mobile */
+  min-height: 300px;
+  padding: 40px 20px;
+  text-align: center;
+  
+  /* This calculation keeps the oval shape on mobile */
+  border-radius: calc( (100vw * 0.8) / 2 );
+  
+  border: 1px solid #9aacc4;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.adventure-card:hover {
+  transform: translateY(-8px) scale(1.03);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  border-color: #6587ab; 
+}
+
+.card-icon {
+  width: 80px; /* Mobile icon size */
+  height: 80px;
+  margin-bottom: 20px;
+}
+
+.card-icon img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: contain;
+}
+
+.adventure-card h3 {
+  font-family: "Inria Serif", serif;
+  font-weight: bold;
+  font-size: 1.2rem; /* Mobile heading size */
+  color: #6587ab;
+  margin: 0 0 10px 0;
+}
+
+.adventure-card p {
+  font-family: "Inria Serif", serif;
+  font-weight: 300; 
+  font-size: 0.9rem; /* Mobile p size */
+  line-height: 1.5;
+  color: #555;
+  margin: 0;
+  max-width: 220px; 
+}
+
+/*
+========================================
+ADVENTURE - TABLET/DESKTOP BREAKPOINTS
+========================================
+*/
+
+@media (min-width: 768px) {
+  .adventure-title {
+      font-size: 3rem; /* Tablet title size */
+  }
+
+  .adventure-chooser {
+      flex-direction: row; /* Go horizontal */
+      justify-content: center;
+      flex-wrap: wrap; /* Allow wrapping */
+      gap: 30px; /* Tablet gap */
+  }
+
+  .adventure-card {
+      max-width: 240px; /* Tablet card width */
+      min-height: 340px;
+      border-radius: 120px; /* Fixed oval shape */
+  }
+
+  .card-icon {
+      width: 100px; /* Revert to larger icon */
+      height: 100px;
+  }
+
+  .adventure-card h3 {
+      font-size: 1.4rem; /* Larger heading */
+  }
+}
+
+@media (min-width: 960px) {
+  .adventure-title {
+      font-size: 4rem; /* Desktop title size */
+  }
+
+  .adventure-chooser {
+      gap: 50px; /* Desktop gap */
+  }
+
+  .adventure-card {
+      max-width: 280px; /* Desktop card width */
+      min-height: 400px;
+      border-radius: 140px; /* Desktop oval shape */
+  }
+}
+
+/* ===================================================================
+ITINERARY MODAL STYLES (No changes needed - already mobile-friendly)
+=================================================================== 
+*/
+
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1050;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.modal-hidden {
+  display: none;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modal-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(5px);
+  cursor: pointer;
+}
+
+.modal-content {
+  position: relative;
+  z-index: 1051;
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+  width: 90%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 30px 30px;
+  box-sizing: border-box;
+  animation: slideIn 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-close {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-family: sans-serif;
+  font-size: 2.5rem;
+  font-weight: 300;
+  color: #aaa;
+  background: none;
+  border: none;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.modal-close:hover {
+  color: #333;
+}
+
+@media (min-width: 960px) {
+  .modal-content {
+      max-width: 900px;
+  }
+}
+
+/* ===================================================================
+MODAL *ITINERARY* STYLES (No changes needed)
+=================================================================== 
+*/
+
+#modal-itinerary-content h2 {
+  font-family: "DarlineScript", cursive;
+  font-size: 2.5rem;
+  font-weight: normal;
+  color: #6587ab;
+  text-align: center;
+  margin: 0 0 25px 0;
+}
+
+#modal-itinerary-content h4 {
+  font-family: "Inria Serif", serif;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.1rem;
+  color: #9aacc4;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 5px;
+  margin-top: 30px;
+  margin-bottom: 15px;
+}
+
+#modal-itinerary-content p {
+  font-family: "Inria Serif", serif;
+  font-weight: 300;
+  line-height: 1.6;
+  color: #333;
+  margin-bottom: 15px;
+}
+
+#modal-itinerary-content strong {
+  font-weight: bold;
+  color: #6587ab;
+}
+
+.download-button {
+  display: inline-block;
+  text-decoration: none;
+  background-color: #6587ab;
+  color: #ffffff;
+  padding: 12px 25px;
+  border-radius: 25px;
+  font-family: "Inria Serif", serif;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.1rem;
+  margin-top: 20px;
+  text-align: center;
+  transition: all 0.3s ease;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.download-button:hover {
+  background-color: #4e6a8a; /* Darker blue */
+  transform: scale(1.03);
+}
+
+/* ===================================================================
+CLEANUP - All old max-width media queries have been removed 
+and replaced with mobile-first min-width queries above.
+=================================================================== 
+*/
+
+/*
+========================================
+TRAVEL / ACCOMMODATIONS HERO SECTION
+========================================
+*/
+
+.travel-hero {
+  position: relative;
+  height: calc(100vh - 90px); /* Viewport minus navbar */
+  width: 100%;
+  overflow: hidden;
+  clip-path: inset(0);
+}
+
+/* Shared image behavior */
+.hero-layer {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center bottom;
+  background-repeat: no-repeat;
+}
+
+/* Background image (full landscape with sky) */
+.hero-bg {
+  background-image: url("/static/Content/baypointebackground.png");
+  z-index: 1;
+}
+
+/* Foreground image (same landscape, sky removed) */
+.hero-fg {
+  background-image: url("/static/Content/baypointeforeground.png");
+  z-index: 3;
+  pointer-events: none;
+}
+
+/* Text layer */
+.hero-text {
+  position: fixed;
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  text-align: center;
+  width: 100%;
+  pointer-events: none;
+}
+
+.hero-text h1 {
+  font-family: "DarlineScript", cursive;
+  font-size: clamp(3rem, 6vw, 5rem);
+  font-weight: normal;
+  color: #ffffff;
+  text-shadow: 0 6px 30px rgba(0, 0, 0, 0.15);
+}
+
+/* Release the fixed text once we scroll past the hero */
+.travel-hero::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  height: 1px;
+  width: 100%;
+}
+
+/* ===================================================================
+   EDITORIAL / THINGS TO DO SECTION
+   =================================================================== */
+
+   .things-to-do-section {
+    padding: 6rem 0rem;
+    background-color: #ffffff;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.editorial-content {
+    width: 100%;
+}
+
+/* Reusing your section-title class, but ensuring center alignment */
+.things-to-do-section .section-title {
+    text-align: center;
+    margin-bottom: 3rem;
+    color: #9aacc4;
+    font-family: 'DarlineScript', 'Darline Script', cursive; 
+    font-size: 4rem; 
+    font-weight: normal;
+    color: #9aacc4; /* Your dusty blue */
+    margin-bottom: 1.5rem;
+    line-height: 1.2;
+}
+
+/* --- GRID LAYOUT --- */
+.editorial-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+}
+
+/* Desktop: Split 60% Left / 40% Right */
+@media (min-width: 900px) {
+  .editorial-grid {
+      /* This ratio gives the left image more dominance */
+      grid-template-columns: 1.4fr 1fr; 
+      gap: 2rem; 
+      /* Removing fixed height so it grows naturally with the content */
+      height: auto; 
+      min-height: 300px;
+  }
+}
+
+/* --- LEFT COLUMN: FEATURE ITEM --- */
+.feature-item {
+    position: relative;
     width: 100%;
     height: 100%;
-    display: block;
-    object-fit: cover; /* Ensures image fills the frame */
+    min-height: 400px; /* Mobile height */
+    overflow: hidden;
 }
 
-/* Text content below the image */
-.accommodation-details h3 {
+.feature-link-wrapper {
+    display: block;
+    width: 100%;
+    height: 100%;
+    text-decoration: none;
+    color: inherit;
+    position: relative;
+}
+
+.feature-image-container {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.feature-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.8s ease;
+}
+
+/* Zoom effect on hover */
+.feature-link-wrapper:hover .feature-image {
+    transform: scale(1.05);
+}
+
+/* The White Box Overlay */
+.feature-text-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    background-color: #fff;
+    padding: 1.5rem 2rem 1rem 0; /* Padding right/top/bottom, 0 left implies sticking to edge */
+    max-width: 80%;
+    z-index: 10;
+}
+
+/* "Cut out" look for the white box */
+@media (min-width: 900px) {
+    .feature-text-overlay {
+        padding: 2rem 3rem; 
+    }
+}
+
+.editorial-heading {
+    font-family: 'Inria Serif', serif;
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #333;
+    margin: 0 0 0.5rem 0;
+    text-transform: uppercase;
+    letter-spacing: 0.05rem;
+}
+
+.read-more-btn {
     font-family: 'Inria Serif', serif;
     font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15rem;
+    color: #6587ab; /* Wedding Blue */
     font-weight: 700;
-    letter-spacing: 0.1em; /* Spaced out caps */
-    color: #444;
-    margin: 0;
-    padding: 0;
-    margin-bottom: 0.25rem;
-    text-shadow: 0px 1px 1px rgba(0, 0, 0, 0.15);
+    transition: letter-spacing 0.3s ease;
 }
 
-.accommodation-details p {
-    font-family: 'Inria Serif', serif;
-    font-size: 0.85rem;
-    color: #666;
-    margin: 0;
-    padding: 0;
-    margin-bottom: 0.75rem;
+.feature-link-wrapper:hover .read-more-btn {
+    letter-spacing: 0.25rem; /* Expands on hover */
 }
 
-/* The "WEBSITE" link */
-.website-link {
-    font-family: 'Inria Serif', serif;
-    font-size: 0.8rem;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    color: #333;
-    text-decoration: none;
-    padding-bottom: 3px;
-    border-bottom: 2px solid #ccc;
-    transition: border-color 0.3s ease;
+/* --- RIGHT COLUMN: LIST ITEMS --- */
+.editorial-list {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* Spreads them out evenly to match left image */
+  gap: 1rem; /* A little breathing room (0.5rem is very tight) */
+  height: 100%;
 }
 
-.website-link:hover {
-    border-bottom-color: #8D9BA8; /* Dusty blue on hover */
-}
-
-/*
-========================================
-RESPONSIVE ADJUSTMENTS
-========================================
-*/
-
-@media (max-width: 900px) {
-    /* On tablets, hide the large florals */
-    .floral-border {
-        display: none;
-    }
-
-    /* Stack to a 2x2 grid */
-    .accommodation-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 2rem;
-        max-width: 600px; /* Constrain grid width */
-        margin: 0 auto; /* Center the 2x2 grid */
-    }
-}
-
-@media (max-width: 768px) {
-    .accommodations-section {
-        padding: 4rem 1.5rem;
-    }
-
-    .accommodations-content .section-title {
-        font-size: 4rem; /* Smaller title on mobile */
-    }
-}
-
-@media (max-width: 480px) {
-    /* Stack to a 1-column grid on small phones */
-    .accommodation-grid {
-        grid-template-columns: 1fr;
-        max-width: 300px; /* Constrain single column */
-    }
-}
-
-  
-  /* ===================================================================
-    ADVENTURE SECTION STYLES - TALL OVAL DESIGN
-    =================================================================== 
-  */
-  
-  .adventure-section {
-    width: 100%;
-    /* max-width: 1100px; <-- Removed this */
-    margin: 60px auto;
-    padding: 60px 20px; /* More vertical padding */
-    box-sizing: border-box;
-    text-align: center;
-    /* This adds the striped background from your inspiration image */
-    background-image: repeating-linear-gradient(
-      90deg, 
-      #eff4fa, /* Your light blue */
-      #eff4fa 60px, 
-      #ffffff 60px, /* A lighter blue/white */
-      #ffffff 120px
-    );
-  }
-  
-  .adventure-header {
-    margin-bottom: 40px;
-    display: inline-block; /* Make background fit content */
-    padding: 20px 40px;
-  }
-  
-  .adventure-title {
-    font-family: "DarlineScript", cursive;
-    font-size: 4rem;
-    font-weight: normal;
-    color: #9aacc4; /* Your blue */
-    margin: 0;
-    line-height: 1.2;
-  }
-  
-  .adventure-subtitle {
-    font-family: "Inria Serif", serif;
-    font-size: 1.1rem;
-    font-style: italic;
-    color: #888;
-    margin-top: 10px;
-  }
-  
-  .adventure-chooser {
+.list-item {
     display: flex;
-    justify-content: center;
-    align-items: stretch; /* Makes ovals the same height */
-    gap: 50px;
-    flex-wrap: wrap;
-    padding-top: 20px; /* Space between header and ovals */
-  }
-  
-  .adventure-card {
-    /* Reset button styles */
-    background: none;
-    font: inherit;
-    color: inherit;
-    cursor: pointer;
-    
-    /* Card styling */
-    background-color: #ffffff;
+    align-items: center;
+    gap: 1.5rem;
+    text-decoration: none;
+}
+
+.list-image-wrapper {
+  /* Increased from 220px -> 300px to fill horizontal space */
+  width: 200px; 
+  /* Slight bump in height to keep ratio nice (from 140px -> 180px) */
+  height: 130px; 
+  flex-shrink: 0;
+  overflow: hidden;
+  border-radius: 2px; /* Optional: adds a tiny polish */
+}
+
+.list-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.list-item:hover .list-image {
+    transform: scale(1.1);
+}
+
+.list-text {
     display: flex;
     flex-direction: column;
-    align-items: center; /* Center content horizontally */
-    justify-content: center; /* Center content vertically */
-    
-    width: 100%;
-    max-width: 280px; /* Set a max-width for the oval */
-    min-height: 400px; /* Set a min-height to make it tall */
-    padding: 40px 20px; /* Padding inside the oval */
-    text-align: center;
-    
-    /* This is the key: border-radius is half of the max-width */
-    border-radius: 140px; 
-    
-    /* This is the blue border from your inspiration */
-    border: 1px solid #9aacc4; /* Your lighter blue, dashed */
-    
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-  }
-  
-  .adventure-card:hover {
-    transform: translateY(-8px) scale(1.03);
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-    border-color: #6587ab; /* Darker blue border on hover */
-  }
-  
-  .card-icon {
-    /* This is just a container for your image */
-    width: 100px; /* Size of the icon */
-    height: 100px;
-    margin-bottom: 20px; /* Space between icon and text */
-    /* Remove any old background/border styles */
-  }
-  
-  .card-icon img {
-    width: 100%;
-    height: 100%;
-    display: block;
-    object-fit: contain; /* Ensures your watercolor image fits */
-  }
-  
-  .adventure-card h3 {
-    font-family: "DarlineSerif", serif;
-    font-weight: bold;
-    font-size: 1.4rem;
-    color: #6587ab;
-    margin: 0 0 10px 0;
-  }
-  
-  .adventure-card p {
-    font-family: "Inria Serif", serif;
-    font-weight: 300; /* Light */
-    font-size: 0.9rem;
-    line-height: 1.5;
-    color: #555;
-    margin: 0;
-    max-width: 220px; /* Keep text from touching the edges */
-  }
-  
-  
-  /* ===================================================================
-    ITINERARY MODAL STYLES
-    =================================================================== 
-  */
-  
-  #itinerary-modal.modal-hidden {
-    display: none;
-  }
-
-  #itinerary-modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 1050;
-    
-    display: flex;
-    align-items: center;
     justify-content: center;
-  
-    /* Subtle fade-in for the modal */
-    animation: fadeIn 0.3s ease-out;
-  }
-  
-  @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  }
-  
-  .modal-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(5px);
-    cursor: pointer;
-  }
-  
-  .modal-content {
-    position: relative;
-    z-index: 1051;
-    background-color: #ffffff;
-    border-radius: 10px;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
-    width: 90%;
-    max-width: 600px;
-    max-height: 85vh;
-    overflow-y: auto;
-    padding: 30px 40px;
-    box-sizing: border-box;
-    
-    /* Subtle slide-in animation */
-    animation: slideIn 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-  }
-  
-  @keyframes slideIn {
-    from {
-      opacity: 0;
-      transform: translateY(30px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-  
-  .modal-close {
-    position: absolute;
-    top: 10px;
-    right: 15px;
-    font-family: sans-serif;
-    font-size: 2.5rem;
-    font-weight: 300;
-    color: #aaa;
-    background: none;
-    border: none;
-    cursor: pointer;
-    line-height: 1;
-  }
-  
-  .modal-close:hover {
-    color: #333;
-  }
-  
-  /* ===================================================================
-    MODAL *ITINERARY* STYLES (for the JS-injected content)
-    =================================================================== 
-  */
-  
-  #modal-itinerary-content h2 {
-    font-family: "DarlineScript", cursive;
-    font-size: 2.5rem;
-    font-weight: normal;
-    color: #6587ab;
-    text-align: center;
-    margin: 0 0 25px 0;
-  }
-  
-  #modal-itinerary-content h4 {
-    font-family: "DarlineSerif", serif;
-    font-weight: bold;
-    text-transform: uppercase;
-    letter-spacing: 0.1rem;
-    color: #9aacc4;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 5px;
-    margin-top: 30px;
-    margin-bottom: 15px;
-  }
-  
-  #modal-itinerary-content p {
-    font-family: "Inria Serif", serif;
-    font-weight: 300;
-    line-height: 1.6;
-    color: #333;
-    margin-bottom: 15px;
-  }
-  
-  #modal-itinerary-content strong {
-    font-weight: bold;
-    color: #6587ab;
-  }
-  
-  .download-button {
-    display: inline-block;
-    text-decoration: none;
-    background-color: #6587ab;
-    color: #ffffff;
-    padding: 12px 25px;
-    border-radius: 25px;
-    font-family: "DarlineSerif", serif;
-    font-weight: bold;
-    text-transform: uppercase;
-    letter-spacing: 0.1rem;
-    margin-top: 20px;
-    text-align: center;
-    transition: all 0.3s ease;
-    width: 100%;
-    box-sizing: border-box;
-  }
-  
-  .download-button:hover {
-    background-color: #4e6a8a; /* Darker blue */
-    transform: scale(1.03);
-  }
-  
-/* ===================================================================
-  RESPONSIVE ADJUSTMENTS for smaller screens
-  =================================================================== 
-*/
-@media (max-width: 960px) {
-  /* This is new - handles the 3-across ovals better on tablets */
-  .adventure-card {
-    max-width: 240px;
-    border-radius: 120px;
-  }
 }
 
-@media (max-width: 768px) {
-  .adventure-title {
-    font-size: 3rem;
-  }
-  .adventure-chooser {
-    flex-direction: column; /* Stack cards vertically */
-    align-items: center;
-  }
-  .adventure-card {
-    max-width: 80%; /* Allow cards to take more width on small screens */
-    margin-bottom: 20px; /* Space between stacked cards */
-    min-height: 340px; /* Adjust height for mobile */
-    /* This calculation keeps the oval shape */
-    border-radius: calc( (100vw * 0.8) / 2 );
-  }
+.list-category {
+    font-family: 'Inria Serif', serif;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    color: #999;
+    letter-spacing: 0.1rem;
+    margin-bottom: 0.3rem;
 }
 
-@media (max-width: 480px) {
-  .adventure-title {
-    font-size: 2.5rem;
-  }
-  .adventure-header {
-    padding: 15px 25px;
-    max-width: 90%;
-  }
-  .card-icon {
-    width: 80px; /* Smaller icons on very small screens */
-    height: 80px;
-  }
-  .adventure-card h3 {
+.editorial-subheading {
+    font-family: 'Inria Serif', serif;
     font-size: 1.2rem;
-  }
-  .adventure-card p {
-    font-size: 0.9rem;
-  }
-  .adventure-card {
-    min-height: 300px;
-  }
+    color: #333;
+    margin: 0 0 0.5rem 0;
+    font-weight: normal;
+}
+
+.read-more-small {
+    font-family: 'Inria Serif', serif;
+    font-size: 0.8rem;
+    color: #6587ab;
+    text-transform: uppercase;
+    letter-spacing: 0.05rem;
+    opacity: 0; /* Hidden by default */
+    transform: translateX(-10px);
+    transition: all 0.3s ease;
+}
+
+/* Show "View Details" text on hover */
+.list-item:hover .read-more-small {
+    opacity: 1;
+    transform: translateX(0);
 }

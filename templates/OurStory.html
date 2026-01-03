@@ -3,186 +3,144 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Our Story</title>
-    <link rel="stylesheet" href="ourstory.css"> <!-- Link to your CSS file -->
+    <title>Our Story - Emma & Ethan</title>
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='static/boatfavicon.webp') }}">
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='ourstory.css') }}">
+    
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    
+    <meta name="description" content="Read the story and timeline of Emma Hernandez and Ethan Wlodarczyk.">
+    <meta name="author" content="Emma Hernandez and Ethan Wlodarczyk">
+
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inria+Serif:ital,wght@0,300;0,400;0,700;1,300;0,400;0,700&family=Kapakana:wght@300..400&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inria+Serif:ital,wght@0,300;0,400;0,700;1,300;0,400;1,700&family=Monsieur+La+Doulaise&display=swap" rel="stylesheet">
 </head>
 <body>
+  <nav class="navbar" id="navbar">
+    <a href="/" class="logo-link">
+        <img src="{{ url_for('static', filename='Long logo with rose.png') }}" alt="Emma & Ethan Logo" class="logo">
+    </a>
 
-  <!-- Sidebar Menu -->
-  <div class="sidebar">
-    <i class="bi bi-x close-icon"></i> <!-- Close Icon -->
-    <ul>
-        <li><a href="index.html">Home</a></li>
-        <li><a href="#">Details</a></li>
-        <li class="dropdown">
-            <button class="dropdown-toggle">
-                Photo Gallery <span class="arrow">▾</span>
-              </button>
-            <ul class="dropdown-content">
-                <li><a href="#">Proposal</a></li>
-                <li><a href="#">Getting Ready</a></li>
-                <li><a href="#">Ceremony</a></li>
-                <li><a href="#">Reception</a></li>
-            </ul>
-        </li>
-        <li><a href="OurStory.html">Our Story</a></li>
-        <li><a href="Registry.html">Registry</a></li>
-    </ul>
-</div>
+    <button class="mobile-nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+    </button>
 
-    <div class="content-wrapper">
-        <div class="overlay"></div>
-        <div class="hero-header">
-            <div class="hero-col left">
-                <i class="bi bi-list menu-icon"></i>
-            </div>
-            <div class="hero-col center">
-                <h1 class="hero-title">
-                    <a href="index.html">Ethan & Emma</a>
-            </div>
-            <div class="hero-col right">
-                <a href="RSVP.html">
-                    <button class="rsvp-button">RSVP</button>
-                </a>
-            </div>
+    <div class="nav-menu" id="nav-menu">
+        <div class="nav-links">
+            <a href="/travel" class="nav-link">Travel & Stay</a>
+            <a href="/our-story" class="nav-link">Our Story</a>
+            <a href="/events" class="nav-link">Weekend Events</a>
+            <a href="/faq" class="nav-link">FAQs</a>
+            <a href="#registry" class="nav-link">Registry</a>
         </div>
+        <div class="nav-icons">
+          <button class="icon-button" aria-label="Search">
+              <svg class="icon search-icon" viewBox="0 0 24 24">
+                  </svg>
+          </button>
+        </div>
+    </div>
+  </nav>
 
-    <!-- Opening Animation -->
-    <section class="intro">
-        <p>Ethan & Emma are…</p>
-        <h2 id="animated-text"> .</h2> <!-- JavaScript will update this text -->
+    <main>
+
+    <section class="story-hero-section">
+
+      <video autoplay loop muted playsinline class="story-hero-video" poster="your-fallback-image.jpg">
+        <source src="{{ url_for('static', filename='Content/Our Story Video.mp4') }}" type="video/mp4">
+          Your browser does not support the video tag.
+      </video>
+  
+      <div class="story-hero-content">
+          <h1 class="section-title">Our Story</h1>
+          <p class="section-label">HOW IT ALL BEGAN</p>
+      </div>
+  
     </section>
 
-    <!--Intro Section-->
-    <section class="intro-section">
-        <div class="intro-container">
-          <div class="intro-image">
-            <img src="Content/best-friends-748w.webp" alt="Intro image" />
-          </div>
-          <div class="intro-text">
-            <div class="intro-heading-container">
-                <h1>They say "marry your best friend."</h1>
-                <h2>We couldn't agree more.</h2>
-            </div>
-            <p>   
-            We’re the kind of couple who talk nonstop, laugh at things only we find funny, and genuinely love being around each other. We’re partners in the truest sense: authentic, loving, and effortlessly in sync. After six years together, that partnership still feels so, genuinely right.<br><br>
-            As we count down the days to our marriage, our hope is that it keeps feeling like this. That we continue loving each other as we do now: wholeheartedly, easily, and with unending joy. As we continue to grow and change, we can't wait to fall in love with the new versions of each other, again and again.
-            </p>
-          </div>
+      <section class="our-story-section" id="our-story">
+        <div class="intro-column image-column">
+          <img src="{{ url_for('static', filename='edited2/ethanandemmaengagement-19.jpg') }}" alt="Emma and Ethan together" class="intro-photo-left">
         </div>
-      </section>      
-
-   <!-- Timeline Section -->
-    <section class="timeline">
-        <h2>Our Journey</h2>
-        <div class="timeline-wrapper">
-            <div class="scroll-container">
-                <button class="scroll-left">
-                    <img src="Content/Arrow.png" alt="Scroll left" class="arrow-img left">
-                  </button>
-                        <div class="timeline-container">
-                            <div class="timeline-spacer"></div>
-                            <div class="timeline-item">
-                                <img src="Content/Music.png" alt="Hand drawn music notes">
-                                <h3>2018</h3>
-                                <p>We met in high school through choir and Mr. May's english class and became instant friends.</p>
-                            </div>
-                            <div class="timeline-item">
-                                <img src="Content/Gondala.png" alt="Hand drawn gondala.">
-                                <h3>2019</h3>
-                                <p>We had our first date in Rome and first kiss in Venice (yes, in Italy)</p>
-                            </div>
-                            <div class="timeline-item">
-                                <img src="Content/Letter.png" alt="Hand drawn letter">
-                                <h3>2020</h3>
-                                <p>We graduted high school, headed to college, and officially started long distance. Lots of FaceTime calls.</p>
-                            </div>
-                            <div class="timeline-item">
-                                <img src="Content/Book.png" alt="Hand drawn book">
-                                <h3>2022</h3>
-                                <p>Emma transferred to Valpo. We both got invovled on campus and made amazing friends.</p>
-                            </div>
-                            <div class="timeline-item">
-                                <img src="Content/Car.png" alt="Hand drawn car">
-                                <h3>2024</h3>
-                                <p>Graduated college and moved to our first apartment together, all the way in Virginia.</p>
-                            </div>
-                            <div class="timeline-item">
-                                <img src="Content/Ring.png" alt="Hand drawn ring box">
-                                <h3>2025</h3>
-                                <p>Ethan proposed while visiting our hometown!</p>
-                            </div>
-                            <div class="timeline-spacer"></div>
-                        </div>
-                 <button class="scroll-right">
-                    <img src="Content/Arrow.png" alt="Scroll right" class="arrow-img right">
-                </button>
-            </div>
-            <div class="timeline-dots-container"></div>
+        <div class="intro-column">
+          <p class="section-label">Our Story</p>
+          <h2 class="intro-quote"><span class="pre-quote">They say</span> "Marry your best friend"</h2>
+          <p class="intro-text">We couldn’t agree more. We’re the kind of couple who talk nonstop, laugh at things only we find funny, and genuinely love being around each other. We’re partners in the truest sense: authentic, loving, and effortlessly in sync. After six years together, that partnership still feels so right.</p>
+          <p class="intro-text">As we count down the days to our marriage, we hope it keeps feeling like this. That we continue loving each other wholeheartedly, easily, and with unending joy. We can't wait to continue to fall in love with the new versions of each other, again and again.</p>
         </div>
-    </section>
-
-     <section class="story-section">
-        <!-- Ethan's Story -->
-        <div class="story-card" id="openHisStory">
-          <div class="story-image-container">
-          <img src="Content/meet-ethan-636w.webp" alt="Ethan" class="story-image">
-          </div>
-          <div class="story-content">
-            <div class="animated-link">
-                <a id="openHisStory">
-                  Meet Ethan <span class="arrow"></span>
-                </a>
-              </div>              
-          </div>
+        <div class="intro-column image-column">
+          <img src="{{ url_for('static', filename='edited2/ethanandemmaengagement-27.jpg') }}" alt="Emma and Ethan together" class="intro-photo-right">
         </div>
-      
-        <!-- Your Story -->
-        <div class="story-card" id="openHerStory">
-          <div class="story-image-container">
-          <img src="Content/MeetEmma.webp" alt="You" class="story-image">
-          </div>
-          <div class="story-content">
-            <div class="animated-link">
-                <a id="openHerStory">
-                  Meet Emma <span class="arrow"></span>
-                </a>
+        <img src="{{ url_for('static', filename='Untitled design (15).png') }}" alt="Two E's wedding monogram" class="monogram-middle">
+      </section>
+          
+      <section class="timeline-section">
+        <div class="timeline-content">
+        <p class="section-label">The Timeline</p>
+        <div class="timeline-container">
+          <div class="timeline-carousel">
+          <img src="{{ url_for('static', filename='web-border-desktop.png') }}" alt="Decorative Border" class="decorative-border">
+          <ul class="timeline">
+            <li class="timeline-item">
+              <div class="timeline-header">
+                <h3 class="timeline-year">2017</h3>
+                <p class="timeline-event-name">meeting</p>
               </div>
+              <p class="timeline-event-description">Ethan thinks we met at a pool party in 2016, Emma... doesn’t remember that at all. Either way, we became fast (and best) friends through choir in 2017.</p>
+            </li>
+            <li class="timeline-item">
+              <div class="timeline-header">
+                <h3 class="timeline-year">2019</h3>
+                <p class="timeline-event-name">first date</p>
+              </div>
+              <p class="timeline-event-description">Our first date was in Rome and first kiss was in Venice, Italy on a school trip.</p>
+            </li>
+            <li class="timeline-item">
+              <div class="timeline-header">
+                <h3 class="timeline-year">2020</h3>
+                <p class="timeline-event-name">long distance</p>
+              </div>
+              <p class="timeline-event-description">In 2020, we both headed off to separate colleges and decided to try long distance.</p>
+            </li>
+            <li class="timeline-item">
+              <div class="timeline-header">
+                <h3 class="timeline-year">2025</h3>
+                <p class="timeline-event-name">fourth thing</p>
+              </div>
+              <p class="timeline-event-description">In 2020, we both headed off to separate colleges and decided to try long distance.</p>
+            </li>
+            <li class="timeline-item">
+              <div class="timeline-header">
+                <h3 class="timeline-year">2027</h3>
+                <p class="timeline-event-name">wedding stuff</p>
+              </div>
+              <p class="timeline-event-description">In 2020, we both headed off to separate colleges and decided to try long distance.</p>
+            </li>
+          </ul>
+            <div class="timeline-controls">
+              <img src="{{ url_for('static', filename='back-arrow-green.svg') }}" alt="Previous" class="timeline-arrow prev">
+              <img src="{{ url_for('static', filename='forward-arrow-green.svg') }}" alt="Next" class="timeline-arrow next">
+            </div>
           </div>
+        </div>
         </div>
       </section>
-      
+        
+    </main>
+    
+    <footer class="site-footer">
+      <a href="/" class="logo-link">
+        <img src="{{ url_for('static', filename='Long logo with rose.png') }}" alt="Emma & Ethan Logo" class="footer-logo">
+      </a>
+      <a href="#our-story" class="return-to-top">Return to the top</a>
+    </footer>
 
-        <!-- The Modal for His Story -->
-        <div id="hisStoryModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>His Story</h2>
-            <p>Ethan’s someone who genuinely loves connecting with people. Whether he’s meeting someone new or spending time with people he’s known forever, he’s in his element when he’s building real connections.<br><br>
-                He grew up in Lake Zurich, Illinois (just like Emma) and is the oldest of two brothers. These days, he’s working toward his master’s in Higher Education Administration at George Mason University and serving as a Graduate Residential Coordinator on campus. He's excited to go into a career where he can make an impact on students' lives and college experiences.<br><br>
-                Emma would describe Ethan as easygoing, thoughtful, and incredibly nostalgic. He loves Minecraft and Mario Kart, and he’s a total sucker for a throwback movie night. He played cello and sang in choir growing up, so music has always had a place in his life. While Ethan loves classical music, car rides with Emma have added a bit more pop to his playlists.<br><br>
-                Ethan’s slowly introducing Emma to the movies he can’t believe she’s never seen (he’s found she’ll agree to watch as long as he makes popcorn). But more than anything, he loves spending quality time with her. Whether it’s a long walk, a drive, or a Minecraft session on the couch where they can catch up for hours, those moments together are what he cherishes most.<br><br>
-                </p>
-        </div>
-        </div>
-
-        <!-- The Modal for Her Story -->
-        <div id="herStoryModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>Her Story</h2>
-            <p>Emma's known for being thoughtful and observant, balancing a vibrant creative side with a really organized, responsible approach. Though she can be a bit reserved at first, her genuine warmth definitely shines through with family and friends. She loves diving deep into creative passions, like figuring out music production or teaching herself code.<br><br>
-
-                She grew up near Ethan, in Lake Zurich, where they met at Lake Zurich High School. Emma is the oldest of 5 sisters, who she shares a strong connection with. Now living in Virginia with Ethan, she has started her career in finance and enjoys the analytical and problem-solving nature of her work.<br><br>
-                
-                Ethan loves Emma's kindness, humor, and determination. He really admires her passion and how she can bring ideas to life, whether that's mastering music production, planning an intricate family award show, or learning to code. This drive reflects a deep thoughtfulness that she invests not just in her passion projects, but more importantly, in the people she loves and her relationship with Ethan.<br><br>
-                
-                Emma's vision and knack for planning works perfectly with Ethan's steady, supportive nature. They make a great team. Their connection is all about shared laughter, late-night reflective conversations and debates, and a comfortable companionship built over six years of growing up together. Emma's so excited to marry her best friend and keep building their life side-by-side.</p>
-        </div>
-        </div>
-
-
-    <script src="Ourstory.js"></script> <!-- Link to your JavaScript file -->
+    
+    <script src="{{ url_for('static', filename='Ourstory.js') }}" defer></script> 
 </body>
 </html>
