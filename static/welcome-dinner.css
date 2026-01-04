@@ -5,7 +5,7 @@
 /* Copying your exact font setups */
 @font-face {
     font-family: 'DarlineScript';
-    src: url('/static/fonts/WOFF/DarlineScript-Regular.woff') format('woff');
+    src: url('/static/Fonts/WOFF/DarlineScript-Regular.woff') format('woff');
     font-weight: normal;
     font-style: normal;
     font-display: swap;
@@ -13,7 +13,7 @@
 
   @font-face {
     font-family: 'DarlineScript';
-    src: url('/static/fonts/WOFF/DarlineScript-Regular.woff') format('woff'); 
+    src: url('/static/Fonts/WOFF/DarlineScript-Regular.woff') format('woff'); 
     font-weight: bold; /* Tell browser this is the bold version */
     font-style: normal;
     font-display: swap;
@@ -21,7 +21,7 @@
   
   @font-face {
     font-family: 'Inria Serif';
-    src: url('/static/fonts/WOFF/Inria Serif-Regular.woff') format('woff');
+    src: url('/static/Fonts/WOFF/Inria Serif-Regular.woff') format('woff');
     font-weight: normal;
     font-style: normal;
     font-display: swap;
@@ -29,7 +29,7 @@
   
   @font-face {
       font-family: 'Inria Serif';
-      src: url('/static/fonts/WOFF/Inria Serif-Bold.woff') format('woff');
+      src: url('/static/Fonts/WOFF/Inria Serif-Bold.woff') format('woff');
       font-weight: bold;
       font-style: normal;
       font-display: swap;

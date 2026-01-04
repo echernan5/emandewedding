@@ -24,7 +24,7 @@
 
 @font-face {
   font-family: 'DarlineScript';
-  src: url('/static/fonts/WOFF/DarlineScript-Regular.woff') format('woff'); 
+  src: url('/static/Fonts/WOFF/DarlineScript-Regular.woff') format('woff'); 
   font-weight: bold; /* Tell browser this is the bold version */
   font-style: normal;
   font-display: swap;
@@ -32,7 +32,7 @@
 
 @font-face {
   font-family: 'Inria Serif';
-  src: url('/static/fonts/WOFF/Inria Serif-Regular.woff') format('woff');
+  src: url('/static/Fonts/WOFF/Inria Serif-Regular.woff') format('woff');
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -40,7 +40,7 @@
 
 @font-face {
   font-family: 'Inria Serif';
-  src: url('/static/fonts/WOFF/Inria Serif-Bold.woff') format('woff');
+  src: url('/static/Fonts/WOFF/Inria Serif-Bold.woff') format('woff');
   font-weight: bold;
   font-style: normal;
   font-display: swap;
@@ -48,7 +48,7 @@
 
 @font-face {
   font-family: 'Inria Serif';
-  src: url('/static/fonts/WOFF/Inria Serif-Light.woff') format('woff');
+  src: url('/static/Fonts/WOFF/Inria Serif-Light.woff') format('woff');
   font-weight: 300; /* Light */
   font-style: normal;
   font-display: swap;
@@ -941,7 +941,7 @@ TRANSPORTATION: MATCHING WIDTH LAYOUT
 }
 
 .transportation-section .section-title {
-  font-family: 'Darline Script', cursive;
+  font-family: 'DarlineScript', 'Darline Script', cursive; 
   font-size: 4rem; 
   font-weight: 400;
   color: #9aacc4;
@@ -1057,7 +1057,7 @@ ADVENTURE SECTION STYLES (MOBILE-FIRST REFACTOR)
 }
 
 .adventure-title {
-  font-family: "DarlineScript", cursive;
+  font-family: 'DarlineScript', 'Darline Script', cursive; 
   font-size: 2.5rem; /* Mobile font size */
   font-weight: normal;
   color: #9aacc4; /* Your blue */
@@ -1288,7 +1288,7 @@ MODAL *ITINERARY* STYLES (No changes needed)
 */
 
 #modal-itinerary-content h2 {
-  font-family: "DarlineScript", cursive;
+  font-family: 'DarlineScript', 'Darline Script', cursive; 
   font-size: 2.5rem;
   font-weight: normal;
   color: #6587ab;
@@ -1401,7 +1401,7 @@ TRAVEL / ACCOMMODATIONS HERO SECTION
 }
 
 .hero-text h1 {
-  font-family: "DarlineScript", cursive;
+  font-family: 'DarlineScript', 'Darline Script', cursive; 
   font-size: clamp(3rem, 6vw, 5rem);
   font-weight: normal;
   color: #ffffff;
