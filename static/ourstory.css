@@ -2,6 +2,18 @@
 /* 1. FONTS
 /* =================================================================== */
 
+:root {
+  --font-serif: 'Inria Serif', serif;
+  --font-script: 'DarlineScript', cursive; 
+  --color-dusty-blue: #9aacc4;  /* Your main brand color */
+  --color-deep-blue: #6587ab;   /* Your accent/text color */
+  --color-charcoal: #333333;
+  --color-cream: #fcfcfc;       /* Your off-white background */
+  --color-border: #e5e5e5;
+  --spacing-desktop: 80px;      /* Matching your section padding */
+}
+
+
 @font-face {
   font-family: 'DarlineScript';
   src: url('/static/fonts/WOFF/DarlineScript-Regular.woff') format('woff');
@@ -116,47 +128,31 @@ body.modal-active {
   margin-bottom: 2rem;
 }
 
-/* =================================================================== */
-/* 4. NAVIGATION BAR
-/* =================================================================== */
-
-/* =================================================================== */
-/* 4. NAVIGATION BAR (Mobile-First Refactor)
-/* =================================================================== */
-
-/* --- MOBILE STYLES (Base) --- */
 #navbar {
+  /* Positioning & Layout */
   position: sticky;
   top: 0;
-  background-color: transparent; /* Your transparent default */
-  width: 100%;
   z-index: 1000;
-  height: 90px;
   display: flex;
-  justify-content: space-between; /* Changed for mobile */
+  justify-content: space-between;
   align-items: center;
-  padding: 0 1.5rem; /* Added for mobile */
-  transition: background-color 0.8s ease, transform 0.8s ease, padding-top 0.8s ease;
-  
-  /* This prevents the transparent navbar from having padding at the top */
-  padding-top: 0; 
+
+  /* Dimensions */
+  width: 100%;
+  height: 90px;
+  padding: 0 1.5rem;
+
+  /* Visuals & Transitions */
+  background-color: var(--color-dusty-blue);
+  transition: background-color 0.8s ease, transform 0.8s ease;
 }
 
-/* This class is added by JS */
 #navbar.scrolled {
-  background-color: #9aacc4;
-  transform: translateY(0);
-  padding-top: 0; /* Ensures no padding when scrolled */
+  background-color: var(--color-dusty-blue);
 }
 
-/* This class is added by JS */
 #navbar.hide-on-scroll-down {
   transform: translateY(-100%);
-}
-
-.navbar .logo-link {
-  text-align: center;
-  z-index: 1002; /* Ensure logo is above menu */
 }
 
 .navbar .logo {
@@ -164,566 +160,445 @@ body.modal-active {
   width: auto;
 }
 
-/* --- Hamburger Toggle Button --- */
+/* --- MOBILE MENU OVERLAY --- */
+.nav-menu {
+  /* Hidden by default on mobile */
+  display: none;
+  
+  /* Full Screen Overlay */
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  width: 100%;
+  height: 100vh;
+  
+  /* Flex Centering */
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  /* Visuals */
+  background-color: var(--color-dusty-blue);
+}
+
+.nav-menu.is-active {
+  display: flex;
+}
+
+/* --- NAV LINKS --- */
+.nav-links {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  gap: 2.5rem;
+}
+
+.navbar .nav-link {
+  /* Typography */
+  font-family: var(--font-serif);
+  font-size: 1.5rem;
+  font-style: italic;
+  text-transform: uppercase;
+  letter-spacing: 0.2rem;
+  text-decoration: none;
+  
+  /* Color & Interaction */
+  color: white;
+  transition: color 0.3s ease;
+}
+
+.navbar .nav-link:hover,
+.navbar .nav-link.active {
+  color: #f0f0f0;
+  text-underline-offset: 5px;
+}
+
+/* --- MOBILE HAMBURGER TOGGLE --- */
 .mobile-nav-toggle {
-  display: flex; /* Show on mobile */
+  /* Layout */
+  display: flex;
   flex-direction: column;
   justify-content: space-around;
+  z-index: 1002;
+  
+  /* Dimensions & Reset */
   width: 30px;
   height: 24px;
-  background: transparent;
-  border: none;
-  cursor: pointer;
   padding: 0;
-  z-index: 1002; /* Above menu */
+  border: none;
+  background: transparent;
+  cursor: pointer;
 }
 
 .hamburger-line {
   width: 30px;
   height: 3px;
-  background-color: white; /* Make sure this is visible on your hero */
+  background-color: white;
   border-radius: 10px;
-  transition: all 0.3s ease;
 }
 
-/* The mobile menu container */
-.nav-menu {
-  display: none; /* Hidden by default */
-  position: fixed;
-  top: 0; /* Full overlay */
-  left: 0;
-  width: 100%;
-  height: 100vh; /* Full viewport height */
-  background-color: #9aacc4; /* Your blue color */
-  flex-direction: column;
-  align-items: center;
-  justify-content: center; /* Center links vertically */
-  overflow-y: auto;
-  z-index: 1000; /* Behind logo/close button */
-  transition: opacity 0.3s ease;
-}
-
-/* This class is added by JS to show the menu */
-.nav-menu.is-active {
-  display: flex;
-}
-
-/* Mobile link styles */
-.nav-links {
-  display: flex;
-  flex-direction: column;
-  text-align: center;
-  gap: 2.5rem; /* More space for tapping */
-}
-
-.navbar .nav-link {
-  font-family: "inria-bold-italic", serif;
-  font-style: italic;
-  text-transform: uppercase;
-  letter-spacing: 0.2rem;
-  color: white;
-  text-decoration: none;
-  transition: color 0.3s ease;
-  font-size: 1.5rem; /* Larger, tappable links */
-}
-
-.navbar .nav-link:hover {
-  color: #f0f0f0;
-}
-
-.nav-icons {
-  display: flex;
-  align-items: center;
-  gap: 20px; /* More space */
-  margin-top: 3rem; /* Space below links */
-}
-
-.icon-button {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-}
-
-.search-icon {
-  width: 28px; /* Slightly larger */
-  height: 28px;
-  fill: white;
-}
-
-
-/* --- TABLET/DESKTOP BREAKPOINTS --- */
-/* Your old file used 900px, so we'll stick with that. */
-
+/* ===================================================================
+   DESKTOP NAV BREAKPOINT (min-width: 900px)
+   =================================================================== */
 @media (min-width: 900px) {
+  
+  /* 1. Reset Navbar Spacing */
   #navbar {
-      justify-content: space-around; /* Revert to desktop layout */
-      padding: 0; /* Remove mobile padding */
-      /* This restores your transparent-on-top style */
-      padding-top: 50px;
-  }
-  
-  /* This ensures the padding-top disappears on scroll */
-  #navbar.scrolled {
-      padding-top: 0;
-  }
-
-  /* Hide the hamburger button on desktop */
-  .mobile-nav-toggle {
-      display: none;
-  }
-
-  /* Show the nav-menu as a normal flex row */
-  .nav-menu {
-      display: flex;
-      position: static; /* Not fixed */
-      flex-direction: row;
-      width: auto;
-      height: auto;
-      background-color: transparent;
-      z-index: auto;
-      transition: none;
-  }
-
-  /* Restore your desktop link styles */
-  .nav-links {
-      flex-direction: row;
-      gap: 60px; /* Restore desktop gap */
-  }
-
-  .navbar .nav-link {
-      font-size: initial; /* Reset font size */
-  }
-
-  .nav-icons {
-      margin-top: 0;
-      margin-left: 60px; /* Add space between links and icons */
-  }
-
-  .search-icon {
-      width: 24px; /* Revert to desktop size */
-      height: 24px;
-  }
-}
-
-/* =================================================================== */
-/* 5. "OUR STORY" HERO VIDEO SECTION (Mobile-First)
-/* --- REVISED CODE ---
-/* =================================================================== */
-
-.story-hero-section {
-  position: relative;
-  margin-top: -90px; /* Adjust for navbar height */
-  width: 100%;
-  overflow: hidden; 
-  isolation: isolate;
-}
-
-.story-hero-video {
-  display: block;
-  width: 100%;
-  height: auto; /* Height is automatic by default */
-  
-  /* --- MOBILE-ONLY TALLER STYLES --- */
-  
-  /* 1. Set a minimum height for mobile.
-     Adjust this 450px value until you like the height. */
-  min-height: 450px; 
-  
-  /* 2. This is the magic property.
-     It crops the video to fill the taller space, 
-     preventing squishing or stretching. */
-  object-fit: cover;
-  
-  /* --- END MOBILE STYLES --- */
-}
-
-/* The dark overlay */
-.story-hero-section::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.3);
-  z-index: 1; 
-  pointer-events: none;
-}
-
-/* The text content wrapper */
-.story-hero-content {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 2;
-  
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  padding: 0 1.5rem;
-}
-
-/* Text styles (unchanged) */
-.story-hero-content .section-title {
-  color: #FFFFFF;
-  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
-  font-size: 3.5rem;
-  margin-bottom: 0.5rem; 
-}
-
-.story-hero-content .section-label {
-  color: #FFFFFF;
-  opacity: 0.9;
-  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5);
-  margin-bottom: 0;
-  margin-top: 0;
-}
-
-
-/* --- TABLET/DESKTOP BREAKPOINTS --- */
-
-@media (min-width: 600px) {
-  .story-hero-content .section-title {
-    font-size: 4rem; 
-  }
-}
-
-/* This is the new part for desktop */
-@media (min-width: 900px) {
-  .story-hero-video {
-    /* This UNDOES the mobile styles for desktop */
-    min-height: 0;
-    object-fit: unset; /* Reverts to default (auto height) */
-  }
-}
-
-/* =================================================================== */
-/* 9. OUR STORY SECTION (Mobile-First Refactor)
-/* =================================================================== */
-
-.our-story-section {
-  background-color: #9aacc4;
-  display: flex;
-  /* MOBILE: Stack vertically by default */
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  /* MOBILE: Use rem-based padding */
-  padding: 4rem 1.5rem;
-  position: relative;
-  /* MOBILE: Let content define height */
-  /* height: 600px;  <-- Removed */
-}
-
-.our-story-section .section-label {
-  color: #d8e2ef;
-  /* MOBILE: Make this part of the normal flow */
-  position: static;
-  transform: none;
-  text-align: center;
-  margin-bottom: 2rem;
-}
-
-.intro-column {
-  /* MOBILE: Take up full width */
-  flex: 1;
-  width: 100%;
-  text-align: center;
-  /* MOBILE: Let the image come first */
-  order: 2; 
-}
-
-.image-column {
-  /* MOBILE: Take up full width */
-  flex: 1;
-  width: 100%;
-  max-width: 300px; /* Optional: constrain mobile image size */
-  margin-bottom: 2rem;
-  
-  /* MOBILE: Image comes first */
-  order: 1;
-  
-  aspect-ratio: 2/3;
-  overflow: hidden;
-}
-
-.intro-column img {
-  width: 100%; 
-  height: 100%;
-  object-fit: cover;
-  opacity: 1; /* No fade-in needed on mobile */
-  transform: none;
-}
-
-.intro-quote {
-  font-family: "DarlineScript", cursive;
-  /* MOBILE: Smaller font size */
-  font-size: 2.5rem;
-  font-weight: 400;
-  line-height: 1.2;
-  margin: 10px 0;
-  color: white;
-}
-
-.intro-quote .pre-quote {
-  font-family: "DarlineSerif", serif;
-  font-size: 1.8rem;
-  font-style: normal;
-}
-
-.intro-text {
-  font-size: 1rem; /* Smaller for mobile */
-  line-height: 1.6;
-  color: white;
-  max-width: 100%; /* Full width on mobile */
-  margin: 20px auto;
-  text-align: center;
-}
-
-.monogram-middle {
-  position: absolute;
-  bottom: -60px; /* Adjusted */
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100px; /* Smaller for mobile */
-  height: auto;
-  z-index: 998;
-}
-
-/* --- DESKTOP BREAKPOINT --- */
-@media (min-width: 900px) {
-  .our-story-section {
-    /* DESKTOP: Revert to side-by-side */
-    flex-direction: row;
-    justify-content: space-between;
-    padding: 50px 0;
-    /* DESKTOP: Restore fixed height */
-    height: 600px;
-    gap: 0px;
-  }
-
-  .our-story-section .section-label {
-    /* DESKTOP: Restore absolute positioning */
-    position: absolute;
-    top: 50px;
-    left: 50%;
-    transform: translateX(-50%);
-  }
-
-  .intro-column {
-    flex: 2;
-    text-align: center;
-    padding: 0 20px;
-    max-width: 70vw;
-    order: 1; /* Text on left */
-  }
-
-  .image-column {
-    /* DESKTOP: Restore fixed width */
-    flex: 0 250px;
+    justify-content: space-around;
     padding: 0;
-    max-width: none;
-    margin-bottom: 0;
-    order: 2; /* Image on right */
   }
 
-  /* Note: The .intro-column img styles (fade-in)
-     will need JavaScript to apply the .fade-in class.
-     I've left the base styles here.
-  */
-  .intro-column img {
-    opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
-  }
-  .intro-column img.fade-in {
-    opacity: 1;
-    transform: translateY(0);
+  /* 2. Hide Mobile Elements */
+  .mobile-nav-toggle {
+    display: none;
   }
 
-  .intro-quote {
-    font-size: 3rem; /* Restore desktop size */
-  }
-  .intro-quote .pre-quote {
-    font-size: 2.2rem;
+  /* 3. Reset Menu (Remove Overlay) */
+  .nav-menu {
+    /* Restore to flow layout */
+    position: static;
+    display: flex;
+    width: auto;
+    height: auto;
+    flex-direction: row;
+    
+    /* Remove mobile styles */
+    background-color: transparent;
+    padding-top: 0;
+    z-index: auto;
+    transition: none;
   }
 
-  .intro-text {
-    font-size: 1.1rem;
-    max-width: 80%;
+  /* 4. Horizontal Links */
+  .nav-links {
+    flex-direction: row;
+    gap: 60px;
   }
 
-  .monogram-middle {
-    bottom: -70px;
-    width: 120px;
+  /* 5. Smaller Desktop Font */
+  .navbar .nav-link {
+    font-size: 0.9rem;
   }
 }
 
-/* =================================================================== */
-/* 10. TIMELINE SECTION (Mobile-First Refactor)
-/* =================================================================== */
+/* =========================================
+   DROPDOWN MENU STYLES
+   ========================================= */
 
-.timeline-section {
-  background-color: #8b8e59;
-  /* MOBILE: Use rem-based padding, keep top space */
-  padding: 100px 1.5rem 4rem 1.5rem;
-  position: relative;
-  border-top: #e1e6cd 2px solid;
-}
-
-.timeline-section .section-label {
-  text-align: center;
-  color: #e1e6cd;
-}
-
-.timeline-container {
-  background-color: transparent;
-  /* MOBILE: Full width */
-  width: 100%;
-  /* MOBILE: Let content define height */
-  /* height: 51vh; <-- Removed */
-  margin: 0 auto;
-  position: relative;
-}
-
-.timeline-carousel {
-  position: relative;
+/* The Wrapper (Holds the label + the menu) */
+.nav-item-dropdown {
+  position: relative; /* Anchor point for the popup */
   display: flex;
   align-items: center;
-  width: 100%;
+  justify-content: center;
   height: 100%;
-  overflow: hidden;
-  /* MOBILE: Less padding */
-  padding: 20px 0;
 }
 
-.decorative-border {
-  /* This is tricky on mobile. We might need to hide it
-     or use a different asset. For now, we'll let it
-     be contained by the parent.
-  */
+/* The Trigger Text ("Weekend Events") */
+.dropdown-trigger {
+  cursor: default; /* Shows regular arrow, not pointer, since it's not a link */
+  padding-bottom: 0; /* Remove default padding conflicts */
+}
+
+/* The Popup Menu (Hidden by default) */
+.dropdown-menu {
+  display: none;
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: fill; /* `fill` might stretch, `contain` might be better */
-  z-index: 1;
-}
-
-.timeline {
-  display: flex;
-  list-style: none;
-  padding: 0;
-  /* MOBILE: No large margins */
-  margin: 0;
-  /* MOBILE: Smaller gap */
-  gap: 30px;
-  z-index: 2;
-  transition: transform 0.5s ease-in-out;
-  transform: translateX(0);
-}
-
-.timeline-item {
-  /* MOBILE: Show ONE item at a time */
-  flex: 0 0 100%;
-  padding: 0; /* No extra padding */
-  color: white;
-}
-
-.timeline-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 5px;
-  border-bottom: 1px solid white;
-}
-
-.timeline-year {
-  font-weight: 500;
-  font-size: 1.1rem; /* Mobile size */
-  margin: 0;
-}
-
-.timeline-event-name {
-  font-family: "DarlineScript", cursive;
-  font-size: 1.8rem; /* Mobile size */
-  font-weight: 400;
-  line-height: 1.2;
-  margin: 0;
-}
-
-.timeline-event-description {
-  font-size: 0.9rem; /* Mobile size */
-  opacity: 0.9;
-  text-align: left;
-  margin-top: 10px;
-  line-height: 1.4;
-}
-
-.timeline-controls {
-  position: absolute;
-  bottom: 0; /* Adjusted position */
+  top: 100%; /* Position right below the navbar */
   left: 50%;
-  transform: translateX(-50%);
-  z-index: 3;
-  display: flex;
-  gap: 30px;
-  align-items: center;
+  transform: translateX(-50%); /* Center perfectly */
+  
+  /* Luxury styling */
+  background-color: #ffffff;
+  min-width: 240px;
+  padding: 15px 0;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.08); /* Soft, expensive shadow */
+  border-top: 3px solid var(--color-deep-blue); /* Subtle accent strip */
+  border-radius: 0 0 4px 4px;
+  z-index: 1100;
 }
 
-.timeline-arrow {
-  cursor: pointer;
-  width: 30px;
-  height: auto;
-  transition: transform 0.2s ease-in-out;
+/* The Links Inside */
+.dropdown-item {
+  display: block;
+  padding: 12px 25px;
+  text-align: center;
+  text-decoration: none;
+  font-style: italic;
+  
+  /* Typography matching your brand */
+  font-family: var(--font-serif);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1rem;
+  color: var(--color-charcoal);
+  transition: all 0.2s ease;
 }
 
-/* --- DESKTOP BREAKPOINT --- */
+/* Hover State for Items */
+.dropdown-item:hover {
+  background-color: #f7f9fb; /* Very light grey/blue */
+  color: var(--color-deep-blue);
+}
+
+/* --- DESKTOP HOVER INTERACTION --- */
 @media (min-width: 900px) {
-  .timeline-section {
-    padding: 100px 50px; /* Restore desktop padding */
+  /* Show menu when hovering the wrapper */
+  .nav-item-dropdown:hover .dropdown-menu {
+      display: block;
+      animation: fadeUp 0.3s ease;
   }
 
-  .timeline-container {
-    width: 79vw; /* Restore desktop width */
-    height: 51vh; /* Restore desktop height */
+  /* Subtle animation for luxury feel */
+  @keyframes fadeUp {
+      from { opacity: 0; transform: translate(-50%, 10px); }
+      to { opacity: 1; transform: translate(-50%, 0); }
+  }
+}
+
+/* --- MOBILE ADJUSTMENTS --- */
+/* On mobile, we want them to just list out underneath */
+@media (max-width: 899px) {
+  .nav-item-dropdown {
+      flex-direction: column;
+      height: auto;
+  }
+
+  .dropdown-trigger {
+      margin-bottom: 1.5rem; /* Space before sub-items */
+  }
+
+  .dropdown-menu {
+      position: static; /* No longer floating */
+      display: flex; /* Always visible on mobile menu */
+      flex-direction: column;
+      transform: none;
+      background-color: transparent;
+      box-shadow: none;
+      border: none;
+      padding: 0;
+      min-width: auto;
+      gap: 1.5rem;
+  }
+
+  .dropdown-item {
+      color: rgba(255, 255, 255, 0.8); /* Slightly dimmer white than main links */
+      font-size: 1.1rem; /* Match mobile link size */
+      padding: 0;
+      font-style: italic; /* Differentiate slightly */
   }
   
-  .timeline-carousel {
-    padding: 40px 20px; /* Restore desktop padding */
+  .dropdown-item:hover {
+      background: none;
+      color: white;
+  }
+}
+
+/* Desktop Hero Adjustment */
+@media (min-width: 900px) {
+    .script-font { font-size: 6rem; }
+}
+
+.story-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 50px 20px 50px 20px;
+}
+/* =========================================
+   EDITORIAL SPLIT LAYOUT
+   ========================================= */
+
+/* The Main Grid Container */
+.editorial-split {
+  display: flex;
+  flex-direction: column; /* Stack on mobile */
+  gap: 3rem;
+  margin-bottom: 4rem;
+  align-items: self-start;
+}
+
+/* --- Left Column: Image --- */
+.split-image-wrapper {
+  width: 100%;
+  position: relative;
+}
+
+.hero-portrait {
+  width: 100%;
+  height: auto;
+  display: block;
+  /* Optional: A very subtle shadow to lift it off the page */
+}
+
+/* --- Right Column: Text --- */
+.split-content-wrapper {
+  width: 100%;
+  text-align: left; /* Essential for the new look */
+}
+
+/* Header Styling (Left Aligned now) */
+.story-header-left {
+  margin-bottom: 2.5rem;
+  text-align: left;
+}
+
+.story-header-left .tiny-label {
+  font-family: "Inria Serif", serif;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: #999;
+  display: block;
+  margin-bottom: 2rem;
+}
+
+.story-header-left .main-title {
+  font-family: 'DarlineScript', cursive;
+  font-size: 4rem; /* Large but fits in column */
+  line-height: 1;
+  color: #333;
+  font-weight: normal;
+  margin: 0 0 0.5rem 0;
+}
+
+.story-header-left .subtitle {
+  font-family: "Inria Serif", serif;
+  font-style: italic;
+  color: #888;
+  font-size: 0.9rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+/* Paragraph Styling */
+.story-text p {
+  font-family: "Inria Serif", serif;
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: #444;
+  margin-bottom: 1.5rem;
+}
+
+/* The Monogram Signature */
+.signature-left {
+  margin-top: 3rem;
+  text-align: left; /* Aligns with text */
+  opacity: 0.6;
+}
+.monogram-sig {
+  width: 80px;
+}
+
+/* =========================================
+ DESKTOP GRID (The "Expensive" Split)
+ ========================================= */
+@media (min-width: 900px) {
+  .story-container {
+      /* Increase padding for desktop grandeur */
+      padding: 80px 40px; 
   }
 
-  .timeline {
-    margin: 40px 40px; /* Restore desktop margins */
-    gap: 60px; /* Restore desktop gap */
-  }
-
-  .timeline-item {
-    /* DESKTOP: Show THREE items */
-    flex: 0 0 calc((100% / 3) - 40px);
-    padding: 0 10px;
-  }
-
-  .timeline-year {
-    font-size: 1.2rem;
+  .editorial-split {
+      display: grid;
+      /* 45% Image, 5% Gap, 50% Text */
+      grid-template-columns: 45% 50%; 
+      gap: 5%;
+      align-items: self-start; /* Centers image vertically with text */
   }
   
-  .timeline-event-name {
-    font-size: 2.2rem;
+  .story-header-left .main-title {
+      font-size: 4rem; /* Larger title on desktop */
   }
+}
 
-  .timeline-event-description {
+/* =========================================
+   3. THE TIMELINE (Horizontal Scroller)
+   ========================================= */
+.memory-lane {
+    margin-top: 4rem;
+    padding-top: 4rem;
+    border-top: 1px solid #eee; /* Subtle separator */
+}
+
+.timeline-title {
+    font-family: "Inria Serif", serif;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: #9aacc4;
+    text-align: center;
+    margin-bottom: 3rem;
+    font-size: 0.9rem;
+}
+
+.film-strip-scroller {
+    display: flex;
+    gap: 40px;
+    overflow-x: auto; /* Allow horizontal scroll */
+    padding: 20px 5%; /* Side padding so first item isn't flush */
+    padding-bottom: 40px; /* Space for scrollbar */
+    
+    /* Hide scrollbar for cleaner look */
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;  /* IE */
+}
+.film-strip-scroller::-webkit-scrollbar { 
+    display: none; /* Chrome/Safari */
+}
+
+.memory-card {
+    flex: 0 0 220px; /* Fixed width cards */
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    opacity: 0;
+    transform: translateX(20px);
+    transition: all 0.6s ease-out;
+}
+
+.memory-card.visible {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* Stagger the fade in for the first few items using nth-child could be cool, 
+   but JS observer handles basic fade */
+
+.memory-img-wrapper {
+    width: 100%;
+    aspect-ratio: 3/4; /* Classic portrait ratio */
+    overflow: hidden;
+    background-color: #f0f0f0;
+}
+
+.memory-img-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: grayscale(100%); /* B&W makes it feel like 'history' */
+    transition: filter 0.5s ease;
+}
+
+.memory-card:hover .memory-img-wrapper img {
+    filter: grayscale(0%); /* Color on hover */
+}
+
+.memory-text {
+    text-align: center;
+}
+
+.memory-text h3 {
+    font-family: "Inria Serif", serif;
+    font-weight: bold;
     font-size: 1rem;
-  }
-  
-  .timeline-controls {
-    bottom: 30px; /* Restore desktop position */
-  }
+    margin: 0;
+    color: #333;
+}
+
+.memory-text p {
+    font-family: "DarlineScript", cursive;
+    font-size: 1.4rem;
+    color: #777;
+    margin: 5px 0 0 0;
 }

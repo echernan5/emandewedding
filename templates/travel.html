@@ -24,33 +24,36 @@
 </head>
 <body>
     
-  <nav class="navbar" id="navbar">
-    <a href="/" class="logo-link">
-        <img src="{{ url_for('static', filename='Long logo with rose.png') }}" alt="Emma & Ethan Logo" class="logo">
-    </a>
-
-    <button class="mobile-nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
-        <span class="hamburger-line"></span>
-        <span class="hamburger-line"></span>
-        <span class="hamburger-line"></span>
-    </button>
-
-    <div class="nav-menu" id="nav-menu">
-        <div class="nav-links">
-            <a href="/travel" class="nav-link">Travel & Stay</a>
-            <a href="/our-story" class="nav-link">Our Story</a>
-            <a href="/events" class="nav-link">Weekend Events</a>
-            <a href="/faq" class="nav-link">FAQs</a>
-            <a href="#registry" class="nav-link">Registry</a>
+    <nav class="navbar" id="navbar">
+        <a href="/" class="logo-link">
+            <img src="{{ url_for('static', filename='Long logo with rose.png') }}" alt="Emma & Ethan Logo" class="logo">
+        </a>
+    
+        <button class="mobile-nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
+        </button>
+    
+        <div class="nav-menu" id="nav-menu">
+            <div class="nav-links">
+                <a href="/travel" class="nav-link">Travel & Stay</a>
+                <a href="/our-story" class="nav-link">Our Story</a>
+                
+                <div class="nav-item-dropdown">
+                    <span class="nav-link dropdown-trigger">Weekend Events</span>
+                    
+                    <div class="dropdown-menu">
+                        <a href="/wedding" class="dropdown-item">Ceremony & Reception</a>
+                        <a href="/welcome-dinner" class="dropdown-item">Welcome Dinner</a>
+                    </div>
+                </div>
+            
+                <a href="/faq" class="nav-link">FAQs</a>
+                <a href="#registry" class="nav-link">Registry</a>
+            </div>
         </div>
-        <div class="nav-icons">
-          <button class="icon-button" aria-label="Search">
-              <svg class="icon search-icon" viewBox="0 0 24 24">
-                  </svg>
-          </button>
-        </div>
-    </div>
-  </nav>
+      </nav>
 
   <section class="travel-hero">
     <!-- Background image -->
@@ -187,7 +190,7 @@
                 </div>
                 
                 <div class="hotel-card-details">
-                    <p class="hotel-subtitle">Private Home on the Lake</p>
+                    <p class="hotel-subtitle">Private Homes on the Lake</p>
                     <h3 class="hotel-title">Vacation Rentals</h3>
                     
                     <div class="hotel-info-rows">
@@ -315,73 +318,6 @@
         </div>
     </div>
  </section>
-
-<section class="adventure-section">
-    <div class="adventure-header">
-      <h2 class="adventure-title">Find Your Perfect Michigan Weekend</h2>
-      <p class="adventure-subtitle">Select an itinerary below to see our recommendations for your free time.</p>
-    </div>
-  
-    <!-- These are the three clickable cards -->
-    <div class="adventure-chooser">
-  
-      <!-- Card 1: The Relaxer -->
-      <button class="adventure-card" id="open-relaxer">
-        <div class="card-icon">
-          <!-- UPDATED: Replaced SVG with IMG tag -->
-          <img src="{{ url_for('static', filename='Content/frog.jpg') }}" alt="Relaxer Itinerary Icon">
-        </div>
-        <h3>The Relaxer</h3>
-        <p>A cozy, restful visit focused on spas, scenic views, and quiet moments.</p>
-      </button>
-  
-      <!-- Card 2: The Adventurer -->
-      <button class="adventure-card" id="open-adventurer">
-        <div class="card-icon">
-          <!-- UPDATED: Replaced SVG with IMG tag -->
-          <img src="{{ url_for('static', filename='Content/backpack.jpg') }}" alt="Adventurer Itinerary Icon">
-        </div>
-        <h3>The Adventurer</h3>
-        <p>An active weekend full of hiking, kayaking, and exploring the outdoors.</p>
-      </button>
-  
-      <!-- Card 3: The Foodie -->
-      <button class="adventure-card" id="open-foodie">
-        <div class="card-icon">
-          <!-- UPDATED: Replaced SVG with IMG tag -->
-          <img src="{{ url_for('static', filename='Content/sandwhich.jpg') }}" alt="Foodie Itinerary Icon">
-        </div>
-        <h3>The Foodie</h3>
-        <p>A delicious itinerary focused on breweries, farm-to-table spots, and brunch.</p>
-      </button>
-    </div>
-  </section>
-  
-  <!-- 
-    ===================================================================
-    ITINERARY MODAL 
-    This part is hidden by default and gets shown by the JavaScript.
-    =================================================================== 
-  -->
-  <div id="itinerary-modal" class="modal modal-hidden">
-    
-    <!-- The dark overlay (click to close) -->
-    <div class="modal-overlay"></div>
-    
-    <!-- The modal content window -->
-    <div class="modal-content">
-      <button class="modal-close">&times;</button>
-      
-      <!-- JS will inject the itinerary content here -->
-      <div id="modal-itinerary-content"></div>
-  
-      <!-- The download button -->
-      <a href="/static/your-full-travel-guide.pdf" class="download-button" download>
-        Download Full Guide
-      </a>
-    </div>
-  
-  </div>
 
   <div id="accommodation-modal" class="modal modal-hidden">
       

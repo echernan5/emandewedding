@@ -310,6 +310,14 @@ def travel():
 def outstory():
     return render_template('OurStory.html')
 
+@app.route('/wedding')
+def wedding():
+    return render_template('wedding.html')
+
+@app.route('/welcome-party')
+def welcomeparty():
+    return render_template('welcome-party.html')
+
 @app.route('/vendors')
 def vendors():
     # This reads the keys from .env and passes them to the HTML template

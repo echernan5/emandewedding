@@ -1,0 +1,814 @@
+/* ===================================================================
+   1. FONTS & VARIABLES (Matching your Travel Page)
+   =================================================================== */
+
+/* Copying your exact font setups */
+@font-face {
+    font-family: 'DarlineScript';
+    src: url('/static/fonts/WOFF/DarlineScript-Regular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+  }
+  
+  @font-face {
+    font-family: 'Inria Serif';
+    src: url('/static/fonts/WOFF/Inria Serif-Regular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+  }
+  
+  @font-face {
+      font-family: 'Inria Serif';
+      src: url('/static/fonts/WOFF/Inria Serif-Bold.woff') format('woff');
+      font-weight: bold;
+      font-style: normal;
+  }
+  
+  /* Define your Brand Colors here for easy changes */
+  :root {
+      --font-serif: 'Inria Serif', serif;
+      --font-script: 'DarlineScript', cursive; 
+      --color-dusty-blue: #9aacc4;  /* Your main brand color */
+      --color-deep-blue: #6587ab;   /* Your accent/text color */
+      --color-charcoal: #333333;
+      --color-cream: #fcfcfc;       /* Your off-white background */
+      --color-border: #e5e5e5;
+      --spacing-desktop: 80px;      /* Matching your section padding */
+  }
+  
+  /* ===================================================================
+     2. GLOBAL & UTILITY
+     =================================================================== */
+  
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+  
+  html {
+    scroll-behavior: smooth;
+    overflow-x: hidden;
+  }
+  
+  body {
+    font-family: var(--font-serif);
+    color: var(--color-charcoal);
+    background-color: #ffffff;
+    line-height: 1.6;
+  }
+  
+ /* ===================================================================
+   3. NAVIGATION
+   =================================================================== */
+
+/* --- BASE NAVBAR CONTAINER --- */
+#navbar {
+    /* Positioning & Layout */
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  
+    /* Dimensions */
+    width: 100%;
+    height: 90px;
+    padding: 0 1.5rem;
+  
+    /* Visuals & Transitions */
+    background-color: var(--color-dusty-blue);
+    transition: background-color 0.8s ease, transform 0.8s ease, padding-top 0.8s ease;
+  }
+  
+  #navbar.scrolled {
+    background-color: var(--color-dusty-blue);
+  }
+  
+  #navbar.hide-on-scroll-down {
+    transform: translateY(-100%);
+  }
+  
+  .navbar .logo {
+    max-height: 70px;
+    width: auto;
+  }
+  
+  /* --- MOBILE MENU OVERLAY --- */
+  .nav-menu {
+    /* Hidden by default on mobile */
+    display: none;
+    
+    /* Full Screen Overlay */
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    width: 100%;
+    height: 100vh;
+    
+    /* Flex Centering */
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  
+    /* Visuals */
+    background-color: var(--color-dusty-blue);
+  }
+  
+  .nav-menu.is-active {
+    display: flex;
+  }
+  
+  /* --- NAV LINKS --- */
+  .nav-links {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    gap: 2.5rem;
+  }
+  
+  .navbar .nav-link {
+    /* Typography */
+    font-family: var(--font-serif);
+    font-size: 1.5rem;
+    font-style: italic;
+    text-transform: uppercase;
+    letter-spacing: 0.2rem;
+    text-decoration: none;
+    
+    /* Color & Interaction */
+    color: white;
+    transition: color 0.3s ease;
+  }
+  
+  .navbar .nav-link:hover,
+  .navbar .nav-link.active {
+    color: #f0f0f0;
+    text-underline-offset: 5px;
+  }
+  
+  /* --- MOBILE HAMBURGER TOGGLE --- */
+  .mobile-nav-toggle {
+    /* Layout */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    z-index: 1002;
+    
+    /* Dimensions & Reset */
+    width: 30px;
+    height: 24px;
+    padding: 0;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+  }
+  
+  .hamburger-line {
+    width: 30px;
+    height: 3px;
+    background-color: white;
+    border-radius: 10px;
+  }
+  
+  /* ===================================================================
+     DESKTOP NAV BREAKPOINT (min-width: 900px)
+     =================================================================== */
+  @media (min-width: 900px) {
+    
+    /* 1. Reset Navbar Spacing */
+    #navbar {
+      justify-content: space-around;
+      padding: 0;
+      padding-top: 50px;
+      background-color: transparent;
+      transition: background-color 0.8s ease, transform 0.8s ease, padding-top 0.8s ease;
+    }
+  
+    #navbar.scrolled {
+      background-color: var(--color-dusty-blue);
+      padding-top: 0px;
+    }
+  
+    /* 2. Hide Mobile Elements */
+    .mobile-nav-toggle {
+      display: none;
+    }
+  
+    /* 3. Reset Menu (Remove Overlay) */
+    .nav-menu {
+      /* Restore to flow layout */
+      position: static;
+      display: flex;
+      width: auto;
+      height: auto;
+      flex-direction: row;
+      
+      /* Remove mobile styles */
+      background-color: transparent;
+      padding-top: 0;
+      z-index: auto;
+      transition: none;
+    }
+  
+    /* 4. Horizontal Links */
+    .nav-links {
+      flex-direction: row;
+      gap: 60px;
+    }
+  
+    /* 5. Smaller Desktop Font */
+    .navbar .nav-link {
+      font-size: 0.9rem;
+    }
+  }
+  
+  /* The Wrapper (Holds the label + the menu) */
+  .nav-item-dropdown {
+    position: relative; /* Anchor point for the popup */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+  }
+  
+  /* The Trigger Text ("Weekend Events") */
+  .dropdown-trigger {
+    cursor: default; /* Shows regular arrow, not pointer, since it's not a link */
+    padding-bottom: 0; /* Remove default padding conflicts */
+  }
+  
+  /* The Popup Menu (Hidden by default) */
+  .dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 100%; /* Position right below the navbar */
+    left: 50%;
+    transform: translateX(-50%); /* Center perfectly */
+    
+    /* Luxury styling */
+    background-color: #ffffff;
+    min-width: 240px;
+    padding: 15px 0;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.08); /* Soft, expensive shadow */
+    border-top: 3px solid var(--color-deep-blue); /* Subtle accent strip */
+    border-radius: 0 0 4px 4px;
+    z-index: 1100;
+  }
+  
+  /* The Links Inside */
+  .dropdown-item {
+    display: block;
+    padding: 12px 25px;
+    text-align: center;
+    text-decoration: none;
+    font-style: italic;
+    
+    /* Typography matching your brand */
+    font-family: var(--font-serif);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1rem;
+    color: var(--color-charcoal);
+    transition: all 0.2s ease;
+  }
+  
+  /* Hover State for Items */
+  .dropdown-item:hover {
+    background-color: #f7f9fb; /* Very light grey/blue */
+    color: var(--color-deep-blue);
+  }
+  
+  /* --- DESKTOP HOVER INTERACTION --- */
+  @media (min-width: 900px) {
+    /* Show menu when hovering the wrapper */
+    .nav-item-dropdown:hover .dropdown-menu {
+        display: block;
+        animation: fadeUp 0.3s ease;
+    }
+  
+    /* Subtle animation for luxury feel */
+    @keyframes fadeUp {
+        from { opacity: 0; transform: translate(-50%, 10px); }
+        to { opacity: 1; transform: translate(-50%, 0); }
+    }
+  }
+  
+  /* --- MOBILE ADJUSTMENTS --- */
+  /* On mobile, we want them to just list out underneath */
+  @media (max-width: 899px) {
+    .nav-item-dropdown {
+        flex-direction: column;
+        height: auto;
+    }
+  
+    .dropdown-trigger {
+        margin-bottom: 1.5rem; /* Space before sub-items */
+    }
+  
+    .dropdown-menu {
+        position: static; /* No longer floating */
+        display: flex; /* Always visible on mobile menu */
+        flex-direction: column;
+        transform: none;
+        background-color: transparent;
+        box-shadow: none;
+        border: none;
+        padding: 0;
+        min-width: auto;
+        gap: 1.5rem;
+    }
+  
+    .dropdown-item {
+        color: rgba(255, 255, 255, 0.8); /* Slightly dimmer white than main links */
+        font-size: 1.1rem; /* Match mobile link size */
+        padding: 0;
+        font-style: italic; /* Differentiate slightly */
+    }
+    
+    .dropdown-item:hover {
+        background: none;
+        color: white;
+    }
+  }
+  
+  
+  /* ===================================================================
+     4. EVENT HERO (The "Mood" Section)
+     =================================================================== */
+  
+  .event-hero {
+      position: relative;
+      /* Use 60vh so the "Concierge Ribbon" is visible below the fold */
+      height: 100vh;
+      margin-top: -90px; 
+      min-height: 500px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: white;
+      overflow: hidden;
+  }
+  
+  .hero-bg {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      /* UPDATE THIS PATH TO YOUR ACTUAL IMAGE */
+      background-image: url('/static/Content/Untitled design (14) 2.webp'); 
+      background-size: cover;
+      background-position: center;
+      z-index: 1;
+  }
+  
+  .hero-overlay {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      /* A subtle dark overlay so white text pops */
+      background: rgba(0,0,0,0.05); 
+      z-index: 2;
+  }
+  
+  .hero-content {
+      position: relative;
+      z-index: 3;
+      padding: 0 20px;
+  }
+  
+  .script-font {
+      font-family: var(--font-script);
+      font-size: 4rem; /* Mobile Size */
+      margin: 0;
+      font-weight: normal;
+      color: white;
+      text-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  }
+  
+  .hero-sub {
+      font-family: var(--font-serif);
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      font-size: 1.2rem;
+      margin-top: 1rem;
+      text-shadow: 0px 0px 7px rgba(0, 0, 0, 0.7);
+      font-style: italic;
+      font-weight: bold;
+  }
+  
+  /* The "Scroll" indicator animation */
+  .scroll-indicator {
+      position: absolute;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 3;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+  }
+  
+  .scroll-indicator span {
+      font-family: var(--font-serif);
+      text-transform: uppercase;
+      font-size: 1rem;
+      letter-spacing: 0.15em;
+  }
+  
+  .scroll-indicator .line {
+      width: 1px;
+      height: 40px;
+      background-color: white;
+  }
+
+   /* Desktop Hero Adjustment */
+   @media (min-width: 900px) {
+    .script-font { font-size: 6rem; }
+}
+
+
+  
+  /* ===================================================================
+     5. INFO RIBBON (The "Concierge Data" Bar)
+     =================================================================== */
+  
+  .info-ribbon-container {
+      background-color: var(--color-cream); /* Off-white from your palette */
+      border-bottom: 1px solid var(--color-border);
+      padding: 2rem 0;
+  }
+  
+  .info-ribbon {
+      display: flex;
+      flex-direction: column; /* Stack on mobile */
+      align-items: center;
+      gap: 1.5rem;
+      max-width: 1200px;
+      margin: 0 auto;
+  }
+  
+  .ribbon-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-family: var(--font-serif);
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--color-charcoal);
+  }
+  
+  .ribbon-icon {
+      width: 20px;
+      height: 20px;
+      stroke: var(--color-deep-blue); /* Using your specific blue */
+  }
+  
+  @media (min-width: 900px) {
+      .info-ribbon {
+          flex-direction: row; /* Row on desktop */
+          justify-content: center;
+          gap: 4rem;
+      }
+  }
+  
+  /* ===================================================================
+     6. MAIN EVENT GRID (The Layout)
+     =================================================================== */
+  
+  /* --- GRID LAYOUT UPDATES --- */
+.main-event-grid {
+    display: grid;
+    grid-template-columns: 1fr; /* Mobile default */
+    gap: 4rem;
+    padding: 60px 20px;
+    max-width: 1100px; /* Slightly wider to let text breathe */
+    margin: 0 auto;
+}
+
+@media (min-width: 900px) {
+    .main-event-grid {
+        /* KEY CHANGE: Left column (Details) is now wider (60%)
+           Right column (Timeline) is narrower (35%)
+        */
+        grid-template-columns: 1.5fr 1fr; 
+        gap: 6rem; /* More luxury whitespace */
+    }
+}
+
+/* --- TYPOGRAPHY UPDATES --- */
+.editorial-title {
+    font-family: var(--font-serif); /* Using Inria Serif */
+    font-weight: bold; /* Make it bold */
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--color-deep-blue);
+    font-size: 1.1rem; /* Bumping up size for hierarchy */
+    margin-bottom: 1.2rem;
+    margin-top: 0;
+    font-style: italic;
+}
+
+.script-header {
+    font-family: var(--font-script);
+    font-size: 3rem; /* Nice and big */
+    color: var(--color-dusty-blue);
+    margin-top: -15px; /* Pull it up slightly to align with top of left column */
+    margin-bottom: 2rem;
+    font-weight: normal;
+}
+
+.body-text {
+    font-family: var(--font-serif);
+    font-size: 0.9rem;
+    line-height: 1.7;
+    color: #444;
+    margin-bottom: 1rem;
+    max-width: 90%; /* Stops lines from getting too long to read */
+}
+
+/* --- THE "STYLE NOTE" (Replaces Concierge Box) --- */
+.style-note {
+    /* No background color - feels less corporate */
+    padding: 0.5rem 0 0.5rem 1.5rem; /* Indent slightly */
+    border-left: 2px solid var(--color-dusty-blue); /* Subtle accent line */
+    margin-top: 1.5rem;
+    margin-bottom: 2rem;
+    color: #555;
+    position: relative;
+}
+
+.style-note p {
+    font-family: var(--font-serif);
+    font-style: italic; /* Editorial feel */
+    font-size: 0.95rem;
+    margin: 0;
+    line-height: 1.6;
+}
+
+.note-icon {
+    /* Optional: If you want a tiny icon floating to the left */
+    position: absolute;
+    left: -11px; /* Centers it on the border line */
+    top: 50%;
+    transform: translateY(-50%);
+    background: white; /* Hides the line behind it */
+    padding: 5px 0;
+    font-size: 1.2rem;
+    line-height: 1;
+}
+
+/* --- TIMELINE UPDATES (Cleaner look) --- */
+.timeline-row {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 2.5rem;
+    align-items: flex-start;
+}
+
+.t-time {
+    font-family: var(--font-serif);
+    font-weight: bold;
+    color: var(--color-deep-blue);
+    font-size: 1rem;
+    min-width: 70px; /* Aligns all text nicely */
+    text-align: right;
+}
+
+.t-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.t-content strong {
+    font-family: var(--font-serif);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-size: 0.95rem;
+    color: #333;
+}
+
+.t-sub {
+    font-family: var(--font-serif);
+    font-style: italic;
+    color: #888;
+    font-size: 0.9rem;
+    margin-top: 4px;
+}
+
+/* --- BUTTON/LINK UPDATE --- */
+.text-link {
+    display: inline-block;
+    margin-top: 1rem;
+    font-family: var(--font-serif);
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 0.15em;
+    color: var(--color-charcoal);
+    text-decoration: none;
+    border-bottom: 1px solid var(--color-charcoal);
+    padding-bottom: 3px;
+    transition: all 0.3s;
+}
+
+.text-link:hover {
+    color: var(--color-deep-blue);
+    border-color: var(--color-deep-blue);
+}
+
+.detail-block {
+    margin-bottom: 4rem; /* Spacing between major sections */
+}
+
+/* =========================================
+   GUEST ESSENTIALS (THE "UN-FAQ")
+   ========================================= */
+
+.essentials-section {
+    margin: 0;
+    padding: 80px 20px;
+    background-color: var(--color-dusty-blue);
+}
+
+.essentials-container {
+    max-width: 1000px;
+    margin: 0 auto; /* Centers the container */
+}
+
+.essentials-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    text-shadow: none;
+    color: white;
+}
+
+.essentials-header h1 {
+    font-family: var(--font-script);
+    font-size: 4.5rem;
+    color: var(--color-dusty-blue);
+    margin-bottom: 0px;
+    text-shadow: none;
+    color: white;
+}
+
+.intro-text {
+    font-family: var(--font-serif);
+    font-size: 1rem;
+    color: #555;
+    font-style: italic;
+    max-width: 500px;
+    margin: 0 auto;
+    color: white;
+}
+
+/* The Row Container */
+.essential-item {
+    display: flex;
+    flex-direction: column; /* Stack on mobile */
+    padding: 2rem 0;
+    border-bottom: 1px solid #eee; /* Subtle divider */
+}
+
+/* Remove border from the last one */
+.essential-item:last-child {
+    border-bottom: none;
+}
+
+/* Left Column (The Topic) */
+.topic-col {
+    width: 100%;
+    margin-bottom: 1rem;
+}
+
+.topic-col h3 {
+    font-family: var(--font-serif);
+    font-size: 1.1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: white;
+    margin: 0;
+}
+
+/* Right Column (The Answer) */
+.info-col {
+    width: 100%;
+}
+
+.info-col p {
+    font-family: var(--font-serif);
+    font-size: 0.9rem;
+    line-height: 1.7;
+    color: white;
+    margin-bottom: 0.8rem;
+}
+
+.info-col p:last-child {
+    margin-bottom: 0;
+}
+
+.sub-note {
+    font-style: italic;
+    color: #ddd;
+    font-size: 0.95rem;
+}
+
+/* --- DESKTOP LAYOUT --- */
+@media (min-width: 900px) {
+    .essential-item {
+        flex-direction: row; /* Side-by-side on desktop */
+        align-items: baseline;
+    }
+
+    .topic-col {
+        width: 30%; /* Topic takes 30% width */
+        padding-right: 2rem;
+    }
+
+    .info-col {
+        width: 70%; /* Info takes 70% width */
+    }
+    
+    .essentials-header h1 {
+        font-size: 4rem;
+    }
+}
+
+/* =========================================
+   VENUE HISTORY SECTION
+   ========================================= */
+
+   .venue-history-section {
+    padding: 80px 20px;
+    background-color: #e1e6ed;
+    text-align: center;
+}
+
+.history-container {
+    max-width: 800px; /* Keeps text readable/narrow */
+    margin: 0 auto;
+}
+
+/* --- THE CAROUSEL --- */
+.history-carousel {
+    margin: auto;
+    position: relative;
+    width: auto;
+    aspect-ratio: 4 / 3;
+    height: 300px;
+    margin-bottom: 3rem;
+    overflow: hidden;
+    align-content: center;
+}
+.carousel-slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    opacity: 0;
+    
+    /* The Animation Magic */
+    /* 15s total loop for 3 images (5s each) */
+    animation: fadeLoop 15s infinite; 
+}
+
+/* Keyframes for a smooth cross-fade */
+@keyframes fadeLoop {
+    0% { opacity: 0; }
+    10% { opacity: 1; }  /* Fade in quickly */
+    33% { opacity: 1; }  /* Stay visible */
+    43% { opacity: 0; }  /* Fade out */
+    100% { opacity: 0; }
+}
+
+/* --- THE TEXT --- */
+.history-title {
+    font-family: var(--font-script);
+    font-size: 3.5rem;
+    color: var(--color-dusty-blue);
+    margin-bottom: 1.5rem;
+    line-height: 1.2;
+    text-shadow: none;
+}
+
+.history-body {
+    font-family: var(--font-serif);
+    font-size: 0.9rem;
+    line-height: 1.8;
+    color: #555;
+    margin-bottom: 1.5rem;
+}
+
+/* Mobile Adjustment */
+@media (max-width: 600px) {
+    .history-carousel {
+        height: 250px; /* Smaller on phone */
+    }
+    .history-title {
+        font-size: 2.8rem;
+    }
+}

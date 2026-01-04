@@ -1,0 +1,465 @@
+/* ===================================================================
+   1. FONTS & VARIABLES (Matching your Travel Page)
+   =================================================================== */
+
+/* Copying your exact font setups */
+@font-face {
+    font-family: 'DarlineScript';
+    src: url('/static/fonts/WOFF/DarlineScript-Regular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+  }
+  
+  @font-face {
+    font-family: 'Inria Serif';
+    src: url('/static/fonts/WOFF/Inria Serif-Regular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+  }
+  
+  @font-face {
+      font-family: 'Inria Serif';
+      src: url('/static/fonts/WOFF/Inria Serif-Bold.woff') format('woff');
+      font-weight: bold;
+      font-style: normal;
+  }
+  
+  /* Define your Brand Colors here for easy changes */
+  :root {
+      --font-serif: 'Inria Serif', serif;
+      --font-script: 'DarlineScript', cursive; 
+      --color-dusty-blue: #9aacc4;  /* Your main brand color */
+      --color-deep-blue: #6587ab;   /* Your accent/text color */
+      --color-charcoal: #333333;
+      --color-cream: #fcfcfc;       /* Your off-white background */
+      --color-border: #e5e5e5;
+      --spacing-desktop: 80px;      /* Matching your section padding */
+  }
+  
+  /* ===================================================================
+     2. GLOBAL & UTILITY
+     =================================================================== */
+  
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+  
+  html {
+    scroll-behavior: smooth;
+    overflow-x: hidden;
+  }
+  
+  body {
+    font-family: var(--font-serif);
+    color: var(--color-charcoal);
+    background-color: #ffffff;
+    line-height: 1.6;
+  }
+  
+ /* ===================================================================
+   3. NAVIGATION
+   =================================================================== */
+
+/* --- BASE NAVBAR CONTAINER --- */
+#navbar {
+    /* Positioning & Layout */
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  
+    /* Dimensions */
+    width: 100%;
+    height: 90px;
+    padding: 0 1.5rem;
+  
+    /* Visuals & Transitions */
+    background-color: var(--color-dusty-blue);
+    transition: background-color 0.8s ease, transform 0.8s ease, padding-top 0.8s ease, padding-bottom 0.8s ease;
+  }
+  
+  #navbar.scrolled {
+    background-color: var(--color-dusty-blue);
+  }
+  
+  #navbar.hide-on-scroll-down {
+    transform: translateY(-100%);
+  }
+  
+  .navbar .logo {
+    max-height: 70px;
+    width: auto;
+  }
+  
+  /* --- MOBILE MENU OVERLAY --- */
+  .nav-menu {
+    /* Hidden by default on mobile */
+    display: none;
+    
+    /* Full Screen Overlay */
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    width: 100%;
+    height: 100vh;
+    
+    /* Flex Centering */
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  
+    /* Visuals */
+    background-color: var(--color-dusty-blue);
+  }
+  
+  .nav-menu.is-active {
+    display: flex;
+  }
+  
+  /* --- NAV LINKS --- */
+  .nav-links {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    gap: 2.5rem;
+  }
+  
+  .navbar .nav-link {
+    /* Typography */
+    font-family: var(--font-serif);
+    font-size: 1.5rem;
+    font-style: italic;
+    text-transform: uppercase;
+    letter-spacing: 0.2rem;
+    text-decoration: none;
+    
+    /* Color & Interaction */
+    color: white;
+    transition: color 0.3s ease;
+  }
+  
+  .navbar .nav-link:hover,
+  .navbar .nav-link.active {
+    color: #f0f0f0;
+    text-underline-offset: 5px;
+  }
+  
+  /* --- MOBILE HAMBURGER TOGGLE --- */
+  .mobile-nav-toggle {
+    /* Layout */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    z-index: 1002;
+    
+    /* Dimensions & Reset */
+    width: 30px;
+    height: 24px;
+    padding: 0;
+    border: none;
+    background: var(--color-dusty-blue);
+    cursor: pointer;
+  }
+  
+  .hamburger-line {
+    width: 30px;
+    height: 3px;
+    background-color: white;
+    border-radius: 10px;
+  }
+  
+  /* ===================================================================
+     DESKTOP NAV BREAKPOINT (min-width: 900px)
+     =================================================================== */
+  @media (min-width: 900px) {
+    
+    /* 1. Reset Navbar Spacing */
+    #navbar {
+      justify-content: space-around;
+      padding: 0;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      background-color: var(--color-dusty-blue);
+      transition: background-color 0.8s ease, transform 0.8s ease, padding-top 0.8s ease, padding-bottom 0.8s ease;
+    }
+  
+    #navbar.scrolled {
+      background-color: var(--color-dusty-blue);
+      padding-top: 0px;
+      padding-bottom: 0px
+    }
+  
+    /* 2. Hide Mobile Elements */
+    .mobile-nav-toggle {
+      display: none;
+    }
+  
+    /* 3. Reset Menu (Remove Overlay) */
+    .nav-menu {
+      /* Restore to flow layout */
+      position: static;
+      display: flex;
+      width: auto;
+      height: auto;
+      flex-direction: row;
+      
+      /* Remove mobile styles */
+      background-color: transparent;
+      padding-top: 0;
+      z-index: auto;
+      transition: none;
+    }
+  
+    /* 4. Horizontal Links */
+    .nav-links {
+      flex-direction: row;
+      gap: 60px;
+    }
+  
+    /* 5. Smaller Desktop Font */
+    .navbar .nav-link {
+      font-size: 0.9rem;
+    }
+  }
+  
+  /* The Wrapper (Holds the label + the menu) */
+  .nav-item-dropdown {
+    position: relative; /* Anchor point for the popup */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+  }
+  
+  /* The Trigger Text ("Weekend Events") */
+  .dropdown-trigger {
+    cursor: default; /* Shows regular arrow, not pointer, since it's not a link */
+    padding-bottom: 0; /* Remove default padding conflicts */
+  }
+  
+  /* The Popup Menu (Hidden by default) */
+  .dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 100%; /* Position right below the navbar */
+    left: 50%;
+    transform: translateX(-50%); /* Center perfectly */
+    
+    /* Luxury styling */
+    background-color: #ffffff;
+    min-width: 240px;
+    padding: 15px 0;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.08); /* Soft, expensive shadow */
+    border-top: 3px solid var(--color-deep-blue); /* Subtle accent strip */
+    border-radius: 0 0 4px 4px;
+    z-index: 1100;
+  }
+  
+  /* The Links Inside */
+  .dropdown-item {
+    display: block;
+    padding: 12px 25px;
+    text-align: center;
+    text-decoration: none;
+    font-style: italic;
+    
+    /* Typography matching your brand */
+    font-family: var(--font-serif);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1rem;
+    color: var(--color-charcoal);
+    transition: all 0.2s ease;
+  }
+  
+  /* Hover State for Items */
+  .dropdown-item:hover {
+    background-color: #f7f9fb; /* Very light grey/blue */
+    color: var(--color-deep-blue);
+  }
+  
+  /* --- DESKTOP HOVER INTERACTION --- */
+  @media (min-width: 900px) {
+    /* Show menu when hovering the wrapper */
+    .nav-item-dropdown:hover .dropdown-menu {
+        display: block;
+        animation: fadeUp 0.3s ease;
+    }
+  
+    /* Subtle animation for luxury feel */
+    @keyframes fadeUp {
+        from { opacity: 0; transform: translate(-50%, 10px); }
+        to { opacity: 1; transform: translate(-50%, 0); }
+    }
+  }
+  
+  /* --- MOBILE ADJUSTMENTS --- */
+  /* On mobile, we want them to just list out underneath */
+  @media (max-width: 899px) {
+    .nav-item-dropdown {
+        flex-direction: column;
+        height: auto;
+    }
+  
+    .dropdown-trigger {
+        margin-bottom: 1.5rem; /* Space before sub-items */
+    }
+  
+    .dropdown-menu {
+        position: static; /* No longer floating */
+        display: flex; /* Always visible on mobile menu */
+        flex-direction: column;
+        transform: none;
+        background-color: var(--color-dusty-blue);
+        box-shadow: none;
+        border: none;
+        padding: 0;
+        min-width: auto;
+        gap: 1.5rem;
+    }
+  
+    .dropdown-item {
+        color: rgba(255, 255, 255, 0.8); /* Slightly dimmer white than main links */
+        font-size: 1.1rem; /* Match mobile link size */
+        padding: 0;
+        font-style: italic; /* Differentiate slightly */
+    }
+    
+    .dropdown-item:hover {
+        background: none;
+        color: white;
+    }
+  }
+
+  /* =========================================
+   WELCOME PARTY (SPLIT LAYOUT)
+   ========================================= */
+
+   .welcome-split-layout {
+    display: flex;
+    flex-direction: column; /* Mobile first: Stack them */
+    width: 100%;
+    min-height: 100vh; /* Fills at least the whole screen */
+    background-color: #ffffff;
+}
+
+/* --- IMAGE SIDE --- */
+.split-image {
+    width: 100%;
+    height: 50vh; /* Half screen on mobile */
+    background-size: cover;
+    background-position: center;
+    position: relative;
+}
+
+/* --- CONTENT SIDE --- */
+.split-content {
+    width: 100%;
+    padding: 60px 20px;
+    display: flex;
+    align-items: center; /* Vertically centers text */
+    justify-content: center; /* Horizontally centers text */
+    background-color: #fff;
+}
+
+.content-wrapper {
+    max-width: 500px;
+    text-align: center;
+}
+
+/* Typography Overrides for this page */
+.welcome-title {
+    font-family: var(--font-script);
+    font-size: 4rem;
+    color: var(--color-dusty-blue);
+    margin: 0;
+    line-height: 1.2;
+    font-weight: normal;
+}
+
+.welcome-date {
+    font-family: var(--font-serif);
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    font-size: 0.9rem;
+    margin-top: 1rem;
+    color: #888;
+}
+
+.decorative-line {
+    width: 60px;
+    height: 1px;
+    background-color: var(--color-deep-blue);
+    margin: 2rem auto; /* Spacing above/below line */
+}
+
+.editorial-sub {
+    font-family: var(--font-serif);
+    font-size: 1.2rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-charcoal);
+    margin-bottom: 1.5rem;
+}
+
+.split-content .body-text {
+    color: #555;
+    margin-bottom: 1.5rem;
+    font-size: 1.05rem; /* Slightly larger for readability */
+}
+
+/* The "Details Coming Soon" Box */
+.coming-soon-box {
+    margin-top: 3rem;
+    padding: 2rem;
+    border: 1px dashed #d0d0d0; /* A soft dash implies "in progress" */
+    border-radius: 4px;
+    background-color: #fcfcfc;
+}
+
+.coming-soon-box p {
+    margin: 0.5rem 0;
+    font-family: var(--font-serif);
+    color: var(--color-charcoal);
+}
+
+.faded-text {
+    color: #999;
+    font-style: italic;
+    font-size: 0.9rem;
+}
+
+.location-hint {
+    color: var(--color-deep-blue);
+    margin-top: 0.5rem;
+    display: block;
+}
+
+/* --- DESKTOP LAYOUT (The Luxury Shift) --- */
+@media (min-width: 900px) {
+    .welcome-split-layout {
+        flex-direction: row; /* Side by side */
+        height: 100vh; /* Lock to full screen height */
+        /* If you have a sticky navbar, you might want calc(100vh - 90px) */
+    }
+
+    .split-image {
+        width: 50%; /* Left half */
+        height: 100%; /* Full height */
+    }
+
+    .split-content {
+        width: 50%; /* Right half */
+        height: 100%;
+        padding: 0 80px; /* Generous padding */
+    }
+
+    .welcome-title {
+        font-size: 4rem;
+    }
+}

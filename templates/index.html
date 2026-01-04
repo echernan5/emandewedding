@@ -36,22 +36,33 @@
     </div>
     
     <nav class="navbar" id="navbar">
-      <a href="#hero" class="logo-link">
+      <a href="/" class="logo-link">
           <img src="{{ url_for('static', filename='Long logo with rose.png') }}" alt="Emma & Ethan Logo" class="logo">
       </a>
-      <div class="nav-links">
-          <a href="/travel" class="nav-link">Travel & Stay</a>
-          <a href="/our-story" class="nav-link">Our Story</a>
-          <a href="/events" class="nav-link">Weekend Events</a>
-          <a href="/faq" class="nav-link">FAQs</a>
-          <a href="#registry" class="nav-link">Registry</a>
-      </div>
-      <div class="nav-icons">
-        <button class="icon-button" aria-label="Search">
-            <svg class="icon search-icon" viewBox="0 0 24 24">
-                <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"></path>
-            </svg>
-        </button>
+  
+      <button class="mobile-nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+      </button>
+  
+      <div class="nav-menu" id="nav-menu">
+          <div class="nav-links">
+              <a href="/travel" class="nav-link">Travel & Stay</a>
+              <a href="/our-story" class="nav-link">Our Story</a>
+              
+              <div class="nav-item-dropdown">
+                  <span class="nav-link dropdown-trigger">Weekend Events</span>
+                  
+                  <div class="dropdown-menu">
+                      <a href="/wedding" class="dropdown-item">Ceremony & Reception</a>
+                      <a href="/welcome-party" class="dropdown-item">Welcome Party</a>
+                  </div>
+              </div>
+          
+              <a href="/faq" class="nav-link">FAQs</a>
+              <a href="#registry" class="nav-link">Registry</a>
+          </div>
       </div>
     </nav>
 
