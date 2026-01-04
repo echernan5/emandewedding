@@ -19,6 +19,7 @@
   src: url('/static/Fonts/WOFF/DarlineScript-Regular.woff') format('woff');
   font-weight: normal;
   font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
@@ -26,6 +27,7 @@
   src: url('/static/fonts/WOFF/DarlineScript-Regular.woff') format('woff'); 
   font-weight: bold; /* Tell browser this is the bold version */
   font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
@@ -33,6 +35,7 @@
   src: url('/static/fonts/WOFF/Inria Serif-Regular.woff') format('woff');
   font-weight: normal;
   font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
@@ -40,6 +43,7 @@
   src: url('/static/fonts/WOFF/Inria Serif-Bold.woff') format('woff');
   font-weight: bold;
   font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
@@ -47,6 +51,7 @@
   src: url('/static/fonts/WOFF/Inria Serif-Light.woff') format('woff');
   font-weight: 300; /* Light */
   font-style: normal;
+  font-display: swap;
 }
 
 .inria-serif-light {

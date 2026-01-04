@@ -8,6 +8,7 @@
     src: url('/static/fonts/WOFF/DarlineScript-Regular.woff') format('woff');
     font-weight: normal;
     font-style: normal;
+    font-display: swap;
   }
 
   @font-face {
@@ -15,6 +16,7 @@
     src: url('/static/fonts/WOFF/DarlineScript-Regular.woff') format('woff'); 
     font-weight: bold; /* Tell browser this is the bold version */
     font-style: normal;
+    font-display: swap;
   }
   
   @font-face {
@@ -22,6 +24,7 @@
     src: url('/static/fonts/WOFF/Inria Serif-Regular.woff') format('woff');
     font-weight: normal;
     font-style: normal;
+    font-display: swap;
   }
   
   @font-face {
@@ -29,6 +32,7 @@
       src: url('/static/fonts/WOFF/Inria Serif-Bold.woff') format('woff');
       font-weight: bold;
       font-style: normal;
+      font-display: swap;
   }
   
   /* Define your Brand Colors here for easy changes */
