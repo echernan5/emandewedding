@@ -3,33 +3,54 @@
 
 document.addEventListener("DOMContentLoaded", function() {
 
+  // 1. LOCK SCROLL ON LOAD
   const modal = document.getElementById("passwordModal");
   if (modal && modal.style.display !== "none") {
     document.body.style.overflow = "hidden"; // 🔒 Disable scroll while modal is open
   }
   
-  // Password Checker (if modal exists)
+  // 2. PASSWORD CHECKER LOGIC
   const pwBtn = document.getElementById("submitPassword");
-  if (pwBtn) {
-    pwBtn.addEventListener("click", function () {
-      const enteredPassword = document.getElementById("passwordInput").value;
-      const correctPassword = "PiDay"; // Change this to your password
-      if (enteredPassword === correctPassword) {
-        document.getElementById("passwordModal").style.display = "none";
-        document.body.style.overflow = ""; // ✅ Re-enable scroll
-      } else {
-        document.getElementById("errorMessage").style.display = "block";
-      }      
-    });
-  }
-}
+  const pwInput = document.getElementById("passwordInput");
 
-)
+  // Helper function to check password
+  function checkPassword() {
+      const enteredPassword = pwInput.value;
+      const correctPassword = "PiDay"; // 🔑 CHANGE THIS TO YOUR REAL PASSWORD
+
+      if (enteredPassword === correctPassword) {
+          // Success: Hide modal & Enable scroll
+          if (modal) modal.style.display = "none";
+          document.body.style.overflow = ""; 
+      } else {
+          // Failure: Show error message
+          const errorMsg = document.getElementById("errorMessage");
+          if (errorMsg) errorMsg.style.display = "block";
+      }
+  }
+
+  // Event Listener: Click the Button
+  if (pwBtn) {
+      pwBtn.addEventListener("click", checkPassword);
+  }
+
+  // Event Listener: Press "Enter" in the input box
+  if (pwInput) {
+      pwInput.addEventListener("keypress", function (e) {
+          if (e.key === "Enter") {
+              checkPassword();
+          }
+      });
+  }
+});
 
 // Navbar Scroll Behavior
 document.addEventListener('DOMContentLoaded', () => {
   const navbar = document.getElementById('navbar');
   let lastScrollY = window.scrollY;
+
+  // Safety check if navbar exists on this page
+  if (!navbar) return;
 
   window.addEventListener('scroll', () => {
     const currentScrollY = window.scrollY;
@@ -57,15 +78,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
   accordionToggles.forEach(toggle => {
     toggle.addEventListener('click', () => {
-      // Find the parent .accordion-item
       const accordionItem = toggle.parentElement;
-      // Find the .accordion-content within that item
       const accordionContent = accordionItem.querySelector('.accordion-content');
-
-      // Toggle the 'active' class on the content
       accordionContent.classList.toggle('active');
-
-      // Optional: Add a class to the button to change the arrow icon's direction
       toggle.classList.toggle('active-toggle');
     });
   });
@@ -76,95 +91,71 @@ document.addEventListener('DOMContentLoaded', () => {
   const images = document.querySelectorAll('.our-story-section .intro-column img');
   const ourStorySection = document.getElementById('our-story');
 
+  if (!ourStorySection) return; // Exit if section doesn't exist
+
   const handleScroll = () => {
-      // Get the position of the our-story-section relative to the viewport
       const rect = ourStorySection.getBoundingClientRect();
-      
-      // Check if the section is in the viewport
       if (rect.top < window.innerHeight && rect.bottom >= 0) {
           images.forEach(img => {
               img.classList.add('fade-in');
           });
-          // Optional: Remove the scroll event listener once the animation is done
           window.removeEventListener('scroll', handleScroll);
       }
   };
 
-  // Add the scroll event listener
   window.addEventListener('scroll', handleScroll);
-
-  // Run once on page load to check if the section is already visible
   handleScroll();
 });
 
 // Timeline Carousel Functionality
 document.addEventListener('DOMContentLoaded', () => {
-  // Select the timeline and arrows from the DOM
   const timeline = document.querySelector('.timeline');
   const prevArrow = document.querySelector('.timeline-arrow.prev');
   const nextArrow = document.querySelector('.timeline-arrow.next');
 
-  // Get all the timeline items
+  if (!timeline) return;
+
   const items = document.querySelectorAll('.timeline-item');
   const totalItems = items.length;
   let currentIndex = 0;
 
-  // This function updates the carousel's position
   const showItem = (index) => {
-      // Find the width of one item to calculate the translation distance
-      // The `offsetWidth` includes padding and border
       const itemWidth = items[0].offsetWidth;
-      
-      // Use the gap value from your CSS to calculate the correct spacing
-      // `getComputedStyle` gets the applied styles from the CSS
-      const gap = parseInt(window.getComputedStyle(timeline).gap, 10);
-      
-      // Calculate the translation value to show the item at the given index
+      const gap = parseInt(window.getComputedStyle(timeline).gap, 10) || 0;
       const translateValue = -((itemWidth + gap) * index);
-      
-      // Apply the transform to the timeline element
       timeline.style.transform = `translateX(${translateValue}px)`;
   };
 
-  // This function handles the 'Next' arrow click
   const nextItem = () => {
-      // Loop back to the start if we reach the end
-      currentIndex = (currentIndex + 1) % (totalItems - 2); 
+      // Loop logic: stops 2 items short so you don't scroll into empty space
+      const maxIndex = Math.max(0, totalItems - 1); 
+      currentIndex = (currentIndex + 1) % maxIndex; 
       showItem(currentIndex);
   };
 
-  // This function handles the 'Previous' arrow click
   const prevItem = () => {
-      // Loop back to the end if we go past the start
-      currentIndex = (currentIndex - 1 + (totalItems - 2)) % (totalItems - 2);
+      const maxIndex = Math.max(0, totalItems - 1);
+      currentIndex = (currentIndex - 1 + maxIndex) % maxIndex;
       showItem(currentIndex);
   };
 
-  // Add event listeners to the arrows
-  if (nextArrow) {
-      nextArrow.addEventListener('click', nextItem);
-  }
-  if (prevArrow) {
-      prevArrow.addEventListener('click', prevItem);
-  }
+  if (nextArrow) nextArrow.addEventListener('click', nextItem);
+  if (prevArrow) prevArrow.addEventListener('click', prevItem);
 });
 
-// --- NEW: Scrolling Invitation Section ---
+// --- Scrolling Invitation Section ---
 document.addEventListener('DOMContentLoaded', () => {
-    // Select all the text containers and image panels for the invitation
     const textElements = [
         document.querySelector('#text-1 .fade-in-text'),
         document.querySelector('#text-2 .fade-in-text'),
         document.querySelector('#text-3 .fade-in-text')
-    ].filter(el => el !== null); // Filter out nulls if elements don't exist
+    ].filter(el => el !== null);
 
     const imagePanels = document.querySelectorAll('.image-panel');
 
-    // Only run if the necessary elements are on the page
     if (textElements.length > 0 && imagePanels.length > 0) {
         const fadeInObserver = new IntersectionObserver((entries) => {
             entries.forEach((entry) => {
-                // Find the index of the target panel
                 const index = Array.from(imagePanels).indexOf(entry.target);
                 if (index !== -1) {
                     if (entry.isIntersecting) {
@@ -174,53 +165,94 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
             });
-        }, {
-            threshold: 0.5 
-        });
+        }, { threshold: 0.5 });
 
-        imagePanels.forEach(panel => {
-            fadeInObserver.observe(panel);
-        });
+        imagePanels.forEach(panel => fadeInObserver.observe(panel));
     }
 });
 
-// --- UPDATED: Parallax Background Effect for Celebration Section ---
+// --- Parallax Background Effect ---
 document.addEventListener('DOMContentLoaded', () => {
-
   const section = document.querySelector('.celebration-section');
-  if (!section) return; // Exit if the section isn't here
+  if (!section) return;
 
   document.addEventListener('scroll', function() {
     const rect = section.getBoundingClientRect();
     const viewportHeight = window.innerHeight;
-
-    // === NEW LOGIC ===
-    // 1. Calculate total scroll distance for the effect:
-    //    (viewportHeight) = distance to get the section's top to the viewport's top
-    //    (rect.height)    = additional distance to get the section's bottom to the viewport's top
     const totalScrollDistance = viewportHeight + rect.height;
-
-    // 2. Calculate how far we've scrolled *into* this total distance
-    //    (viewportHeight - rect.top) = pixels scrolled since the top of the
-    //                                  section first appeared at the bottom of the screen.
     const scrollProgress = viewportHeight - rect.top;
-
-    // 3. Calculate the fraction (0 to 1) of how far we are through the effect
     let scrollFraction = scrollProgress / totalScrollDistance;
-    // === END NEW LOGIC ===
-
-    
-    // Clamp the value between 0 and 1 (so it doesn't go below 0 or above 1)
     let clampedFraction = Math.max(0, Math.min(1, scrollFraction));
-
-    // This is the same as before:
-    // It maps your 0-1 progress to a -50px to +50px range.
-    // (0 * 100) - 50 = -50px (start)
-    // (1 * 100) - 50 = +50px (end)
     let offset = (clampedFraction * 150) - 75;
 
-    // Apply this new pixel value to the CSS variable
     section.style.setProperty('--bg-y-offset', `${offset}px`);
   });
+});
 
+// --- Mobile Navigation Toggle ---
+document.addEventListener('DOMContentLoaded', () => {
+    const mobileToggle = document.querySelector('.mobile-nav-toggle');
+    const navMenu = document.querySelector('.nav-menu');
+    const body = document.body;
+  
+    if (mobileToggle && navMenu) {
+      mobileToggle.addEventListener('click', () => {
+        // Toggle the class that shows/hides the menu
+        navMenu.classList.toggle('is-active');
+        
+        // Prevent scrolling on the background when menu is open
+        body.classList.toggle('nav-is-active');
+      });
+  
+      // Close menu when clicking a link
+      const navLinks = document.querySelectorAll('.nav-link');
+      navLinks.forEach(link => {
+        link.addEventListener('click', () => {
+          navMenu.classList.remove('is-active');
+          body.classList.remove('nav-is-active');
+        });
+      });
+    }
+  });
+
+  // --- Privacy Policy Modal Logic ---
+document.addEventListener("DOMContentLoaded", () => {
+  const modal = document.getElementById("privacy-modal");
+  const trigger = document.getElementById("privacy-trigger");
+  const closeBtn = document.getElementById("privacy-close");
+  const overlay = document.getElementById("privacy-overlay");
+
+  // Helper to open
+  function openModal() {
+      if (modal) {
+          modal.classList.remove("modal-hidden");
+          document.body.classList.add("modal-active"); // Prevents background scrolling
+      }
+  }
+
+  // Helper to close
+  function closeModal() {
+      if (modal) {
+          modal.classList.add("modal-hidden");
+          document.body.classList.remove("modal-active");
+      }
+  }
+
+  // click "Privacy Policy" link
+  if (trigger) {
+      trigger.addEventListener("click", (e) => {
+          e.preventDefault(); // Stop it from jumping to top of page
+          openModal();
+      });
+  }
+
+  // Click "X" button
+  if (closeBtn) {
+      closeBtn.addEventListener("click", closeModal);
+  }
+
+  // Click dark background
+  if (overlay) {
+      overlay.addEventListener("click", closeModal);
+  }
 });

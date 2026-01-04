@@ -328,6 +328,59 @@
     </div>
  </section>
 
+ <footer class="luxury-footer">
+    <div class="footer-content">
+       
+       <div class="footer-logo-container">
+         <img src="{{ url_for('static', filename='Long logo with rose.png') }}" alt="Emma and Ethan logo with rose" class="footer-logo">
+       </div>
+
+        <nav class="footer-nav">
+            <a href="/" class="footer-link">Home</a>
+            <a href="/travel" class="footer-link">Travel</a>
+            <a href="/our-story" class="footer-link">Our Story</a>
+            <a href="/rsvp" class="footer-link">RSVP</a>
+            <a href="/wedding" class="footer-link">Ceremony & Reception</a>
+            <a href="/welcome-party" class="footer-link">Welcome Party</a>
+            <a href="/registry" class="footer-link">Registry</a>
+        </nav>
+
+        <div class="footer-bottom">
+            <p>
+                &copy; 2026 Emma & Ethan 
+                <span class="divider">•</span> 
+                <button id="privacy-trigger" class="privacy-link-light">Privacy Policy</button>
+            </p>
+        </div>
+
+    </div>
+  </footer>
+
+<div id="privacy-modal" class="modal modal-hidden">
+    <div class="modal-overlay" id="privacy-overlay"></div>
+    
+    <div class="modal-content privacy-content">
+        <button class="modal-close" id="privacy-close">&times;</button>
+        
+        <h2 class="script-font privacy-title">Privacy Policy</h2>
+        
+        <div class="privacy-body">
+            <p><strong>Last Updated: January 2026</strong></p>
+            <p>This website is a personal wedding website hosted for the purpose of sharing information with our guests. We respect your privacy and are committed to protecting it.</p>
+            
+            <h4>Data Collection</h4>
+            <p>We use Google Analytics to help us understand how our website is being used (e.g., to ensure our RSVP system is functioning correctly). This may collect non-personal information such as your device type, browser version, and general geographic location.</p>
+            
+            <h4>Cookies</h4>
+            <p>We do not use tracking cookies for advertising purposes. Any cookies used are strictly necessary for the functioning of the site or for anonymous analytics.</p>
+            
+            <h4>Personal Information</h4>
+            <p>Any personal information you voluntarily provide via our RSVP form (such as dietary restrictions or names) is used solely for the purpose of planning our wedding celebration and will not be shared with third parties.</p>
+        </div>
+    </div>
+</div>
+  
+
   <div id="accommodation-modal" class="modal modal-hidden">
       
       <div class="modal-overlay"></div>

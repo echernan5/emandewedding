@@ -108,3 +108,45 @@ document.addEventListener('DOMContentLoaded', () => {
       }
   }
 });
+
+// --- Privacy Policy Modal Logic ---
+document.addEventListener("DOMContentLoaded", () => {
+    const modal = document.getElementById("privacy-modal");
+    const trigger = document.getElementById("privacy-trigger");
+    const closeBtn = document.getElementById("privacy-close");
+    const overlay = document.getElementById("privacy-overlay");
+  
+    // Helper to open
+    function openModal() {
+        if (modal) {
+            modal.classList.remove("modal-hidden");
+            document.body.classList.add("modal-active"); // Prevents background scrolling
+        }
+    }
+  
+    // Helper to close
+    function closeModal() {
+        if (modal) {
+            modal.classList.add("modal-hidden");
+            document.body.classList.remove("modal-active");
+        }
+    }
+  
+    // click "Privacy Policy" link
+    if (trigger) {
+        trigger.addEventListener("click", (e) => {
+            e.preventDefault(); // Stop it from jumping to top of page
+            openModal();
+        });
+    }
+  
+    // Click "X" button
+    if (closeBtn) {
+        closeBtn.addEventListener("click", closeModal);
+    }
+  
+    // Click dark background
+    if (overlay) {
+        overlay.addEventListener("click", closeModal);
+    }
+  });

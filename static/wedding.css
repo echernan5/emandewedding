@@ -819,3 +819,262 @@
         font-size: 2.8rem;
     }
 }
+
+/* =========================================
+   LUXURY FOOTER STYLES
+   ========================================= */
+
+   .luxury-footer {
+    width: 100%;
+    /* The "Bookend" Effect: Matches your navbar color */
+    background-color: var(--color-dusty-blue); 
+    color: #ffffff;
+    padding: 100px 20px 60px; /* Generous top padding feels expensive */
+    text-align: center;
+    position: relative;
+}
+
+.footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3rem;
+}
+
+/* 1. Control the size here */
+.footer-logo-container {
+  width: 100%;        /* Takes up available space up to the max-width */
+  max-width: 250px;   /* <--- CHANGE THIS VALUE to make it smaller (e.g. 80px) */
+  margin: 0 auto 20px; /* Centers it horizontally and keeps the bottom gap */
+}
+
+/* 2. Ensure the image fits inside the container */
+.footer-logo {
+  width: 100%;      /* Forces image to fill the container width */
+  height: auto;     /* Maintains aspect ratio */
+  display: block;   /* Removes any tiny invisible margins under the image */
+}
+
+/* 1. The Sign-Off Script */
+.footer-message h2 {
+    font-family: var(--font-script);
+    font-size: 2rem;
+    color: #ffffff;
+    margin: 0;
+    line-height: 1.2;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.05); /* Very subtle depth */
+    font-weight: normal;
+}
+
+/* 2. The Navigation Row */
+.footer-nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 2rem;
+    padding: 2rem 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.2); /* Soft semi-transparent line */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    width: 100%;
+}
+
+.footer-link {
+    font-family: var(--font-serif);
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.15rem;
+    color: #ffffff;
+    text-decoration: none;
+    transition: opacity 0.3s ease;
+    opacity: 0.9;
+}
+
+.footer-link:hover {
+    opacity: 1;
+    text-decoration: underline;
+    text-underline-offset: 5px;
+}
+
+/* The Central "E & E" */
+.footer-monogram {
+    font-family: var(--font-serif);
+    font-size: 1.5rem;
+    font-style: italic;
+    font-weight: bold;
+    color: #ffffff;
+    padding: 0 2rem; /* Extra space around the center item */
+}
+
+/* 3. The Bottom Details */
+.footer-bottom {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    opacity: 0.7; /* Make fine print slightly dimmer */
+}
+
+.footer-bottom p {
+    font-family: var(--font-serif);
+    font-size: 0.75rem;
+    letter-spacing: 0.05rem;
+    margin: 0;
+}
+
+.privacy-link-light {
+    background: none;
+    border: none;
+    padding: 0;
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+    text-decoration: underline;
+    transition: opacity 0.3s;
+}
+
+.privacy-link-light:hover {
+    opacity: 0.8;
+}
+
+.location-tag {
+    font-style: italic;
+    margin-top: 5px;
+}
+
+/* --- MOBILE ADJUSTMENTS --- */
+@media (max-width: 768px) {
+    .luxury-footer {
+        padding: 60px 20px 40px;
+    }
+
+    .footer-message h2 {
+        font-size: 3rem;
+    }
+
+    .footer-nav {
+        flex-direction: column;
+        gap: 1.5rem;
+        border: none; /* Remove lines on mobile to save space */
+    }
+
+    .footer-monogram {
+        display: none; /* Hide monogram on mobile stack */
+    }
+}
+
+/* =========================================
+   PRIVACY MODAL SPECIFIC STYLES
+   ========================================= */
+
+/* Make the privacy modal narrower than the itinerary one */
+.privacy-content {
+    max-width: 800px !important; 
+    text-align: left;
+}
+
+.privacy-title {
+    font-size: 2rem;
+    color: var(--color-dusty-blue);
+    text-align: center;
+    margin-bottom: 1.5rem;
+    font-weight: normal;
+}
+
+.privacy-body h4 {
+    font-family: var(--font-serif);
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 0.1rem;
+    color: var(--color-charcoal);
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.privacy-body p {
+    font-family: var(--font-serif);
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: #555;
+    margin-bottom: 1rem;
+}
+
+.signature {
+    margin-top: 2rem;
+    font-family: var(--font-script);
+    font-size: 1.5rem !important; /* Override standard p size */
+    color: var(--color-dusty-blue) !important;
+}
+
+/* =========================================
+   BASE MODAL STYLES (The Logic)
+   ========================================= */
+
+/* 1. The Wrapper: Covers the whole screen */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2000; /* Super high so it sits on top of everything */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  /* Animation for smooth fade-in */
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+/* 2. The Hiding Class: This is what makes it invisible by default */
+.modal-hidden {
+  display: none !important;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* 3. The Dark Background Overlay */
+.modal-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black */
+  backdrop-filter: blur(4px); /* Optional: blurs the background */
+  cursor: pointer;
+}
+
+/* 4. The White Box Content */
+.modal-content {
+  position: relative;
+  z-index: 2001; /* Must be higher than the overlay */
+  background-color: #ffffff;
+  padding: 40px;
+  width: 90%;
+  max-width: 600px;
+  max-height: 90vh; /* Prevents it from being taller than screen */
+  overflow-y: auto; /* Adds scrollbar inside box if text is too long */
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  border-radius: 4px;
+}
+
+/* 5. The Close Button (X) */
+.modal-close {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  background: none;
+  border: none;
+  font-size: 2rem;
+  cursor: pointer;
+  color: #999;
+  line-height: 1;
+}
+
+.modal-close:hover {
+  color: #333;
+}
