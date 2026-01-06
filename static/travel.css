@@ -1,1885 +1,591 @@
 /* ===================================================================
-  FONTS (Using the paths from your previous file)
-  =================================================================== 
-*/
-
-:root {
-  --font-serif: 'Inria Serif', serif;
-  --font-script: 'DarlineScript', cursive; 
-  --color-dusty-blue: #9aacc4;  /* Your main brand color */
-  --color-deep-blue: #6587ab;   /* Your accent/text color */
-  --color-charcoal: #333333;
-  --color-cream: #fcfcfc;       /* Your off-white background */
-  --color-border: #e5e5e5;
-  --spacing-desktop: 80px;      /* Matching your section padding */
-}
-
-@font-face {
-  font-family: 'DarlineScript';
-  src: url('/static/Fonts/WOFF/DarlineScript-Regular.woff') format('woff');
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'DarlineScript';
-  src: url('/static/Fonts/WOFF/DarlineScript-Regular.woff') format('woff'); 
-  font-weight: bold; /* Tell browser this is the bold version */
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Inria Serif';
-  src: url('/static/Fonts/WOFF/Inria Serif-Regular.woff') format('woff');
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Inria Serif';
-  src: url('/static/Fonts/WOFF/Inria Serif-Bold.woff') format('woff');
-  font-weight: bold;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Inria Serif';
-  src: url('/static/Fonts/WOFF/Inria Serif-Light.woff') format('woff');
-  font-weight: 300; /* Light */
-  font-style: normal;
-  font-display: swap;
-}
-
-.inria-serif-light {
-  font-family: "Inria Serif", serif;
-  font-weight: 300;
-  font-style: normal;
-}
-
-.inria-serif-regular {
-  font-family: "Inria Serif", serif;
-  font-weight: 400;
-  font-style: normal;
-}
-
-.inria-serif-bold {
-  font-family: "Inria Serif", serif;
-  font-weight: 700;
-  font-style: normal;
-}
-
-.inria-serif-light-italic {
-  font-family: "Inria Serif", serif;
-  font-weight: 300;
-  font-style: italic;
-}
-
-.inria-serif-regular-italic {
-  font-family: "Inria Serif", serif;
-  font-weight: 400;
-  font-style: italic;
-}
-
-.inria-serif-bold-italic {
-  font-family: "Inria Serif", serif;
-  font-weight: 700;
-  font-style: italic;
-}
-
-/* =================================================================== */
-/* 2. GLOBAL & UTILITY STYLES
-/* =================================================================== */
-
-/* Universal Styles */
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-html {
-  scroll-behavior: smooth; /* Smooth scrolling */
-  overflow-x: hidden; /* Prevent horizontal scroll */
-}
-
-body {
-  padding: 0;
-  margin: 0;
-  max-width: 100%;
-}
-
-/* Hides the modal scrollbar from the body */
-body.modal-active,
-body.nav-is-active { /* Added to support mobile nav overlay */
-  overflow: hidden;
-}
-
-/* Re-usable class for section labels */
-.section-label {
-  font-family: "Inria Serif", serif;
-  text-transform: uppercase;
-  font-style: italic;
-  letter-spacing: 0.2rem;
-  color: #bcbdb5;
-  margin-bottom: 2rem;
-}
-
-
-/* =================================================================== */
-/* 4. NAVIGATION BAR (MOBILE-FIRST REFACTOR)
-/* =================================================================== */
+  TABLE OF CONTENTS
+  1. VARIABLES & FONTS
+  2. GLOBAL RESET & UTILITIES
+  3. NAVIGATION
+  4. HERO SECTION
+  5. ACCOMMODATIONS (Grid & Cards)
+  6. TRANSPORTATION & ADVENTURE
+  7. FOOTER
+  8. MODALS (Luxury Editorial Layout)
+  9. ITINERARY SPECIFIC STYLES
+  =================================================================== */
 
 /* ===================================================================
-   3. NAVIGATION
+   1. VARIABLES & FONTS
    =================================================================== */
-
-/* --- BASE NAVBAR CONTAINER --- */
-#navbar {
-  /* Positioning & Layout */
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-
-  /* Dimensions */
-  width: 100%;
-  height: 90px;
-  padding: 0 1.5rem;
-
-  /* Visuals & Transitions */
-  background-color: var(--color-dusty-blue);
-  transition: background-color 0.8s ease, transform 0.8s ease, padding-top 0.8s ease;
-}
-
-#navbar.scrolled {
-  background-color: var(--color-dusty-blue);
-}
-
-#navbar.hide-on-scroll-down {
-  transform: translateY(-100%);
-}
-
-.navbar .logo {
-  max-height: 70px;
-  width: auto;
-}
-
-/* --- MOBILE MENU OVERLAY --- */
-.nav-menu {
-  /* Hidden by default on mobile */
-  display: none;
+   :root {
+    --font-serif: 'Inria Serif', serif;
+    --font-script: 'DarlineScript', cursive; 
+    --color-dusty-blue: #9aacc4;
+    --color-deep-blue: #6587ab;
+    --color-charcoal: #333333;
+    --color-cream: #fcfcfc;
+    --color-border: #e5e5e5;
+    --spacing-desktop: 80px;
+  }
   
-  /* Full Screen Overlay */
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 1000;
-  width: 100%;
-  height: 100vh;
+  @font-face {
+    font-family: 'DarlineScript';
+    src: url('/static/Fonts/WOFF/DarlineScript-Regular.woff') format('woff');
+    font-weight: normal; font-style: normal; font-display: swap;
+  }
   
-  /* Flex Centering */
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-
-  /* Visuals */
-  background-color: var(--color-dusty-blue);
-}
-
-.nav-menu.is-active {
-  display: flex;
-}
-
-/* --- NAV LINKS --- */
-.nav-links {
-  display: flex;
-  flex-direction: column;
-  text-align: center;
-  gap: 2.5rem;
-}
-
-.navbar .nav-link {
-  /* Typography */
-  font-family: var(--font-serif);
-  font-size: 1.5rem;
-  font-style: italic;
-  text-transform: uppercase;
-  letter-spacing: 0.2rem;
-  text-decoration: none;
+  @font-face {
+    font-family: 'Inria Serif';
+    src: url('/static/Fonts/WOFF/Inria Serif-Regular.woff') format('woff');
+    font-weight: normal; font-style: normal; font-display: swap;
+  }
+  @font-face {
+    font-family: 'Inria Serif';
+    src: url('/static/Fonts/WOFF/Inria Serif-Bold.woff') format('woff');
+    font-weight: bold; font-style: normal; font-display: swap;
+  }
+  @font-face {
+    font-family: 'Inria Serif';
+    src: url('/static/Fonts/WOFF/Inria Serif-Light.woff') format('woff');
+    font-weight: 300; font-style: normal; font-display: swap;
+  }
   
-  /* Color & Interaction */
-  color: white;
-  transition: color 0.3s ease;
-}
+  /* ===================================================================
+  2. GLOBAL & UTILITY STYLES
+  =================================================================== */
 
-.navbar .nav-link:hover,
-.navbar .nav-link.active {
-  color: #f0f0f0;
-  text-underline-offset: 5px;
-}
+  .accommodations-section,
+  .transportation-section,
+  .things-to-do-section,
+  .luxury-footer {
+    position: relative;
+    z-index: 10; /* Must be higher than .hero-text (z-index: 2) */
+  }
 
-/* --- MOBILE HAMBURGER TOGGLE --- */
-.mobile-nav-toggle {
-  /* Layout */
-  display: flex;
-  flex-direction: column;
-  justify-content: space-around;
-  z-index: 1002;
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; overflow-x: hidden; }
+  body { padding: 0; margin: 0; max-width: 100%; }
   
-  /* Dimensions & Reset */
-  width: 30px;
-  height: 24px;
-  padding: 0;
-  border: none;
-  background: transparent;
-  cursor: pointer;
-}
-
-.hamburger-line {
-  width: 30px;
-  height: 3px;
-  background-color: white;
-  border-radius: 10px;
-}
-
-/* ===================================================================
-   DESKTOP NAV BREAKPOINT (min-width: 900px)
-   =================================================================== */
-@media (min-width: 900px) {
+  /* Hides the modal scrollbar from the body */
+  body.modal-active, body.nav-is-active { overflow: hidden; }
   
-  /* 1. Reset Navbar Spacing */
+  /* Re-usable class for section labels */
+  .section-label {
+    font-family: "Inria Serif", serif; text-transform: uppercase; font-style: italic;
+    letter-spacing: 0.2rem; color: #bcbdb5; margin-bottom: 2rem;
+  }
+  
+  /* ===================================================================
+     3. NAVIGATION
+     =================================================================== */
   #navbar {
-    justify-content: space-around;
-    padding: 0;
-    padding-top: 50px;
-    background-color: transparent;
-    transition: background-color 0.8s ease, transform 0.8s ease, padding-top 0.8s ease;
-  }
-
-  #navbar.scrolled {
+    position: sticky; top: 0; z-index: 1000;
+    display: flex; justify-content: space-between; align-items: center;
+    width: 100%; height: 90px; padding: 0 1.5rem;
     background-color: var(--color-dusty-blue);
-    padding-top: 0px;
+    transition: all 0.8s ease;
   }
-
-  /* 2. Hide Mobile Elements */
-  .mobile-nav-toggle {
-    display: none;
-  }
-
-  /* 3. Reset Menu (Remove Overlay) */
+  #navbar.scrolled { background-color: var(--color-dusty-blue); }
+  #navbar.hide-on-scroll-down { transform: translateY(-100%); }
+  .navbar .logo { max-height: 70px; width: auto; }
+  
+  /* Mobile Menu */
   .nav-menu {
-    /* Restore to flow layout */
-    position: static;
-    display: flex;
-    width: auto;
-    height: auto;
-    flex-direction: row;
-    
-    /* Remove mobile styles */
-    background-color: transparent;
-    padding-top: 0;
-    z-index: auto;
-    transition: none;
+    display: none; position: fixed; top: 0; left: 0; z-index: 1000;
+    width: 100%; height: 100vh;
+    flex-direction: column; align-items: center; justify-content: center;
+    background-color: var(--color-dusty-blue);
   }
-
-  /* 4. Horizontal Links */
-  .nav-links {
-    flex-direction: row;
-    gap: 60px;
-  }
-
-  /* 5. Smaller Desktop Font */
+  .nav-menu.is-active { display: flex; }
+  
+  .nav-links { display: flex; flex-direction: column; text-align: center; gap: 2.5rem; }
   .navbar .nav-link {
-    font-size: 0.9rem;
+    font-family: var(--font-serif); font-size: 1.5rem; font-style: italic;
+    text-transform: uppercase; letter-spacing: 0.2rem; text-decoration: none;
+    color: white; transition: color 0.3s ease;
   }
-}
-
-/* The Wrapper (Holds the label + the menu) */
-.nav-item-dropdown {
-  position: relative; /* Anchor point for the popup */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-}
-
-/* The Trigger Text ("Weekend Events") */
-.dropdown-trigger {
-  cursor: default; /* Shows regular arrow, not pointer, since it's not a link */
-  padding-bottom: 0; /* Remove default padding conflicts */
-}
-
-/* The Popup Menu (Hidden by default) */
-.dropdown-menu {
-  display: none;
-  position: absolute;
-  top: 100%; /* Position right below the navbar */
-  left: 50%;
-  transform: translateX(-50%); /* Center perfectly */
+  .navbar .nav-link:hover, .navbar .nav-link.active { color: #f0f0f0; text-underline-offset: 5px; }
   
-  /* Luxury styling */
-  background-color: #ffffff;
-  min-width: 240px;
-  padding: 15px 0;
-  box-shadow: 0 5px 20px rgba(0,0,0,0.08); /* Soft, expensive shadow */
-  border-top: 3px solid var(--color-deep-blue); /* Subtle accent strip */
-  border-radius: 0 0 4px 4px;
-  z-index: 1100;
-}
-
-/* The Links Inside */
-.dropdown-item {
-  display: block;
-  padding: 12px 25px;
-  text-align: center;
-  text-decoration: none;
-  font-style: italic;
+  /* Hamburger */
+  .mobile-nav-toggle {
+    display: flex; flex-direction: column; justify-content: space-around; z-index: 1002;
+    width: 30px; height: 24px; padding: 0; border: none; background: transparent; cursor: pointer;
+  }
+  .hamburger-line { width: 30px; height: 3px; background-color: white; border-radius: 10px; }
   
-  /* Typography matching your brand */
-  font-family: var(--font-serif);
-  font-size: 0.85rem;
-  text-transform: uppercase;
-  letter-spacing: 0.1rem;
-  color: var(--color-charcoal);
-  transition: all 0.2s ease;
-}
-
-/* Hover State for Items */
-.dropdown-item:hover {
-  background-color: #f7f9fb; /* Very light grey/blue */
-  color: var(--color-deep-blue);
-}
-
-/* --- DESKTOP HOVER INTERACTION --- */
-@media (min-width: 900px) {
-  /* Show menu when hovering the wrapper */
-  .nav-item-dropdown:hover .dropdown-menu {
-      display: block;
-      animation: fadeUp 0.3s ease;
-  }
-
-  /* Subtle animation for luxury feel */
-  @keyframes fadeUp {
-      from { opacity: 0; transform: translate(-50%, 10px); }
-      to { opacity: 1; transform: translate(-50%, 0); }
-  }
-}
-
-/* --- MOBILE ADJUSTMENTS --- */
-/* On mobile, we want them to just list out underneath */
-@media (max-width: 899px) {
-  .nav-item-dropdown {
-      flex-direction: column;
-      height: auto;
-  }
-
-  .dropdown-trigger {
-      margin-bottom: 1.5rem; /* Space before sub-items */
-  }
-
-  .dropdown-menu {
-      position: static; /* No longer floating */
-      display: flex; /* Always visible on mobile menu */
-      flex-direction: column;
-      transform: none;
-      background-color: transparent;
-      box-shadow: none;
-      border: none;
-      padding: 0;
-      min-width: auto;
-      gap: 1.5rem;
-  }
-
-  .dropdown-item {
-      color: rgba(255, 255, 255, 0.8); /* Slightly dimmer white than main links */
-      font-size: 1.1rem; /* Match mobile link size */
-      padding: 0;
-      font-style: italic; /* Differentiate slightly */
+  /* Desktop Logic */
+  @media (min-width: 900px) {
+    #navbar { justify-content: space-around; padding: 0; padding-top: 50px; background-color: transparent; }
+    #navbar.scrolled { background-color: var(--color-dusty-blue); padding-top: 0px; }
+    .mobile-nav-toggle { display: none; }
+    
+    .nav-menu {
+      position: static; display: flex; width: auto; height: auto; flex-direction: row;
+      background-color: transparent; padding-top: 0; z-index: auto; transition: none;
+    }
+    .nav-links { flex-direction: row; gap: 60px; }
+    .navbar .nav-link { font-size: 0.9rem; }
   }
   
-  .dropdown-item:hover {
-      background: none;
-      color: white;
+  /* Dropdown Logic */
+  .nav-item-dropdown { position: relative; display: flex; align-items: center; justify-content: center; height: 100%; }
+  .dropdown-trigger { cursor: default; padding-bottom: 0; }
+  .dropdown-menu { display: none; }
+  
+  @media (min-width: 900px) {
+    .dropdown-menu {
+        position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+        background-color: #ffffff; min-width: 240px; padding: 15px 0;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.08); border-top: 3px solid var(--color-deep-blue);
+        border-radius: 0 0 4px 4px; z-index: 1100;
+    }
+    .nav-item-dropdown:hover .dropdown-menu { display: block; animation: fadeUp 0.3s ease; }
+    .dropdown-item {
+        display: block; padding: 12px 25px; text-align: center; text-decoration: none;
+        font-family: var(--font-serif); font-size: 0.85rem; font-style: italic;
+        text-transform: uppercase; color: var(--color-charcoal); transition: all 0.2s ease;
+    }
+    .dropdown-item:hover { background-color: #f7f9fb; color: var(--color-deep-blue); }
+    @keyframes fadeUp { from { opacity: 0; transform: translate(-50%, 10px); } to { opacity: 1; transform: translate(-50%, 0); } }
   }
+  
+  @media (max-width: 899px) {
+    .nav-item-dropdown { flex-direction: column; height: auto; }
+    .dropdown-trigger { margin-bottom: 1.5rem; }
+    .dropdown-menu {
+        position: static; display: flex; flex-direction: column; transform: none;
+        background-color: transparent; box-shadow: none; border: none; padding: 0; min-width: auto; gap: 1.5rem;
+    }
+    .dropdown-item {
+        color: rgba(255, 255, 255, 0.8); font-size: 1.1rem; padding: 0; font-style: italic;
+    }
+  }
+  
+  /* ===================================================================
+     4. HERO SECTION
+     =================================================================== */
+  .travel-hero {
+    position: relative; height: 100vh; width: 100%; overflow: hidden; margin-top: -90px;
+  }
+  .hero-layer {
+    position: absolute; inset: 0; background-size: cover; background-position: center bottom; background-repeat: no-repeat;
+  }
+  .hero-bg { background-image: url("/static/Content/baypointebackground.png"); z-index: 1; }
+  .hero-fg { background-image: url("/static/Content/baypointeforeground.png"); z-index: 3; pointer-events: none; }
+  
+  .hero-text {
+    position: fixed; top: 30%; left: 50%; transform: translate(-50%, -50%);
+    z-index: 2; text-align: center; width: 100%; pointer-events: none;
+  }
+  .hero-text h1 {
+    font-family: 'DarlineScript', cursive; font-size: clamp(3rem, 6vw, 5rem);
+    font-weight: normal; color: #ffffff; text-shadow: 0 6px 30px rgba(0, 0, 0, 0.15);
+  }
+  
+  /* ===================================================================
+   5. ACCOMMODATIONS (GRID & CARDS)
+   =================================================================== */
+.accommodations-section { 
+  background-color: #fcfcfc; 
+  padding: 4rem 1.5rem; 
 }
-
-/* Desktop Hero Adjustment */
-@media (min-width: 900px) {
-    .script-font { font-size: 6rem; }
-}
-
-
-/*
-========================================
-ACCOMMODATIONS SECTION (UPDATED)
-========================================
-*/
-
-/* --- CLEAN BACKGROUND OVERRIDE --- */
-.accommodations-section {
-  background-image: none !important; /* Remove texture */
-  background-color: #fcfcfc; /* Clean off-white */
-  padding: 4rem 1.5rem;
-}
-
-/* Hide the floral images */
-.floral-border {
-  display: none !important;
-}
-
-/* --- RESTORED TEXT STYLING --- */
-.accommodations-content {
-  text-align: center; /* Ensures text is centered */
-}
+.accommodations-content { text-align: center; }
 
 .accommodations-content .section-title {
-  /* Use the exact name from your @font-face definition */
-  font-family: 'DarlineScript', 'Darline Script', cursive; 
-  font-size: 2.8rem; 
-  font-weight: normal;
-  color: #9aacc4; /* Your dusty blue */
-  margin-bottom: 1.5rem;
-  line-height: 1.2;
+font-family: 'DarlineScript', cursive; 
+font-size: 2.8rem; 
+font-weight: normal;
+color: #9aacc4; 
+margin-bottom: 1.5rem; 
+line-height: 1.2;
 }
 
-.accommodations-description {
-  font-family: 'Inria Serif', serif;
-  font-size: 1.1rem;
-  line-height: 1.6;
-  color: #555;
-  max-width: 800px; 
-  margin: 0 auto 3rem auto; /* Centers the text block */
-}
-
-/* --- GRID ADJUSTMENTS (3 Columns Horizontal) --- */
+/* Grid Layout - LOCKED TO 1000px */
 .accommodation-grid.centered-grid {
-  display: grid;
-  /* Default to 3 columns side-by-side */
-  grid-template-columns: repeat(3, 1fr); 
-  gap: 2rem;
-  /* Increased width so cards stay large */
-  max-width: 1000px; 
-  margin: 0 auto;
-  justify-content: center;
+display: grid; 
+grid-template-columns: repeat(3, 1fr); 
+gap: 2rem;
+width: 100%;
+max-width: 1000px; /* Locked width */
+margin: 0 auto; 
+justify-content: center;
 }
 
-/* Only stack them vertically on actual mobile phones */
+/* Mobile Stack */
 @media (max-width: 850px) {
-  .accommodation-grid.centered-grid {
-      grid-template-columns: 1fr; /* Stack on mobile/small tablet */
-      max-width: 500px;
-  }
+.accommodation-grid.centered-grid { 
+    grid-template-columns: 1fr; 
+    max-width: 500px; 
+}
 }
 
-/* --- NEW CARD STYLING (Hotel Facade Look) --- */
-.hotel-style-card {
-  text-align: left; /* Align text left inside the centered grid */
-  background: transparent;
-  box-shadow: none; /* Clean look */
-  width: 100%;
+/* Desktop Adjustments (Spacing only, no width change) */
+@media (min-width: 900px) {
+.accommodations-section { padding: 80px 2rem; }
+.accommodations-content .section-title { font-size: 4rem; }
+/* We removed the max-width: 1400px override here */
+.accommodation-grid.centered-grid { gap: 3rem; }
 }
 
-/* Carousel Wrapper */
+/* --- Card Styling (Unchanged) --- */
+.hotel-style-card { text-align: left; background: transparent; width: 100%; }
+
 .card-carousel-wrapper {
-  position: relative;
-  width: 100%;
-  /* Standard rectangular aspect ratio */
-  aspect-ratio: 4/3; 
-  overflow: hidden;
-  margin-bottom: 1.5rem;
-  background-color: #eee;
+position: relative; width: 100%; aspect-ratio: 4/3; 
+overflow: hidden; margin-bottom: 1.5rem; background-color: #eee;
 }
-
-.card-carousel-images {
-  width: 100%;
-  height: 100%;
-  position: relative;
-}
-
 .card-carousel-images img {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  opacity: 0;
-  transition: opacity 0.5s ease;
+position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+object-fit: cover; opacity: 0; transition: opacity 0.5s ease;
 }
+.card-carousel-images img.active { opacity: 1; z-index: 1; }
 
-.card-carousel-images img.active {
-  opacity: 1;
-  z-index: 1;
-}
-
-/* --- THE "WHITE BOX" ARROWS --- */
 .card-carousel-nav {
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  background-color: white;
-  display: flex;
-  z-index: 10;
-  padding: 0;
+position: absolute; bottom: 0; right: 0; background-color: white;
+display: flex; z-index: 10; padding: 0;
 }
-
 .nav-arrow {
-  background: white;
-  border: none;
-  cursor: pointer;
-  width: 45px; /* Slightly larger targets */
-  height: 45px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #555;
-  transition: background-color 0.2s;
-  font-size: 1.2rem;
+background: white; border: none; cursor: pointer; width: 45px; height: 45px;
+display: flex; align-items: center; justify-content: center; color: #555;
+transition: background-color 0.2s; font-size: 1.2rem;
 }
+.nav-arrow:hover { background-color: #f0f0f0; color: #000; }
 
-.nav-arrow:hover {
-  background-color: #f0f0f0;
-  color: #000;
-}
-
-/* --- TYPOGRAPHY UPDATES --- */
-.hotel-card-details {
-  padding: 0 0.5rem;
-}
-
-/* Subtitle (above title) */
 .hotel-subtitle {
-  font-family: 'Inria Serif', serif;
-  font-style: italic;
-  font-size: 1rem;
-  color: #8D9BA8; /* Muted blue/gray */
-  margin-bottom: 0.4rem;
+font-family: 'Inria Serif', serif; font-style: italic; font-size: 1rem;
+color: #8D9BA8; margin-bottom: 0.4rem;
 }
-
-/* Title (Main Name) */
 .hotel-title {
-  font-family: 'Inria Serif', serif;
-  font-weight: normal;
-  font-size: 1.5rem; /* Slightly larger */
-  color: #333;
-  margin-bottom: 1rem;
-  letter-spacing: 0.05rem;
+font-family: 'Inria Serif', serif; font-weight: normal; font-size: 1.5rem;
+color: #333; margin-bottom: 1rem; letter-spacing: 0.05rem;
 }
-
-/* Info Rows */
-.hotel-info-rows {
-  margin-bottom: 1.5rem;
-  border-top: 1px solid #eee;
-  padding-top: 1rem;
-}
-
+.hotel-info-rows { margin-bottom: 1.5rem; border-top: 1px solid #eee; padding-top: 1rem; }
 .info-row {
-  font-family: 'Inria Serif', serif;
-  font-size: 0.8rem;
-  color: #666;
-  margin-bottom: 0.4rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05rem;
+font-family: 'Inria Serif', serif; font-size: 0.8rem; color: #666;
+margin-bottom: 0.4rem; text-transform: uppercase; letter-spacing: 0.05rem;
 }
 
-/* View Room Link */
-.view-room-link {
-  font-family: 'Inria Serif', serif;
-  font-size: 0.8rem;
-  text-transform: uppercase;
-  letter-spacing: 0.15rem;
-  text-decoration: none;
-  color: #333;
-  border-bottom: 1px solid transparent;
-  transition: all 0.3s;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.view-room-link:hover {
-  color: #8D9BA8;
-  gap: 12px; /* Slight movement animation */
-}
-
-.short-arrow {
-  font-size: 1rem;
-}
-
-/* --- AMENITIES ROW STYLING --- */
+/* Card Amenities */
 .amenities-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-top: 0.8rem;
-  padding-top: 0.8rem;
-  border-top: 1px dashed #eee; /* Subtle separator */
+display: flex; align-items: center; gap: 10px; margin-top: 0.8rem;
+padding-top: 0.8rem; border-top: 1px dashed #eee;
 }
-
 .amenities-label {
-  font-family: 'Inria Serif', serif;
-  font-size: 0.8rem;
-  color: #999;
-  text-transform: uppercase;
-  letter-spacing: 0.05rem;
+font-family: 'Inria Serif', serif; font-size: 0.8rem; color: #999; text-transform: uppercase;
 }
+.amenities-icons { display: flex; gap: 8px; flex-wrap: wrap; }
+.amenity-icon { position: relative; cursor: help; color: #888; font-size: 1rem; transition: color 0.3s; }
+.amenity-icon:hover { color: #6587ab; }
 
-.amenities-icons {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-/* Individual Icon Wrapper */
-.amenity-icon {
-  position: relative; /* Essential for tooltip positioning */
-  cursor: help;
-  color: #888;
-  font-size: 1rem;
-  transition: color 0.3s ease;
-}
-
-.amenity-icon:hover {
-  color: #6587ab; /* Your Wedding Blue */
-}
-
-/* --- TOOLTIP POPUP --- */
 .amenity-icon::after {
-  content: attr(data-tooltip); /* Grabs text from HTML */
-  
-  position: absolute;
-  bottom: 140%; /* Position above the icon */
-  left: 50%;
-  transform: translateX(-50%);
-  
-  background-color: #333;
-  color: #fff;
-  font-family: "Inria Serif", serif;
-  font-size: 0.75rem;
-  white-space: nowrap;
-  padding: 5px 10px;
-  border-radius: 4px;
-  
-  /* Hidden by default */
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.3s, visibility 0.3s;
-  pointer-events: none;
-  z-index: 100;
+content: attr(data-tooltip); position: absolute; bottom: 140%; left: 50%;
+transform: translateX(-50%); background-color: #333; color: #fff;
+font-family: "Inria Serif", serif; font-size: 0.75rem; white-space: nowrap;
+padding: 5px 10px; border-radius: 4px; opacity: 0; visibility: hidden; pointer-events: none;
 }
+.amenity-icon:hover::after { opacity: 1; visibility: visible; }
 
-/* Little triangle arrow at bottom of tooltip */
-.amenity-icon::before {
-  content: '';
-  position: absolute;
-  bottom: 120%;
-  left: 50%;
-  transform: translateX(-50%);
-  border-width: 5px;
-  border-style: solid;
-  border-color: #333 transparent transparent transparent;
-  
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.3s, visibility 0.3s;
-  z-index: 100;
+.view-room-link {
+font-family: 'Inria Serif', serif; font-size: 0.8rem; text-transform: uppercase;
+letter-spacing: 0.15rem; text-decoration: none; color: #333;
+display: inline-flex; align-items: center; gap: 8px;
 }
+.view-room-link:hover { color: #8D9BA8; gap: 12px; }
 
-/* Show Tooltip on Hover */
-.amenity-icon:hover::after,
-.amenity-icon:hover::before {
-  opacity: 1;
-  visibility: visible;
-}
 
-/*
-========================================
-ACCOMMODATION MODAL STYLES (NEW)
-========================================
-*/
+/* ===================================================================
+ 6. TRANSPORTATION & ADVENTURE
+ =================================================================== */
+/* Transportation */
+.transportation-section { padding: 4rem 1.5rem; background-color: #ffffff; }
 
-/* --- Slideshow Container --- */
-.slideshow-container {
-  position: relative;
+/* Locked to 1000px to match Accommodations */
+.editorial-layout { 
   width: 100%;
-  max-width: 600px;
-  margin: 0 auto;
-  background-color: #f0f0f0;
-  
-  /* THIS IS THE CHANGE: */
-  border-radius: 50%; 
-  
-  overflow: hidden;
-  height: 0;
-  padding-top: 60%; /* This keeps your 16:9 ratio */
-  border: 4px solid #8D9BA8;
-}
-
-.slide {
-  /* Stacks all slides on top of each other */
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  
-  /* Fade-in/out settings */
-  opacity: 0;
-  transition: opacity 1.5s ease-in-out; /* This is your fade speed */
-  
-  /* This ensures the image inside behaves */
-  overflow: hidden; 
-}
-
-/* This new class will be added by JS to show a slide */
-.slide.is-active {
-  opacity: 1;
-}
-
-.slide img {
-  /* Make the image fill the slide container */
-  width: 100%;
-  height: 100%;
-  object-fit: cover; /* This will crop, 'contain' will letterbox */
-}
-
-/* Next & previous buttons */
-.prev, .next {
-  display: none; /* Hidden on mobile */
-  cursor: pointer;
-  position: absolute;
-  top: 50%;
-  width: auto;
-  padding: 16px;
-  margin-top: -30px; /* Center vertically */
-  color: white;
-  font-weight: bold;
-  font-size: 20px;
-  transition: 0.3s ease;
-  border-radius: 0 3px 3px 0;
-  user-select: none;
-  background-color: rgba(0, 0, 0, 0.3);
-}
-
-/* Position the "next button" to the right */
-.next {
-  right: 0;
-  border-radius: 3px 0 0 3px;
-}
-
-.prev:hover, .next:hover {
-  background-color: rgba(0, 0, 0, 0.6);
-}
-
-/* Dots */
-.dot-container {
-  display: none;
-  text-align: center;
-  padding: 12px 0;
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-}
-
-.dot {
-  cursor: pointer;
-  height: 10px;
-  width: 10px;
-  margin: 0 4px;
-  background-color: rgba(255, 255, 255, 0.5);
-  border-radius: 50%;
-  display: inline-block;
-  transition: background-color 0.3s ease;
-}
-
-.dot.active, .dot:hover {
-  background-color: #ffffff;
-}
-
-@keyframes fade {
-  from { opacity: 0.4 }
-  to { opacity: 1 }
-}
-
-/* --- Modal Content Text --- */
-.modal-accomm-content {
-  padding-top: 20px;
-}
-
-.modal-accomm-title {
-  font-family: "Inria Serif", serif;
-  font-weight: bold;
-  font-size: 1.8rem;
-  color: #6587ab;
-  margin: 0 0 15px 0;
-  text-align: left;
-}
-
-.modal-accomm-highlights {
-  font-family: "Inria Serif", serif;
-  font-weight: 300;
-  line-height: 1.6;
-  color: #333;
-  text-align: left;
-  padding-left: 20px;
-  margin-bottom: 25px;
-}
-
-.modal-accomm-highlights li {
-  margin-bottom: 8px;
-}
-
-.modal-accomm-booking {
-  text-align: left;
-  font-family: "Inria Serif", serif;
-  font-weight: 300;
-  line-height: 1.6;
-  color: #333;
-  background-color: #f8f8f8;
-  border: 1px solid #eee;
-  border-radius: 8px;
-  padding: 15px 20px;
-}
-
-.modal-accomm-booking h4 {
-  font-family: "Inria Serif", serif;
-  font-weight: bold;
-  text-transform: uppercase;
-  letter-spacing: 0.1rem;
-  color: #9aacc4;
-  margin-top: 0;
-  margin-bottom: 10px;
-  font-size: 0.9rem;
-}
-
-.modal-accomm-booking p {
-  margin: 0;
-}
-
-/*
-========================================
-ACCOMMODATIONS - TABLET/DESKTOP BREAKPOINTS
-========================================
-*/
-
-@media (min-width: 600px) {
-  /* Stack to a 2x2 grid */
-  .accommodation-grid {
-      grid-template-columns: repeat(2, 1fr);
-      gap: 2rem;
-      max-width: 600px; /* Constrain grid width */
-  }
-
-  .accommodations-content .section-title {
-      font-size: 4rem; /* Enlarge title */
-  }
-
-  .slideshow-container {
-    padding-top: 40%; 
-  }
-
-}
-
-@media (min-width: 900px) {
-  .accommodations-section {
-      padding: 80px 2rem; /* Revert to desktop padding */
-  }
-
-  /* On desktops, show the large florals */
-  .floral-border {
-      display: block;
-  }
-
-  /* Go to 4-column grid */
-  .accommodation-grid {
-    /* 1. Change to 3 columns so your 3 cards fill the whole width */
-    grid-template-columns: repeat(3, 1fr); 
-    
-    /* 2. Increase the gap for that luxurious "air" */
-    gap: 3rem; 
-    
-    /* 3. Increase max-width to match your Transportation section */
-    max-width: 1400px; 
-  }
-
-  .slideshow-container {
-    padding-top: 40%; 
-  }
-}
-
-/* ========================================
-TRANSPORTATION: MATCHING WIDTH LAYOUT
-========================================
-*/
-
-.transportation-section {
-  /* Match the padding of your Accommodations section (6rem = approx 96px) */
-  padding: 4rem 1.5rem; 
-  background-color: #ffffff;
-}
-
-.editorial-layout {
-  /* MATCHING WIDTH: Exactly the same as your Accommodation Grid */
   max-width: 1000px; 
-  margin: 0 auto;
-  
-  /* Mobile Default: Stacked */
-  display: flex;
-  flex-direction: column;
-  gap: 3rem;
+  margin: 0 auto; 
+  display: flex; 
+  flex-direction: column; 
+  gap: 3rem; 
 }
 
-/* --- Left Side (Header) --- */
-.editorial-header {
-  text-align: left;
-}
-
-.transportation-section .section-title {
-  font-family: 'DarlineScript', 'Darline Script', cursive; 
-  font-size: 4rem; 
-  font-weight: 400;
-  color: #9aacc4;
-  margin-bottom: 1.5rem;
-  line-height: 1;
-}
-
-.transportation-section .section-description {
-  font-family: 'Inria Serif', serif;
-  font-size: 1rem;
-  font-style: italic;
-  color: #777;
-  max-width: 450px; 
-  margin: 0; 
-  line-height: 1.6;
-}
-
-/* --- Right Side (Content) --- */
-.editorial-content {
-  text-align: left;
-}
-
-.info-group {
-  margin-bottom: 2rem;
-  padding-bottom: 2rem;
-  border-bottom: 1px solid #f0f0f0; 
-}
-.info-group:last-child {
-  margin-bottom: 0;
-  border-bottom: none;
-  padding-bottom: 0;
-}
-
-.editorial-subtitle {
-  font-family: 'Inria Serif', serif;
-  font-size: 1.25rem;
-  text-transform: uppercase;
-  letter-spacing: 0.2em;
-  color: #6587ab;
-  margin-bottom: 1.5rem;
-  display: block;
-  font-style: italic;
-}
-
-/* THE FIX: Ensure text spans the full width of its column */
-.editorial-content p {
-  font-family: 'Inria Serif', serif;
-  font-size: 1rem;
-  line-height: 1.8;
-  color: #444;
-  margin-bottom: 1.25rem;
-  width: 100%; 
-  max-width: none; /* Removes any restriction */
-}
-
-.editorial-content strong {
-  font-weight: 600;
-  color: #222;
-}
-
-/* ========================================
-DESKTOP ALIGNMENT (The Match)
-=======================================
-*/
-@media (min-width: 900px) {
-  .transportation-section {
-      /* Match the 80px padding from Accommodations desktop view */
-      padding: 80px 2rem; 
+  .transportation-section .section-title {
+  font-family: 'DarlineScript', cursive; font-size: 4rem; font-weight: 400;
+  color: #9aacc4; margin-bottom: 1.5rem; line-height: 1;
+  }
+  .transportation-section .section-description {
+  font-family: 'Inria Serif', serif; font-size: 1rem; font-style: italic; color: #777; max-width: 450px;
   }
 
-  .editorial-layout {
-    display: grid;
-    /* Here is the alignment fix:
-       25% for Title | 5% Gap | 70% for Content
-       This ensures the content column is very wide (like your cards).
-    */
-    grid-template-columns: 30% 65%; 
-    gap: 5%; 
-    align-items: start; 
+  .editorial-subtitle {
+  font-family: 'Inria Serif', serif; font-size: 1.25rem; text-transform: uppercase;
+  letter-spacing: 0.2em; color: #6587ab; margin-bottom: 1.5rem; font-style: italic;
+  }
+  .editorial-content p {
+  font-family: 'Inria Serif', serif; font-size: 1rem; line-height: 1.8; color: #444; margin-bottom: 1.25rem;
   }
 
-  .editorial-header {
-    margin-top: 0.5rem; 
-  }
-}
-
-/* ===================================================================
-ADVENTURE SECTION STYLES (MOBILE-FIRST REFACTOR)
-=================================================================== 
-*/
-
-.adventure-section {
-  width: 100%;
-  margin: 0px auto;
-  padding: 60px 20px;
-  box-sizing: border-box;
-  text-align: center;
-  background-image: repeating-linear-gradient(
-    90deg, 
-    #eff4fa, /* Your light blue */
-    #eff4fa 60px, 
-    #ffffff 60px, /* A lighter blue/white */
-    #ffffff 120px
-  );
-}
-
-/* --- MOBILE STYLES (Base) --- */
-.adventure-header {
-  margin-bottom: 40px;
-  display: inline-block; 
-  padding: 15px 25px; /* Mobile padding */
-  max-width: 90%;
-}
-
-.adventure-title {
-  font-family: 'DarlineScript', 'Darline Script', cursive; 
-  font-size: 2.5rem; /* Mobile font size */
-  font-weight: normal;
-  color: #9aacc4; /* Your blue */
-  margin: 0;
-  line-height: 1.2;
-}
-
-.adventure-subtitle {
-  font-family: "Inria Serif", serif;
-  font-size: 1.1rem;
-  font-style: italic;
-  color: #888;
-  margin-top: 10px;
-}
-
-.adventure-chooser {
-  display: flex;
-  flex-direction: column; /* Stack vertically on mobile */
-  align-items: center; /* Center stacked cards */
-  gap: 20px; /* Mobile gap */
-  padding-top: 20px;
-}
-
-.adventure-card {
-  background: none;
-  font: inherit;
-  color: inherit;
-  cursor: pointer;
-  background-color: #ffffff;
-  display: flex;
-  flex-direction: column;
-  align-items: center; 
-  justify-content: center; 
-  
-  width: 100%;
-  max-width: 80%; /* Use % for mobile */
-  min-height: 300px;
-  padding: 40px 20px;
-  text-align: center;
-  
-  /* This calculation keeps the oval shape on mobile */
-  border-radius: calc( (100vw * 0.8) / 2 );
-  
-  border: 1px solid #9aacc4;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-}
-
-.adventure-card:hover {
-  transform: translateY(-8px) scale(1.03);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-  border-color: #6587ab; 
-}
-
-.card-icon {
-  width: 80px; /* Mobile icon size */
-  height: 80px;
-  margin-bottom: 20px;
-}
-
-.card-icon img {
-  width: 100%;
-  height: 100%;
-  display: block;
-  object-fit: contain;
-}
-
-.adventure-card h3 {
-  font-family: "Inria Serif", serif;
-  font-weight: bold;
-  font-size: 1.2rem; /* Mobile heading size */
-  color: #6587ab;
-  margin: 0 0 10px 0;
-}
-
-.adventure-card p {
-  font-family: "Inria Serif", serif;
-  font-weight: 300; 
-  font-size: 0.9rem; /* Mobile p size */
-  line-height: 1.5;
-  color: #555;
-  margin: 0;
-  max-width: 220px; 
-}
-
-/*
-========================================
-ADVENTURE - TABLET/DESKTOP BREAKPOINTS
-========================================
-*/
-
-@media (min-width: 768px) {
-  .adventure-title {
-      font-size: 3rem; /* Tablet title size */
+  @media (min-width: 900px) {
+  .transportation-section { padding: 80px 2rem; }
+  .editorial-layout { display: grid; grid-template-columns: 30% 65%; gap: 5%; align-items: start; }
   }
 
-  .adventure-chooser {
-      flex-direction: row; /* Go horizontal */
-      justify-content: center;
-      flex-wrap: wrap; /* Allow wrapping */
-      gap: 30px; /* Tablet gap */
+  /* Adventure / Things To Do */
+  .things-to-do-section { padding: 4rem 1.5rem; background-color: #fcfcfc; margin: 0 auto; }
+  .things-to-do-section .section-title {
+  text-align: center; margin-bottom: 3rem; font-family: 'DarlineScript', cursive;
+  font-size: 4rem; font-weight: normal; color: #9aacc4;
   }
 
-  .adventure-card {
-      max-width: 240px; /* Tablet card width */
-      min-height: 340px;
-      border-radius: 120px; /* Fixed oval shape */
-  }
+  .editorial-grid { display: grid; grid-template-columns: 1fr; gap: 2rem; }
 
-  .card-icon {
-      width: 100px; /* Revert to larger icon */
-      height: 100px;
-  }
-
-  .adventure-card h3 {
-      font-size: 1.4rem; /* Larger heading */
-  }
-}
-
-@media (min-width: 960px) {
-  .adventure-title {
-      font-size: 4rem; /* Desktop title size */
-  }
-
-  .adventure-chooser {
-      gap: 50px; /* Desktop gap */
-  }
-
-  .adventure-card {
-      max-width: 280px; /* Desktop card width */
-      min-height: 400px;
-      border-radius: 140px; /* Desktop oval shape */
-  }
-}
-
-/* ===================================================================
-ITINERARY MODAL STYLES (No changes needed - already mobile-friendly)
-=================================================================== 
-*/
-
-
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 1050;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  animation: fadeIn 0.3s ease-out;
-}
-
-.modal-hidden {
-  display: none;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-.modal-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(5px);
-  cursor: pointer;
-}
-
-.modal-content {
-  position: relative;
-  z-index: 1051;
-  background-color: #ffffff;
-  border-radius: 10px;
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
-  width: 90%;
-  max-width: 600px;
-  max-height: 90vh;
-  overflow-y: auto;
-  padding: 30px 30px;
-  box-sizing: border-box;
-  animation: slideIn 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-}
-
-@keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.modal-close {
-  position: absolute;
-  top: 10px;
-  right: 15px;
-  font-family: sans-serif;
-  font-size: 2.5rem;
-  font-weight: 300;
-  color: #aaa;
-  background: none;
-  border: none;
-  cursor: pointer;
-  line-height: 1;
-}
-
-.modal-close:hover {
-  color: #333;
-}
-
-@media (min-width: 960px) {
-  .modal-content {
-      max-width: 900px;
-  }
-}
-
-/* ===================================================================
-MODAL *ITINERARY* STYLES (No changes needed)
-=================================================================== 
-*/
-
-#modal-itinerary-content h2 {
-  font-family: 'DarlineScript', 'Darline Script', cursive; 
-  font-size: 2.5rem;
-  font-weight: normal;
-  color: #6587ab;
-  text-align: center;
-  margin: 0 0 25px 0;
-}
-
-#modal-itinerary-content h4 {
-  font-family: "Inria Serif", serif;
-  font-weight: bold;
-  text-transform: uppercase;
-  letter-spacing: 0.1rem;
-  color: #9aacc4;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 5px;
-  margin-top: 30px;
-  margin-bottom: 15px;
-}
-
-#modal-itinerary-content p {
-  font-family: "Inria Serif", serif;
-  font-weight: 300;
-  line-height: 1.6;
-  color: #333;
-  margin-bottom: 15px;
-}
-
-#modal-itinerary-content strong {
-  font-weight: bold;
-  color: #6587ab;
-}
-
-.download-button {
-  display: inline-block;
-  text-decoration: none;
-  background-color: #6587ab;
-  color: #ffffff;
-  padding: 12px 25px;
-  border-radius: 25px;
-  font-family: "Inria Serif", serif;
-  font-weight: bold;
-  text-transform: uppercase;
-  letter-spacing: 0.1rem;
-  margin-top: 20px;
-  text-align: center;
-  transition: all 0.3s ease;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.download-button:hover {
-  background-color: #4e6a8a; /* Darker blue */
-  transform: scale(1.03);
-}
-
-/* ===================================================================
-CLEANUP - All old max-width media queries have been removed 
-and replaced with mobile-first min-width queries above.
-=================================================================== 
-*/
-
-/*
-========================================
-TRAVEL / ACCOMMODATIONS HERO SECTION
-========================================
-*/
-
-.travel-hero {
-  position: relative;
-  height: 100vh;
-  width: 100%;
-  overflow: hidden;
-  clip-path: inset(0);
-  margin-top: -90px;
-}
-
-/* Shared image behavior */
-.hero-layer {
-  position: absolute;
-  inset: 0;
-  background-size: cover;
-  background-position: center bottom;
-  background-repeat: no-repeat;
-}
-
-/* Background image (full landscape with sky) */
-.hero-bg {
-  background-image: url("/static/Content/baypointebackground.png");
-  z-index: 1;
-}
-
-/* Foreground image (same landscape, sky removed) */
-.hero-fg {
-  background-image: url("/static/Content/baypointeforeground.png");
-  z-index: 3;
-  pointer-events: none;
-}
-
-/* Text layer */
-.hero-text {
-  font-family: 'DarlineScript', 'Darline Script', cursive; 
-  position: fixed;
-  top: 30%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 2;
-  text-align: center;
-  width: 100%;
-  pointer-events: none;
-}
-
-.hero-text h1 {
-  font-family: 'DarlineScript', 'Darline Script', cursive; 
-  font-size: clamp(3rem, 6vw, 5rem);
-  font-weight: normal;
-  color: #ffffff;
-  text-shadow: 0 6px 30px rgba(0, 0, 0, 0.15);
-}
-
-/* Release the fixed text once we scroll past the hero */
-.travel-hero::after {
-  content: "";
-  position: absolute;
-  bottom: 0;
-  height: 1px;
-  width: 100%;
-}
-
-/* ===================================================================
-   EDITORIAL / THINGS TO DO SECTION
-   =================================================================== */
-  
-.things-to-do-section {
-    /* MOBILE: 1.5rem side padding prevents edge-touching */
-    padding: 4rem 1.5rem; 
-    background-color: #fcfcfc;
-    margin: 0 auto;
-}
-
-.editorial-content {
-    width: 100%;
-}
-
-/* Reusing your section-title class, but ensuring center alignment */
-.things-to-do-section .section-title {
-    text-align: center;
-    margin-bottom: 3rem;
-    color: #9aacc4;
-    font-family: 'DarlineScript', 'Darline Script', cursive; 
-    font-size: 4rem; 
-    font-weight: normal;
-    color: #9aacc4; /* Your dusty blue */
-    margin-bottom: 1.5rem;
-    line-height: 1.2;
-}
-
-/* --- GRID LAYOUT --- */
-.editorial-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 2rem;
-}
-
-/* Desktop: Split 60% Left / 40% Right */
-@media (min-width: 900px) {
-
-  .things-to-do-section {
-    padding: 80px 2rem; 
-   }
-
-  .editorial-grid {
-      /* This ratio gives the left image more dominance */
+  @media (min-width: 900px) {
+  .things-to-do-section { padding: 80px 2rem; }
+  /* Locked max-width to 1000px */
+  .editorial-grid { 
       grid-template-columns: 1.4fr 1fr; 
       gap: 2rem; 
-      /* Removing fixed height so it grows naturally with the content */
-      width: 100%;       /* Ensure it doesn't overflow smaller screens */
-      max-width: 1000px; /* Cap it at 1000px */
-      margin: 0 auto;    /* This centers the grid horizontally */
+      max-width: 1000px; 
+      margin: 0 auto; 
   }
-}
+  }
 
-/* --- LEFT COLUMN: FEATURE ITEM --- */
-.feature-item {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    min-height: 400px; /* Mobile height */
-    overflow: hidden;
-}
+  .feature-item { position: relative; min-height: 400px; overflow: hidden; }
+  .feature-image { width: 100%; height: 100%; object-fit: cover; transition: transform 0.8s ease; }
+  .feature-item:hover .feature-image { transform: scale(1.05); }
 
-.feature-link-wrapper {
-    display: block;
-    width: 100%;
-    height: 100%;
-    text-decoration: none;
-    color: inherit;
-    position: relative;
-}
+  .feature-text-overlay {
+  position: absolute; bottom: 0; left: 0; background-color: #fff;
+  padding: 1.5rem 2rem 1rem 0; max-width: 80%; z-index: 10;
+  }
+  .editorial-heading {
+  font-family: 'Inria Serif', serif; font-size: 1.8rem; font-weight: bold;
+  color: #333; margin: 0 0 0.5rem 0; text-transform: uppercase;
+  }
 
-.feature-image-container {
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-}
-
-.feature-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.8s ease;
-}
-
-/* Zoom effect on hover */
-.feature-link-wrapper:hover .feature-image {
-    transform: scale(1.05);
-}
-
-/* The White Box Overlay */
-.feature-text-overlay {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    background-color: #fff;
-    padding: 1.5rem 2rem 1rem 0; /* Padding right/top/bottom, 0 left implies sticking to edge */
-    max-width: 80%;
-    z-index: 10;
-}
-
-/* "Cut out" look for the white box */
-@media (min-width: 900px) {
-    .feature-text-overlay {
-        padding: 2rem 3rem; 
-    }
-}
-
-.editorial-heading {
-    font-family: 'Inria Serif', serif;
-    font-size: 1.8rem;
-    font-weight: bold;
-    color: #333;
-    margin: 0 0 0.5rem 0;
-    text-transform: uppercase;
-    letter-spacing: 0.05rem;
-}
-
-.read-more-btn {
-    font-family: 'Inria Serif', serif;
-    font-size: 0.9rem;
-    text-transform: uppercase;
-    letter-spacing: 0.15rem;
-    color: #6587ab; /* Wedding Blue */
-    font-weight: 700;
-    transition: letter-spacing 0.3s ease;
-}
-
-.feature-link-wrapper:hover .read-more-btn {
-    letter-spacing: 0.25rem; /* Expands on hover */
-}
-
-/* --- RIGHT COLUMN: LIST ITEMS --- */
-.editorial-list {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between; /* Spreads them out evenly to match left image */
-  gap: 1rem; /* A little breathing room (0.5rem is very tight) */
-  height: 100%;
-}
-
-.list-item {
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-    text-decoration: none;
-}
-
-.list-image-wrapper {
-  /* Increased from 220px -> 300px to fill horizontal space */
-  width: 200px; 
-  /* Slight bump in height to keep ratio nice (from 140px -> 180px) */
-  height: 130px; 
-  flex-shrink: 0;
-  overflow: hidden;
-  border-radius: 2px; /* Optional: adds a tiny polish */
-}
-
-.list-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.5s ease;
-}
-
-.list-item:hover .list-image {
-    transform: scale(1.1);
-}
-
-.list-text {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-}
-
-.list-category {
-    font-family: 'Inria Serif', serif;
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    color: #999;
-    letter-spacing: 0.1rem;
-    margin-bottom: 0.3rem;
-}
-
-.editorial-subheading {
-    font-family: 'Inria Serif', serif;
-    font-size: 1.2rem;
-    color: #333;
-    margin: 0 0 0.5rem 0;
-    font-weight: normal;
-}
-
-.read-more-small {
-    font-family: 'Inria Serif', serif;
-    font-size: 0.8rem;
-    color: #6587ab;
-    text-transform: uppercase;
-    letter-spacing: 0.05rem;
-    opacity: 0; /* Hidden by default */
-    transform: translateX(-10px);
-    transition: all 0.3s ease;
-}
-
-/* Show "View Details" text on hover */
-.list-item:hover .read-more-small {
-    opacity: 1;
-    transform: translateX(0);
-}
-
-/* =========================================
-   LUXURY FOOTER STYLES
-   ========================================= */
-
-   .luxury-footer {
-    width: 100%;
-    /* The "Bookend" Effect: Matches your navbar color */
-    background-color: var(--color-dusty-blue); 
-    color: #ffffff;
-    padding: 100px 20px 60px; /* Generous top padding feels expensive */
-    text-align: center;
-    position: relative;
-}
-
-.footer-content {
-    max-width: 1200px;
-    margin: 0 auto;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 3rem;
-}
-
-/* 1. Control the size here */
-.footer-logo-container {
-  width: 100%;        /* Takes up available space up to the max-width */
-  max-width: 250px;   /* <--- CHANGE THIS VALUE to make it smaller (e.g. 80px) */
-  margin: 0 auto 20px; /* Centers it horizontally and keeps the bottom gap */
-}
-
-/* 2. Ensure the image fits inside the container */
-.footer-logo {
-  width: 100%;      /* Forces image to fill the container width */
-  height: auto;     /* Maintains aspect ratio */
-  display: block;   /* Removes any tiny invisible margins under the image */
-}
-
-/* 1. The Sign-Off Script */
-.footer-message h2 {
-    font-family: var(--font-script);
-    font-size: 2rem;
-    color: #ffffff;
-    margin: 0;
-    line-height: 1.2;
-    text-shadow: 0 2px 10px rgba(0,0,0,0.05); /* Very subtle depth */
-    font-weight: normal;
-}
-
-/* 2. The Navigation Row */
-.footer-nav {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 2rem;
-    padding: 2rem 0;
-    border-top: 1px solid rgba(255, 255, 255, 0.2); /* Soft semi-transparent line */
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-    width: 100%;
-}
-
-.footer-link {
-    font-family: var(--font-serif);
-    text-transform: uppercase;
-    font-size: 0.85rem;
-    letter-spacing: 0.15rem;
-    color: #ffffff;
-    text-decoration: none;
-    transition: opacity 0.3s ease;
-    opacity: 0.9;
-}
-
-.footer-link:hover {
-    opacity: 1;
-    text-decoration: underline;
-    text-underline-offset: 5px;
-}
-
-/* The Central "E & E" */
-.footer-monogram {
-    font-family: var(--font-serif);
-    font-size: 1.5rem;
-    font-style: italic;
-    font-weight: bold;
-    color: #ffffff;
-    padding: 0 2rem; /* Extra space around the center item */
-}
-
-/* 3. The Bottom Details */
-.footer-bottom {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    opacity: 0.7; /* Make fine print slightly dimmer */
-}
-
-.footer-bottom p {
-    font-family: var(--font-serif);
-    font-size: 0.75rem;
-    letter-spacing: 0.05rem;
-    margin: 0;
-}
-
-.privacy-link-light {
-    background: none;
-    border: none;
-    padding: 0;
-    font: inherit;
-    color: inherit;
-    cursor: pointer;
-    text-decoration: underline;
-    transition: opacity 0.3s;
-}
-
-.privacy-link-light:hover {
-    opacity: 0.8;
-}
-
-.location-tag {
-    font-style: italic;
-    margin-top: 5px;
-}
-
-/* --- MOBILE ADJUSTMENTS --- */
-@media (max-width: 768px) {
-    .luxury-footer {
-        padding: 60px 20px 40px;
-    }
-
-    .footer-message h2 {
-        font-size: 3rem;
-    }
-
-    .footer-nav {
-        flex-direction: column;
-        gap: 1.5rem;
-        border: none; /* Remove lines on mobile to save space */
-    }
-
-    .footer-monogram {
-        display: none; /* Hide monogram on mobile stack */
-    }
-}
-
-/* =========================================
-   PRIVACY MODAL SPECIFIC STYLES
-   ========================================= */
-
-/* Make the privacy modal narrower than the itinerary one */
-.privacy-content {
-    max-width: 800px !important; 
-    text-align: left;
-}
-
-.privacy-title {
-    font-size: 2rem;
-    color: var(--color-dusty-blue);
-    text-align: center;
-    margin-bottom: 1.5rem;
-    font-weight: normal;
-}
-
-.privacy-body h4 {
-    font-family: var(--font-serif);
-    font-weight: bold;
-    text-transform: uppercase;
-    font-size: 0.8rem;
-    letter-spacing: 0.1rem;
-    color: var(--color-charcoal);
-    margin-top: 1.5rem;
-    margin-bottom: 0.5rem;
-}
-
-.privacy-body p {
-    font-family: var(--font-serif);
-    font-size: 0.9rem;
-    line-height: 1.6;
-    color: #555;
-    margin-bottom: 1rem;
-}
-
-.signature {
-    margin-top: 2rem;
-    font-family: var(--font-script);
-    font-size: 1.5rem !important; /* Override standard p size */
-    color: var(--color-dusty-blue) !important;
-}
-
-/* =========================================
-   BASE MODAL STYLES (The Logic)
-   ========================================= */
-
-/* 1. The Wrapper: Covers the whole screen */
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 2000; /* Super high so it sits on top of everything */
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  .editorial-list { display: flex; flex-direction: column; gap: 1rem; }
+  .list-item { display: flex; align-items: center; gap: 1.5rem; text-decoration: none; }
+  .list-image-wrapper { width: 200px; height: 130px; flex-shrink: 0; overflow: hidden; border-radius: 2px; }
+  .list-image { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s; }
+  .list-item:hover .list-image { transform: scale(1.1); }
+  .editorial-subheading {
+  font-family: 'Inria Serif', serif; font-size: 1.2rem; color: #333; margin: 0;
+  }
   
-  /* Animation for smooth fade-in */
-  opacity: 1;
-  transition: opacity 0.3s ease;
-}
-
-/* 2. The Hiding Class: This is what makes it invisible by default */
-.modal-hidden {
-  display: none !important;
-  opacity: 0;
-  pointer-events: none;
-}
-
-/* 3. The Dark Background Overlay */
-.modal-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black */
-  backdrop-filter: blur(4px); /* Optional: blurs the background */
-  cursor: pointer;
-}
-
-/* 4. The White Box Content */
-.modal-content {
-  position: relative;
-  z-index: 2001; /* Must be higher than the overlay */
-  background-color: #ffffff;
-  padding: 40px;
-  width: 90%;
-  max-width: 600px;
-  max-height: 90vh; /* Prevents it from being taller than screen */
-  overflow-y: auto; /* Adds scrollbar inside box if text is too long */
-  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-  border-radius: 4px;
-}
-
-/* 5. The Close Button (X) */
-.modal-close {
-  position: absolute;
-  top: 15px;
-  right: 20px;
-  background: none;
-  border: none;
-  font-size: 2rem;
-  cursor: pointer;
-  color: #999;
-  line-height: 1;
-}
-
-.modal-close:hover {
-  color: #333;
-}
+  /* ===================================================================
+     7. FOOTER
+     =================================================================== */
+  .luxury-footer {
+    width: 100%; background-color: var(--color-dusty-blue); color: #ffffff;
+    padding: 100px 20px 60px; text-align: center;
+  }
+  .footer-content {
+    max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 3rem;
+  }
+  .footer-logo-container { width: 100%; max-width: 250px; margin: 0 auto 20px; }
+  .footer-logo { width: 100%; height: auto; display: block; }
+  
+  .footer-nav {
+    display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 2rem;
+    padding: 2rem 0; border-top: 1px solid rgba(255, 255, 255, 0.2); border-bottom: 1px solid rgba(255, 255, 255, 0.2); width: 100%;
+  }
+  .footer-link {
+    font-family: var(--font-serif); text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.15rem;
+    color: #ffffff; text-decoration: none; transition: opacity 0.3s ease; opacity: 0.9;
+  }
+  .footer-link:hover { opacity: 1; text-decoration: underline; text-underline-offset: 5px; }
+  
+  .footer-bottom { display: flex; flex-direction: column; gap: 0.5rem; opacity: 0.7; }
+  .footer-bottom p { font-family: var(--font-serif); font-size: 0.75rem; letter-spacing: 0.05rem; margin: 0; }
+  .privacy-link-light { background: none; border: none; padding: 0; font: inherit; color: inherit; cursor: pointer; text-decoration: underline; }
+  
+  @media (max-width: 768px) {
+    .luxury-footer { padding: 60px 20px 40px; }
+    .footer-nav { flex-direction: column; gap: 1.5rem; border: none; }
+  }
+  
+  /* ===================================================================
+     8. MODALS (LUXURY EDITORIAL LAYOUT)
+     =================================================================== */
+  
+  /* --- Wrapper & Overlay --- */
+  .modal {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 2000;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 1; transition: opacity 0.3s ease;
+  }
+  .modal-hidden { display: none !important; opacity: 0; pointer-events: none; }
+  
+  .modal-overlay {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background-color: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(5px); cursor: pointer;
+  }
+  
+  /* --- The Card (Bigger & Taller) --- */
+  .modal-content {
+    position: relative; z-index: 2001; 
+    background-color: #ffffff;
+    width: 95%; max-width: 500px; max-height: 90vh; 
+    overflow-y: auto; border-radius: 2px;
+    box-shadow: 0 40px 80px rgba(0, 0, 0, 0.4);
+    padding: 0; /* Important: padding is handled by children */
+  }
+  
+  /* Close Button */
+  .modal-close {
+    position: absolute; top: 20px; right: 20px; z-index: 100;
+    background: transparent; border: none; font-size: 2rem; color: #333; cursor: pointer;
+    line-height: 1; transition: transform 0.2s ease;
+  }
+  .modal-close:hover { transform: rotate(90deg); color: #000; }
+  
+  /* --- Layout Logic --- */
+  #modal-accommodation-content { display: flex; flex-direction: column; }
+  
+  /* DESKTOP: TALLER & WIDER */
+  @media (min-width: 900px) {
+    .modal-content { 
+        max-width: 1000px; height: 600px; max-height: 85vh; overflow: hidden; 
+    }
+    #modal-accommodation-content {
+        display: grid; grid-template-columns: 55% 45%; height: 100%; 
+    }
+  }
+  
+  /* --- Left Side: Gallery --- */
+  .gallery-container {
+    display: flex; flex-direction: column; height: 100%;
+    background-color: #f4f4f4; border-right: 1px solid #f0f0f0;
+  }
+  
+  .gallery-main-view {
+    position: relative; width: 100%; flex-grow: 1; min-height: 300px; overflow: hidden;
+  }
+  .gallery-slide {
+    position: absolute; inset: 0; opacity: 0; transition: opacity 0.8s ease; z-index: 1;
+  }
+  .gallery-slide img { 
+    width: 100%; height: 100%; object-fit: cover; 
+    transition: transform 6s ease; transform: scale(1.0);
+  }
+  .gallery-slide.active { opacity: 1; z-index: 2; }
+  .gallery-slide.active img { transform: scale(1.05); }
+  
+  .gallery-thumbnails {
+    height: 90px; width: 100%; display: flex; align-items: center; justify-content: center; gap: 12px; 
+    background-color: #fff; border-top: 1px solid #eee; padding: 0 20px;
+  }
+  .gallery-thumb {
+    width: 50px; height: 50px; padding: 0; border: none; border-radius: 0;
+    cursor: pointer; opacity: 0.5; transition: all 0.3s; filter: grayscale(100%);
+  }
+  .gallery-thumb.active { 
+    opacity: 1; filter: grayscale(0%); box-shadow: 0 4px 10px rgba(0,0,0,0.2); transform: translateY(-2px);
+  }
+  .gallery-thumb img { width: 100%; height: 100%; object-fit: cover; }
+  
+  /* --- Right Side: Content --- */
+  .modal-accomm-content {
+    padding: 50px 40px; background-color: #fff; display: flex; flex-direction: column; height: 100%; overflow-y: auto;
+  }
+  
+  .modal-header-group { text-align: left; margin-bottom: 2.5rem; }
+  .modal-accomm-title {
+    font-family: "Inria Serif", serif; font-size: 2.4rem; font-weight: 300;
+    color: #1a1a1a; margin-bottom: 0.8rem; line-height: 1.1;
+  }
+  
+  .modal-meta-row {
+    font-family: "Inria Serif", serif; font-size: 0.8rem; color: #888;
+    display: flex; align-items: center; gap: 12px; text-transform: uppercase; letter-spacing: 0.05rem;
+  }
+  .meta-item i { color: var(--color-dusty-blue); margin-right: 5px; }
+  .meta-item.link { text-decoration: none; color: #888; border-bottom: 1px solid #ddd; transition: all 0.2s; }
+  .meta-item.link:hover { color: #333; border-bottom-color: #333; }
+  
+  .modal-section-header {
+    font-family: "Inria Serif", serif; text-transform: uppercase; letter-spacing: 2px;
+    font-size: 0.7rem; color: #bbb; margin: 0 0 1.2rem 0;
+  }
+  
+  .modal-amenities-section { margin-bottom: 2.5rem; }
+  .modal-amenities-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .amenity-item { 
+    display: flex; align-items: center; gap: 12px; 
+    font-family: "Inria Serif", serif; font-size: 0.95rem; color: #555; 
+  }
+  .amenity-item i { font-size: 1.2rem; color: #9aacc4; }
+  
+  .modal-booking-note {
+    font-family: "Inria Serif", serif; font-size: 1rem; line-height: 1.6; color: #444; 
+    border-left: 2px solid var(--color-dusty-blue); padding-left: 20px; 
+    margin-bottom: 3rem; font-style: italic;
+  }
+  
+  .modal-actions { margin-top: auto; display: flex; gap: 15px; }
+  .action-btn {
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    padding: 16px 24px; border-radius: 2px; text-decoration: none;
+    font-family: "Inria Serif", serif; font-size: 0.85rem; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.1rem; transition: all 0.3s;
+  }
+  .primary-btn {
+    background-color: #9aacc4; color: white; flex-grow: 2; border: 1px solid #515151;
+  }
+  .primary-btn:hover { background-color: #444; border-color: #444; transform: translateY(-1px); }
+  .secondary-btn {
+    background-color: transparent; color: #666; border: 1px solid #ddd; flex-grow: 1;
+  }
+  .secondary-btn:hover { border-color: #999; color: #333; }
+  
+  @media (max-width: 768px) {
+    .modal-content { height: auto; max-height: 90vh; }
+    .modal-accomm-title { font-size: 1.8rem; }
+    .modal-accomm-content { padding: 30px 25px; }
+    .modal-actions { flex-direction: column; }
+  }
+  
+  /* ===================================================================
+     9. ITINERARY SPECIFIC STYLES
+     (Preserved content styling, but using new layout wrapper)
+     =================================================================== */
+  
+  /* IMPORTANT: Since the global modal-content has padding:0, we must add it back for itinerary text */
+  #modal-itinerary-content {
+    padding: 40px;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  #modal-itinerary-content h2 {
+    font-family: 'DarlineScript', cursive; font-size: 2.5rem;
+    font-weight: normal; color: #6587ab; text-align: center; margin: 0 0 25px 0;
+  }
+  
+  #modal-itinerary-content h4 {
+    font-family: "Inria Serif", serif; font-weight: bold;
+    text-transform: uppercase; letter-spacing: 0.1rem; color: #9aacc4;
+    border-bottom: 1px solid #eee; padding-bottom: 5px; margin-top: 30px; margin-bottom: 15px;
+  }
+  
+  #modal-itinerary-content p {
+    font-family: "Inria Serif", serif; font-weight: 300; line-height: 1.6;
+    color: #333; margin-bottom: 15px;
+  }
+  
+  #modal-itinerary-content strong { font-weight: bold; color: #6587ab; }
+  
+  /* Privacy Policy Content Wrapper */
+  .privacy-content { 
+      max-width: 800px !important; 
+      padding: 40px !important; /* Forces padding back on */
+      text-align: left; 
+  }
+  .privacy-title {
+      font-size: 2rem; color: var(--color-dusty-blue); text-align: center; margin-bottom: 1.5rem; font-weight: normal;
+  }
+  .privacy-body h4 {
+      font-family: var(--font-serif); font-weight: bold; text-transform: uppercase;
+      font-size: 0.8rem; letter-spacing: 0.1rem; color: var(--color-charcoal); margin-top: 1.5rem;
+  }
+  .privacy-body p {
+      font-family: var(--font-serif); font-size: 0.9rem; line-height: 1.6; color: #555; margin-bottom: 1rem;
+  }

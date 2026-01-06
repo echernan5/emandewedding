@@ -128,7 +128,7 @@
         
                     </div>
         
-                    <a href="#" class="view-room-link" data-modal-id="bay-pointe">
+                    <a href="#" class="view-room-link" data-modal-id="best-western">
                         More Info <i class="bi bi-arrow-right short-arrow"></i>
                     </a>
                 </div>
@@ -223,7 +223,7 @@
         
                     </div>
         
-                    <a href="#" class="view-room-link" data-modal-id="airbnb">
+                    <a href="#" class="view-room-link" data-modal-id="vacation-rentals">
                         More Info <i class="bi bi-arrow-right short-arrow"></i>
                     </a>
                 </div>
@@ -394,84 +394,90 @@
   </div>
 
   <script>
-    // This data is now "injected" by the server
-    // so url_for() will work correctly.
     window.__ACCOMMODATION_DATA__ = {
-      
-      'bay-pointe': {
-          title: 'Bay Pointe Inn',
-          images: [
-              "{{ url_for('static', filename='Content/Accommodations/BayPointe1.jpg') }}",
-              "{{ url_for('static', filename='Content/Accommodations/BayPointe2.jpg') }}",
-              "{{ url_for('static', filename='Content/Accommodations/BayPointe3.jpg') }}",
-              "{{ url_for('static', filename='Content/Accommodations/BayPointe4.jpg') }}"
-          ],
-          highlights: [
-              "This is our main hotel block and where the reception will be held.",
-              "Located directly on Gun Lake with beautiful water views.",
-              "Features an indoor pool and the on-site Terrace Grille restaurant."
-          ],
-          bookingInfo: `
-              <h4>How to Book</h4>
-              <p>We have reserved a limited number of rooms at a special rate. Please call the inn directly at <strong>(269) 672-8111</strong> and mention the <strong>Hernandez/Wlodarczyk</strong> wedding, or use the discount code <strong>Wlodarczyk</strong> when booking online.</p>
-          `
-      },
+        'best-western': {
+            title: 'Best Western Plus',
+            // Add these new fields
+            rating: 4.5,
+            reviews: 840,
+            address: 'Wayland, MI',
+            mapLink: 'https://maps.app.goo.gl/example', // You can add real links later
+            website: 'https://www.bestwestern.com', 
+            phone: '(269) 672-8111',
+            
+            images: [
+                "{{ url_for('static', filename='Content/Accommodations/BestWestern1.avif') }}",
+                "{{ url_for('static', filename='Content/Accommodations/BestWestern5.jpg') }}",
+                "{{ url_for('static', filename='Content/Accommodations/BestWestern2.webp') }}"
+            ],
+            amenities: [
+                { icon: 'bi-bus-front', text: 'Shuttle Stop' }, // Shortened text
+                { icon: 'bi-cup-hot', text: 'Free Breakfast' },
+                { icon: 'bi-water', text: 'Indoor Pool' },
+                { icon: 'bi-wifi', text: 'Fast Wi-Fi' },
+                { icon: 'bi-p-circle', text: 'Free Parking' },
+                { icon: 'bi-ev-station', text: 'EV Charging' }
+            ],
+            // This replaces "At a Glance" and "Booking Info" with one concise block
+            bookingNote: `
+                <strong>Reservation Note:</strong> We have a block reserved. Use code <strong>Wlodarczyk</strong> or mention our names when calling.
+            `
+        },
 
-      'gun-lake': {
-          title: 'Gun Lake Casino',
-          images: [
-              "{{ url_for('static', filename='Content/Accommodations/GunLake1.jpg') }}",
-              "{{ url_for('static', filename='Content/Accommodations/GunLake2.jpg') }}",
-              "{{ url_for('static', filename='Content/Accommodations/GunLake3.jpg') }}",
-              "{{ url_for('static', filename='Content/Accommodations/GunLake4.jpg') }}",
-              "{{ url_for('static', filename='Content/Accommodations/GunLake5.jpg') }}"
-          ],
-          highlights: [
-              "A modern, 4-Diamond hotel with a spa, casino, and multiple restaurants.",
-              "Located a convenient 15-minute drive from the wedding venue.",
-              "Our complimentary wedding shuttle will run to and from this hotel."
-          ],
-          bookingInfo: `
-              <h4>How to Book</h4>
-              <p>You can book directly on their website. Please note that our wedding shuttle will be provided for all guests staying here, running to and from Bay Pointe Inn.</p>
-          `
-      },
+        'gun-lake': {
+            title: 'Gun Lake Casino Resort',
+            rating: 4.7,
+            reviews: 3200,
+            address: 'Wayland, MI',
+            mapLink: '#',
+            website: 'https://gunlakecasino.com/',
+            phone: '(269) 792-7777',
+            
+            images: [
+                "{{ url_for('static', filename='Content/Accommodations/GunLake1.jpg') }}",
+                "{{ url_for('static', filename='Content/Accommodations/GunLake2.jpg') }}",
+                "{{ url_for('static', filename='Content/Accommodations/GunLake3.jpg') }}",
+                "{{ url_for('static', filename='Content/Accommodations/GunLake4.jpg') }}"
+            ],
+            amenities: [
+                { icon: 'bi-bus-front', text: 'Shuttle Stop' },
+                { icon: 'bi-dice-5', text: 'Casino & Slots' },
+                { icon: 'bi-flower1', text: 'Full Spa' },
+                { icon: 'bi-cup-straw', text: 'Dining & Bars' },
+                { icon: 'bi-music-note-beamed', text: 'Live Events' },
+                { icon: 'bi-brightness-high', text: 'Pool' }
+            ],
+            bookingNote: `
+                <strong>Transportation:</strong> Our shuttle runs to and from here. Please book directly through their website.
+            `
+        },
 
-      'vrbo': {
-          title: 'VRBO',
-          images: [
-              "{{ url_for('static', filename='Content/Accommodations/vrbo2.avif') }}",
-              "{{ url_for('static', filename='Content/Accommodations/vrbo1.avif') }}",
-              "{{ url_for('static', filename='Content/Accommodations/vrbo3.avif') }}",
-              "{{ url_for('static', filename='Content/Accommodations/vrbo4.webp') }}"
-          ],
-          highlights: [
-              "Ideal for families or groups wanting to stay together.",
-              "Find beautiful lakefront homes with private docks and kitchens.",
-              "Offers a more private, 'home-away-from-home' experience."
-          ],
-          bookingInfo: `
-              <h4>How to Book</h4>
-              <p>We recommend searching for homes in <strong>Shelbyville, MI</strong> on the VRBO website. Remember to opt-in for our Uber voucher on your RSVP if you plan to use it for wedding day transportation!</p>
-          `
-      },
-
-      'airbnb': {
-          title: 'Airbnb',
-          images: [
-              "{{ url_for('static', filename='Content/Accommodations/Airbnb1.jpg') }}",
-              "{{ url_for('static', filename='Content/Accommodations/Airbnb2.jpg') }}"
-          ],
-          highlights: [
-              "A great option for finding unique cottages, apartments, or guest suites.",
-              "Perfect for couples or smaller groups looking for a flexible stay.",
-              "Discover properties with unique amenities and local charm."
-          ],
-          bookingInfo: `
-              <h4>How to Book</h4>
-              <p>Search for listings in <strong>Shelbyville, MI</strong> or nearby towns on the Airbnb website. Remember to opt-in for our Uber voucher on your RSVP if you plan to use it for wedding day transportation!</p>
-          `
-      }
+        'vacation-rentals': {
+            title: 'Private Lake Homes',
+            rating: 4.8,
+            reviews: 120,
+            address: 'Shelbyville, MI',
+            mapLink: '#',
+            website: 'https://www.vrbo.com',
+            phone: null, // No phone for this one
+            
+            images: [
+                "{{ url_for('static', filename='Content/Accommodations/vrbo2.avif') }}",
+                "{{ url_for('static', filename='Content/Accommodations/vrbo1.avif') }}",
+                "{{ url_for('static', filename='Content/Accommodations/Airbnb1.jpg') }}"
+            ],
+            amenities: [
+                { icon: 'bi-house-heart', text: 'Entire Home' },
+                { icon: 'bi-people', text: 'Group Stays' },
+                { icon: 'bi-water', text: 'Lake Access' },
+                { icon: 'bi-basket', text: 'Kitchen' },
+                { icon: 'bi-car-front', text: 'Uber Voucher' },
+                { icon: 'bi-tree', text: 'Scenic Views' }
+            ],
+            bookingNote: `
+                <strong>Tip:</strong> Search for homes in <strong>Shelbyville, MI</strong>. Don't forget to opt-in for our Uber Voucher on the RSVP!
+            `
+        }
     };
 </script>
 
