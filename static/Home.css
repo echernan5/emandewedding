@@ -160,6 +160,7 @@ body.modal-active {
   align-items: center;
   justify-content: center;
   overflow-y: auto;
+  display: none;
 }
 
 .password-modal-content {
@@ -685,13 +686,23 @@ body.modal-active {
   font-weight: normal;
   margin-bottom: 25px;
   color: #f6f5f1;
+  margin-top: 20px;
 }
 
 .event-location-name {
-  font-family: "DarlineSerif", serif;
-  font-weight: 600;
-  font-size: 1.3rem;
-  margin-bottom: 8px;
+  font-size: 1.2rem;
+  margin-bottom: 6px;
+  font-weight: 400;
+  letter-spacing: 0.05rem;
+  text-transform: uppercase;
+  font-style: italic;
+}
+
+.event-date {
+  font-size: 1.2rem;
+  margin-bottom: 6px;
+  font-style: italic;
+  text-transform: uppercase;
 }
 
 .event-address,
@@ -699,9 +710,14 @@ body.modal-active {
 .event-description {
   font-family: "InriaSerif", serif;
   font-size: 1.1rem;
-  line-height: 1.6;
-  margin-bottom: 18px;
+  line-height: 1.2;
+  margin-bottom: 20px;
   opacity: 0.9;
+}
+
+
+.event-time-mobile {
+  display: none; /* Hidden on desktop */
 }
 
 .event-description {
@@ -712,7 +728,7 @@ body.modal-active {
 /* Responsive Adjustments */
 @media (max-width: 768px) {
   .celebration-section {
-    padding: 60px 15px;
+    padding: 100px 0px;
   }
   
   .event-column {
@@ -720,16 +736,38 @@ body.modal-active {
   }
 
   .event-title-script {
-    font-size: 2.5rem;
+    font-size: 2.8rem;
     margin-bottom: 20px;
   }
 
-  .event-location-name,
+  .event-location-name {
+    font-size: 1.2rem;
+    margin-bottom: 6px;
+  }
+
+  .event-date {
+    font-size: 1.2rem;
+    margin-bottom: 6px;
+    font-style: italic;
+    text-transform: uppercase;
+  }
+
+  .event-time-mobile {
+    display: block !important;;
+  }
+
   .event-address,
-  .event-time,
+  .event-time-mobile {
+    font-size: 1.1rem;
+    margin-bottom: 30px;
+  }
+
+  .event-time {
+    display: none;
+  }
+
   .event-description {
-    font-size: 1rem;
-    margin-bottom: 15px;
+    display: none; /* Hide description on small screens */
   }
 }
 
@@ -832,9 +870,6 @@ body.modal-active {
   color: transparent;
 }
 
-a#marker-hotel img {
-  max-width: 275px !important;
-}
 
 /* CLEANUP: Removed .map-marker span style, as it's not in the HTML */
 
@@ -1031,92 +1066,6 @@ a#marker-hotel img {
   width: 30px;
   height: auto;
   transition: transform 0.2s ease-in-out;
-}
-
-/* =================================================================== */
-/* 11. REGISTRY SECTION
-/* =================================================================== */
-
-.registry-section {
-  background-color: #f8f6f1;
-  background-image: url('PK_PAPER_8 copy.jpg'); /* NOTE: Verify this path */
-  background-position: center;
-  background-size: cover;
-  padding: 80px 20px;
-  text-align: center;
-}
-
-/* Re-uses .section-label global style */
-
-.registry-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  max-width: 1100px;
-  margin: 0 auto;
-  gap: 80px;
-  text-align: left;
-  flex-wrap: wrap; /* Allow wrapping on mobile */
-}
-
-.registry-text-column {
-  flex: 1;
-  max-width: 500px;
-  min-width: 300px; /* Prevent it from getting too squished */
-}
-
-.registry-heading {
-  font-family: "DarlineSerif", serif;
-  font-weight: 400;
-  font-size: 3rem;
-  line-height: 1.2;
-  color: #212121;
-  margin-bottom: 20px;
-}
-
-.registry-body {
-  font-family: "DarlineSerif", serif;
-  font-weight: 300;
-  font-size: 1.1rem;
-  line-height: 1.6;
-  color: #212121;
-  margin-bottom: 25px;
-  margin-left: 20px;
-}
-
-.registry-button {
-  font-family: "DarlineSerif", serif;
-  text-transform: uppercase;
-  font-style: italic;
-  font-weight: 400;
-  letter-spacing: 0.15rem;
-  color: #212121;
-  text-decoration: none;
-  border-bottom: 1px solid #212121;
-  padding-bottom: 4px;
-  display: inline-block;
-  margin-top: 10px;
-  margin-left: 20px;
-}
-
-.registry-button:hover {
-  color: #75793d;
-  border-bottom: 1px solid #75793d;
-  transition: color 0.3s ease, border-bottom-color 0.3s ease;
-}
-
-.registry-photo-column {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-width: 300px;
-}
-
-.registry-photo {
-  max-width: 400px;
-  width: 100%; /* Make image responsive */
-  height: auto;
 }
 
 /* =========================================
@@ -1376,4 +1325,111 @@ a#marker-hotel img {
 
 .modal-close:hover {
   color: #333;
+}
+
+/* =================================================================== */
+/* MOBILE OVERRIDES (Add to very bottom of CSS)
+/* =================================================================== */
+
+@media (max-width: 768px) {
+
+  /* --- 1. FIX THE HERO TEXT --- */
+  /* The 12rem font is too big for phones. We shrink it and re-center the offsets. */
+  
+  .hero-text span {
+      width: 100%; /* Ensures text doesn't flow off screen */
+      text-align: center;
+      left: 0 !important; /* Reset left positioning */
+      right: 0 !important; /* Reset right positioning */
+  }
+
+  .line-1 {
+      top: 35%;
+      font-size: 4rem; /* Down from 7rem */
+  }
+
+  .line-2 {
+      top: 43%;
+      font-size: 5rem; /* Down from 12rem */
+  }
+
+  .line-3 {
+      top: 55%;
+      font-size: 4rem;
+  }
+
+  .line-4 {
+      bottom: 25%;
+      font-size: 5rem;
+  }
+
+  /* --- 2. FIX THE EVENT CIRCLE --- */
+  /* The circle needs to breathe on mobile */
+  
+  .event-column {
+      width: 90%; /* Use more screen width */
+      aspect-ratio: auto; /* Stop forcing the exact circle ratio if content overflows */
+      min-height: 400px; /* Ensure enough height */
+      padding: 80px 20px 50px;
+  }
+  
+  .event-title-script {
+      font-size: 2.8rem;
+      line-height: 1.2;
+  }
+
+  /* --- 3. FIX THE MAP TITLES --- */
+  /* The translateX was pushing the title off the side of the iPhone screen */
+  
+  .map-section {
+    margin: 90px auto 125px;
+  }
+  .map-title-main, 
+  .map-title-script {
+      transform: none !important; /* Remove the offset */
+      display: block;
+      margin: 0 auto;
+      text-align: center;
+  }
+
+  .map-title-main {
+      font-size: 3rem;
+      margin-bottom: 5px;
+  }
+  
+  .map-title-script {
+      font-size: 3.5rem;
+      margin-top: -10px;
+  }
+
+  /* --- 4. FIX THE MAP PINS --- */
+  /* Pins are absolute positioned. We need to make sure they don't cover the whole map */
+  
+  .map-marker img {
+      width: 200px; /* Shrink the pin images significantly */
+  }
+  
+  /* Adjust specific pin positions if they drift too much on small screens */
+  #marker-venue { top: 125% !important; left: 52% !important; }
+  #marker-hotel { top: 38% !important; left: 23% !important; }
+  #marker-welcome { top: 50% !important; left: 78% !important; }
+
+  a#marker-hotel img {
+    max-width: 170px !important;
+  }
+
+  /* --- 5. GENERAL CLEANUP --- */
+  
+  .section-label {
+      font-size: 0.8rem; /* Make labels smaller */
+  }
+
+  .map-container {
+    margin-top: 80px;
+  }
+
+  /* Ensure content doesn't cause horizontal scrolling */
+  html, body {
+      overflow-x: hidden;
+  }
 }

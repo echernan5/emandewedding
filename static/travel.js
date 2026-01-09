@@ -233,7 +233,50 @@ document.addEventListener("DOMContentLoaded", () => {
                 `;
             }
 
-            // 3. Assemble Full Modal HTML
+            // 1. Format the numbers safely
+            // We check if data.rating exists first so "Vacation Rentals" don't crash the script
+            const ratingText = data.rating 
+                ? `${Number(data.rating).toFixed(1)} (${Number(data.reviews).toLocaleString()} reviews)` 
+                : '';
+
+            // 2. Create the clickable link (using the class for hover effects)
+            const ratingContent = data.reviewsLink 
+                ? `<a href="${data.reviewsLink}" target="_blank" class="review-link">${ratingText}</a>`
+                : ratingText;
+
+            // 3. Assemble the final HTML
+            const ratingHTML = data.rating 
+                ? `<span class="meta-item"><i class="bi bi-star-fill"></i> ${ratingContent}</span>
+                   <span class="meta-dot">•</span>` 
+                : '';
+
+            // 4. NEW: Determine Button Logic
+            let actionButtonsHTML = '';
+
+            // Check if we have the special rental links
+            if (data.vrboLink && data.airbnbLink) {
+                actionButtonsHTML = `
+                    <a href="${data.vrboLink}" target="_blank" class="action-btn secondary-btn" style="flex: 1;">
+                        <img src="https://a0.muscache.com/im/pictures/airbnb-platform-assets/AirbnbPlatformAssets-Favicons/original/0d189acb-3f82-4b2c-b95f-ad1d6a803d13.png?im_w=240" style="height:16px; margin-right:8px;"> Airbnb
+                    </a>
+                    <a href="${data.airbnbLink}" target="_blank" class="action-btn secondary-btn" style="flex: 1;">
+                        <img src="https://www.vrbo.com/favicon.ico" style="height:16px; margin-right:8px;"> VRBO
+                    </a>
+                `;
+            } else {
+                // Standard Hotel Logic (Website + Phone)
+                actionButtonsHTML = `
+                    <a href="${data.website}" target="_blank" class="action-btn primary-btn">
+                        Book / Visit Website
+                    </a>
+                    ${data.phone ? `
+                        <a href="tel:${data.phone}" class="action-btn secondary-btn">
+                            <i class="bi bi-telephone"></i> Call
+                        </a>
+                    ` : ''}
+                `;
+            }
+
             const modalContentHTML = `
                 <div class="gallery-container">
                     <div class="gallery-main-view" id="gallery-main">
@@ -250,8 +293,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         <h2 class="modal-accomm-title">${data.title}</h2>
                         
                         <div class="modal-meta-row">
-                            <span class="meta-item"><i class="bi bi-star-fill"></i> ${data.rating} (${data.reviews} reviews)</span>
-                            <span class="meta-dot">•</span>
+                            ${ratingHTML}
                             <a href="${data.mapLink}" target="_blank" class="meta-item link"><i class="bi bi-geo-alt-fill"></i> ${data.address}</a>
                         </div>
                     </div>
@@ -263,18 +305,12 @@ document.addEventListener("DOMContentLoaded", () => {
                     </div>
 
                     <div class="modal-actions">
-                        <a href="${data.website}" target="_blank" class="action-btn primary-btn">
-                            Book / Visit Website
-                        </a>
-                        ${data.phone ? `
-                            <a href="tel:${data.phone}" class="action-btn secondary-btn">
-                                <i class="bi bi-telephone"></i> Call
-                            </a>
-                        ` : ''}
+                        ${actionButtonsHTML}
                     </div>
                 </div>
             `;
 
+            // 3. Assemble Full Modal HTML
             accommModalContent.innerHTML = modalContentHTML;
             openAccommodationModal();
             initGallery(accommModalContent);
