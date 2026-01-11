@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-YGDNYBCK3Z"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-YGDNYBCK3Z');
+    </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emma & Ethan</title>
+    
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='static/boatfavicon.webp') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='address-collection.css') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inria+Serif:ital,wght@0,300;0,400;0,700;1,300;0,400;0,700&family=Kapakana:wght@300..400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inria+Serif:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Monsieur+La+Doulaise&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<section class="editorial-form-container">
+    <form class="scroll-form" id="weddingForm" 
+          data-supabase-url="{{ supabase_url }}" 
+          data-supabase-key="{{ supabase_anon_key }}">
+        
+        <div class="form-step visible">
+            <h2 class="script-intro">The Details</h2>
+            <label>Let's get your invitation on its way.</label>
+            <p class="helper-text">Scroll to begin &darr;</p>
+        </div>
+
+        <div class="form-step" id="step-name">
+            <label for="guest-name">First, what is your full name?</label>
+            <input type="text" id="guest-name" name="name" placeholder="First and Last Name" autocomplete="name" required>
+        </div>
+
+        <div class="form-step step-hidden" id="step-partner">
+            <label>Hi <span id="name-display" style="font-style:italic; color: #ddd;">there</span>.</label>
+            <label class="sub-label">Are you living with a spouse or partner who should also be listed on the envelope?</label>
+            
+            <div class="radio-group" id="partner-radios">
+                <label class="radio-option">
+                    <input type="radio" name="has_partner" value="no">
+                    <span>Just me</span>
+                </label>
+                <label class="radio-option">
+                    <input type="radio" name="has_partner" value="yes">
+                    <span>Yes, add a name</span>
+                </label>
+            </div>
+
+            <div id="partner-input-container" class="hidden-input-wrap">
+                <input type="text" id="partner-name" name="partner_name" placeholder="Partner's Full Name">
+            </div>
+        </div>
+
+        <div class="form-step step-hidden" id="step-address">
+            <label>Where should we send the mail?</label>
+            <div class="address-stack">
+                <input type="text" id="address-line" name="address" placeholder="Street Address" autocomplete="shipping street-address" required>
+                <input type="text" name="apt" placeholder="Apt / Unit (Optional)" autocomplete="shipping address-line2">
+                <div class="multi-input-row">
+                    <input type="text" name="city" placeholder="City" style="flex: 2;" autocomplete="shipping address-level2" required>
+                    <input type="text" name="state" placeholder="State" style="flex: 1;" autocomplete="shipping address-level1" required>
+                    <input type="text" id="zip-code" name="zip" placeholder="Zip" style="flex: 1;" autocomplete="shipping postal-code" required>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-step step-hidden" id="step-message">
+            <label for="guest-message">Anything else you'd like to share?</label>
+            <textarea id="guest-message" name="message" placeholder="Leave a note for the couple (optional)..."></textarea>
+        </div>
+
+        <div class="form-step final-step step-hidden" id="step-submit">
+            <label>Perfect. Thank you!</label>
+            <button type="submit" class="editorial-submit-btn" id="final-btn">Send Details</button>
+        </div>
+
+    </form>
+</section>
+
+<script src="{{ url_for('static', filename='address-collection.js') }}" defer></script>
+</body>
+</html>

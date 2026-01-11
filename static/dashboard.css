@@ -1,0 +1,725 @@
+/* ======================================================
+   RSVP DASHBOARD — CLEAN TABLE + SUBTLE COLOR
+   (full dashboard.css)
+   - Party cards + icon-only mini stats
+   - Drawer (wide) with party address at top
+   - Party members displayed as a clean, aligned table
+====================================================== */
+
+:root{
+    --bg:#f7f8fb;
+    --panel:#ffffff;
+    --panel-soft:#fafafa;
+  
+    --border:#e5e7eb;
+    --border-soft:#eef0f3;
+  
+    --text:#262626;
+    --muted:#7b7b7b;
+  
+    --accent:#1f9bd1;
+    --accent-soft: rgba(31,155,209,.12);
+    --accent-line: rgba(31,155,209,.28);
+  
+    --yes:#009035;
+    --no:#cb3131;
+    --pending:#969696;
+  
+    --shadow: 0 10px 28px rgba(17,24,39,.10);
+    --radius:12px;
+  }
+  
+  *{ box-sizing:border-box }
+  html,body{ height:100% }
+  
+  body{
+    margin:0;
+    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+    background: var(--bg);
+    color: var(--text);
+  }
+  
+  .hidden{ display:none !important }
+  .muted{ color:var(--muted) }
+  
+  /* ---------- Header ---------- */
+  
+  .topbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    gap:16px;
+    padding:18px 22px 14px;
+    background: var(--panel);
+    border-bottom:1px solid var(--border);
+  }
+  
+  .title{
+    margin:0;
+    font-size:22px;
+    font-weight:800;
+  }
+  
+  .subtitle{
+    margin-top:4px;
+    font-size:12.5px;
+    color:var(--muted);
+    max-width:720px;
+  }
+  
+  /* ---------- Layout ---------- */
+  
+  .container{
+    max-width:1200px;
+    margin:0 auto;
+    padding:14px 18px 36px;
+  }
+  
+  /* ---------- View Toggle ---------- */
+  
+  .segmented{
+    display:inline-flex;
+    padding:3px;
+    border:1px solid var(--border);
+    border-radius:999px;
+    background:#f1f2f6;
+  }
+  
+  .segmented__btn{
+    border:0;
+    background:transparent;
+    padding:8px 14px;
+    border-radius:999px;
+    font-size:13px;
+    font-weight:700;
+    cursor:pointer;
+    color:var(--muted);
+  }
+  
+  .segmented__btn.is-active{
+    background: var(--panel);
+    color: var(--text);
+    box-shadow: 0 2px 6px rgba(0,0,0,.08);
+    border: 1px solid rgba(0,0,0,0);
+  }
+  
+  /* ---------- Summary ---------- */
+  
+  .summary{
+    display:grid;
+    grid-template-columns: repeat(3, 1fr) 260px;
+    gap:10px;
+    margin-top:14px;
+  }
+  
+  .summary__card,
+  .summary__meta{
+    background: var(--panel);
+    border:1px solid var(--border);
+    border-radius: var(--radius);
+    padding:14px;
+    box-shadow: 0 6px 18px rgba(17,24,39,.06);
+  }
+  
+  .summary__label{
+    font-size:12px;
+    color:var(--muted);
+  }
+  
+  .summary__value{
+    margin-top:4px;
+    font-size:30px;
+    font-weight:800;
+  }
+  
+  .summary__card--yes::before,
+  .summary__card--no::before,
+  .summary__card--pending::before{
+    content:"";
+    display:block;
+    height:3px;
+    border-radius:999px;
+    margin-bottom:10px;
+  }
+  .summary__card--yes::before{ background: var(--yes); }
+  .summary__card--no::before{ background: var(--no); }
+  .summary__card--pending::before{ background: var(--pending); }
+  
+  .metaRow{
+    display:flex;
+    justify-content:space-between;
+    font-size:13px;
+  }
+  .metaValue{ font-weight:700 }
+  
+  /* ---------- Toolbar ---------- */
+  
+  .toolbar{
+    margin-top:14px;
+    display:flex;
+    justify-content:space-between;
+    gap:12px;
+    padding:12px;
+    background: var(--panel);
+    border:1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: 0 6px 18px rgba(17,24,39,.06);
+  }
+  
+  .toolbar__left{
+    display:flex;
+    gap:12px;
+    flex-wrap:wrap;
+  }
+  
+  .toolbar__right{
+    display:flex;
+    align-items:flex-end;
+  }
+  
+  .field{
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+  }
+  
+  .field__label{
+    font-size:12px;
+    color:var(--muted);
+  }
+  
+  .input,.select{
+    height:36px;
+    min-width:200px;
+    padding:0 12px;
+    border-radius:10px;
+    border:1px solid var(--border);
+    background: var(--panel-soft);
+    font-size:14px;
+    color: var(--text);
+  }
+  
+  .input:focus, .select:focus{
+    outline:none;
+    border-color: var(--accent-line);
+    box-shadow: 0 0 0 3px var(--accent-soft);
+    background:#fff;
+  }
+  
+  .btn{
+    height:36px;
+    padding:0 14px;
+    border-radius:10px;
+    border:1px solid var(--border);
+    background:#f3f4f6;
+    font-weight:700;
+    cursor:pointer;
+  }
+  
+  .btn:hover{ background:#e9eaee }
+  .btn--ghost{ background:transparent }
+  
+  #btnRefresh.btn{
+    background: linear-gradient(#f7fbff, #f1f6ff);
+    border-color: rgba(31,155,209,.25);
+  }
+  #btnRefresh.btn:hover{
+    background: linear-gradient(#f1f7ff, #eaf2ff);
+  }
+  
+  /* ---------- Views ---------- */
+  
+  .view{ display:none; margin-top:14px }
+  .view--active{ display:block }
+  
+  /* ---------- Party Cards ---------- */
+  
+  .partyList{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+  }
+  
+  .partyCard{
+    background: var(--panel);
+    border:1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: 0 6px 18px rgba(17,24,39,.06);
+    overflow:hidden;
+  }
+  
+  .partyCard__header{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:12px;
+    padding:14px;
+    border-bottom:1px solid var(--border);
+    background:#fafafa;
+  }
+  
+  .partyCard__title{
+    margin:0;
+    font-size:18px;
+    font-weight:800;
+  }
+  
+  .partyCard__meta{
+    font-size:12px;
+    color:var(--muted);
+    margin-top:2px;
+  }
+  
+  .partyCard__footer{
+    padding:10px 14px;
+    font-size:12px;
+    color:var(--muted);
+    border-top:1px solid var(--border-soft);
+    background:#fff;
+  }
+  
+  /* Icon-only mini stats (✓ 0, ✕ 0, ? 2) */
+  .partyCard__badges{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    flex-wrap:wrap;
+    margin-top:2px;
+  }
+  
+  .miniStat{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    line-height:1;
+  }
+  
+  .miniStat__icon{
+    width:16px;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    font-size:16px;
+    font-weight:900;
+    line-height:1;
+  }
+  
+  .miniStat__value{
+    font-size:15px;
+    font-weight:800;
+    color: var(--text);
+  }
+  
+  .miniStat--yes .miniStat__icon{ color: var(--yes); }
+  .miniStat--no .miniStat__icon{ color: var(--no); }
+  .miniStat--pending .miniStat__icon{ color: var(--pending); }
+  
+  /* ---------- Tables ---------- */
+  
+  .tableWrap{ overflow:auto; }
+  
+  .table,
+  .partyTable{
+    width:100%;
+    border-collapse:collapse;
+    table-layout: fixed;
+    min-width:980px;
+  }
+  
+  .table th,
+  .table td,
+  .partyTable th,
+  .partyTable td{
+    padding:12px;
+    border-bottom:1px solid var(--border-soft);
+    font-size:13px;
+    text-align:left;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  
+  .table th,
+  .partyTable th{
+    font-size:12px;
+    font-weight:800;
+    text-transform:uppercase;
+    letter-spacing:.02em;
+    color:#8a93a3;
+    background:#fafafa;
+  }
+  
+  .table tr,
+  .partyTable tr{ position:relative; }
+  
+  .table tr:hover,
+  .partyTable tr:hover{
+    background:#f6f8fb;
+    cursor:pointer;
+  }
+  
+  .table tr:hover td:first-child,
+  .partyTable tr:hover td:first-child{
+    box-shadow: inset 3px 0 0 0 rgba(31,155,209,.35);
+  }
+  
+  /* Party view (6 columns) */
+  .partyTable th:nth-child(1),
+  .partyTable td:nth-child(1){ width:140px; }
+  .partyTable th:nth-child(2),
+  .partyTable td:nth-child(2){ width:180px; }
+  .partyTable th:nth-child(3),
+  .partyTable td:nth-child(3){ width:170px; }
+  .partyTable th:nth-child(4),
+  .partyTable td:nth-child(4){ width:170px; }
+  .partyTable th:nth-child(5),
+  .partyTable td:nth-child(5){ width:160px; }
+  .partyTable th:nth-child(6),
+  .partyTable td:nth-child(6){ width:auto; }
+  
+  /* Individual view (7 columns) */
+  .table th:nth-child(1),
+  .table td:nth-child(1){ width:130px; }
+  .table th:nth-child(2),
+  .table td:nth-child(2){ width:170px; }
+  .table th:nth-child(3),
+  .table td:nth-child(3){ width:220px; }
+  .table th:nth-child(4),
+  .table td:nth-child(4){ width:170px; }
+  .table th:nth-child(5),
+  .table td:nth-child(5){ width:170px; }
+  .table th:nth-child(6),
+  .table td:nth-child(6){ width:160px; }
+  .table th:nth-child(7),
+  .table td:nth-child(7){ width:auto; }
+  
+  /* RSVP status pill-less (dot + word) */
+  .status{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    font-weight:700;
+    font-size:13px;
+  }
+  .statusDot{
+    width:8px;
+    height:8px;
+    border-radius:50%;
+    background:var(--pending);
+    flex:0 0 auto;
+  }
+  .status--yes{ color:var(--yes) }
+  .status--yes .statusDot{ background:var(--yes) }
+  .status--no{ color:var(--no) }
+  .status--no .statusDot{ background:var(--no) }
+  .status--pending{ color:var(--pending) }
+  .status--pending .statusDot{ background:var(--pending) }
+  
+  /* ======================================================
+     DRAWER (WIDE) + SPACING FIXES
+  ====================================================== */
+  
+  /* The drawer wrapper MUST be the element you toggle .is-open on */
+  .drawer{
+    position:fixed;
+    inset:0;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .18s ease;
+    z-index:999;
+  }
+  .drawer.is-open{
+    opacity:1;
+    pointer-events:auto;
+  }
+  
+  .drawer__overlay{
+    position:absolute;
+    inset:0;
+    background:rgba(0,0,0,.28);
+  }
+  
+  .drawer__panel{
+    position:absolute;
+    right:0;
+    top:0;
+    bottom:0;
+    width:min(980px, 92vw); /* BIGGER drawer */
+    background:var(--panel);
+    border-left:1px solid var(--border);
+    box-shadow: var(--shadow);
+    display:flex;
+    flex-direction:column;
+  }
+  
+  .drawer__header{
+    padding:18px 20px;
+    border-bottom:1px solid var(--border);
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:14px;
+  }
+  
+  .drawer__title{
+    font-size:18px;
+    font-weight:900;
+    margin:0;
+  }
+  
+  .drawer__subtitle{
+    font-size:12px;
+    color:var(--muted);
+    margin-top:4px;
+  }
+  
+  .drawer__content{
+    padding:18px 20px 22px;
+    overflow:auto;
+  }
+  
+  /* close button */
+  .iconBtn{
+    width:36px;
+    height:36px;
+    border-radius:10px;
+    border:1px solid var(--border);
+    background:#f3f4f6;
+    cursor:pointer;
+    flex:0 0 auto;
+  }
+  .iconBtn:hover{ background:#e9eaee }
+  
+  /* Section titles */
+  .drawerSectionTitle{
+    margin:18px 0 10px;
+    font-size:12px;
+    font-weight:900;
+    color:#8a93a3;
+    letter-spacing:.02em;
+    text-transform:uppercase;
+  }
+  
+  .drawerDivider{
+    height:1px;
+    background: var(--border);
+    margin:16px 0;
+  }
+  
+  /* Address grid (fix the “State floating to the right” issue) */
+  .formGrid{
+    display:grid;
+    grid-template-columns: 1.4fr .6fr .6fr; /* City wider, State/Zip tighter */
+    gap:12px 14px;
+    margin-top:6px;
+    max-width: 760px;
+  }
+  
+  .formField{ min-width:0; }
+
+  .formField--street,
+  .formField--unit{
+    grid-column: 1 / -1;
+    }
+
+    /* City / State / Zip */
+    .formField--city{ grid-column: 1 / 2; }
+    .formField--state{ grid-column: 2 / 3; }
+    .formField--zip{ grid-column: 3 / 4; }
+
+  
+  .formLabel{
+    display:block;
+    font-size:12px;
+    color: var(--muted);
+    margin:0 0 6px;
+    font-weight:800;
+  }
+  
+  /* Make inputs consistent inside drawer */
+  .drawer__content .input,
+  .drawer__content .select{
+    height:36px;
+    border-radius:10px;
+    background:#fbfbfd;
+  }
+  
+  /* ======================================================
+     PARTY MEMBERS (TABLE) — fixes spacing / alignment
+     Assumes your JS renders a real table like:
+     <div class="membersTable">
+       <table class="membersTable__table">
+         <thead>...</thead>
+         <tbody>...</tbody>
+       </table>
+     </div>
+  
+     If you still have a div-grid version, see the fallback
+     styles further down.
+  ====================================================== */
+  
+  .membersTable{
+    margin-top:10px;
+    border:1px solid var(--border);
+    border-radius:12px;
+    overflow:hidden;
+    background:#fff;
+  }
+  
+  .membersTable__table{
+    width:100%;
+    border-collapse:collapse;
+    table-layout:fixed;
+    min-width:920px; /* ensures columns don’t smash */
+  }
+  
+  .membersTable__table thead th{
+    padding:10px 12px;
+    background:#fafafa;
+    border-bottom:1px solid var(--border);
+    font-size:12px;
+    font-weight:900;
+    color:#8a93a3;
+    text-transform:uppercase;
+    letter-spacing:.02em;
+    text-align:left;
+  }
+  
+  .membersTable__table tbody td{
+    padding:10px 12px;
+    border-bottom:1px solid var(--border-soft);
+    vertical-align:middle;
+  }
+  
+  .membersTable__table tbody tr:last-child td{
+    border-bottom:0;
+  }
+  
+  .membersTable__table .input,
+  .membersTable__table .select{
+    height:34px;
+    width:100%;
+    min-width:0;
+    padding:0 10px;
+    border-radius:10px;
+    background:#fbfbfd;
+  }
+  
+  /* Column sizing (tweak as needed) */
+  .membersTable__table th:nth-child(1),
+  .membersTable__table td:nth-child(1){ width:140px; } /* First */
+  .membersTable__table th:nth-child(2),
+  .membersTable__table td:nth-child(2){ width:170px; } /* Last */
+  .membersTable__table th:nth-child(3),
+  .membersTable__table td:nth-child(3){ width:130px; } /* Wedding */
+  .membersTable__table th:nth-child(4),
+  .membersTable__table td:nth-child(4){ width:130px; } /* Welcome */
+  .membersTable__table th:nth-child(5),
+  .membersTable__table td:nth-child(5){ width:160px; } /* Lodging */
+  .membersTable__table th:nth-child(6),
+  .membersTable__table td:nth-child(6){ width:180px; } /* Table */
+  .membersTable__table th:nth-child(7),
+  .membersTable__table td:nth-child(7){ width:160px; } /* Side */
+  .membersTable__table th:nth-child(8),
+  .membersTable__table td:nth-child(8){ width:auto; }  /* Dietary / Relationship */
+  
+  /* If you have 8+ columns, horizontal scroll is intentional */
+  .membersTable{
+    overflow:auto;
+  }
+  
+  /* ======================================================
+     FALLBACK: if your JS is still using DIV GRID rows like:
+     .membersHead, .membersRow, .membersBody, etc.
+     (kept clean + consistent)
+  ====================================================== */
+  
+  .membersHead,
+  .membersRow{
+    display:grid;
+    align-items:center;
+    gap:10px;
+    padding:10px 12px;
+  }
+  
+  .membersHead{
+    grid-template-columns: 140px 170px 130px 130px 160px 180px 160px 1fr;
+    background:#fafafa;
+    border-bottom:1px solid var(--border);
+    font-size:12px;
+    font-weight:900;
+    color:#8a93a3;
+    text-transform:uppercase;
+    letter-spacing:.02em;
+  }
+  
+  .membersBody .membersRow{
+    grid-template-columns: 140px 170px 130px 130px 160px 180px 160px 1fr;
+    border-bottom:1px solid var(--border-soft);
+  }
+  .membersBody .membersRow:last-child{ border-bottom:0; }
+  
+  .membersRow .input,
+  .membersRow .select{
+    height:34px;
+    width:100%;
+    min-width:0;
+    padding:0 10px;
+    border-radius:10px;
+    background:#fbfbfd;
+  }
+  
+  /* Prevent odd wrapping in grid cells */
+  .membersRow > div,
+  .membersHead > div{
+    min-width:0;
+  }
+  
+  /* ---------- Drawer actions ---------- */
+  
+  .drawerActions{
+    margin-top:14px;
+    padding-top:12px;
+    border-top:1px solid var(--border);
+    display:flex;
+    gap:10px;
+    align-items:center;
+  }
+  
+  .drawerMsg{
+    font-size:12px;
+    color: var(--muted);
+  }
+  
+  /* ---------- Empty ---------- */
+  
+  .emptyState{
+    padding:24px;
+    border:1px dashed var(--border);
+    border-radius: var(--radius);
+    background:#fafafa;
+  }
+  
+  .emptyState h3{
+    margin:0 0 6px;
+    font-size:16px;
+  }
+  
+  /* ---------- Responsive ---------- */
+  
+  @media (max-width: 980px){
+    .summary{ grid-template-columns:1fr }
+    .input,.select{ min-width:100% }
+    .toolbar{ align-items:stretch }
+    .toolbar__right{ align-items:stretch }
+  
+    .formGrid{
+      grid-template-columns: 1fr;
+      max-width: 100%;
+    }
+  }
+  
+  @media (max-width: 520px){
+    .drawer__panel{ width: 94vw; }
+  }
+  

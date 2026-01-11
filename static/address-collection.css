@@ -1,0 +1,301 @@
+/* ===================================================================
+   1. FONTS & VARIABLES (Matching your Travel Page)
+   =================================================================== */
+
+html {
+    scroll-snap-type: y mandatory; /* This forces the "lock" behavior */
+}
+
+/* Copying your exact font setups */
+@font-face {
+    font-family: 'DarlineScript';
+    src: url('/static/Fonts/WOFF/DarlineScript-Regular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: 'DarlineScript';
+    src: url('/static/Fonts/WOFF/DarlineScript-Regular.woff') format('woff'); 
+    font-weight: bold; /* Tell browser this is the bold version */
+    font-style: normal;
+    font-display: swap;
+  }
+  
+  @font-face {
+    font-family: 'Inria Serif';
+    src: url('/static/Fonts/WOFF/Inria Serif-Regular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+  }
+  
+  @font-face {
+      font-family: 'Inria Serif';
+      src: url('/static/Fonts/WOFF/Inria Serif-Bold.woff') format('woff');
+      font-weight: bold;
+      font-style: normal;
+      font-display: swap;
+  }
+  
+  /* Define your Brand Colors here for easy changes */
+  :root {
+      --font-serif: 'Inria Serif', serif;
+      --font-script: 'DarlineScript', cursive; 
+      --color-dusty-blue: #9aacc4;  /* Your main brand color */
+      --color-deep-blue: #6587ab;   /* Your accent/text color */
+      --color-charcoal: #333333;
+      --color-cream: #fcfcfc;       /* Your off-white background */
+      --color-border: #e5e5e5;
+      --spacing-desktop: 80px;      /* Matching your section padding */
+  }
+  
+  /* ===================================================================
+     2. GLOBAL & UTILITY
+     =================================================================== */
+  
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+  
+  html {
+    scroll-behavior: smooth;
+    overflow-x: hidden;
+  }
+  
+  body {
+    font-family: var(--font-serif);
+    color: var(--color-charcoal);
+    background-color: #ffffff;
+    line-height: 1.6;
+  }
+  
+  
+  /* =========================================
+   EDITORIAL SCROLL FORM
+   ========================================= */
+
+   .editorial-form-container {
+    background-color: var(--color-dusty-blue); /* Your Brand Blue */
+    color: #ffffff; /* White text looks best on this blue */
+    min-height: 100vh;
+    padding: 0 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.scroll-form {
+    width: 100%;
+    max-width: 700px;
+    padding-bottom: 40vh; /* Extra space to allow scrolling to the end */
+}
+
+/* --- THE STEPS --- */
+.form-step {
+    min-height: 80vh; /* Takes up most of the screen */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    opacity: 0;
+    transform: translateY(40px);
+    transition: all 1s ease; /* Slow, luxurious transition */
+    min-height: 100vh;        /* Make each step the full height of the screen */
+    scroll-snap-align: start; /* Tells the browser to lock the top of this box to the top of the screen */
+    scroll-margin-top: 20px;  /* A little extra breathing room at the top */
+}
+
+.form-step.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* --- TYPOGRAPHY --- */
+.script-intro {
+    font-family: var(--font-script);
+    font-size: 4rem;
+    color: white;
+    margin-bottom: 1rem;
+    font-weight: normal;
+    line-height: 1;
+}
+
+.form-step label {
+    font-family: var(--font-serif);
+    font-size: 2rem;
+    line-height: 1.3;
+    margin-bottom: 2rem;
+    display: block;
+}
+
+.helper-text {
+    font-family: var(--font-serif);
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2rem;
+    opacity: 0.7;
+    margin-top: 1rem;
+}
+
+/* --- INPUTS (The Clean Line Look) --- */
+.editorial-form-container input {
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.4);
+    font-family: var(--font-serif);
+    font-size: 1.5rem;
+    color: #ffffff;
+    padding: 15px 0;
+    width: 100%;
+    border-radius: 0; /* Removes default rounding on iOS */
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+.editorial-form-container input:focus {
+    border-bottom-color: #ffffff; /* Solid white on focus */
+}
+
+.editorial-form-container input::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+    font-style: italic;
+}
+
+/* --- MULTI INPUT ROW (City/State/Zip) --- */
+.multi-input-row {
+    display: flex;
+    gap: 30px;
+}
+
+/* --- SUBMIT BUTTON --- */
+.editorial-submit-btn {
+    background-color: white;
+    color: var(--color-dusty-blue);
+    font-family: var(--font-serif);
+    font-size: 1.1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15rem;
+    padding: 20px 50px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 2rem;
+}
+
+.editorial-submit-btn:hover {
+    background-color: var(--color-cream);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+/* --- MOBILE ADJUSTMENTS --- */
+@media (max-width: 600px) {
+    .script-intro { font-size: 3rem; }
+    .form-step label { font-size: 1.5rem; }
+    .multi-input-row { flex-direction: column; gap: 10px; }
+}
+
+/* --- ADDRESS STACK (Merged View) --- */
+.address-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+}
+
+/* --- DYNAMIC NAME --- */
+#name-display {
+    border-bottom: 1px dashed rgba(255,255,255,0.3);
+}
+
+.sub-label {
+    font-size: 1.2rem !important; /* Smaller than the main question */
+    margin-top: -1.5rem;
+    opacity: 0.9;
+}
+
+/* --- CUSTOM RADIO BUTTONS --- */
+.radio-group {
+    display: flex;
+    gap: 20px;
+    margin-top: 1rem;
+}
+
+.radio-option {
+    position: relative;
+    cursor: pointer;
+}
+
+/* Hide the ugly default circle */
+.radio-option input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+}
+
+/* The visual button look */
+.radio-option span {
+    display: inline-block;
+    padding: 15px 30px;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    font-family: var(--font-serif);
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    letter-spacing: 0.1em;
+    transition: all 0.3s;
+}
+
+/* When selected or hovered */
+.radio-option input[type="radio"]:checked + span,
+.radio-option:hover span {
+    background-color: white;
+    color: var(--color-dusty-blue);
+    border-color: white;
+}
+
+/* --- HIDDEN PARTNER INPUT --- */
+.hidden-input-wrap {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.5s ease, opacity 0.5s ease;
+    opacity: 0;
+    margin-top: 0;
+}
+
+.hidden-input-wrap.revealed {
+    max-height: 100px; /* Enough space for the input */
+    opacity: 1;
+    margin-top: 20px;
+}
+
+/* Add this to your CSS */
+.step-hidden {
+    display: none;
+}
+
+/* Style the textarea to look like a lines on a page */
+.editorial-form-container textarea {
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.4);
+    font-family: var(--font-serif);
+    font-size: 1.5rem;
+    color: #ffffff;
+    padding: 15px 0;
+    width: 100%;
+    outline: none;
+    resize: none; /* Prevents them from dragging it ugly sizes */
+    min-height: 60px; /* enough for 1-2 lines */
+    transition: border-color 0.3s;
+}
+
+.editorial-form-container textarea:focus {
+    border-bottom-color: #ffffff;
+}
+
+.editorial-form-container textarea::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+    font-style: italic;
+}

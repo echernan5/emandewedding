@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wedding Guest Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
+</head>
+
+<body>
+  <header class="topbar">
+    <div class="topbar__left">
+      <h1 class="title">RSVP Responses</h1>
+      <p class="subtitle">Quickly review wedding + welcome party responses, lodging, and dietary notes.</p>
+    </div>
+
+    <div class="topbar__right">
+      <div class="segmented" role="tablist" aria-label="View toggle">
+        <button id="btnPartyView" class="segmented__btn is-active" role="tab" aria-selected="true">
+          Party View
+        </button>
+        <button id="btnIndividualView" class="segmented__btn" role="tab" aria-selected="false">
+          Individual View
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- SUMMARY -->
+    <section class="summary" aria-label="RSVP Summary">
+      <div class="summary__card summary__card--yes">
+        <div class="summary__label">Yes</div>
+        <div class="summary__value" id="sumYes">—</div>
+      </div>
+      <div class="summary__card summary__card--no">
+        <div class="summary__label">No</div>
+        <div class="summary__value" id="sumNo">—</div>
+      </div>
+      <div class="summary__card summary__card--pending">
+        <div class="summary__label">Pending</div>
+        <div class="summary__value" id="sumPending">—</div>
+      </div>
+
+      <div class="summary__meta">
+        <div class="metaRow">
+          <span class="metaLabel">Welcome Party “Yes”</span>
+          <span class="metaValue" id="sumWelcomeYes">—</span>
+        </div>
+        <div class="metaRow">
+          <span class="metaLabel">Missing Addresses</span>
+          <span class="metaValue" id="sumMissingAddresses">—</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- TOOLBAR -->
+    <section class="toolbar" aria-label="Filters and search">
+      <div class="toolbar__left">
+        <label class="field">
+          <span class="field__label">Search</span>
+          <input id="searchInput" class="input" type="search" placeholder="Search name, party, lodging, dietary…" />
+        </label>
+
+        <label class="field">
+          <span class="field__label">Wedding RSVP</span>
+          <select id="filterWedding" class="select">
+            <option value="all">All</option>
+            <option value="accepted">Yes</option>
+            <option value="declined">No</option>
+            <option value="pending">Pending</option>
+          </select>
+        </label>
+
+        <label class="field">
+          <span class="field__label">Welcome RSVP</span>
+          <select id="filterWelcome" class="select">
+            <option value="all">All</option>
+            <option value="accepted">Yes</option>
+            <option value="declined">No</option>
+            <option value="pending">Pending</option>
+          </select>
+        </label>
+
+        <button id="btnClear" class="btn btn--ghost" type="button">Clear</button>
+      </div>
+
+      <div class="toolbar__right">
+        <button id="btnRefresh" class="btn" type="button">Refresh</button>
+      </div>
+    </section>
+
+    <!-- PARTY VIEW -->
+    <section id="partyView" class="view view--active" aria-label="Party view">
+        <div id="partyList" class="partyList" aria-live="polite"></div>
+        <div id="partyEmpty" class="emptyState hidden">
+            <h3>No results</h3>
+            <p>Try clearing filters or searching something else.</p>
+        </div>
+    </section>
+
+    <!-- INDIVIDUAL VIEW -->
+    <section id="individualView" class="view" aria-label="Individual view">
+      <div class="tableWrap">
+        <table class="table" aria-label="Guest list">
+          <thead>
+            <tr>
+              <th>First</th>
+              <th>Last</th>
+              <th>Party</th>
+              <th>Wedding RSVP</th>
+              <th>Welcome RSVP</th>
+              <th>Lodging</th>
+              <th>Dietary</th>
+            </tr>
+          </thead>
+          <tbody id="guestTbody"></tbody>
+        </table>
+      </div>
+
+      <div id="individualEmpty" class="emptyState hidden">
+        <h3>No results</h3>
+        <p>Try clearing filters or searching something else.</p>
+      </div>
+    </section>
+  </main>
+
+  <!-- CONTACT DRAWER -->
+  <!-- DRAWER -->
+<!-- PARTY DRAWER -->
+<div id="drawer" class="drawer" aria-hidden="true">
+    <div id="drawerOverlay" class="drawer__overlay"></div>
+  
+    <aside class="drawer__panel" role="dialog" aria-modal="true" aria-label="Party editor">
+      <header class="drawer__header">
+        <div>
+          <div id="drawerTitle" class="drawer__title">Party</div>
+          <div id="drawerSubtitle" class="drawer__subtitle">—</div>
+        </div>
+  
+        <button id="drawerClose" class="iconBtn" type="button" aria-label="Close">
+          ✕
+        </button>
+      </header>
+  
+      <div class="drawer__content">
+        <div class="drawerSectionTitle">Address</div>
+  
+        <!-- Address layout (Address 1 + 2 wider, rest in a row) -->
+        <div class="addressGrid">
+          <div class="formField formField--full">
+            <label class="formLabel" for="addrStreet">Address 1</label>
+            <input id="addrStreet" class="input" type="text" />
+          </div>
+  
+          <div class="formField formField--full">
+            <label class="formLabel" for="addrStreet2">Address 2</label>
+            <input id="addrStreet2" class="input" type="text" placeholder="Apt / Unit" />
+          </div>
+  
+          <div class="formField">
+            <label class="formLabel" for="addrCity">City</label>
+            <input id="addrCity" class="input" type="text" />
+          </div>
+  
+          <div class="formField">
+            <label class="formLabel" for="addrState">State</label>
+            <input id="addrState" class="input" type="text" />
+          </div>
+  
+          <div class="formField">
+            <label class="formLabel" for="addrZip">Zip</label>
+            <input id="addrZip" class="input" type="text" />
+          </div>
+        </div>
+  
+        <div class="drawerDivider"></div>
+  
+        <div class="drawerSectionTitle">Party members</div>
+  
+        <!-- JS injects the editable members table here -->
+        <div id="membersList"></div>
+  
+        <div class="drawerActions">
+          <button id="btnDrawerCancel" class="btn btn--ghost" type="button">Cancel</button>
+          <button id="btnDrawerSave" class="btn" type="button">Save changes</button>
+          <span id="drawerMsg" class="drawerMsg"></span>
+        </div>
+      </div>
+    </aside>
+  </div>
+  
+  
+
+    <script src="{{ url_for('static', filename='dashboard.js') }}" defer></script>
+</body>
+</html>
