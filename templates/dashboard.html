@@ -5,90 +5,224 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Wedding Guest Dashboard</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='dash-sidebar.css') }}">
 </head>
 
 <body>
-  <header class="topbar">
-    <div class="topbar__left">
-      <h1 class="title">RSVP Responses</h1>
-      <p class="subtitle">Quickly review wedding + welcome party responses, lodging, and dietary notes.</p>
+<div class="mobileOverlay" data-close-sidebar></div>
+
+<div class="app">
+  <!-- SIDEBAR (shared) -->
+  <aside class="sidebar">
+    <div class="sideTop">
+      <div class="appTitle">Wedding Manager</div>
+      <div class="eventLine">Emma &amp; Ethan • Jun 18, 2027</div>
     </div>
 
-    <div class="topbar__right">
-      <div class="segmented" role="tablist" aria-label="View toggle">
-        <button id="btnPartyView" class="segmented__btn is-active" role="tab" aria-selected="true">
-          Party View
-        </button>
-        <button id="btnIndividualView" class="segmented__btn" role="tab" aria-selected="false">
-          Individual View
-        </button>
+    <nav class="sideNav">
+      <a href="/dashboard">Guest List</a>
+
+      <a href="/address" class="withBadge active">
+        Address Book
+        <span class="badge" id="missingAddrBadge" style="display:none;">Missing</span>
+      </a>
+
+      <a href="/vendors" data-route="/vendors">Vendors</a>
+      <a href="logistics.html">Logistics</a>
+      <a href="exports.html">Exports</a>
+      <a href="settings.html">Settings</a>
+    </nav>
+
+    <div class="sideBottom" style="position: relative;">
+        <div class="userChip" id="userMenuTrigger" style="cursor: pointer;">
+          <div class="userAvatar" id="userAvatarDisplay">EH</div>
+          <div class="userText">
+            <div class="userName" id="userNameDisplay">Emma Hernandez</div>
+            <div class="userRole" id="userRoleDisplay">Bride</div>
+          </div>
+        </div>
+      
+        <div id="userRoleMenu" class="roleMenu" style="display: none;">
+            <div class="roleMenuHeader">Switch View</div>
+            <button type="button" class="roleMenuItem" data-role="admin">
+                <span class="roleIcon">EH</span>
+                <div class="roleDetails">
+                    <span class="roleName">Emma Hernandez</span>
+                    <span class="roleLabel">Bride (Admin)</span>
+                </div>
+            </button>
+            <button type="button" class="roleMenuItem" data-role="family">
+                <span class="roleIcon" style="background:#e0f2fe; color:#0369a1;">AE</span>
+                <div class="roleDetails">
+                    <span class="roleName">Amy Eiduke</span>
+                    <span class="roleLabel">Family (Restricted)</span>
+                </div>
+            </button>
+            <button type="button" class="roleMenuItem" data-role="viewer">
+                <span class="roleIcon" style="background:#f3fdf0; color:#338015;">IS</span>
+                <div class="roleDetails">
+                    <span class="roleName">Isabel Hernandez</span>
+                    <span class="roleLabel">Bridesmaid (View)</span>
+                </div>
+            </button>
+        </div>
       </div>
-    </div>
-  </header>
+  </aside>
+  
+  <div class="main">
+    <header class="topbar">
+        <div class="topbar__left">
+        <h1 class="title">Guest List</h1>
+        <p class="subtitle">Quickly review wedding + welcome party responses, lodging, and dietary notes.</p>
+        </div>
 
-  <main class="container">
+        <div class="topbar__right">
+        <div class="segmented" role="tablist" aria-label="View toggle">
+            <button id="btnPartyView" class="segmented__btn is-active" role="tab" aria-selected="true">
+            Party View
+            </button>
+            <button id="btnIndividualView" class="segmented__btn" role="tab" aria-selected="false">
+            Individual View
+            </button>
+        </div>
+        </div>
+    </header>
+
     <!-- SUMMARY -->
-    <section class="summary" aria-label="RSVP Summary">
-      <div class="summary__card summary__card--yes">
-        <div class="summary__label">Yes</div>
-        <div class="summary__value" id="sumYes">—</div>
-      </div>
-      <div class="summary__card summary__card--no">
-        <div class="summary__label">No</div>
-        <div class="summary__value" id="sumNo">—</div>
-      </div>
-      <div class="summary__card summary__card--pending">
-        <div class="summary__label">Pending</div>
-        <div class="summary__value" id="sumPending">—</div>
-      </div>
-
-      <div class="summary__meta">
-        <div class="metaRow">
-          <span class="metaLabel">Welcome Party “Yes”</span>
-          <span class="metaValue" id="sumWelcomeYes">—</span>
+    <div class="content-container">
+        <section class="summary" aria-label="RSVP Summary">
+            <!-- LEFT: bar + 4 compact cards -->
+            <div class="summaryMetrics" aria-label="Wedding RSVP Metrics">
+            <!-- RSVP bar -->
+            <div class="rsvpViz" aria-label="Wedding RSVP distribution">
+                <div class="rsvpViz__top">
+                <div class="rsvpViz__title">RSVP Progress</div>
+        
+                <div class="rsvpViz__legend" aria-hidden="true">
+                    <span class="legendItem"><span class="dot dot--yes"></span>Yes</span>
+                    <span class="legendItem"><span class="dot dot--no"></span>No</span>
+                    <span class="legendItem"><span class="dot dot--pending"></span>Pending</span>
+                </div>
+                </div>
+        
+                <div class="rsvpViz__bar" role="img" aria-label="Wedding RSVP distribution bar">
+                <div id="rsvpBarYes" class="rsvpViz__seg rsvpViz__seg--yes" style="width:0%"></div>
+                <div id="rsvpBarNo" class="rsvpViz__seg rsvpViz__seg--no" style="width:0%"></div>
+                <div id="rsvpBarPending" class="rsvpViz__seg rsvpViz__seg--pending" style="width:0%"></div>
+                </div>
+        
+                <div class="rsvpViz__nums" aria-hidden="true">
+                <div class="rsvpViz__num"><span class="k">Yes</span><span class="v" id="rsvpYesN">—</span></div>
+                <div class="rsvpViz__num"><span class="k">No</span><span class="v" id="rsvpNoN">—</span></div>
+                <div class="rsvpViz__num"><span class="k">Pending</span><span class="v" id="rsvpPendingN">—</span></div>
+                </div>
+            </div>
+        
+            <!-- 4 cards -->
+            <div class="summaryGrid" aria-label="Wedding and age counts">
+                <div class="summary__card summary__card--yes">
+                <div class="summary__label">Wedding “Yes”</div>
+                <div class="summary__value" id="sumYes">—</div>
+                </div>
+        
+                <div class="summary__card summary__card--no">
+                <div class="summary__label">Wedding “No”</div>
+                <div class="summary__value" id="sumNo">—</div>
+                </div>
+        
+                <div class="summary__card summary__card--pending">
+                <div class="summary__label">Wedding Pending</div>
+                <div class="summary__value" id="sumPending">—</div>
+                </div>
+        
+                <div class="summary__card summary__card--neutral">
+                <div class="summary__label">Under 21</div>
+                <div class="summary__value" id="sumUnder21">—</div>
+                </div>
+            </div>
+            </div>
+        
+            <!-- RIGHT: full-height meta -->
+            <div class="summary__meta" aria-label="Welcome party, addresses, and lodging">
+            <div class="metaRow">
+                <span class="metaLabel">Welcome Party “Yes”</span>
+                <span class="metaValue" id="sumWelcomeYes">—</span>
+            </div>
+        
+            <div class="metaRow">
+                <span class="metaLabel">Missing Addresses</span>
+                <span class="metaValue" id="sumMissingAddresses">—</span>
+            </div>
+        
+            <div class="metaDivider"></div>
+        
+            <div class="metaRow">
+                <span class="metaLabel">Lodging Assigned</span>
+                <span class="metaValue" id="sumLodgingAssigned">—</span>
+            </div>
+        
+            <div class="metaStack">
+                <div class="metaRow metaRow--sub">
+                <span class="metaLabel">Bay Pointe</span>
+                <span class="metaValue" id="sumLodgeBayPointe">—</span>
+                </div>
+                <div class="metaRow metaRow--sub">
+                <span class="metaLabel">Best Western</span>
+                <span class="metaValue" id="sumLodgeBestWestern">—</span>
+                </div>
+                <div class="metaRow metaRow--sub">
+                <span class="metaLabel">Gun Lake</span>
+                <span class="metaValue" id="sumLodgeGunLake">—</span>
+                </div>
+                <div class="metaRow metaRow--sub">
+                <span class="metaLabel">Other</span>
+                <span class="metaValue" id="sumLodgeOther">—</span>
+                </div>
+                <div class="metaRow metaRow--sub">
+                <span class="metaLabel">None</span>
+                <span class="metaValue" id="sumLodgeNone">—</span>
+                </div>
+            </div>
+            </div>
+        </section>
+  
+        
+        <!-- TOOLBAR -->
+        <section class="toolbar" aria-label="Filters and search">
+        <div class="toolbar__left">
+            <label class="field">
+            <span class="field__label">Search</span>
+            <input id="searchInput" class="input" type="search" placeholder="Search name, party, lodging, dietary…" />
+            </label>
+        
+            <label class="field">
+            <span class="field__label">Wedding RSVP</span>
+            <select id="filterWedding" class="select">
+                <option value="all">All</option>
+                <option value="accepted">Yes</option>
+                <option value="declined">No</option>
+                <option value="pending">Pending</option>
+            </select>
+            </label>
+        
+            <label class="field">
+            <span class="field__label">Welcome RSVP</span>
+            <select id="filterWelcome" class="select">
+                <option value="all">All</option>
+                <option value="accepted">Yes</option>
+                <option value="declined">No</option>
+                <option value="pending">Pending</option>
+            </select>
+            </label>
+        
+            <button id="btnClear" class="btn btn--ghost" type="button">Clear</button>
         </div>
-        <div class="metaRow">
-          <span class="metaLabel">Missing Addresses</span>
-          <span class="metaValue" id="sumMissingAddresses">—</span>
+        
+        <div class="toolbar__right">
+            <button id="btnRefresh" class="btn" type="button">Refresh</button>
         </div>
-      </div>
-    </section>
-
-    <!-- TOOLBAR -->
-    <section class="toolbar" aria-label="Filters and search">
-      <div class="toolbar__left">
-        <label class="field">
-          <span class="field__label">Search</span>
-          <input id="searchInput" class="input" type="search" placeholder="Search name, party, lodging, dietary…" />
-        </label>
-
-        <label class="field">
-          <span class="field__label">Wedding RSVP</span>
-          <select id="filterWedding" class="select">
-            <option value="all">All</option>
-            <option value="accepted">Yes</option>
-            <option value="declined">No</option>
-            <option value="pending">Pending</option>
-          </select>
-        </label>
-
-        <label class="field">
-          <span class="field__label">Welcome RSVP</span>
-          <select id="filterWelcome" class="select">
-            <option value="all">All</option>
-            <option value="accepted">Yes</option>
-            <option value="declined">No</option>
-            <option value="pending">Pending</option>
-          </select>
-        </label>
-
-        <button id="btnClear" class="btn btn--ghost" type="button">Clear</button>
-      </div>
-
-      <div class="toolbar__right">
-        <button id="btnRefresh" class="btn" type="button">Refresh</button>
-      </div>
-    </section>
+        </section>
+          
 
     <!-- PARTY VIEW -->
     <section id="partyView" class="view view--active" aria-label="Party view">
@@ -128,70 +262,97 @@
   <!-- CONTACT DRAWER -->
   <!-- DRAWER -->
 <!-- PARTY DRAWER -->
+<!-- PARTY DRAWER -->
 <div id="drawer" class="drawer" aria-hidden="true">
     <div id="drawerOverlay" class="drawer__overlay"></div>
   
     <aside class="drawer__panel" role="dialog" aria-modal="true" aria-label="Party editor">
+      <!-- Header -->
       <header class="drawer__header">
-        <div>
-          <div id="drawerTitle" class="drawer__title">Party</div>
-          <div id="drawerSubtitle" class="drawer__subtitle">—</div>
+        <div class="drawerHead">
+          <div class="drawerAvatar" aria-hidden="true" id="drawerAvatar">P</div>
+  
+          <div class="drawerHeadText">
+            <div id="drawerTitle" class="drawer__title">Party</div>
+  
+            <div class="drawerHeadMeta">
+              <span id="drawerSubtitle" class="drawer__subtitle">—</span>
+              <span class="dotSep">•</span>
+              <span class="muted" id="drawerAddressHint">—</span>
+            </div>
+  
+            <div class="drawerChips" id="drawerChips"></div>
+          </div>
         </div>
   
-        <button id="drawerClose" class="iconBtn" type="button" aria-label="Close">
-          ✕
-        </button>
+        <button id="drawerClose" class="iconBtn" type="button" aria-label="Close">✕</button>
       </header>
   
+      <!-- Scrollable Content -->
       <div class="drawer__content">
+        <!-- Address -->
         <div class="drawerSectionTitle">Address</div>
   
-        <!-- Address layout (Address 1 + 2 wider, rest in a row) -->
-        <div class="addressGrid">
-          <div class="formField formField--full">
-            <label class="formLabel" for="addrStreet">Address 1</label>
-            <input id="addrStreet" class="input" type="text" />
+        <div class="drawerCard">
+          <div class="drawerCard__head">
+            <div class="drawerCard__title">Mailing address</div>
+            <div class="muted" style="font-size:12px;">Used for invites + thank yous</div>
           </div>
   
-          <div class="formField formField--full">
-            <label class="formLabel" for="addrStreet2">Address 2</label>
-            <input id="addrStreet2" class="input" type="text" placeholder="Apt / Unit" />
-          </div>
+          <div class="drawerCard__body">
+            <div class="addressGrid">
+              <div class="formField formField--full">
+                <label class="formLabel" for="addrStreet">Address 1</label>
+                <input id="addrStreet" class="input" type="text" />
+              </div>
   
-          <div class="formField">
-            <label class="formLabel" for="addrCity">City</label>
-            <input id="addrCity" class="input" type="text" />
-          </div>
+              <div class="formField formField--full">
+                <label class="formLabel" for="addrStreet2">Address 2</label>
+                <input id="addrStreet2" class="input" type="text" placeholder="Apt / Unit" />
+              </div>
   
-          <div class="formField">
-            <label class="formLabel" for="addrState">State</label>
-            <input id="addrState" class="input" type="text" />
-          </div>
+              <!-- Compact City / State / Zip row -->
+              <div class="addressRow">
+                <div class="formField">
+                  <label class="formLabel" for="addrCity">City</label>
+                  <input id="addrCity" class="input" type="text" />
+                </div>
   
-          <div class="formField">
-            <label class="formLabel" for="addrZip">Zip</label>
-            <input id="addrZip" class="input" type="text" />
+                <div class="formField">
+                  <label class="formLabel" for="addrState">State</label>
+                  <input id="addrState" class="input" type="text" />
+                </div>
+  
+                <div class="formField">
+                  <label class="formLabel" for="addrZip">Zip</label>
+                  <input id="addrZip" class="input" type="text" />
+                </div>
+              </div>
+            </div>
           </div>
         </div>
   
-        <div class="drawerDivider"></div>
+        <!-- Members -->
+        <div class="drawerSectionTitle" style="margin-top:18px;">Party members</div>
   
-        <div class="drawerSectionTitle">Party members</div>
-  
-        <!-- JS injects the editable members table here -->
+        <!-- JS injects the editable members UI here -->
         <div id="membersList"></div>
+      </div>
   
-        <div class="drawerActions">
-          <button id="btnDrawerCancel" class="btn btn--ghost" type="button">Cancel</button>
-          <button id="btnDrawerSave" class="btn" type="button">Save changes</button>
-          <span id="drawerMsg" class="drawerMsg"></span>
-        </div>
+      <!-- Fixed footer actions (always visible, never overlays content) -->
+      <div class="drawerActions">
+        <button id="btnDrawerCancel" class="btn btn--ghost" type="button">Cancel</button>
+        <button id="btnDrawerSave" class="btn" type="button">Save changes</button>
+        <span id="drawerMsg" class="drawerMsg"></span>
       </div>
     </aside>
   </div>
+</div>
+  
   
   
 
     <script src="{{ url_for('static', filename='dashboard.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='dash-sidebar.js') }}" defer></script>
 </body>
 </html>

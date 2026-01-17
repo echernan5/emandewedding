@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Address Book • Wedding Manager</title>
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='dash-sidebar.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='addressbook.css') }}">
+</head>
+
+<body>
+  <div class="appShell">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sideTop">
+        <div class="appTitle">Wedding Manager</div>
+        <div class="eventLine">Emma &amp; Ethan • Jun 18, 2027</div>
+      </div>
+  
+      <nav class="sideNav">
+        <a href="/dashboard">Guest List</a>
+  
+        <a href="/address" class="withBadge active">
+          Address Book
+          <span class="badge" id="missingAddrBadge" style="display:none;">Missing</span>
+        </a>
+  
+        <a href="/vendors" data-route="/vendors">Vendors</a>
+        <a href="logistics.html">Logistics</a>
+        <a href="exports.html">Exports</a>
+        <a href="settings.html">Settings</a>
+      </nav>
+  
+      <div class="sideBottom" style="position: relative;">
+          <div class="userChip" id="userMenuTrigger" style="cursor: pointer;">
+            <div class="userAvatar" id="userAvatarDisplay">EH</div>
+            <div class="userText">
+              <div class="userName" id="userNameDisplay">Emma Hernandez</div>
+              <div class="userRole" id="userRoleDisplay">Bride</div>
+            </div>
+          </div>
+        
+          <div id="userRoleMenu" class="roleMenu" style="display: none;">
+              <div class="roleMenuHeader">Switch View</div>
+              <button type="button" class="roleMenuItem" data-role="admin">
+                  <span class="roleIcon">EH</span>
+                  <div class="roleDetails">
+                      <span class="roleName">Emma Hernandez</span>
+                      <span class="roleLabel">Bride (Admin)</span>
+                  </div>
+              </button>
+              <button type="button" class="roleMenuItem" data-role="family">
+                  <span class="roleIcon" style="background:#e0f2fe; color:#0369a1;">AE</span>
+                  <div class="roleDetails">
+                      <span class="roleName">Amy Eiduke</span>
+                      <span class="roleLabel">Family (Restricted)</span>
+                  </div>
+              </button>
+              <button type="button" class="roleMenuItem" data-role="viewer">
+                  <span class="roleIcon" style="background:#f3fdf0; color:#338015;">IS</span>
+                  <div class="roleDetails">
+                      <span class="roleName">Isabel Hernandez</span>
+                      <span class="roleLabel">Bridesmaid (View)</span>
+                  </div>
+              </button>
+          </div>
+        </div>
+    </aside>
+
+    <!-- Main -->
+    <main class="main">
+      <header class="pageHeader">
+        <div class="headerLeft">
+          <h1>Address Book</h1>
+          <p class="sub">For envelopes: copy addresses fast. For planning: missing ones are easy to spot.</p>
+          <div id="abStatus" class="abStatus" aria-live="polite"></div>
+        </div>
+
+        <div class="headerRight">
+          <div class="summaryPill" id="summaryPill">—</div>
+        </div>
+      </header>
+
+      <section class="controls" aria-label="Controls">
+        <div class="searchWrap">
+          <input id="abSearch" class="input" placeholder="Search party, guest, street, city, state, zip…" />
+        </div>
+
+        <div class="segmented" role="tablist" aria-label="Filter">
+          <button class="segBtn active" data-filter="all" type="button">All</button>
+          <button class="segBtn" data-filter="missing" type="button">Missing</button>
+          <button class="segBtn" data-filter="complete" type="button">Complete</button>
+        </div>
+
+        <button class="btn" id="expandAllBtn" type="button" title="Open edit panels for visible rows">
+          Edit visible
+        </button>
+      </section>
+
+      <section class="list" id="abList" aria-label="Address list"></section>
+    </main>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="{{ url_for('static', filename='addressbook.js') }}" defer></script>
+  <script src="{{ url_for('static', filename='dash-sidebar.js') }}" defer></script>
+</body>
+</html>

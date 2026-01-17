@@ -1,0 +1,192 @@
+/* Minimal, professional sidebar */
+
+.sidebar{
+    width: 260px;
+    background: #90a4bd;
+    border-right: 1px solid #ececf0;
+    height: 100vh;
+    position: sticky;
+    top: 0;
+    padding: 18px 14px;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .sideTop{
+    padding: 6px 8px 14px 8px;
+  }
+  
+  .appTitle{
+    font-weight: 450;
+    font-size: 26px;
+    color: white;
+  }
+  
+  .eventLine{
+    margin-top: 6px;
+    font-size: 12.5px;
+    color: #ececec;
+    font-weight: 600;
+  }
+  
+  .sideNav{
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 6px 4px;
+  }
+  
+  .sideNav a{
+    text-decoration: none;
+    color: #ffffff;
+    font-weight: 600;
+    padding: 10px 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .sideNav a:hover{
+    color: #ffffff;
+    border-left: 2px solid white;
+  }
+  
+  .badge{
+    font-size: 11px;
+    font-weight: 800;
+    padding: 3px 8px;
+    border-radius: 999px;
+    background: rgb(250 239 238);
+    color: #b42318;
+  }
+  
+  .sideBottom{
+    margin-top: auto;
+    padding: 14px 6px 0 6px;
+    border-top: 1px solid #f0f1f4;
+  }
+  
+  .userChip{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 10px;
+    border-radius: 14px;
+  }
+  
+  .userAvatar{
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    display: grid;
+    place-items: center;
+    font-weight: 700;
+    color: #5d7996;
+    background: #f7f7f7;
+  }
+  
+  .userName{
+    font-weight: 500;
+    font-size: 16px;
+    color: white;
+    line-height: 1.1;
+  }
+  
+  .userRole{
+    font-size: 12px;
+    color: #e1e1e1;
+    font-weight: 700;
+    margin-top: 3px;
+  }
+  
+  /* --- User Role Switcher Menu --- */
+
+.roleMenu {
+    position: absolute;
+    bottom: 100%; /* Position right above the user chip */
+    left: 0;
+    width: 100%; /* Match width of the sidebar section */
+    margin-bottom: 8px; /* Small gap between chip and menu */
+    
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    
+    padding: 6px;
+    z-index: 50;
+    transform-origin: bottom center;
+    animation: menuPopUp 0.15s ease-out;
+  }
+  
+  @keyframes menuPopUp {
+      from { opacity: 0; transform: scale(0.95) translateY(10px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+  }
+  
+  .roleMenuHeader {
+    padding: 8px 10px 4px 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #9ca3af; /* Subtle gray label */
+  }
+  
+  .roleMenuItem {
+    /* Reset default button styles */
+    background: none;
+    border: none;
+    width: 100%;
+    text-align: left;
+    font-family: inherit;
+    cursor: pointer;
+    
+    /* Layout */
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px;
+    border-radius: 8px;
+    transition: background-color 0.15s ease;
+  }
+  
+  .roleMenuItem:hover {
+    background-color: #f3f4f6; /* Light gray hover effect */
+  }
+  
+  /* The Avatar Circles inside the menu */
+  .roleIcon {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%; /* Make them circles for a softer look */
+    
+    /* Default colors (Admin) */
+    background: #f1f5f9;
+    color: #64748b;
+    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.85rem;
+    flex-shrink: 0; /* Prevent squishing */
+  }
+  
+  .roleDetails {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.3;
+  }
+  
+  .roleName {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #1f2937; /* Dark text */
+  }
+  
+  .roleLabel {
+    font-size: 0.75rem;
+    color: #6b7280; /* Lighter secondary text */
+    font-weight: 500;
+  }

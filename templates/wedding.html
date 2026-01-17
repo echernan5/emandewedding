@@ -1,324 +1,187 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-YGDNYBCK3Z"></script>
-    <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-
-    gtag('config', 'G-YGDNYBCK3Z');
-    </script>
-
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Emma & Ethan</title>
-    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='static/boatfavicon.webp') }}">
-    
-    <!-- This should be pointing to your main style.css, which now contains all the rules -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='wedding.css') }}">
-    
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
-    
-    <link rel="preload" as="image" href="{{ url_for('static', filename='Content/Untitled design (14) 2.webp') }}">
-
-    <meta name="description" content="Join Emma Hernandez and Ethan Wlodarczyk as they celebrate their wedding on June 18, 2027, at the Bay Pointe Inn in Shelbyville, Michigan.">
-    <meta name="keywords" content="Emma Hernandez, Ethan Wlodarczyk, Wedding, Emma and Ethan, Emma Hernandez and Ethan Wlodarczyk">
-    <meta name="author" content="Emma Hernandez and Ethan Wlodarczyk">
-
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inria+Serif:ital,wght@0,300;0,400;0,700;1,300;0,400;0,700&family=Kapakana:wght@300..400&display=swap" rel="stylesheet">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inria+Serif:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Monsieur+La+Doulaise&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Wedding Vendors</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='vendors.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='dash-sidebar.css') }}">
 </head>
 <body>
-    
-  <nav class="navbar" id="navbar">
-    <a href="/" class="logo-link">
-        <img src="{{ url_for('static', filename='Long logo with rose.png') }}" alt="Emma & Ethan Logo" class="logo">
-    </a>
+<div class="mobileOverlay" data-close-sidebar></div>
 
-    <button class="mobile-nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
-        <span class="hamburger-line"></span>
-        <span class="hamburger-line"></span>
-        <span class="hamburger-line"></span>
-    </button>
+<div class="app">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sideTop">
+      <div class="appTitle">Wedding Manager</div>
+      <div class="eventLine">Emma & Ethan • Jun 18, 2027</div>
+    </div>
 
-    <div class="nav-menu" id="nav-menu">
-        <div class="nav-links">
-            <a href="/travel" class="nav-link">Travel & Stay</a>
-            <a href="/our-story" class="nav-link">Our Story</a>
-            
-            <div class="nav-item-dropdown">
-                <span class="nav-link dropdown-trigger">Weekend Events</span>
-                
-                <div class="dropdown-menu">
-                    <a href="/wedding" class="dropdown-item">Ceremony & Reception</a>
-                    <a href="/welcome-party" class="dropdown-item">Welcome Party</a>
-                </div>
-            </div>
-        
-            <a href="/faq" class="nav-link">FAQs</a>
-            <a href="#registry" class="nav-link">Registry</a>
+    <nav class="sideNav">
+      <a href="/dashboard">Guest List</a>
+      <a href="/address" class="withBadge">
+        Address Book
+        <span class="badge" id="missingAddrBadge" style="display:none;">Missing</span>
+      </a>
+      <a href="/vendors" class="is-active">Vendors</a>
+      <a href="seating.html">Seating</a>
+      <a href="logistics.html">Logistics</a>
+      <a href="exports.html">Exports</a>
+      <a href="settings.html">Settings</a>
+    </nav>
+
+    <div class="sideBottom">
+      <div class="userChip">
+        <div class="userAvatar">EH</div>
+        <div class="userText">
+          <div class="userName">Emma Hernandez</div>
+          <div class="userRole">Owner</div>
         </div>
+      </div>
     </div>
-  </nav>
+  </aside>
 
-  <header class="event-hero">
-    <div class="hero-bg" style="background-image: url('{{ url_for('static', filename='Content/Weekend Events/Ceremony and Reception/Untitled design (14).jpg') }}');"></div>
-    <div class="hero-overlay"></div>
-    
-    <div class="hero-content">
-        <h1 class="script-font">Ceremony & Reception</h1>
-        <p class="hero-sub">Friday, June 18th, 2027</p>
-    </div>
-    
-    <div class="scroll-indicator">
-        <span>Scroll</span>
-        <div class="line"></div>
-    </div>
- </header>
-
-<div class="info-ribbon-container">
-    <div class="info-ribbon">
-      
-      <div class="ribbon-item">
-          <svg class="ribbon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-              <circle cx="12" cy="12" r="10"></circle>
-              <polyline points="12 6 12 12 16 14"></polyline>
-          </svg>
-          <span>4:00 PM Arrival</span>
+  <!-- MAIN -->
+  <div class="main">
+    <header class="topbar">
+      <div class="topbar__left">
+        <h1 class="title">Vendors</h1>
+        <p class="subtitle">Booked vendors only. Track payments, files, contacts, and key day-of details.</p>
+        <div id="statusLine" class="statusLine"></div>
       </div>
 
-      <div class="ribbon-item">
-          <svg class="ribbon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-              <circle cx="12" cy="10" r="3"></circle>
-          </svg>
-          <span>Bay Pointe Inn, Lakefront Pavilion</span>
+      <div class="topbar__right">
+        <button id="btnAddVendor" class="btn btn--primary" type="button">Add vendor</button>
       </div>
+    </header>
 
-      <div class="ribbon-item">
-          <svg class="ribbon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-              <rect x="1" y="3" width="15" height="13"></rect>
-              <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
-              <circle cx="5.5" cy="18.5" r="2.5"></circle>
-              <circle cx="18.5" cy="18.5" r="2.5"></circle>
-          </svg>
-          <span>Comp. On-Site Parking</span>
+    <main class="container">
+      <!-- SUMMARY STRIP -->
+      <section class="summaryStrip" aria-label="Vendor summary">
+        <div class="stripCard">
+          <div class="k">Booked vendors</div>
+          <div class="v" id="sumBooked">—</div>
+        </div>
+        <div class="stripCard">
+          <div class="k">Upcoming payments</div>
+          <div class="v" id="sumUpcoming">—</div>
+        </div>
+        <div class="stripCard">
+          <div class="k">Overdue</div>
+          <div class="v" id="sumOverdue">—</div>
+        </div>
+
+        <div class="stripRight">
+          <div class="pill" id="sumTotalScheduled">Scheduled: —</div>
+          <div class="pill pill--soft" id="sumPaid">Paid: —</div>
+          <div class="pill pill--soft" id="sumRemaining">Remaining: —</div>
+        </div>
+      </section>
+
+      <!-- TOOLBAR -->
+      <section class="toolbar" aria-label="Vendor filters">
+        <div class="toolbar__left">
+          <label class="field">
+            <span class="field__label">Search</span>
+            <input id="searchInput" class="input" type="search" placeholder="Search vendor, category, role…" />
+          </label>
+
+          <label class="field">
+            <span class="field__label">Category</span>
+            <select id="filterCategory" class="select">
+              <option value="all">All</option>
+            </select>
+          </label>
+
+          <label class="field">
+            <span class="field__label">Payment status</span>
+            <select id="filterPay" class="select">
+              <option value="all">All</option>
+              <option value="overdue">Overdue</option>
+              <option value="upcoming">Upcoming</option>
+              <option value="paid">Paid-only (no upcoming)</option>
+            </select>
+          </label>
+
+          <button id="btnClear" class="btn" type="button">Clear</button>
+        </div>
+
+        <div class="toolbar__right">
+          <button id="btnRefresh" class="btn" type="button">Refresh</button>
+        </div>
+      </section>
+
+      <!-- LIST -->
+      <section class="vendorList" id="vendorList" aria-label="Booked vendors"></section>
+
+      <div id="emptyState" class="emptyState hidden">
+        <h3>No vendors found</h3>
+        <p>Try clearing filters or adding your first booked vendor.</p>
       </div>
-
-    </div>
- </div>
-
- <section class="main-event-grid">
-      
-    <div class="col-details">
-        
-        <div class="detail-block">
-            <h2 class="editorial-title">Garden Cocktail Attire</h2>
-            <p class="body-text">
-              We invite you to dress in semi-formal garden attire. Gentlemen are encouraged to wear suits (ties optional); ladies are invited to wear midi or maxi dresses.
-            </p>
-            
-            <div class="style-note">
-                <span class="note-icon">🌿</span> <p><em>For your comfort:</em> As the ceremony and cocktail hour will be held on the lawn, we recommend block heels, wedges, or formal flats rather than stilettos.</p>
-            </div>
-        </div>
-  
-        <div class="detail-block">
-            <h2 class="editorial-title">Shuttles & Transport</h2>
-            <p class="body-text">
-              Complimentary shuttle service will be provided to and from the venue.
-              <br><br>
-              <strong>Pick Up:</strong> Best Western Plus<br>
-              <strong>Pick Up:</strong> Gun Lake Casino
-            </p>
-            <p class="sub-text"><em>Exact departure schedules will be provided at your hotel front desk upon arrival.</em></p>
-        </div>
-  
-        <div class="detail-block">
-            <h2 class="editorial-title">The Setting</h2>
-            <p class="body-text">
-              Bay Pointe Inn<br>
-              11456 Marsh Rd, Shelbyville, MI 49344
-            </p>
-            <a href="https://maps.google.com" target="_blank" class="text-link">Open Map &rarr;</a>
-        </div>
-  
-    </div>
-  
-    <aside class="col-timeline">
-        <h3 class="script-header">Day-of Timeline</h3>
-        
-        <div class="timeline-wrapper">
-            <div class="timeline-row">
-                <span class="t-time">4:00 PM</span>
-                <div class="t-content">
-                  <strong>Doors Open</strong>
-                  <span class="t-sub">Welcome Refreshments</span>
-                </div>
-            </div>
-            
-            <div class="timeline-row">
-                <span class="t-time">4:30 PM</span>
-                <div class="t-content">
-                  <strong>Ceremony</strong>
-                  <span class="t-sub">Garden Lawn</span>
-                </div>
-            </div>
-            
-            <div class="timeline-row">
-                <span class="t-time">5:00 PM</span>
-                <div class="t-content">
-                  <strong>Cocktail Hour</strong>
-                </div>
-            </div>
-            
-            <div class="timeline-row">
-                <span class="t-time">6:00 PM</span>
-                <div class="t-content">
-                  <strong>Reception</strong>
-                  <span class="t-sub">Dinner & Dancing in the Pavilion</span>
-                </div>
-            </div>
-        </div>
-    </aside>
-  
-  </section>
-
-  <section class="essentials-section">
-    <div class="essentials-container">
-        
-        <div class="essentials-header">
-            <h1 class="script-font">Helpful Details</h1>
-            <p class="intro-text">A few notes to ensure your evening is seamless and comfortable.</p>
-        </div>
-
-        <div class="essentials-grid">
-            
-            <div class="essential-item">
-                <div class="topic-col">
-                    <h3>The Elements</h3>
-                </div>
-                <div class="info-col">
-                    <p>We recommend dressing for the season as we will be celebrating outdoors to take in the lake views. For your comfort, the Pavilion is open-air but equipped with fans, heaters, and drop-down walls to suit any forecast.</p>
-                </div>
-            </div>
-
-            <div class="essential-item">
-                <div class="topic-col">
-                    <h3>Mobility</h3>
-                </div>
-                <div class="info-col">
-                    <p>The path to the Lakefront Pavilion involves a set of stairs and a paved incline. If you require mobility assistance, please let us know in advance; we are happy to arrange a golf cart to ensure you arrive comfortably.</p>
-                </div>
-            </div>
-
-            <div class="essential-item">
-                <div class="topic-col">
-                    <h3>Dietary Preferences</h3>
-                </div>
-                <div class="info-col">
-                    <p>We want everyone to dine well. When RSVPs open, you will have a dedicated space to list any allergies or restrictions so our culinary team can prepare a safe and delicious meal for you.</p>
-                </div>
-            </div>
-
-            <div class="essential-item">
-                <div class="topic-col">
-                    <h3>Departure</h3>
-                </div>
-                <div class="info-col">
-                    <p>The celebration will conclude at <strong>11:00 PM</strong>. As ride-share services can be limited in this area late at night, we recommend pre-arranging your transportation if you are staying off-site.</p>
-                </div>
-            </div>
-
-        </div>
-    </div>
- </section>
-
-</script>
-
-<section class="venue-history-section">
-    <div class="history-container">
-        
-        <div class="history-carousel">
-            <div class="carousel-slide" style="background-image: url('{{ url_for('static', filename='Content/Weekend Events/Ceremony and Reception/History/history1.jpg') }}');"></div>
-            <div class="carousel-slide" style="background-image: url('{{ url_for('static', filename='Content/Weekend Events/Ceremony and Reception/History/history2.jpeg') }}'); animation-delay: 5s;"></div>
-            <div class="carousel-slide" style="background-image: url('{{ url_for('static', filename='Content/Weekend Events/Ceremony and Reception/History/history5.webp') }}'); animation-delay: 10s;"></div>
-            <div class="carousel-slide" style="background-image: url('{{ url_for('static', filename='Content/Weekend Events/Ceremony and Reception/History/history4.jpg') }}'); animation-delay: 15s;"></div>
-        </div>
-
-        <div class="history-text-content">
-            <h2 class="script-font history-title">A Legacy of Celebration</h2>
-            <p class="history-body">
-                Nestled along the south shores of Gun Lake, Bay Pointe is a storied enclave where history and modern luxury converge.
-            </p>
-            <p class="history-body">
-                The property’s legacy as a destination for celebration dates back to the late 19th century, when steamboats offered moonlight cruises that sparked countless courtships, and travelers arrived by horse and carriage for days of music and dancing. In 1906, the site became home to the "Dwight Villa," a Colonial Revival summer retreat known for its lavish parties and extraordinary dahlia gardens.
-            </p>
-            <p class="history-body">
-                Now a family-owned resort spanning 30 wooded acres and 375 feet of pristine lake frontage, Bay Pointe stands as a testament to timeless beauty. From the historic BoatHouse Villa to the modern Lakefront Pavilion, the estate remains a hidden paradise where nature’s beauty is brought to life.
-            </p>
-        </div>
-
-    </div>
- </section>
-
- <footer class="luxury-footer">
-    <div class="footer-content">
-       
-       <div class="footer-logo-container">
-         <img src="{{ url_for('static', filename='Long logo with rose.png') }}" alt="Emma and Ethan logo with rose" class="footer-logo">
-       </div>
-
-        <nav class="footer-nav">
-            <a href="/" class="footer-link">Home</a>
-            <a href="/travel" class="footer-link">Travel</a>
-            <a href="/our-story" class="footer-link">Our Story</a>
-            <a href="/rsvp" class="footer-link">RSVP</a>
-            <a href="/wedding" class="footer-link">Ceremony & Reception</a>
-            <a href="/welcome-party" class="footer-link">Welcome Party</a>
-            <a href="/registry" class="footer-link">Registry</a>
-        </nav>
-
-        <div class="footer-bottom">
-            <p>
-                &copy; 2026 Emma & Ethan 
-                <span class="divider">•</span> 
-                <button id="privacy-trigger" class="privacy-link-light">Privacy Policy</button>
-            </p>
-        </div>
-
-    </div>
-  </footer>
-
-<div id="privacy-modal" class="modal modal-hidden">
-    <div class="modal-overlay" id="privacy-overlay"></div>
-    
-    <div class="modal-content privacy-content">
-        <button class="modal-close" id="privacy-close">&times;</button>
-        
-        <h2 class="script-font privacy-title">Privacy Policy</h2>
-        
-        <div class="privacy-body">
-            <p><strong>Last Updated: January 2026</strong></p>
-            <p>This website is a personal wedding website hosted for the purpose of sharing information with our guests. We respect your privacy and are committed to protecting it.</p>
-            
-            <h4>Data Collection</h4>
-            <p>We use Google Analytics to help us understand how our website is being used (e.g., to ensure our RSVP system is functioning correctly). This may collect non-personal information such as your device type, browser version, and general geographic location.</p>
-            
-            <h4>Cookies</h4>
-            <p>We do not use tracking cookies for advertising purposes. Any cookies used are strictly necessary for the functioning of the site or for anonymous analytics.</p>
-            
-            <h4>Personal Information</h4>
-            <p>Any personal information you voluntarily provide via our RSVP form (such as dietary restrictions or names) is used solely for the purpose of planning our wedding celebration and will not be shared with third parties.</p>
-        </div>
-    </div>
+    </main>
+  </div>
 </div>
-  
 
-<script src="{{ url_for('static', filename='event.js') }}" defer></script>
+<!-- DRAWER -->
+<div id="drawer" class="drawer" aria-hidden="true">
+  <div id="drawerOverlay" class="drawer__overlay"></div>
 
+  <aside class="drawer__panel" role="dialog" aria-modal="true" aria-label="Vendor details">
+    <header class="drawer__header">
+      <div class="drawerHead">
+        <div class="drawerAvatar" aria-hidden="true" id="drawerAvatar">V</div>
+
+        <div class="drawerHeadText">
+          <div id="drawerTitle" class="drawer__title">Vendor</div>
+          <div class="drawerHeadMeta">
+            <span id="drawerMeta">—</span>
+          </div>
+          <div class="drawerChips" id="drawerChips"></div>
+        </div>
+      </div>
+
+      <button id="drawerClose" class="iconBtn" type="button" aria-label="Close">✕</button>
+    </header>
+
+    <div class="drawer__content">
+      <div class="drawerGrid">
+        <!-- LEFT -->
+        <div>
+          <div class="drawerSectionTitle">Contacts</div>
+          <div class="drawerCard">
+            <div class="drawerCard__body" id="drawerPeople"></div>
+          </div>
+
+          <div class="drawerSectionTitle" style="margin-top:16px;">Files</div>
+          <div class="drawerCard">
+            <div class="drawerCard__body" id="drawerFiles"></div>
+          </div>
+        </div>
+
+        <!-- RIGHT -->
+        <div>
+          <div class="drawerSectionTitle">Payments</div>
+          <div class="drawerCard">
+            <div class="drawerCard__body" id="drawerPayments"></div>
+          </div>
+
+          <div class="drawerSectionTitle" style="margin-top:16px;">Notes</div>
+          <div class="drawerCard">
+            <div class="drawerCard__body">
+              <div class="noteBox" id="drawerNotes">—</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="drawerActions">
+      <button id="btnDrawerClose2" class="btn" type="button">Close</button>
+    </div>
+  </aside>
+</div>
+
+<script src="{{ url_for('static', filename='vendors.js') }}" defer></script>
 </body>
 </html>

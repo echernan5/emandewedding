@@ -1,841 +1,1789 @@
-/* Core Styles */
-:root {
-    --color-background-light: #fafafa;
-    --color-secondary-light: #d8e2ef;
-    --color-primary-blue: #8b9fb9;
-    --color-primary-green: #727a4d;
-    --color-accent-gold: #bcbdb5;
-    --color-text-dark: #212121;
-    --color-card-border: #e6e6e6;
-    --sidebar-width: 100px;
-}
+:root{
+    --bg:#f8f8f8;
+    --panel:#ffffff;
+    --panel-soft:#fafafa;
+  
+    --border:#e5e7eb;
+    --border-soft:#eef0f3;
+  
+    --text:#262626;
+    --muted:#828282;
+  
+    --accent:#1f9bd1;
+    --accent-soft: rgba(31,155,209,.12);
+    --accent-line: rgba(31,155,209,.28);
+  
+    --good:rgb(15, 118, 30);
+    --goodBg: rgba(15, 118, 30, 0.1);
+  
+    --danger:#b42318;
+    --dangerBg: rgba(180,35,24,0.10);
+  
+    --warn:#646464;
+    --warnBg: rgba(169, 169, 169, 0.14);
 
-body {
-    font-family: 'Inria Serif', serif;
-    background-color: var(--color-background-light);
-    color: var(--color-text-dark);
+    --reimb: rgb(80, 141, 172);
+    --reimbBg: rgba(80, 141, 172, 0.10);
+  
+    --shadow: 0 10px 28px rgba(17,24,39,.10);
+    --radius:12px;
+  }
+  
+  *{ box-sizing:border-box }
+  html,body{ height:100% }
+  
+  body{
+    margin:0;
+    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+    background: var(--bg);
+    color: var(--text);
+  }
+  
+  .hidden{ display:none !important }
+  .muted{ color:var(--muted) }
+
+  .muted {
+    font-weight: 600;
+  }
+  
+  .app{
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    min-height: 100vh;
+  }
+  .main{ min-width:0; }
+  
+  /* Header */
+  .topbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    gap:16px;
+    padding:18px 22px 14px;
+    background: var(--panel);
+    border-bottom:1px solid var(--border);
+  }
+  
+  .title{
     margin: 0;
-}
-
-.roboto {
-    font-family: "Roboto", sans-serif;
+    font-size: 28px;
     font-weight: 500;
-}
+  }
+  
+  .subtitle{
+    margin-top: 4px;
+    font-size: 12.5px;
+    color: var(--muted);
+    max-width: 720px;
+  }
+  
+  .statusLine{
+    margin-top:10px;
+    font-size:12.5px;
+    font-weight:700;
+    color:var(--muted);
+  }
+  
+  .container{
+    max-width:1200px;
+    margin:0 auto;
+    padding:16px 18px 36px;
+  }
+  
+  /* Summary strip */
+  .summaryStrip{
+    display:grid;
+    grid-template-columns: repeat(3, 1fr) 1.4fr;
+    gap:10px;
+    background: var(--panel);
+    border:1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: 0 6px 18px rgba(17,24,39,.06);
+    padding:12px;
+  }
+  
+  .stripCard{
+    border:1px solid var(--border-soft);
+    border-radius: 12px;
+    padding:10px 12px;
+    background:#fff;
+  }
+  
+  .stripCard .k{
+    font-size:11.5px;
+    color:var(--muted);
+    font-weight:800;
+  }
+  .stripCard .v{
+    margin-top:2px;
+    font-size:22px;
+    font-weight: 600;
+  }
+  
+  .stripRight{
+    display:flex;
+    gap:10px;
+    justify-content:flex-end;
+    align-items:stretch;
+    flex-wrap:wrap;
+  }
+  
+  .pill{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:10px 12px;
+    border-radius: 999px;
+    border:1px solid var(--border);
+    background:#fff;
+    font-size:12.5px;
+    font-weight: 600;
+    color:#3b3b3b;
+    white-space:nowrap;
+  }
+  
+  .pill--soft{
+    background: var(--panel-soft);
+    border-color: var(--border-soft);
+    color:#555;
+  }
+  
+  /* Toolbar (reuse your dashboard vibe) */
+  .toolbar{
+    margin-top:14px;
+    display:flex;
+    justify-content:space-between;
+    gap:12px;
+    padding:12px;
+    background: var(--panel);
+    border:1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: 0 6px 18px rgba(17,24,39,.06);
+  }
+  
+  .toolbar__left{
+    display:flex;
+    gap:12px;
+    flex-wrap:wrap;
+    align-items:flex-end;
+  }
+  
+  .toolbar__right{
+    display:flex;
+    align-items:flex-end;
+  }
+  
+  .field{
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+  }
+  
+  .field__label{
+    font-size:12px;
+    color:var(--muted);
+    font-weight:700;
+  }
+  
+  .input,.select{
+    height:36px;
+    min-width:200px;
+    padding:0 12px;
+    border-radius:10px;
+    border:1px solid var(--border);
+    background: var(--panel-soft);
+    font-size:14px;
+    color: var(--text);
+  }
+  
+  #searchInput.input{ min-width:320px; }
+  
+  .input:focus, .select:focus{
+    outline:none;
+    border-color: var(--accent-line);
+    box-shadow: 0 0 0 3px var(--accent-soft);
+    background:#fff;
+  }
+  
+  .btn{
+    height:36px;
+    padding:0 14px;
+    border-radius:10px;
+    border:1px solid var(--border);
+    background:#f3f4f6;
+    font-weight:600;
+    cursor:pointer;
+  }
+  
+  .btn:hover{ background:#e9eaee }
+  .btn--primary{
+    background: linear-gradient(#f7fbff, #f1f6ff);
+    border-color: rgba(31,155,209,.25);
+  }
+  .btn--primary:hover{
+    background: linear-gradient(#f1f7ff, #eaf2ff);
+  }
+  
+  /* Vendor cards */
+  .vendorList{
+    margin-top:14px;
+    display:grid;
+    gap:10px;
+  }
+  
+  .vendorCard{
+    background: var(--panel);
+    border:1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: 0 6px 18px rgba(17,24,39,.06);
+    overflow:hidden;
+  }
+  
+  .vendorTop{
+    padding:14px;
+    display:flex;
+    justify-content:space-between;
+    gap:12px;
+    align-items:flex-start;
+  }
+  
+  .vendorName{
+    font-size:18px;
+    font-weight:500;
+    margin:0;
+  }
+  
+  .vendorMeta{
+    margin-bottom:4px;
+    font-size:12.5px;
+    color:var(--muted);
+    font-weight:500;
+  }
+  
+  .vendorRight{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+    justify-content:flex-end;
+    align-items:center;
+  }
+  
+  .chip{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:6px 10px;
+    border-radius:999px;
+    border:1px solid var(--border);
+    background:#fff;
+    font-size:12px;
+    font-weight:600;
+    color:#374151;
+  }
+  
+  .chipDot{
+    width:8px;
+    height:8px;
+    border-radius:99px;
+    background:#c7c9cf;
+  }
+  
+  .chip--paid{ background: var(--goodBg); border-color: rgba(15,118,110,0.25); color: var(--good); }
+  .chip--paid .chipDot{ background: var(--good); }
+  
+  .chip--overdue{ background: var(--dangerBg); border-color: rgba(180,35,24,0.25); color: var(--danger); }
+  .chip--overdue .chipDot{ background: var(--danger); }
+  
+  .chip--upcoming{ background: var(--warnBg); border-color: rgba(168, 168, 168, 0.3); color: var(--warn); }
+  .chip--upcoming .chipDot{ background: #b4b4b4; }
 
-.page-content-wrapper {
-    margin-left: var(--sidebar-width);
-    width: calc(100% - var(--sidebar-width));
-    transition: margin-left 0.3s ease, width 0.3s ease;
-}
+  /* Blue styling for the specific reimbursement state */
+  .chip--reimb-pending{ background: var(--reimbBg); border-color: rgba(15,118,110,0.25); color: var(--reimb); }
+  .chip--reimb-pending .chipDot{ background: var(--reimb); }
+  
+  /* Optional: style the whole row if it's in this state */
+  .responsibilityRow.is-reimb-pending {
+  }
+  
+  .vendorBottom{
+    border-top:1px solid var(--border-soft);
+    background:#fff;
+    padding:10px 14px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+  }
+  
+  .vendorNums{
+    display:flex;
+    gap:14px;
+    flex-wrap:wrap;
+    color:var(--muted);
+    font-size:12.5px;
+    font-weight:500;
+  }
+  
+  .vendorNums b{ color: var(--text); font-weight:600; }
+  
+  .linkBtn{
+    border:1px solid var(--border);
+    background:#fff;
+    height:34px;
+    padding:0 12px;
+    border-radius:10px;
+    font-weight:600;
+    cursor:pointer;
+  }
+  .linkBtn:hover{ background:#f3f4f6; }
+  
+  /* Empty */
+  .emptyState{
+    margin-top:14px;
+    padding:24px;
+    border:1px dashed var(--border);
+    border-radius: var(--radius);
+    background:#fafafa;
+  }
+  .emptyState h3{ margin:0 0 6px; }
+  
+  /* Drawer */
+  .drawer{
+    position:fixed;
+    inset:0;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .18s ease;
+    z-index:999;
+  }
+  .drawer.is-open{ opacity:1; pointer-events:auto; }
+  
+  .drawer__overlay{
+    position:absolute;
+    inset:0;
+    background:rgba(0,0,0,.28);
+  }
+  
+  .drawer__panel{
+    position:absolute;
+    right:0;
+    top:0;
+    bottom:0;
+    width:min(980px, 92vw);
+    background:var(--panel);
+    border-left:1px solid var(--border);
+    box-shadow: var(--shadow);
+    display:flex;
+    flex-direction:column;
+  }
+  
+  .drawer__header{
+    padding:18px 20px;
+    border-bottom:1px solid var(--border);
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:14px;
+  }
+  
+  .drawerHead{
+    display:flex;
+    align-items:flex-start;
+    gap:14px;
+    min-width:0;
+  }
+  
+  .drawerAvatar{
+    width:50px;
+    height:50px;
+    border-radius:8px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:700;
+    background:#f7f7f7;;
+    border:1px solid rgba(31,155,209,.25);
+    color:#5d7996;
+    flex:0 0 auto;
+    font-size: 20px;
+  }
+  
+  .drawer__title{
+    font-size:24px;
+    font-weight:500;
+    margin:0;
+  }
+  
+  .drawerHeadMeta{
+    margin-top:4px;
+    font-size:12.5px;
+    color:var(--muted);
+    font-weight:500;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  
+  .drawerChips{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+    margin: 0px auto;
+  }
+  
+  .iconBtn{
+    width:36px;
+    height:36px;
+    border-radius:10px;
+    border:1px solid var(--border);
+    background:#f3f4f6;
+    cursor:pointer;
+    flex:0 0 auto;
+  }
+  .iconBtn:hover{ background:#e9eaee }
+  
+  .drawer__content{
+    padding:18px 20px 90px;
+    overflow:auto;
+    background-color: var(--bg);
+  }
+  
+  .drawerSectionTitle{
+    margin:0 0 10px;
+    font-size:12.5px;
+    letter-spacing:.08em;
+    color:#6e6e6e;
+    font-weight:500;
+    text-transform:uppercase;
+  }
+  
+  .drawerGrid{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap:14px;
+  }
+  
+  .drawerCard{
+    border:1px solid var(--border);
+    border-radius:14px;
+    background:#fff;
+    box-shadow: 0 10px 24px rgba(17,24,39,.06);
+    overflow:hidden;
+  }
+  
+  .drawerCard__body{
+    padding:14px;
+  }
+  
+  .drawerActions{
+    position:sticky;
+    bottom:0;
+    margin-top:auto;
+    padding:12px 14px;
+    border-top:1px solid var(--border);
+    background: rgba(255,255,255,.9);
+    backdrop-filter: blur(10px);
+    display:flex;
+    justify-content:flex-end;
+    gap:10px;
+  }
+  
+  /* People / Files / Payments lists */
+  .stack{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+  
+  .row{
+    display:flex;
+    justify-content:space-between;
+    gap:10px;
+    align-items:flex-start;
+    border:1px solid var(--border-soft);
+    border-radius:12px;
+    padding:10px 12px;
+    background:#fff;
+  }
+  
+  .rowLeft{ min-width:0; }
+  
+  .rowTitle{
+    font-weight:500;
+    font-size:14px;
+  }
+  .rowSub{
+    margin-top:3px;
+    font-size:12.5px;
+    color:var(--muted);
+    font-weight:500;
+  }
+  
+  .noteBox{
+    background: var(--panel-soft);
+    border:1px solid var(--border-soft);
+    border-radius:12px;
+    padding:12px;
+    color:#4b5563;
+    font-weight:700;
+    font-size:13px;
+    line-height:1.35;
+    min-height:84px;
+    white-space:pre-wrap;
+  }
+  
+  @media (max-width: 980px){
+    .summaryStrip{ grid-template-columns: 1fr; }
+    .drawerGrid{ grid-template-columns: 1fr; }
+    .input,.select{ min-width:100%; }
+    .toolbar__right{ align-items:stretch; }
+    .app{ grid-template-columns: 1fr; }
+    .sidebar{ display:none; }
+  }
+  
+  .payTabs { display:flex; gap:8px; background:#f3f4f6; padding:6px; border-radius:999px; margin-bottom: 20px;}
+.payTab { border:0; background:transparent; padding:8px 12px; border-radius:999px; font-weight:700; cursor:pointer; }
+.payTab.is-active { background:#fff; box-shadow:0 1px 2px rgba(0,0,0,.08); }
 
-.members-container {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 2.5rem;
-}
+.ledgerSection { margin-top:12px; }
+.ledgerHeader { font-size:12px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:#6b7280; margin:8px 0; }
 
-.info-card {
-    background-color: white;
-    padding: 1.5rem;
-    border-radius: 10px;
-    border: 1px solid var(--color-card-border);
-}
+.payCard { border:1px solid rgba(0,0,0,.08); border-radius:14px; padding:12px; background:#fff; }
+.payTop { display:flex; justify-content:space-between; gap:12px; }
+.payTitle { color:#6b7280; font-weight:500; margin-top:4px; font-size: 12px;}
+.paySub { font-weight:600; font-size: 18px; }
+.payRight { display:flex; flex-direction:column; align-items:flex-end; gap:6px; }
+.payMeta { font-size:12px; color:#6b7280; font-weight:500; }
 
-.card-heading {
-    font-family: 'Inria Serif', serif;
-    font-size: 1.5rem;
-    color: var(--color-primary-blue);
-    margin: 0;
-}
+.payDocs { margin-top:10px; padding-top:10px; border-top:1px solid rgba(0,0,0,.06); }
+.docStack { display:flex; flex-direction:column; gap:10px; }
+.docRow { display:flex; justify-content:space-between; align-items:center; gap:12px; padding:10px; border:1px solid rgba(0,0,0,.06); border-radius:12px; background:#fafafa; }
+.docTitle { font-weight:500; }
+.docSub { font-size:12px; color:#6b7280; font-weight:500; margin-top:2px; }
+.docMissing { font-size:12px; font-weight:500; margin-bottom:8px; color:#6b7280; }
 
-/* Sidebar */
-.sidebar {
-    position: fixed; top: 0; left: 0; height: 100%;
-    background-color: white; border-right: 1px solid #e6e6e6;
-    display: flex; flex-direction: column; justify-content: space-between;
-    width: var(--sidebar-width); box-sizing: border-box; z-index: 1000;
-    padding: 1.5rem 0; align-items: center;
-}
-.sidebar-logo-img {
-    width: 100%; max-width: 45px; display: block;
-    margin: 0 auto 2rem auto; border-bottom: 1px solid #e6e6e6;
-    padding-bottom: 2rem;
-}
-.sidebar-menu {
-    list-style: none; padding: 0; margin: 0;
-    display: flex; flex-direction: column; gap: 0.5rem;
-}
-.menu-link {
-    display: flex; align-items: center; justify-content: center;
-    padding: 0.75rem 1rem; border-radius: 10px;
-    color: var(--color-primary-blue); text-decoration: none;
-    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
-}
-.menu-link:hover { background-color: var(--color-primary-green); color: white; }
-.menu-link .material-icons-round { font-size: 28px; }
-.sidebar-footer { padding-top: 1rem; border-top: 1px solid #e6e6e6; }
-.logout-link { margin-top: 1rem; width: 100%; box-sizing: border-box; }
-
-/* Vendor Dashboard Layout */
-.vendor-dashboard-grid {
-    display: grid;
-    grid-template-columns: 320px 1fr;
-    gap: 2.5rem;
-    align-items: start;
-}
-.vendor-dashboard-sidebar {
-    top: 2.5rem;
+.drawerTabs {
     display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-}
-
-/* Summary Dashboard Styles */
-.summary-title {
-    font-family: 'Inria Serif', serif; font-size: 1.2rem;
-    color: var(--color-text-dark); margin: 0 0 1.5rem 0;
-}
-.progress-ring {
-    position: relative; display: flex; align-items: center;
-    justify-content: center; margin: 0 auto 1.5rem auto;
-}
-.progress-ring__svg { transform: rotate(-90deg); }
-.progress-ring__circle { transition: stroke-dashoffset 0.5s ease-in-out; }
-.progress-ring__text {
-    position: absolute; display: flex; flex-direction: column;
-    align-items: center; line-height: 1.2;
-}
-.progress-ring__number {
-    font-family: 'Inria Serif', serif; font-size: 2rem;
-    font-weight: bold; color: var(--color-primary-green);
-}
-.progress-ring__label {
-    font-family: 'Roboto', sans-serif; font-size: 0.8rem;
-    color: #777; text-transform: uppercase;
-}
-.summary-stats {
-    display: flex; justify-content: space-around; text-align: center;
-    border-top: 1px solid #e6e6e6; padding-top: 1rem;
-}
-.stat-item { font-family: 'Roboto', sans-serif; color: #555; font-size: 0.9rem; }
-.stat-item span { display: block; font-weight: bold; font-size: 1.2rem; }
-.upcoming-payments-list {
-    list-style: none; padding: 0; margin: 0;
-    display: flex; flex-direction: column; gap: 1rem;
-}
-.upcoming-payments-list li {
-    display: grid; grid-template-columns: 1fr auto;
-    grid-template-areas: "vendor amount" "date amount";
-    font-family: 'Roboto', sans-serif; font-size: 0.9rem;
-}
-.payment-date { grid-area: date; font-size: 0.8rem; color: #777; }
-.payment-vendor { grid-area: vendor; font-weight: bold; color: var(--color-text-dark); }
-.payment-amount { grid-area: amount; font-weight: bold; color: var(--color-primary-green); }
-
-/* Vendor Checklist */
-/* Vendor Checklist */
-.checklist-card { 
-    margin-bottom: 2.5rem; 
-}
-
-.section-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-bottom: 1rem;
-    margin-bottom: 1rem;
-    border-bottom: 1px solid var(--color-card-border);
-}
-
-.checklist-header {
-    display: grid;
-    grid-template-columns: 150px 1fr;
-    gap: 1.5rem;
-    padding: 0 1rem;
-    font-family: 'Roboto', sans-serif;
-    font-size: 0.7rem;
-    font-weight: bold;
-    color: #777;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    margin-bottom: 0.5rem;
-}
-
-/* DEFINITIVE Header and Milestone Alignment */
-/* DEFINITIVE Header and Milestone Alignment */
-.header-statuses {
-    position: relative;
-    height: 20px;
-}
-
-.milestone-dots {
-    z-index: 1;
-    display: flex;
-    width: calc(100% - 16px);
-    margin: 0 8px;
-}
-
-.header-statuses span,
-.milestone-dot {
-    position: absolute; /* Positions each item individually */
-    top: 50%;
-    transform: translate(-50%, -50%); /* Centers the item on its 'left' coordinate */
-}
-
-/* Position each header label */
-.header-statuses span:nth-child(1) { left: 33%; }
-.header-statuses span:nth-child(2) { left: 66%; }
-.header-statuses span:nth-child(3) { left: 100%; }
-
-/* Position each milestone dot */
-.milestone-dot:nth-child(1) { left: 33%; }
-.milestone-dot:nth-child(2) { left: 66%; }
-.milestone-dot:nth-child(3) { left: 100%; }
-
-/* General Checklist Styles */
-.vendor-checklist {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-}
-
-.checklist-item {
-    display: grid;
-    grid-template-columns: 150px 1fr;
-    gap: 1.5rem;
-    align-items: center;
-    padding: 0.75rem 1rem;
-}
-
-.checklist-category {
-    font-family: 'Inria Serif', serif;
-    font-size: 1.1rem;
-    font-weight: bold;
-    color: var(--color-text-dark);
-}
-
-.milestone-tracker {
-    position: relative;
-    display: flex;
-    align-items: center;
-}
-
-.milestone-line {
-    position: absolute;
-    top: 50%;
-    left: 0;
-    right: 0;
-    height: 6px;
-    background-color: var(--color-card-border);
-    border-radius: 3px;
-    transform: translateY(-50%);
-}
-
-.milestone-line-progress {
-    position: absolute;
-    top: 50%;
-    left: 0;
-    height: 6px;
-    background-color: var(--color-primary-blue);
-    border-radius: 3px;
-    transform: translateY(-50%);
-    width: 0;
-    transition: width 0.4s ease-in-out;
-}
-
-.milestone-dot {
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    background-color: white;
-    border: 3px solid var(--color-card-border);
-    transition: border-color 0.4s ease;
-    z-index: 1; /* Ensures dots are on top of the line */
-}
-
-.milestone-dot.active {
-    border-color: var(--color-primary-blue);
-}
-
-.milestone-dot.complete {
-    border-color: var(--color-primary-green);
-}
-
-/* --- NEW: Tabbed Interface Styles --- */
-.tabs-header {
-    display: flex;
-    justify-content: flex-start;
-    border-bottom: 2px solid var(--color-card-border);
-    margin-bottom: 1.5rem;
-}
-
-.tab-button {
-    background: none;
+    gap: 8px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 16px;
+  }
+  
+  .tabBtn {
+    padding: 8px 14px;
+    border-radius: 8px 8px 0 0;
     border: none;
-    padding: 0.75rem 1.5rem;
-    font-family: 'Roboto', sans-serif;
-    font-size: 1rem;
-    font-weight: bold;
-    color: #999;
+    background: var(--bg);
+    font-weight: 600;
     cursor: pointer;
-    transition: color 0.3s ease;
-    position: relative;
-    top: 2px;
+    border-bottom-color: white;
+  }
+  
+  .tabBtn.active {
+    background: var(--panel);
+    border: 1px solid var(--border);
+  }
+  
+  .drawerTabPanel {
+    display: none;
+  }
+  
+  .drawerTabPanel.is-active {
+    display: block;
+  }
+
+  .drawerTabs{
+    display:flex;
+    gap:10px;
+    padding: 12px 18px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  
+  .tabBtn{
+    border:1px solid var(--border);
+    background: var(--bg);
+    padding:10px 14px;
+    border-radius:12px 12px 0 0;
+    font-weight:800;
+    cursor:pointer;
+  }
+  
+  .tabBtn.is-active{
+    background: white;
+  }
+  
+  .drawerTabPanel{ display:none; padding: 16px 18px; background-color: white; border-radius: 15px; border: 1px solid var(--border);}
+  .drawerTabPanel.is-active{ display:block; }
+  
+  /* Payment card hooks */
+  .paymentCard{
+    border:1px solid var(--border);
+    border-radius:14px;
+    background:#fff;
+    box-shadow: 0 10px 24px rgba(17,24,39,.06);
+    overflow:hidden;
+  }
+  
+    .paymentCard__body { 
+        padding: 14px;
+    }
+
+.paymentTitle { font-weight: 600; }          /* description */
+.paymentMeta { margin-top: 6px; }
+.paymentMeta__details { opacity: 0.8; font-size: 13px; }
+.paymentNotes { margin-top: 10px; opacity: 0.85; }
+
+/* Sections */
+.paymentSection { margin-top: 14px; }
+.paymentSection__title {
+  font-size: 12px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  font-weight: 550;
+  opacity: .75;
 }
 
-.tab-button.active {
-    color: var(--color-primary-green);
-    border-bottom: 2px solid var(--color-primary-green);
+/* Responsibilities */
+.responsibilityRow { display:flex; justify-content:space-between; gap: 12px; padding: 10px 0; }
+.responsibilityName { font-weight: 750; }
+.responsibilityMeta { font-size: 13px; opacity: .75; }
+.responsibilityAmount { font-weight: 600; }
+
+/* Easy state styling */
+.paymentCard.is-overdue .paymentTitle { }
+.paymentCard.is-paid .paymentTitle { }
+.responsibilityRow.is-reimb-pending .responsibilityName { }
+
+/* =========================
+   Payments (new card markup)
+   ========================= */
+
+   #drawerPayments .stack { gap: 12px; }
+
+   /* Card shell */
+   .paymentCard{
+     border:1px solid var(--border);
+     border-radius:14px;
+     background:#fff;
+     box-shadow: 0 10px 24px rgba(17,24,39,.06);
+     overflow:hidden;
+   }
+   
+   .paymentCard__body{
+     padding:14px;
+   }
+   
+   /* Subtle state accents */
+   .paymentCard.is-overdue{
+     border-color: rgba(180,35,24,0.28);
+     box-shadow: 0 10px 24px rgba(180,35,24,.06);
+   }
+   
+   .paymentCard.is-paid{
+     border-color: rgba(15,118,110,0.22);
+   }
+   
+   /* Header */
+   .paymentHeader{ display:block; }
+   
+   .paymentTitle{
+     font-size:16px;
+     font-weight:650;
+     margin:0;
+   }
+   
+   .paymentMeta{
+     margin-top:6px;
+     display:flex;
+     flex-wrap:wrap;
+     gap:10px;
+     align-items:center;
+   }
+   
+   .paymentMeta__status{
+     display:inline-flex;
+     align-items:center;
+   }
+   
+   /* The “Due • Total • Paid • Remaining” line */
+   .paymentMeta__details{
+     display:inline-flex;
+     flex-wrap:wrap;
+     gap:8px;
+     align-items:center;
+     font-size:12.5px;
+     color:var(--muted);
+     font-weight:600;
+   }
+   
+   .paymentMeta__dot{
+     opacity:.5;
+   }
+   
+   .paymentMeta__remaining{
+     color: var(--text);
+     font-weight:800;
+   }
+   
+   .paymentCard.is-overdue .paymentMeta__remaining{
+     color: var(--danger);
+   }
+   
+   .paymentCard.is-paid .paymentMeta__remaining{
+     color: var(--good);
+   }
+   
+   /* Notes under header */
+   .paymentNotes{
+     margin-top:10px;
+     padding:10px 12px;
+     border-radius:12px;
+     border:1px solid var(--border-soft);
+     background: var(--panel-soft);
+     color:#4b5563;
+     font-size:13px;
+     font-weight:650;
+     line-height:1.35;
+   }
+   
+   /* Sections */
+   .paymentSection{
+     margin-top:14px;
+     padding-top:14px;
+     border-top:1px solid var(--border-soft);
+   }
+   
+   .paymentSection__title{
+     margin:0 0 10px;
+     font-size:11.5px;
+     letter-spacing:.08em;
+     text-transform:uppercase;
+     color:#797979;
+     font-weight:550;
+   }
+   
+   /* Responsibilities list */
+   .responsibilityList{
+     display:flex;
+     flex-direction:column;
+     gap:10px;
+   }
+   
+   .responsibilityRow{
+     display:flex;
+     justify-content:space-between;
+     gap:12px;
+     align-items:flex-start;
+     border:1px solid var(--border-soft);
+     border-radius:12px;
+     padding:10px 12px;
+     background:#fff;
+   }
+   
+   .responsibilityRow__left{ min-width:0; }
+   
+   .responsibilityName{
+     font-size:14px;
+     font-weight:650;
+   }
+   
+   .responsibilityMeta{
+     margin-top:3px;
+     font-size:12.5px;
+     color:var(--muted);
+     font-weight:400;
+     line-height:1.25;
+   }
+   
+   .responsibilityRow__right{
+     display:flex;
+     flex-direction:column;
+     align-items:flex-end;
+     gap:6px;
+     flex:0 0 auto;
+   }
+   
+   .responsibilityAmount{
+     font-weight:600;
+     font-size:13.5px;
+     color:var(--text);
+   }
+   
+   /* Responsibility states */
+   
+   .responsibilityRow.is-paid{
+     border-color: rgba(15,118,110,0.22);
+     background: rgba(15,118,110,0.06);
+   }
+   
+   /* Empty text inside a payment */
+   .paymentEmpty{
+     border:1px dashed var(--border);
+     border-radius:12px;
+     padding:10px 12px;
+     background:#fafafa;
+     color:var(--muted);
+     font-size:12.5px;
+     font-weight:650;
+   }
+   
+   /* Files section: reuse your existing row look but tighter */
+   .paymentFiles__list{
+     display:flex;
+     flex-direction:column;
+     gap:10px;
+   }
+   
+   /* Let you style invoices vs receipts if you want */
+   /* Make the Open button consistent inside payment files */
+   .paymentSection--files .linkBtn{
+     height:32px;
+     border-radius:10px;
+     font-weight:500;
+   }
+
+   /* Payment card (hierarchy-focused) */
+.paymentCard{
+    border:1px solid var(--border);
+    border-radius:16px;
+    background:#fff;
+    box-shadow: 0 10px 24px rgba(17,24,39,.06);
+    overflow:hidden;
+  }
+  
+  .paymentCard__body{ padding:16px; }
+  
+  /* Header layout */
+  .paymentHeader__top{
+    display:flex;
+    justify-content:space-between;
+    gap:16px;
+    align-items:flex-start;
+  }
+  
+  .paymentHeader__left{ min-width:0; }
+  
+  .paymentTitle{
+    font-size:18px;
+    font-weight:600;
+    margin:0;
+  }
+  
+  .paymentSub{
+    margin-top:8px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    flex-wrap:wrap;
+    color:var(--muted);
+    font-weight:500;
+    font-size:14px;
+  }
+  
+  .paymentDue{ color: #454545; font-size: 14px; font-weight: 600; }
+  
+  /* Total on the right */
+  .paymentHeader__right{
+    text-align:right;
+    flex:0 0 auto;
+  }
+  
+  .paymentTotalLabel{
+    font-size:12px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:var(--muted);
+    font-weight:500;
+    opacity:.9;
+  }
+  
+  .paymentTotal{
+    margin-top:4px;
+    font-size:20px;
+    font-weight:600;
+  }
+  
+  /* Paid / Remaining line */
+  .paymentSummary{
+    margin-top:10px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    color:var(--muted);
+    font-size:13px;
+    font-weight:600;
+  }
+  
+  .paymentSummary b{
+    color:var(--text);
+    font-weight:700;
+  }
+  
+  .paymentSummary__dot{ opacity:.5; }
+  
+  .paymentRemaining{}
+  
+  /* Notes */
+  .paymentNotes{
+    margin-top:10px;
+    color:var(--muted);
+    font-size:13px;
+    font-weight:700;
+    line-height:1.35;
+  }
+  
+  /* Spacing between header and sections */
+  .paymentSection{ margin-top:16px; }
+  .paymentSection__title{
+    font-size:12px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    font-weight:550;
+    color:#797979;
+    margin:0 0 10px;
+  }
+  
+  /* Responsibility rows */
+  .responsibilityRow{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:12px;
+    padding:12px;
+    border:1px solid var(--border-soft);
+    border-radius:14px;
+    background:#fff;
+  }
+  
+  .responsibilityLeft{ min-width:0; }
+  
+  .responsibilityName{
+    font-weight:600;
+    font-size:14px;
+  }
+  
+  .responsibilityMeta{
+    margin-top:4px;
+    font-size:12.5px;
+    color:var(--muted);
+    font-weight:400;
+  }
+  
+  .responsibilityRight{
+    display:flex;
+    flex-direction:column;
+    align-items:flex-end;
+    gap:8px;
+  }
+  
+  .responsibilityAmount{
+    font-weight:600;
+    font-size:14px;
+  }
+  
+  
+  .paymentMiniMeta {
+    font-size: 14px;
+    margin-top: 4px;
 }
 
-.tab-button:hover:not(.active) {
-    color: var(--color-primary-blue);
+/* Hide details by default */
+.paymentDetails {
+    display: none;
+    border-top: 1px solid #eee; /* Optional separator */
+    margin-top: 12px;
 }
 
-/* --- NEW: Accordion Styles for Prospective Vendors --- */
-.vendor-accordion {
-    width: 100%;
+/* Show details when expanded */
+.paymentCard.is-expanded .paymentDetails {
+    display: block;
+    animation: fadeIn 0.2s ease-in-out;
 }
 
-.accordion-item {
-    border-bottom: 1px solid var(--color-card-border);
+/* Rotate the chevron when expanded */
+.paymentChevron {
+    transition: transform 0.2s ease;
 }
 
-.accordion-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem 1.5rem;
-    cursor: pointer;
-    background-color: transparent;
-    transition: background-color 0.2s ease;
-    font-family: 'Inria Serif', serif;
-    font-size: 1.25rem;
-    color: var(--color-text-dark);
-}
-
-.accordion-header:hover {
-    background-color: #f9f9f9;
-}
-
-/* New CSS for the wrapper */
-.accordion-header .category-and-count {
-    display: flex; /* Make the new container a flexbox */
-    align-items: center; /* Align items vertically */
-    gap: 0.5rem; /* Add a small gap between the category and count */
-}
-
-.accordion-header .category-name {
-    font-weight: bold;
-    color: var(--color-primary-blue);
-}
-
-.accordion-header .vendor-count {
-    font-family: 'Roboto', sans-serif;
-    font-size: 0.9rem;
-    font-weight: normal;
-    color: #999;
-}
-
-.accordion-header .material-icons-round {
-    transition: transform 0.3s ease;
-}
-
-.accordion-item.open .accordion-header .material-icons-round {
+.paymentCard.is-expanded .paymentChevron {
     transform: rotate(180deg);
 }
 
-.vendor-management .section-header {
-    margin: 0px;
+/* Smooth fade in animation */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-5px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
-.accordion-body {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.3s ease-in-out;
-    padding: 0 1.5rem; /* Add padding to match the header */
+/* Blue chip for pending reimbursements */
+.chip--reimb-pending {
+    background-color: #e0f2fe; /* Light blue bg */
+    color: #0284c7;            /* Blue text */
 }
 
-.accordion-body.open {
-    max-height: 5000px; /* A large value to allow for dynamic content */
-    padding: 1.5rem; /* Add top/bottom padding when open */
+.chip--reimb-pending .chipDot {
+    background-color: #0284c7;
 }
 
-/* --- NEW: Prospective Vendor Card Styles --- */
-.prospective-vendor-card {
-    display: block;
-    grid-template-columns: 80px 1fr;
-    gap: 1.5rem;
-    padding: 1rem;
-    border: 1px solid var(--color-card-border);
-    border-radius: 8px;
-    margin-bottom: 1rem;
-    background-color: white;
-    width: 100%;
-}
-
-.prospective-vendor-card .vendor-image {
-    width: 80px;
-    height: 80px;
-    border-radius: 5px;
-    object-fit: cover;
-    background-color: var(--color-secondary-light);
-}
-
-.prospective-vendor-card .vendor-details {
+/* Layout for the numbers area */
+.vendorNums {
     display: flex;
-    flex-direction: column;
+    align-items: center;
+    justify-content: space-between; /* Pushes bar to the right */
     width: 100%;
+    gap: 16px;
 }
 
-.prospective-vendor-card .vendor-details h4 {
-    font-family: 'Inria Serif', serif;
-    font-size: 1.2rem;
-    color: var(--color-primary-green);
-    margin: 0 0 0.25rem 0;
-}
-
-.prospective-vendor-card .vendor-details p {
-    font-family: 'Roboto', sans-serif;
-    font-size: 0.9rem;
+.vendorNumsText {
+    display: flex;
+    gap: 16px;
+    font-size: 0.9em;
     color: #555;
-    margin: 0.25rem 0;
 }
 
-.prospective-vendor-card .card-actions {
-    margin-top: 1rem;
-    display: flex;
-    gap: 0.5rem;
+.vendorNumsText span b {
+    color: #111;
+    font-weight: 500;
 }
 
-.prospective-vendor-card .card-actions button {
-    background-color: var(--color-primary-blue);
-    color: white;
-    border: none;
-    border-radius: 5px;
-    padding: 0.5rem 1rem;
-    cursor: pointer;
-    font-family: 'Roboto', sans-serif;
-    font-size: 0.9rem;
-    transition: background-color 0.2s ease;
+/* The Progress Bar Container */
+.vendorProgress {
+    flex-grow: 0;
+    flex-shrink: 0;
+    width: 120px; /* Fixed width for consistency */
+    height: 8px;  /* Subtle height */
+    background-color: #e5e7eb; /* Light grey background */
+    border-radius: 99px;
+    overflow: hidden;
 }
 
-.prospective-vendor-card .card-actions button:hover {
-    background-color: #7286a1;
-}
-
-/* Ensure the booked vendors container uses a single-column layout */
-#booked-vendors-container {
-    display: block; /* Reverts to the default block-level display */
-}
-
-/* --- NEW: Grid Layout for PROSPECTIVE Vendor Cards --- */
-.vendor-accordion .accordion-body {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr); /* Creates 3 equal-width columns */
-    gap: 1.5rem; /* Adds space between the cards */
-}
-
-.prospective-vendor-card .vendor-placeholder {
-    width: 80px;
-    height: 80px;
-    border-radius: 5px;
-    background-color: var(--color-secondary-light); /* Or any color you prefer */
-}
-
-/* Base styles for the "No Vendors" message */
-.no-vendors-message {
-    padding: 1rem;
-    text-align: center;
-    color: #777;
-    font-family: 'Roboto', sans-serif;
-    font-style: italic;
-}
-
-/* --- NEW: Modal Styles for a Two-Mode System --- */
-
-/* Modal Overlays (already mostly correct) */
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
+/* The Green Fill */
+.vendorProgressFill {
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.6);
+    background-color: #10b981; /* Emerald green to match 'Paid' chips */
+    border-radius: 99px;
+    transition: width 0.4s ease-out; /* Smooth animation on load */
+}
+
+/* Container: Align items to start (left) instead of spaced out */
+.vendorNums {
     display: flex;
-    justify-content: center;
     align-items: center;
+    justify-content: flex-start; /* Changed from space-between */
+    width: 100%;
+    /* No gap needed because we use fixed widths on children */
+}
+
+/* Individual Stat Columns */
+.vendorStat {
+    display: flex;
+    gap: 6px;
+    font-size: 14px;
+    flex-shrink: 0; /* Prevents squishing if window is small */
+}
+
+.vendorStat b {
+    color: #111;
+    font-weight: 500;
+}
+
+/* Progress Bar */
+.vendorProgress {
+    flex-shrink: 0;
+    width: 100px; /* Fixed width for the bar itself */
+    height: 8px;
+    background-color: #e5e7eb;
+    border-radius: 99px;
+    overflow: hidden;
+    /* margin-left: 0; Ensures it sits right next to the previous column */
+}
+
+.vendorProgressFill {
+    height: 100%;
+    background-color: #90a4bd;
+    border-radius: 99px;
+    transition: width 0.4s ease-out;
+}
+
+/* Modal Overlay */
+.modalOverlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+    display: flex; align-items: center; justify-content: center;
     z-index: 1000;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.3s ease, visibility 0.3s ease;
 }
 
-.modal-overlay.is-visible {
-    opacity: 1;
-    visibility: visible;
+/* Modal Shell */
+.modalShell {
+    background: white; width: 100%; max-width: 500px;
+    border-radius: 12px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+    display: flex; flex-direction: column; max-height: 90vh;
 }
 
-/* Modal Containers */
-.modal-container {
-    background-color: var(--color-background-light);
-    border-radius: 12px;
-    padding: 30px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-    position: relative;
-    max-width: 650px; /* Wider for better organization */
-    width: 90%;
-    transform: translateY(20px);
-    transition: transform 0.3s ease;
-    overflow-y: auto;
-    max-height: 90vh;
+.modalHeader {
+    padding: 16px 24px; border-bottom: 1px solid #e5e7eb;
+    display: flex; justify-content: space-between; align-items: center;
+}
+.modalHeader h2 { margin: 0; font-size: 1.25rem; font-weight: 600; }
+.closeModal { background: none; border: none; font-size: 24px; cursor: pointer; color: #9ca3af; }
+
+.modalBody { padding: 24px; overflow-y: auto; }
+
+/* Form Layout */
+.paySection { margin-bottom: 24px; }
+.formRow { display: flex; gap: 16px; margin-bottom: 12px; }
+.formGroup { display: flex; flex-direction: column; gap: 6px; flex: 1; }
+.formGroup label { font-size: 0.85rem; font-weight: 500; color: #374151; }
+.formGroup input, .formGroup select {
+    padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 0.95rem;
+}
+.readOnlyInput { background: #f3f4f6; border-color: transparent; color: #6b7280; }
+
+/* Input with Icon ($) */
+.inputIconWrapper { position: relative; display: flex; align-items: center; }
+.inputIconWrapper span { position: absolute; left: 10px; color: #6b7280; }
+.inputIconWrapper input { padding-left: 24px; width: 100%; }
+
+/* File Drop Zone */
+.fileDropZone {
+    border: 2px dashed #d1d5db; border-radius: 8px; padding: 20px;
+    text-align: center; color: #6b7280; cursor: pointer; transition: all 0.2s;
+}
+.fileDropZone:hover { border-color: #10b981; background: #ecfdf5; color: #047857; }
+
+/* Toggle Switch */
+.toggleSwitch { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; cursor: pointer; }
+
+/* Split Rows */
+.splitHeaders { display: grid; grid-template-columns: 2fr 1fr 1.5fr 30px; gap: 8px; margin-bottom: 8px; font-size: 0.75rem; color: #6b7280; font-weight: 600; text-transform: uppercase; }
+.splitRow { display: grid; grid-template-columns: 2fr 1fr 1.5fr 30px; gap: 8px; margin-bottom: 8px; }
+.splitRow input, .splitRow select { width: 100%; padding: 6px; font-size: 0.85rem; }
+.removeRow { background: none; border: none; color: #ef4444; cursor: pointer; font-size: 1.2rem; line-height: 1; }
+
+.modalFooter {
+    padding: 16px 24px; border-top: 1px solid #e5e7eb;
+    display: flex; justify-content: flex-end; gap: 12px;
+}
+.btnPrimary { background: #111; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 500; }
+.btnSecondary { background: white; border: 1px solid #d1d5db; color: #374151; padding: 10px 20px; border-radius: 6px; cursor: pointer; }
+.btnLink { background: none; border: none; color: #2563eb; cursor: pointer; font-size: 0.9rem; padding: 0; margin-top: 8px; text-decoration: underline; }
+
+/* Update this existing class */
+.toggleSwitch { 
+    display: flex; 
+    align_items: center; /* Critical for vertical alignment */
+    gap: 10px; 
+    font-size: 0.9rem; 
+    cursor: pointer; 
+    color: #4b5563;
 }
 
-.modal-overlay.is-visible .modal-container {
-    transform: translateY(0);
-}
-
-.close-modal-btn {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    background: none;
-    border: none;
+/* Make the checkbox itself larger/cleaner if supported */
+.toggleSwitch input[type="checkbox"] {
+    accent-color: #111; /* Makes the checkmark black instead of default blue */
+    width: 16px; 
+    height: 16px;
+    margin: 0;
     cursor: pointer;
-    font-size: 1.5em;
-    color: #999;
-    padding: 5px;
-    border-radius: 50%;
-    transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-.close-modal-btn:hover {
-    background-color: #f0f0f0;
-    color: #333;
+/* Update .formGroup input, .formGroup select, .formGroup textarea */
+.formGroup input, 
+.formGroup select, 
+.formGroup textarea {
+    padding: 10px 12px; /* More breathing room */
+    border: 1px solid #e5e7eb; /* Softer grey than #d1d5db */
+    border-radius: 8px; /* Softer corners */
+    font-size: 0.95rem;
+    font-family: inherit; /* Ensure it uses your main font */
+    background-color: #fff;
+    transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-/* --- View Mode (Read-Only) Styling --- */
-#vendor-view-mode {
-    display: block;
-}
-
-#vendor-view-mode .modal-header h3 {
-    margin: 0;
-    font-size: 2em;
-    font-weight: 600;
-}
-
-.vendor-details-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-}
-
-.detail-group {
-    display: flex;
-    flex-direction: column;
-}
-
-.detail-group.full-width {
-    grid-column: 1 / -1;
-}
-
-.detail-label {
-    font-weight: 600;
-    color: #666;
-    text-transform: uppercase;
-    font-size: 0.85em;
-    letter-spacing: 0.5px;
-    margin-bottom: 5px;
-}
-
-#vendor-view-mode p,
-#vendor-view-mode a,
-#vendor-view-mode span {
-    font-size: 1.1em;
-    color: #333;
-    word-wrap: break-word;
-}
-
-/* --- Edit Mode Styling --- */
-#edit-vendor-form.hidden {
-    display: none;
-}
-
-.modal-header {
-    margin-bottom: 25px;
-    padding-bottom: 15px;
-    border-bottom: 1px solid var(--color-card-border);
-}
-
-.modal-header h3 {
-    margin: 0;
-    font-size: 1.8em;
-    color: var(--color-text-dark);
-}
-
-.form-group {
-    margin-bottom: 20px;
-}
-
-.form-group label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: 600;
-    color: var(--color-text-dark);
-    font-size: 0.95em;
-}
-
-.form-group input,
-.form-group select,
-.form-group textarea {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid var(--color-card-border);
-    border-radius: 8px;
-    font-size: 1em;
-    color: var(--color-text-dark);
-    background-color: white;
-    box-sizing: border-box;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-.form-group input:focus,
-.form-group select:focus,
-.form-group textarea:focus {
-    border-color: var(--color-primary-green);
+.formGroup input:focus, 
+.formGroup select:focus, 
+.formGroup textarea:focus {
     outline: none;
-    box-shadow: 0 0 0 3px rgba(114, 122, 77, 0.2);
+    border-color: #111; /* Classy black focus border */
+    box-shadow: 0 0 0 3px rgba(0,0,0,0.05); /* Very subtle ring */
 }
 
-.form-group textarea {
-    resize: vertical;
-    min-height: 80px;
+/* Fix the Date Input height to match Text Inputs */
+.formGroup input[type="date"] {
+    min-height: 42px; /* Forces height consistency */
 }
 
-.modal-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-    margin-top: 20px;
-}
-
-.submit-btn, .action-btn {
-    padding: 12px 20px;
-    border: none;
-    border-radius: 8px;
-    font-size: 1em;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-}
-
-.submit-btn {
-    background-color: var(--color-primary-green);
-    color: #fff;
-}
-
-.submit-btn:hover {
-    background-color: #5d613e;
-}
-
-.cancel-btn {
-    background-color: #f0f0f0;
-    color: #333;
-}
-
-.cancel-btn:hover {
-    background-color: #e0e0e0;
-}
-
-.hidden {
-    display: none !important;
-}
-
-/* NEW: Customizations for Book Now Modal */
-#bookVendorModalOverlay .modal-container {
-    max-width: 450px;
-}
-
-/* Vendor Contact Modal Specifics */
-.vendor-contact-modal {
-    width: 90%;
-    max-width: 900px; /* Adjust as needed */
-    padding: 2.5rem;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: auto 1fr auto;
-    gap: 2rem;
-    grid-template-areas:
-        "header header"
-        "main-left main-right"
-        "footer footer";
-}
-
-.modal-header {
-    grid-area: header;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid #ddd;
-    padding-bottom: 1.5rem;
-}
-
-.modal-title-wrapper {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-    align-items: baseline;
-}
-
-.modal-title-wrapper .vendor-name-title {
-    font-family: 'Kapakana', serif;
-    font-size: 2rem;
-    font-weight: 300;
-    color: var(--color-text-dark);
-}
-
-.quote-info {
-    font-family: 'Inria Serif', serif;
-    font-size: 1.25rem;
-    font-style: italic;
-    color: var(--color-text-dark);
-    font-weight: 400;
-}
-
-.modal-body {
-    grid-area: main-left;
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-}
-
-.contact-info-section, .files-section {
-    border-bottom: 1px solid #e6e6e6;
-    padding-bottom: 1rem;
-}
-
-.vendor-contact-modal h3 {
-    font-family: 'Inria Serif', serif;
-    font-weight: 700;
-    font-size: 1.25rem;
-    color: var(--color-primary-green);
-    margin-bottom: 1rem;
-}
-
-.info-group {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1.5rem;
-    margin-bottom: 1rem;
-}
-
-.info-item {
-    display: flex;
-    flex-direction: column;
-    flex: 1 1 45%;
-}
-
-.info-item.full-width {
-    flex: 1 1 100%;
-}
-
-.info-item label {
-    font-family: 'Roboto', sans-serif;
-    font-size: 0.8rem;
-    font-weight: 500;
-    color: #999;
-    text-transform: uppercase;
-    margin-bottom: 0.25rem;
-}
-
-.info-item p, .info-item a {
-    font-family: 'Inria Serif', serif;
-    font-size: 1rem;
-    color: var(--color-text-dark);
-    line-height: 1.5;
-}
-
-.file-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.file-list li {
-    font-family: 'Inria Serif', serif;
-    font-size: 1rem;
-    margin-bottom: 0.5rem;
-}
-
-/* Right side content */
-.notes-section, .appointments-section, .payments-section {
-    grid-area: main-right;
-}
-
-.appointments-table, .payments-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-family: 'Roboto', sans-serif;
+.fileDropZone {
+    border: 2px dashed #d1d5db; 
+    border-radius: 12px; /* Match input radius */
+    padding: 32px 20px; /* Taller touch target */
+    text-align: center; 
+    color: #6b7280; 
+    background-color: #f9fafb; /* Subtle fill */
+    cursor: pointer; 
+    transition: all 0.2s ease;
     font-size: 0.9rem;
-    color: var(--color-text-dark);
 }
 
-.appointments-table th, .payments-table th {
-    text-align: left;
-    font-weight: 500;
-    padding: 0.5rem 0;
-    border-bottom: 1px solid #e6e6e6;
+.fileDropZone:hover { 
+    border-color: #9ca3af; 
+    background-color: #f3f4f6; 
+    color: #111; 
 }
 
-.appointments-table td, .payments-table td {
-    padding: 0.75rem 0;
-    border-bottom: 1px solid #f0f0f0;
+.modalHeader {
+    padding: 20px 24px; /* More vertical space */
+    border-bottom: 1px solid #f3f4f6; /* Lighter separator */
 }
 
-/* Modal Footer & Buttons */
-.modal-footer {
-    grid-area: footer;
-    display: flex;
-    justify-content: flex-end;
-    gap: 1rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid #e6e6e6;
+.modalHeader h2 { 
+    font-family: "Your Serif Font", serif; /* Enforce the vibe */
+    font-size: 1.5rem; 
+    color: #111;
 }
 
-.edit-btn {
-    background: #f0f0f0;
-    border: none;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.modalFooter {
+    padding: 20px 24px; 
+    border-top: 1px solid #f3f4f6; 
+    background-color: #fff; /* Ensure it's white */
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+}
+
+input#payAmount {
+    text-align: right;
+}
+
+/* The "Mark Paid" Button */
+.btnMarkPaid {
+    background-color: transparent;
+    border: 1px solid #d1d5db;
+    color: #374151;
+    padding: 6px 12px;
+    font-size: 0.75rem; /* Small and discrete */
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-radius: 6px;
     cursor: pointer;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    transition: background-color 0.2s ease;
+    transition: all 0.2s ease;
 }
 
-.edit-btn:hover {
-    background-color: #e6e6e6;
+.btnMarkPaid:hover {
+    border-color: #111;
+    color: #111;
+    background-color: #f9fafb;
 }
 
-.edit-btn .material-icons-round {
-    font-size: 20px;
+/* Update the 'Upcoming' chip to be Orange/Yellow */
+.chip--upcoming {
+  background-color: #fff7ed; /* Very light orange */
+  color: #d16c00;            /* Deep orange text */
 }
 
-/* State changes (for JavaScript) */
-.hidden {
-    display: none !important;
+.chip--upcoming .chipDot {
+  background-color: #d16c00; /* Bright orange dot */
 }
 
-.modal-body.edit-mode .view-mode-content {
-    display: none;
+/* --- NEW DRAWER STYLES --- */
+
+/* 1. The Financial Summary Row (Replaces Chips) */
+.drawerStatsGrid {
+  display: flex;
+  gap: 24px;
+  margin-top: 16px;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #f3f4f6;
 }
 
-.modal-body.edit-mode .edit-mode-content {
-    display: block; /* or flex, or grid */
+.drawerStatItem {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.drawerStatLabel {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #6b7280; /* Muted gray */
+  font-weight: 600;
+}
+
+.drawerStatValue {
+  font-size: 1.25rem; /* Big and readable */
+  font-weight: 600;
+  color: #111827; /* Dark black */
+  font-variant-numeric: tabular-nums;
+}
+
+.drawerStatValue.is-highlight {
+  color: #b45309; /* Warm orange for "Next Due" date */
+}
+
+/* 2. Minimal Tabs (Removes the heavy gray bar) */
+.minimalTabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 0; /* Align with border */
+}
+
+.minimalTabBtn {
+  background: none;
+  border: none;
+  padding: 8px 12px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #7b7b7b;
+  cursor: pointer;
+  border-bottom: 2px solid transparent; /* Invisible border for hover state */
+  transition: all 0.2s;
+}
+
+.minimalTabBtn:hover {
+  color: #464646;
+}
+
+.minimalTabBtn.is-active {
+  color: #111827;
+  border-bottom-color: #111827; /* Active state is just a clean underline */
+}
+
+/* --- 1. THE "HERO" STATS GRID --- */
+.drawerStatsGrid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 1fr; /* First column is wider for the Date */
+  gap: 16px;
+  margin-top: 20px;
+  margin-bottom: 24px;
+  align-items: stretch;
+}
+
+.drawerStatItem {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 12px 16px;
+  border-radius: 12px;
+  /* Default: No background, just clean text for the money stuff */
+  background-color: transparent; 
+}
+
+/* The "Next Payment" Box - The Star of the Show */
+.drawerStatItem.is-hero {
+  background-color: #fff7ed; /* Soft Orange Background */
+  border: 1px solid #fed7aa; /* Subtle Orange Border */
+}
+
+.drawerStatLabel {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+/* Default Label Color */
+.drawerStatItem .drawerStatLabel { color: #9ca3af; }
+/* Hero Label Color (Darker Orange) */
+.drawerStatItem.is-hero .drawerStatLabel { color: #c2410c; }
+
+.drawerStatValue {
+  font-size: 1.4rem; /* Big */
+  font-weight: 700;
+  color: #1f2937;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+
+.drawerStatItem.is-hero .drawerStatValue { color: #9a3412; }
+
+
+/* --- 2. UNOBTRUSIVE TEXT TABS --- */
+.minimalTabs {
+  display: inline-flex; /* Only take up needed width */
+  gap: 4px;
+  margin-bottom: 16px;
+  background: #f3f4f6; /* Very light gray pill container */
+  padding: 4px;
+  border-radius: 8px;
+}
+
+.minimalTabBtn {
+  background: none;
+  border: none;
+  padding: 6px 16px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #747474;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+.minimalTabBtn:hover {
+  color: #111827;
+  background-color: rgba(255,255,255,0.5);
+}
+
+.minimalTabBtn.is-active {
+  background-color: #ffffff; /* White card look */
+  color: #111827; /* Black text */
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05); /* Tiny shadow */
+}
+
+/* Update this class to center content horizontally */
+.drawerStatItem {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center; /* <--- This centers the text horizontally */
+  text-align: center;  /* <--- This ensures multi-line text centers */
+  padding: 12px 16px;
+  border-radius: 12px;
+  background-color: transparent; 
+}
+
+/* Optional: Ensure the grid itself is centered if it doesn't fill width */
+.drawerStatsGrid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 1fr;
+  gap: 16px;
+  margin-top: 20px;
+  margin-bottom: 24px;
+  align-items: stretch;
+  justify-content: center; /* <--- Safety centering */
+}
+
+/* Positions the title on the left and tabs on the right */
+.paymentHeaderRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px; /* Adjust spacing below the header */
+}
+
+/* Ensure the title doesn't have its own bottom margin pushing things down */
+.paymentHeaderRow .drawerSectionTitle {
+  margin-bottom: 0;
+}
+
+/* Update Minimal Tabs to remove their old margins/backgrounds if needed */
+.minimalTabs {
+  display: inline-flex;
+  gap: 4px;
+  background: #f3f4f6;
+  padding: 4px;
+  border-radius: 8px;
+  margin-bottom: 0; /* Remove old margin since the Row handles it */
+}
+
+/* Update this class */
+.drawer__header {
+  display: flex;
+  flex-direction: column; /* <--- THIS IS THE KEY FIX. Stacks top-to-bottom. */
+  width: 100%;
+  padding: 24px 32px; /* Adjust padding as you like */
+  border-bottom: 1px solid #e5e7eb;
+  background: #fff;
+  gap: 16px; /* Adds space between the Title Row and the Hero Grid */
+}
+
+/* Eyebrow Label above the Hero Grid */
+.drawerGridLabel {
+  text-align: center;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #9ca3af;      /* Light gray */
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-top: 8px;     /* Push it down slightly from the vendor name */
+  margin-bottom: -12px;/* Pull the grid closer to it */
+}
+
+/* --- HEADER CONTACT CHIPS (Replaces the Hero Grid in Header) --- */
+.drawerHeaderContact {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+
+.contactChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  color: #4b5563;
+  background: #f3f4f6;
+  padding: 6px 12px;
+  border-radius: 20px; /* Fully rounded pills */
+  text-decoration: none;
+  transition: all 0.2s;
+  border: 1px solid transparent;
+}
+
+.contactChip:hover {
+  background: #e5e7eb;
+  color: #111827;
+  border-color: #d1d5db;
+}
+
+/* --- ADJUST THE STATS GRID TO FIT INSIDE THE TAB --- */
+/* We remove the big margin-top because it's no longer under the header */
+.drawerStatsGrid {
+  /* Keep previous flex settings */
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  gap: 16px;
+  width: 100%;
+  
+  /* Updates for being inside the tab */
+  margin-top: 0; 
+  margin-bottom: 32px;
+  padding: 16px;
+  background: #fafafa; /* Subtle background to separate it from list */
+  border-radius: 12px;
+  border: 1px dashed #e5e7eb; /* Dashed border makes it feel like a "Summary" area */
+}
+
+/* --- RICH CONTACT CARDS --- */
+.contactCard {
+  display: flex;
+  gap: 20px;
+  padding: 24px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  margin-bottom: 16px;
+  transition: box-shadow 0.2s, transform 0.2s;
+  align-items: flex-start;
+}
+
+.contactCard:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  border-color: #d1d5db;
+}
+
+/* 1. The Avatar (Visual Anchor) */
+.contactAvatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background-color: #f3f4f6; /* Default gray */
+  color: #4b5563;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  font-weight: 600;
+  flex-shrink: 0;
+  border: 1px solid #e5e7eb;
+}
+
+/* Randomize colors slightly based on logic if you want, or stick to elegant gray/blue */
+.contactAvatar.is-blue { background: #eff6ff; color: #1d4ed8; border-color: #dbeafe; }
+.contactAvatar.is-green { background: #f0fdf4; color: #15803d; border-color: #bbf7d0; }
+
+/* 2. Main Info Column */
+.contactMain {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.contactHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.contactName {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #111827;
+  line-height: 1.2;
+}
+
+.contactRole {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #6b7280;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  padding: 2px 8px;
+  border-radius: 6px;
+  margin-top: 6px;
+}
+
+/* 3. Contact Details Grid (Email/Phone) */
+.contactMethods {
+  display: grid;
+  grid-template-columns: 1fr; /* Stack on mobile */
+  gap: 8px;
+  margin-top: 8px;
+}
+
+@media (min-width: 500px) {
+  .contactMethods {
+      grid-template-columns: 1fr 1fr; /* Side by side on larger drawers */
+  }
+}
+
+.contactMethodRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  color: #4b5563;
+  text-decoration: none;
+  padding: 6px 0;
+}
+
+.contactMethodRow:hover {
+  color: #111827;
+  text-decoration: underline;
+}
+
+.contactIcon {
+  width: 16px;
+  height: 16px;
+  opacity: 0.5;
+}
+
+/* --- SUMMARY STRIP CONTAINER --- */
+.summaryStrip {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 32px;
+  align-items: stretch; /* Ensure cards are same height */
+  flex-wrap: wrap;
+}
+
+/* --- THE NEW ACCENT CARDS --- */
+.metricCard {
+  flex: 1;
+  min-width: 140px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 20px 24px;
+  position: relative;
+  overflow: hidden;
+  /* subtle shadow */
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* The Colored Top Line */
+.metricCard::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px; /* Thickness of the color bar */
+  background: #e5e7eb; /* Default color */
+}
+
+/* Color Variants */
+.metricCard.is-blue::before   { background-color: #3b82f6; } /* Booked */
+.metricCard.is-orange::before { background-color: #f97316; } /* Upcoming */
+.metricCard.is-red::before    { background-color: #ef4444; } /* Overdue */
+
+.metricLabel {
+  font-size: 0.8rem;
+  color: #6b7280;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 8px;
+}
+
+.metricValue {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #111827;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- CLEANER FINANCIALS (RIGHT SIDE) --- */
+/* Instead of pills, we'll make this a clean text group */
+.stripRight {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 0 32px; /* Wide padding */
+  margin-left: auto; /* Push to right */
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.finStat {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end; /* Right align numbers */
+  gap: 4px;
+}
+
+.finLabel {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.finValue {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+/* Make "Remaining" stand out */
+.finStat.is-bold .finValue {
+  color: #111827;
+  font-weight: 700;
+  font-size: 1.25rem;
+}
+
+/* --- THE FIX FOR FLOATING ACCENT BARS --- */
+.metricCard::before {
+  content: "";
+  position: absolute;
+  /* Adjust these three values to 'float' the bar */
+  top: 10px;           /* Distance from top */
+  left: 12px;          /* Distance from left */
+  right: 12px;         /* Distance from right */
+  
+  height: 4px;         /* Thickness */
+  border-radius: 99px; /* Makes the bar ends rounded pills */
+  background: #e5e7eb; /* Default gray */
+  z-index: 1;
+}
+
+.metricCard {
+  flex: 1;
+  min-width: 140px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 24px 24px 20px; /* Increased top padding to clear the bar */
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end; /* Pushes content down slightly */
 }
