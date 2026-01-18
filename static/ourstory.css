@@ -593,10 +593,6 @@ body.modal-active {
     transition: filter 0.5s ease;
 }
 
-.memory-card:hover .memory-img-wrapper img {
-    filter: grayscale(0%); /* Color on hover */
-}
-
 .memory-text {
     text-align: center;
 }
@@ -873,4 +869,21 @@ body.modal-active {
 
 .modal-close:hover {
   color: #333;
+}
+
+.film-strip-scroller {
+  display: flex;
+  gap: 40px; 
+  overflow-x: auto;
+  
+  /* Top: 20px | Right: 10px | Bottom: 40px | Left: 5% */
+  /* Smaller Right padding allows the next card to be seen */
+  padding: 20px 10px 40px 5%; 
+  
+  scrollbar-width: none; 
+  -ms-overflow-style: none;
+  
+  /* Keep your mask logic here */
+  -webkit-mask-image: linear-gradient(to right, black 85%, transparent 100%);
+  mask-image: linear-gradient(to right, black 85%, transparent 100%);
 }
