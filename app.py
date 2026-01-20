@@ -659,6 +659,10 @@ def wedding():
 def welcomeparty():
     return render_template("welcome-party.html")
 
+@app.route("/faqs")
+def faqs():
+    return render_template("faq.html")
+
 
 @app.route("/vendors")
 def vendors():

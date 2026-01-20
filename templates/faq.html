@@ -16,7 +16,7 @@
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='Content/favicon.png') }}">
     
     <!-- This should be pointing to your main style.css, which now contains all the rules -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='wedding.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='faq.css') }}">
     
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
     
@@ -65,6 +65,11 @@
   </nav>
 
   <div class="essentials-grid essentials-accordion" id="faqAccordion">
+
+    <div class="page-header">
+        <h1 class="script-title">The Essentials</h1>
+        <p class="intro-text">Everything you need to know for the big weekend.</p>
+    </div>
 
     <!-- CATEGORY 1 -->
     <div class="accordion-item">
@@ -240,7 +245,7 @@
 </div>
   
 
-<script src="{{ url_for('static', filename='event.js') }}" defer></script>
+<script src="{{ url_for('static', filename='faq.js') }}" defer></script>
 
 </body>
 </html>
