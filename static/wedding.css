@@ -65,7 +65,7 @@
   body {
     font-family: var(--font-serif);
     color: var(--color-charcoal);
-    background-color: #ffffff;
+    background-color: #f5f5f5;
     line-height: 1.6;
   }
   
@@ -260,7 +260,7 @@
     transform: translateX(-50%); /* Center perfectly */
     
     /* Luxury styling */
-    background-color: #ffffff;
+    background-color: #f5f5f5;
     min-width: 240px;
     padding: 15px 0;
     box-shadow: 0 5px 20px rgba(0,0,0,0.08); /* Soft, expensive shadow */
@@ -431,7 +431,7 @@
   .scroll-indicator .line {
       width: 1px;
       height: 40px;
-      background-color: white;
+      background-color: #f5f5f5;
   }
 
    /* Desktop Hero Adjustment */
@@ -725,6 +725,10 @@
     font-size: 0.95rem;
 }
 
+.sub-text {
+    color: #555
+}
+
 /* --- DESKTOP LAYOUT --- */
 @media (min-width: 900px) {
     .essential-item {
@@ -832,7 +836,7 @@
     width: 100%;
     /* The "Bookend" Effect: Matches your navbar color */
     background-color: var(--color-dusty-blue); 
-    color: #ffffff;
+    color: #f5f5f5;
     padding: 100px 20px 60px; /* Generous top padding feels expensive */
     text-align: center;
     position: relative;
@@ -865,7 +869,7 @@
 .footer-message h2 {
     font-family: var(--font-script);
     font-size: 2rem;
-    color: #ffffff;
+    color: #f5f5f5;
     margin: 0;
     line-height: 1.2;
     text-shadow: 0 2px 10px rgba(0,0,0,0.05); /* Very subtle depth */
@@ -890,7 +894,7 @@
     text-transform: uppercase;
     font-size: 0.85rem;
     letter-spacing: 0.15rem;
-    color: #ffffff;
+    color: #f5f5f5;
     text-decoration: none;
     transition: opacity 0.3s ease;
     opacity: 0.9;
@@ -908,7 +912,7 @@
     font-size: 1.5rem;
     font-style: italic;
     font-weight: bold;
-    color: #ffffff;
+    color: #f5f5f5;
     padding: 0 2rem; /* Extra space around the center item */
 }
 
@@ -984,6 +988,7 @@
     text-align: center;
     margin-bottom: 1.5rem;
     font-weight: normal;
+    text-shadow: none;
 }
 
 .privacy-body h4 {
@@ -1056,7 +1061,7 @@
 .modal-content {
   position: relative;
   z-index: 2001; /* Must be higher than the overlay */
-  background-color: #ffffff;
+  background-color: #f5f5f5;
   padding: 40px;
   width: 90%;
   max-width: 600px;
@@ -1082,3 +1087,268 @@
 .modal-close:hover {
   color: #333;
 }
+
+/* =========================================
+   EVENT ESSENTIALS (White section rewrite)
+   ========================================= */
+
+   .event-essentials {
+    background: #f5f5f5;
+    padding: 80px 20px;
+  }
+  
+  .essentials-shell {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  
+  .essentials-head {
+    margin-bottom: 40px;
+    text-align: left;
+  }
+  
+  .essentials-kicker {
+    font-family: var(--font-serif);
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    font-size: 0.8rem;
+    color: var(--color-deep-blue);
+    opacity: 0.9;
+    margin-bottom: 10px;
+  }
+  
+  .essentials-title {
+    font-family: var(--font-script);
+    font-size: 3.2rem;
+    line-height: 1.05;
+    color: var(--color-dusty-blue);
+    margin-bottom: 10px;
+    font-weight: normal;
+  }
+  
+  .essentials-sub {
+    font-family: var(--font-serif);
+    font-style: italic;
+    color: #666;
+    max-width: 60ch;
+  }
+  
+  .essentials-layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+  
+  @media (min-width: 900px) {
+    .essentials-layout {
+      grid-template-columns: 1.6fr 0.8fr;
+      gap: 50px;
+      align-items: start;
+    }
+  }
+  
+  /* Primary column */
+  .essentials-primary {
+    display: flex;
+    flex-direction: column;
+    gap: 26px;
+  }
+  
+  /* Cards: editorial, not dashboard */
+  .info-card {
+    padding: 26px 26px 22px;
+    border: 1px solid rgba(101, 135, 171, 0.18);
+    border-radius: 10px;
+    background: #fff;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+  }
+  
+  .info-card-head {
+    margin-bottom: 14px;
+  }
+  
+  .micro-label {
+    font-family: var(--font-serif);
+    font-style: italic;
+    color: #7a7a7a;
+    font-size: 0.95rem;
+    margin-top: 6px;
+  }
+  
+  /* Use your existing title style, but slightly softened */
+  .editorial-title {
+    margin-bottom: 0;
+    letter-spacing: 0.13em;
+    font-size: 1.05rem;
+  }
+  
+  /* Your existing body text is fine; just let it breathe */
+  .info-card-body .body-text {
+    max-width: 70ch;
+    margin-bottom: 12px;
+  }
+  
+  /* Shuttle stops list */
+  .stops-list {
+    margin: 16px 0 10px;
+    display: grid;
+    gap: 12px;
+  }
+  
+  .stop {
+    display: grid;
+    grid-template-columns: 14px 1fr;
+    gap: 12px;
+    align-items: start;
+  }
+  
+  .stop-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 999px;
+    margin-top: 6px;
+    background: var(--color-dusty-blue);
+    opacity: 0.9;
+  }
+  
+  .sub-text {
+    color: #666;
+    margin-top: 8px;
+  }
+  
+  /* Side column: gentle “program” navigation */
+  .essentials-side {
+    position: relative;
+  }
+  
+  @media (min-width: 900px) {
+    .essentials-side {
+      position: sticky;
+      top: 120px; /* clears your sticky nav */
+    }
+  }
+  
+  .side-card {
+    padding: 22px;
+    border-radius: 10px;
+    background: var(--color-cream);
+    border: 1px solid rgba(0,0,0,0.06);
+  }
+  
+  .side-title {
+    font-family: var(--font-serif);
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    font-size: 0.85rem;
+    color: var(--color-deep-blue);
+    margin-bottom: 14px;
+    font-style: italic;
+  }
+  
+  .side-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .side-link {
+    font-family: var(--font-serif);
+    text-decoration: none;
+    color: #333;
+    letter-spacing: 0.04em;
+    padding: 10px 12px;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.65);
+    border: 1px solid rgba(101,135,171,0.12);
+    transition: transform 0.2s ease, border-color 0.2s ease;
+  }
+  
+  .side-link:hover {
+    transform: translateY(-1px);
+    border-color: rgba(101,135,171,0.28);
+  }
+  
+  .side-divider {
+    height: 1px;
+    background: rgba(0,0,0,0.08);
+    margin: 16px 0;
+  }
+  
+  .side-note {
+    font-family: var(--font-serif);
+    color: #666;
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+  
+  .program-section{
+    background: #f5f5f5;
+    padding: 75px 20px;
+  }
+  
+  .program-card{
+    max-width: 600px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  
+  .program-kicker{
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+    font-size: 0.95rem;
+    color: var(--color-deep-blue);
+    margin-bottom: 12px;
+  }
+  
+  .program-title{
+    font-family: var(--font-script);
+    font-size: 4rem;
+    color: var(--color-dusty-blue);
+  }
+  
+  .program-block h3{
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    font-size: 0.95rem;
+    color: var(--color-deep-blue);
+    margin-bottom: 14px;
+  }
+  
+  .program-block p{
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: #444;
+    margin-bottom: 12px;
+  }
+  
+  .program-sub{
+    font-style: italic;
+    color: #777;
+  }
+  
+  .program-note{
+    font-style: italic;
+    font-size: 0.85rem;
+    color: #666;
+    margin-top: 14px;
+  }
+  
+  .program-divider{
+    width: 40px;
+    height: 1px;
+    background: rgba(0,0,0,0.15);
+    margin: 25px auto;
+  }
+  
+  .program-link{
+    display: inline-block;
+    margin-top: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    font-size: 0.75rem;
+    color: var(--color-charcoal);
+    text-decoration: none;
+    border-bottom: 1px solid currentColor;
+    padding-bottom: 4px;
+  }
+  

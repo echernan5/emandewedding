@@ -411,11 +411,13 @@
 
 .editorial-sub {
     font-family: var(--font-serif);
-    font-size: 1.2rem;
+    font-size: 1rem;
     text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--color-charcoal);
+    letter-spacing: 0.2rem;
+    color: #555;
     margin-bottom: 1.5rem;
+    font-weight: 400;
+    font-style: italic;
 }
 
 .split-content .body-text {
@@ -468,6 +470,7 @@
         width: 50%; /* Right half */
         height: 100%;
         padding: 0 80px; /* Generous padding */
+        transform: translateY(-50px);
     }
 
     .welcome-title {
@@ -732,4 +735,49 @@
 
 .modal-close:hover {
   color: #333;
+}
+
+/* The "Details" Card — finished, not placeholder */
+.coming-soon-box {
+  margin-top: 3rem;
+  padding: 2.25rem 2.25rem;
+  border: 1px solid rgba(101, 135, 171, 0.22); /* var(--color-deep-blue) softened */
+  border-radius: 6px;
+  background: linear-gradient(180deg, #ffffff 0%, #fbfbfd 100%);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.04);
+}
+
+/* Title line in card */
+.coming-soon-box p strong {
+  display: inline-block;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-size: 1rem;
+}
+
+.welcome-title {
+  font-family: var(--font-script);
+  font-size: 4rem;
+  color: var(--color-dusty-blue);
+  margin: 0;
+  line-height: 1.05;          /* tighter = more editorial */
+  font-weight: normal;
+  letter-spacing: 0.01em;     /* tiny = refined, not “default script” */
+}
+
+@media (min-width: 1200px) {
+  .welcome-title {
+    font-size: 4.2rem;
+  }
+}
+
+.split-content .body-text {
+  color: #555;
+  margin-bottom: 1.4rem;
+  font-size: 1rem;     /* slightly smaller = more premium */
+  line-height: 1.75;   /* more air = luxury */
+}
+
+.editorial-sub {
+  margin-bottom: 1.25rem;
 }

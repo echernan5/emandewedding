@@ -461,7 +461,7 @@ body.modal-active {
   font-size: 0.9rem;
   text-transform: uppercase;
   letter-spacing: 0.2em;
-  color: #999;
+  color: #555;
   display: block;
   margin-bottom: 2rem;
 }
@@ -478,7 +478,7 @@ body.modal-active {
 .story-header-left .subtitle {
   font-family: "Inria Serif", serif;
   font-style: italic;
-  color: #888;
+  color: #555;
   font-size: 0.9rem;
   letter-spacing: 0.2em;
   text-transform: uppercase;

@@ -13,7 +13,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Emma & Ethan</title>
-    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='static/boatfavicon.webp') }}">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='Content/favicon.png') }}">
     
     <!-- This should be pointing to your main style.css, which now contains all the rules -->
     <link rel="stylesheet" href="{{ url_for('static', filename='wedding.css') }}">
@@ -65,7 +65,7 @@
   </nav>
 
   <header class="event-hero">
-    <div class="hero-bg" style="background-image: url('{{ url_for('static', filename='Content/Weekend Events/Ceremony and Reception/Untitled design (14).jpg') }}');"></div>
+    <div class="hero-bg" style="background-image: url('{{ url_for('static', filename='Content/Weekend Events/Ceremony and Reception/Untitled design (14).webp') }}');"></div>
     <div class="hero-overlay"></div>
     
     <div class="hero-content">
@@ -79,119 +79,61 @@
     </div>
  </header>
 
-<div class="info-ribbon-container">
-    <div class="info-ribbon">
-      
-      <div class="ribbon-item">
-          <svg class="ribbon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-              <circle cx="12" cy="12" r="10"></circle>
-              <polyline points="12 6 12 12 16 14"></polyline>
-          </svg>
-          <span>4:00 PM Arrival</span>
-      </div>
+ <section class="program-section">
 
-      <div class="ribbon-item">
-          <svg class="ribbon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-              <circle cx="12" cy="10" r="3"></circle>
-          </svg>
-          <span>Bay Pointe Inn, Lakefront Pavilion</span>
-      </div>
+  <div class="program-card">
 
-      <div class="ribbon-item">
-          <svg class="ribbon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-              <rect x="1" y="3" width="15" height="13"></rect>
-              <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
-              <circle cx="5.5" cy="18.5" r="2.5"></circle>
-              <circle cx="18.5" cy="18.5" r="2.5"></circle>
-          </svg>
-          <span>Comp. On-Site Parking</span>
-      </div>
+    <header class="program-header">
+      <p class="program-kicker">Ceremony & Reception</p>
+      <h2 class="program-title">Details</h2>
+    </header>
 
+    <div class="program-block">
+      <h3>Reception</h3>
+      <p>
+        Doors open at <strong>4:00 PM</strong><br>
+        Ceremony begins at <strong>4:30 PM</strong><br>
+        Cocktail hour and Reception to follow<br>
+      </p>
+      <p class="program-sub">
+        Bay Pointe Inn, 11456 Marsh Rd, Shelbyville, Michigan 49344
+      </p>
     </div>
- </div>
 
- <section class="main-event-grid">
-      
-    <div class="col-details">
-        
-        <div class="detail-block">
-            <h2 class="editorial-title">Garden Cocktail Attire</h2>
-            <p class="body-text">
-              We invite you to dress in semi-formal garden attire. Gentlemen are encouraged to wear suits (ties optional); ladies are invited to wear midi or maxi dresses.
-            </p>
-            
-            <div class="style-note">
-                <span class="note-icon">🌿</span> <p><em>For your comfort:</em> As the ceremony and cocktail hour will be held on the lawn, we recommend block heels, wedges, or formal flats rather than stilettos.</p>
-            </div>
-        </div>
-  
-        <div class="detail-block">
-            <h2 class="editorial-title">Shuttles & Transport</h2>
-            <p class="body-text">
-              Complimentary shuttle service will be provided to and from the venue.
-              <br><br>
-              <strong>Pick Up:</strong> Best Western Plus<br>
-              <strong>Pick Up:</strong> Gun Lake Casino
-            </p>
-            <p class="sub-text"><em>Exact departure schedules will be provided at your hotel front desk upon arrival.</em></p>
-        </div>
-  
-        <div class="detail-block">
-            <h2 class="editorial-title">The Setting</h2>
-            <p class="body-text">
-              Bay Pointe Inn<br>
-              11456 Marsh Rd, Shelbyville, MI 49344
-            </p>
-            <a href="https://maps.google.com" target="_blank" class="text-link">Open Map &rarr;</a>
-        </div>
-  
+    <div class="program-divider"></div>
+
+    <div class="program-block">
+      <h3>Cocktail Attire</h3>
+      <p>
+        We ask that our guests wear cocktail attire. This includes suits (ties optional), midi or tea-length dresses, dressy separates, or a jumpsuit. Colorful attire is welcome.
+      </p>
+      <p class="program-sub">
+        As the ceremony will be held on the lawn, we recommend block heels, wedges, or formal flats.
+      </p>
     </div>
-  
-    <aside class="col-timeline">
-        <h3 class="script-header">Day-of Timeline</h3>
-        
-        <div class="timeline-wrapper">
-            <div class="timeline-row">
-                <span class="t-time">4:00 PM</span>
-                <div class="t-content">
-                  <strong>Doors Open</strong>
-                  <span class="t-sub">Welcome Refreshments</span>
-                </div>
-            </div>
-            
-            <div class="timeline-row">
-                <span class="t-time">4:30 PM</span>
-                <div class="t-content">
-                  <strong>Ceremony</strong>
-                  <span class="t-sub">Garden Lawn</span>
-                </div>
-            </div>
-            
-            <div class="timeline-row">
-                <span class="t-time">5:00 PM</span>
-                <div class="t-content">
-                  <strong>Cocktail Hour</strong>
-                </div>
-            </div>
-            
-            <div class="timeline-row">
-                <span class="t-time">6:00 PM</span>
-                <div class="t-content">
-                  <strong>Reception</strong>
-                  <span class="t-sub">Dinner & Dancing in the Pavilion</span>
-                </div>
-            </div>
-        </div>
-    </aside>
-  
-  </section>
+
+    <div class="program-divider"></div>
+
+    <div class="program-block">
+      <h3>Transportation</h3>
+      <p>
+        For our guests' convinience, complimentary motorcoach transportation will run continuously throughout the evening.
+      </p>
+
+      <p class="program-note">
+        Departure times and locations will be shared closer to the wedding date.
+      </p>
+    </div>
+  </div>
+
+</section>
+
 
   <section class="essentials-section">
     <div class="essentials-container">
         
         <div class="essentials-header">
-            <h1 class="script-font">Helpful Details</h1>
+            <h1 class="script-font">Guest Information</h1>
             <p class="intro-text">A few notes to ensure your evening is seamless and comfortable.</p>
         </div>
 
@@ -211,7 +153,7 @@
                     <h3>Mobility</h3>
                 </div>
                 <div class="info-col">
-                    <p>The path to the Lakefront Pavilion involves a set of stairs and a paved incline. If you require mobility assistance, please let us know in advance; we are happy to arrange a golf cart to ensure you arrive comfortably.</p>
+                    <p>The path to the Lakefront Pavilion involves a set of stairs and a paved incline. If you require mobility assistance, please let Ethan or Emma know in advance.</p>
                 </div>
             </div>
 
@@ -229,7 +171,7 @@
                     <h3>Departure</h3>
                 </div>
                 <div class="info-col">
-                    <p>The celebration will conclude at <strong>11:00 PM</strong>. As ride-share services can be limited in this area late at night, we recommend pre-arranging your transportation if you are staying off-site.</p>
+                    <p>The celebration will conclude by 10:30 PM. As ride-share services can be limited in this area late at night, we recommend pre-arranging your transportation if you are staying off-site.</p>
                 </div>
             </div>
 
@@ -276,7 +218,6 @@
             <a href="/" class="footer-link">Home</a>
             <a href="/travel" class="footer-link">Travel</a>
             <a href="/our-story" class="footer-link">Our Story</a>
-            <a href="/rsvp" class="footer-link">RSVP</a>
             <a href="/wedding" class="footer-link">Ceremony & Reception</a>
             <a href="/welcome-party" class="footer-link">Welcome Party</a>
             <a href="/registry" class="footer-link">Registry</a>

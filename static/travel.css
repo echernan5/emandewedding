@@ -167,8 +167,8 @@
   .hero-layer {
     position: absolute; inset: 0; background-size: cover; background-position: center bottom; background-repeat: no-repeat;
   }
-  .hero-bg { background-image: url("/static/Content/baypointebackground.png"); z-index: 1; }
-  .hero-fg { background-image: url("/static/Content/baypointeforeground.png"); z-index: 3; pointer-events: none; }
+  .hero-bg { background-image: url("/static/Content/baypointebackground.webp"); z-index: 1; }
+  .hero-fg { background-image: url("/static/Content/baypointeforeground.webp"); z-index: 3; pointer-events: none; }
   
   .hero-text {
     position: fixed; top: 30%; left: 50%; transform: translate(-50%, -50%);
@@ -258,7 +258,7 @@ color: #333; margin-bottom: 1rem; letter-spacing: 0.05rem;
 }
 .hotel-info-rows { margin-bottom: 1.5rem; border-top: 1px solid #eee; padding-top: 1rem; }
 .info-row {
-font-family: 'Inria Serif', serif; font-size: 0.8rem; color: #666;
+font-family: 'Inria Serif', serif; font-size: 0.8rem; color: #555;
 margin-bottom: 0.4rem; text-transform: uppercase; letter-spacing: 0.05rem;
 }
 
@@ -268,10 +268,10 @@ display: flex; align-items: center; gap: 10px; margin-top: 0.8rem;
 padding-top: 0.8rem; border-top: 1px dashed #eee;
 }
 .amenities-label {
-font-family: 'Inria Serif', serif; font-size: 0.8rem; color: #999; text-transform: uppercase;
+font-family: 'Inria Serif', serif; font-size: 0.8rem; color: #555; text-transform: uppercase;
 }
 .amenities-icons { display: flex; gap: 8px; flex-wrap: wrap; }
-.amenity-icon { position: relative; cursor: help; color: #888; font-size: 1rem; transition: color 0.3s; }
+.amenity-icon { position: relative; cursor: help; color: #555; font-size: 1rem; transition: color 0.3s; }
 .amenity-icon:hover { color: #6587ab; }
 
 .amenity-icon::after {
@@ -360,7 +360,7 @@ display: inline-flex; align-items: center; gap: 8px;
   .feature-item:hover .feature-image { transform: scale(1.05); }
 
   .feature-text-overlay {
-  position: absolute; bottom: 0; left: 0; background-color: #fff;
+  position: absolute; bottom: 0; left: 0; background-color: #fcfcfc;
   padding: 1.5rem 2rem 1rem 0; max-width: 80%; z-index: 10;
   }
   .editorial-heading {
