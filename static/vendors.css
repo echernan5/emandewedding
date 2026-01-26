@@ -1371,12 +1371,6 @@ input#payAmount {
   background-color: transparent; 
 }
 
-/* The "Next Payment" Box - The Star of the Show */
-.drawerStatItem.is-hero {
-  background-color: #fff7ed; /* Soft Orange Background */
-  border: 1px solid #fed7aa; /* Subtle Orange Border */
-}
-
 .drawerStatLabel {
   font-size: 0.7rem;
   text-transform: uppercase;
@@ -1696,7 +1690,7 @@ input#payAmount {
 }
 
 /* Color Variants */
-.metricCard.is-blue::before   { background-color: #3b82f6; } /* Booked */
+.metricCard.is-blue::before   { background-color: var(--good); } /* Booked */
 .metricCard.is-orange::before { background-color: #f97316; } /* Upcoming */
 .metricCard.is-red::before    { background-color: #ef4444; } /* Overdue */
 
@@ -1786,4 +1780,66 @@ input#payAmount {
   display: flex;
   flex-direction: column;
   justify-content: flex-end; /* Pushes content down slightly */
+}
+
+/* Segmented Control Styling */
+.segmented {
+  display: inline-flex;
+  background: #f3f4f6; /* Gray-100 */
+  padding: 2px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
+
+.segBtn {
+  border: none;
+  background: transparent;
+  padding: 6px 12px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #6b7280; /* Gray-500 */
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.segBtn.is-active {
+  background: white;
+  color: #111827; /* Gray-900 */
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.segBtn:hover:not(.is-active) {
+  color: #374151;
+}
+
+/* Layout adjustment to keep it next to summary labels */
+.scope-control-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.scope-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #9ca3af;
+}
+
+.filter-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+/* Ensure the button doesn't look too bulky in the toolbar */
+#btnAddVendor.btn--primary {
+  padding: 8px 16px;
+  font-size: 0.85rem;
+}
+
+input#planAmount {
+  text-align: right;
 }

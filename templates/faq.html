@@ -15,7 +15,6 @@
     <title>Emma & Ethan</title>
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='Content/favicon.png') }}">
     
-    <!-- This should be pointing to your main style.css, which now contains all the rules -->
     <link rel="stylesheet" href="{{ url_for('static', filename='faq.css') }}">
     
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
@@ -32,220 +31,209 @@
     <link href="https://fonts.googleapis.com/css2?family=Inria+Serif:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Monsieur+La+Doulaise&display=swap" rel="stylesheet">
 </head>
 <body>
-    
-  <nav class="navbar" id="navbar">
-    <a href="/" class="logo-link">
-        <img src="{{ url_for('static', filename='Long logo with rose.png') }}" alt="Emma & Ethan Logo" class="logo">
-    </a>
-
-    <button class="mobile-nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
-        <span class="hamburger-line"></span>
-        <span class="hamburger-line"></span>
-        <span class="hamburger-line"></span>
-    </button>
-
-    <div class="nav-menu" id="nav-menu">
-        <div class="nav-links">
-            <a href="/travel" class="nav-link">Travel & Stay</a>
-            <a href="/our-story" class="nav-link">Our Story</a>
-            
-            <div class="nav-item-dropdown">
-                <span class="nav-link dropdown-trigger">Weekend Events</span>
-                
-                <div class="dropdown-menu">
-                    <a href="/wedding" class="dropdown-item">Ceremony & Reception</a>
-                    <a href="/welcome-party" class="dropdown-item">Welcome Party</a>
+    <nav class="navbar" id="navbar">
+      <a href="/" class="logo-link">
+          <img src="{{ url_for('static', filename='Long logo with rose.png') }}" alt="Emma & Ethan Logo" class="logo">
+      </a>
+      <button class="mobile-nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+      </button>
+      <div class="nav-menu" id="nav-menu">
+          <div class="nav-links">
+              <a href="/travel" class="nav-link">Travel & Stay</a>
+              <a href="/our-story" class="nav-link">Our Story</a>
+              <div class="nav-item-dropdown">
+                  <span class="nav-link dropdown-trigger">Weekend Events</span>
+                  <div class="dropdown-menu">
+                      <a href="/wedding" class="dropdown-item">Ceremony & Reception</a>
+                      <a href="/welcome-party" class="dropdown-item">Welcome Party</a>
+                  </div>
+              </div>
+              <a href="/faqs" class="nav-link">FAQs</a>
+              <a href="#registry" class="nav-link">Registry</a>
+          </div>
+      </div>
+    </nav>
+  
+    <div class="faq-page-wrapper">
+  
+      <header class="faq-header">
+          <span class="tiny-label">What to know before we begin</span>
+          <h1 class="main-title">Frequently Asked Questions</h1>
+      </header>
+  
+      <section class="faq-section intro-section">
+          <div class="faq-text-col">
+              <h2 class="serif-heading">From the first RSVP to the final dance, here is what you can expect.</h2>
+              <p class="body-text">We have compiled all the essential details to ensure your trip to Michigan is smooth and enjoyable. If you have a question that isn't answered here, please don't hesitate to reach out to us directly.</p>
+          </div>
+          <div class="faq-image-col collage-col">
+              <img src="{{ url_for('static', filename='Content/faqs/ethanandemmaengagement-31.jpg') }}" class="collage-main" alt="Couple">
+          </div>
+      </section>
+  
+      <section class="faq-section reverse-layout">
+          <div class="faq-text-col">
+              <span class="script-category">The Experience</span>
+              <h2 class="category-title">Wedding Day</h2>
+              
+              <div class="clean-accordion">
+                  <div class="accordion-item">
+                      <button class="accordion-trigger">
+                          <span>What time should I arrive?</span>
+                          <i class="bi bi-chevron-down"></i>
+                      </button>
+                      <div class="accordion-panel">
+                          <p>Seating opens at 4:00 PM, and the ceremony will begin promptly at 4:30 PM. We recommend arriving at least 15 minutes early to find your seat and settle in.</p>
+                      </div>
+                  </div>
+                  <div class="accordion-item">
+                      <button class="accordion-trigger">
+                          <span>Where will the ceremony and reception take place?</span>
+                          <i class="bi bi-chevron-down"></i>
+                      </button>
+                      <div class="accordion-panel">
+                          <p>Both will take place at Bay Pointe Inn’s Lakefront Pavilion (11456 Marsh Rd, Shelbyville, MI 49344). No travel is required between events.</p>
+                      </div>
+                  </div>
+                   <div class="accordion-item">
+                      <button class="accordion-trigger">
+                          <span>Will the ceremony be outdoors?</span>
+                          <i class="bi bi-chevron-down"></i>
+                      </button>
+                      <div class="accordion-panel">
+                          <p>Weather permitting, yes — we plan to celebrate on the lawn by the lake. The reception will follow in the covered Pavilion.</p>
+                      </div>
+                  </div>
+              </div>
+          </div>
+          <div class="faq-image-col">
+              <img src="{{ url_for('static', filename='Content/faqs/ethanandemmaengagement-27.jpg') }}" alt="Wedding Details" class="vertical-img">
+          </div>
+      </section>
+  
+      <section class="faq-section">
+          <div class="faq-text-col">
+              <span class="script-category">Look & Feel</span>
+              <h2 class="category-title">Attire & Comfort</h2>
+              
+              <div class="clean-accordion">
+                  <div class="accordion-item">
+                      <button class="accordion-trigger">
+                          <span>What should I wear?</span>
+                          <i class="bi bi-chevron-down"></i>
+                      </button>
+                      <div class="accordion-panel">
+                          <p>Cocktail attire. Suits (ties optional), midi or tea-length dresses, dressy separates, or a jumpsuit are all welcome. Colorful attire is encouraged!</p>
+                      </div>
+                  </div>
+                  <div class="accordion-item">
+                      <button class="accordion-trigger">
+                          <span>Any shoe recommendations?</span>
+                          <i class="bi bi-chevron-down"></i>
+                      </button>
+                      <div class="accordion-panel">
+                          <p>Because the ceremony will be held on the lawn, block heels, wedges, or formal flats tend to be the most comfortable choice.</p>
+                      </div>
+                  </div>
+                   <div class="accordion-item">
+                      <button class="accordion-trigger">
+                          <span>What about the weather?</span>
+                          <i class="bi bi-chevron-down"></i>
+                      </button>
+                      <div class="accordion-panel">
+                          <p>The Pavilion is open-air but equipped with fans, heaters, and drop-down walls to suit the forecast.</p>
+                      </div>
+                  </div>
+              </div>
+          </div>
+          <div class="faq-image-col">
+              <img src="{{ url_for('static', filename='Content/faqs/ethanandemmaengagement-15.jpg') }}" alt="Attire Inspiration" class="vertical-img">
+          </div>
+      </section>
+  
+      <section class="faq-section reverse-layout">
+          <div class="faq-text-col">
+              <span class="script-category">Details</span>
+              <h2 class="category-title">Travel & Logistics</h2>
+              
+              <div class="clean-accordion">
+                  <div class="accordion-item">
+                      <button class="accordion-trigger">
+                          <span>Will transportation be provided?</span>
+                          <i class="bi bi-chevron-down"></i>
+                      </button>
+                      <div class="accordion-panel">
+                          <p>Yes. Complimentary motorcoach transportation will run continuously throughout the evening. Pickup details will be shared closer to the date.</p>
+                      </div>
+                  </div>
+                  <div class="accordion-item">
+                      <button class="accordion-trigger">
+                          <span>Is there parking at the venue?</span>
+                          <i class="bi bi-chevron-down"></i>
+                      </button>
+                      <div class="accordion-panel">
+                          <p>Yes — complimentary on-site parking is available directly in front of the Inn.</p>
+                      </div>
+                  </div>
+                   <div class="accordion-item">
+                      <button class="accordion-trigger">
+                          <span>Are Uber/Lyft available?</span>
+                          <i class="bi bi-chevron-down"></i>
+                      </button>
+                      <div class="accordion-panel">
+                          <p>They can be, but availability may be limited later in the evening — planning ahead is a good idea if you’re staying off-site.</p>
+                      </div>
+                  </div>
+              </div>
+          </div>
+          <div class="faq-image-col">
+              <img src="{{ url_for('static', filename='Content/faqs/wlodarczykproposal-10.jpg') }}" alt="Travel Logistics" class="vertical-img">
+          </div>
+      </section>
+  
+    </div>
+  
+    <footer class="luxury-footer">
+      <div class="footer-content">
+         <div class="footer-logo-container">
+           <img src="{{ url_for('static', filename='Long logo with rose.png') }}" alt="Emma and Ethan logo with rose" class="footer-logo">
+         </div>
+          <nav class="footer-nav">
+              <a href="/" class="footer-link">Home</a>
+              <a href="/travel" class="footer-link">Travel</a>
+              <a href="/our-story" class="footer-link">Our Story</a>
+              <a href="/wedding" class="footer-link">Ceremony & Reception</a>
+              <a href="/welcome-party" class="footer-link">Welcome Party</a>
+              <a href="/faqs" class="footer-link">FAQs</a>
+              <a href="/registry" class="footer-link">Registry</a>
+          </nav>
+          <div class="footer-bottom">
+              <p>
+                  &copy; 2027 Emma & Ethan 
+                  <span class="divider">•</span> 
+                  <button id="privacy-trigger" class="privacy-link-light">Privacy Policy</button>
+              </p>
+          </div>
+      </div>
+    </footer>
+  
+    <div id="privacy-modal" class="modal modal-hidden">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <button class="modal-close">&times;</button>
+            <div class="privacy-content">
+                <h2 class="privacy-title">Privacy Policy</h2>
+                <div class="privacy-body">
+                    <p>Your privacy is important to us...</p>
                 </div>
             </div>
-        
-            <a href="/faqs" class="nav-link">FAQs</a>
-            <a href="#registry" class="nav-link">Registry</a>
         </div>
     </div>
-  </nav>
-
-  <div class="essentials-grid essentials-accordion" id="faqAccordion">
-
-    <div class="page-header">
-        <h1 class="script-title">The Essentials</h1>
-        <p class="intro-text">Everything you need to know for the big weekend.</p>
-    </div>
-
-    <!-- CATEGORY 1 -->
-    <div class="accordion-item">
-      <button class="accordion-trigger" type="button" aria-expanded="false">
-        <div class="topic-col">
-          <h3>Wedding Day</h3>
-        </div>
-        <div class="accordion-icon" aria-hidden="true"></div>
-      </button>
   
-      <div class="accordion-panel" hidden>
-        <div class="info-col">
-          
-          <div class="qa">
-            <p class="q"><strong>What time should I arrive?</strong></p>
-            <p class="a">Seating opens at 4:00 PM, and the ceremony will begin at 4:30 PM.</p>
-          </div>
-  
-          <div class="qa">
-            <p class="q"><strong>Where will the ceremony and reception take place?</strong></p>
-            <p class="a">Both will take place at Bay Pointe Inn’s Lakefront Pavilion (11456 Marsh Rd, Shelbyville, MI 49344).</p>
-          </div>
-  
-          <div class="qa">
-            <p class="q"><strong>Will the ceremony be outdoors?</strong></p>
-            <p class="a">Weather permitting, yes — we plan to celebrate on the lawn by the lake.</p>
-          </div>
-  
-        </div>
-      </div>
-    </div>
-  
-    <!-- CATEGORY 2 -->
-    <div class="accordion-item">
-      <button class="accordion-trigger" type="button" aria-expanded="false">
-        <div class="topic-col">
-          <h3>Attire & Comfort</h3>
-        </div>
-        <div class="accordion-icon" aria-hidden="true"></div>
-      </button>
-  
-      <div class="accordion-panel" hidden>
-        <div class="info-col">
-  
-          <div class="qa">
-            <p class="q"><strong>What should I wear?</strong></p>
-            <p class="a">Cocktail attire. Suits (ties optional), midi or tea-length dresses, dressy separates, or a jumpsuit are all welcome. Colorful attire is encouraged.</p>
-          </div>
-  
-          <div class="qa">
-            <p class="q"><strong>Any shoe recommendations?</strong></p>
-            <p class="a">Because the ceremony will be held on the lawn, block heels, wedges, or formal flats tend to be the most comfortable choice.</p>
-          </div>
-  
-          <div class="qa">
-            <p class="q"><strong>What should I expect in terms of weather?</strong></p>
-            <p class="a">The Pavilion is open-air but equipped with fans, heaters, and drop-down walls to suit the forecast.</p>
-          </div>
-  
-        </div>
-      </div>
-    </div>
-  
-    <!-- CATEGORY 3 -->
-    <div class="accordion-item">
-      <button class="accordion-trigger" type="button" aria-expanded="false">
-        <div class="topic-col">
-          <h3>Transportation</h3>
-        </div>
-        <div class="accordion-icon" aria-hidden="true"></div>
-      </button>
-  
-      <div class="accordion-panel" hidden>
-        <div class="info-col">
-  
-          <div class="qa">
-            <p class="q"><strong>Will transportation be provided?</strong></p>
-            <p class="a">Yes. Complimentary motorcoach transportation will run continuously throughout the evening. Pickup details will be shared closer to the date.</p>
-          </div>
-  
-          <div class="qa">
-            <p class="q"><strong>Is there parking at the venue?</strong></p>
-            <p class="a">Yes — complimentary on-site parking is available directly in front of the Inn.</p>
-          </div>
-  
-          <div class="qa">
-            <p class="q"><strong>Are Uber/Lyft available?</strong></p>
-            <p class="a">They can be, but availability may be limited later in the evening — planning ahead is a good idea if you’re staying off-site.</p>
-          </div>
-  
-        </div>
-      </div>
-    </div>
-  
-    <!-- CATEGORY 4 -->
-    <div class="accordion-item">
-      <button class="accordion-trigger" type="button" aria-expanded="false">
-        <div class="topic-col">
-          <h3>Weekend Events</h3>
-        </div>
-        <div class="accordion-icon" aria-hidden="true"></div>
-      </button>
-  
-      <div class="accordion-panel" hidden>
-        <div class="info-col">
-  
-          <div class="qa">
-            <p class="q"><strong>Should we plan to attend the welcome gathering?</strong></p>
-            <p class="a">Only if it fits your travel plans. It’s a relaxed option for guests who happen to be arriving on Thursday, and we’d truly love to see you if you’re in town. There’s absolutely no expectation to travel early or adjust plans in order to attend.</p>
-          </div>
-  
-          <div class="qa">
-            <p class="q"><strong>Will more details be shared closer to the weekend?</strong></p>
-            <p class="a">Yes — as plans finalize, we’ll post timing/location updates on the website.</p>
-          </div>
-  
-        </div>
-      </div>
-    </div>
-  
-  </div>  
-
- <footer class="luxury-footer">
-    <div class="footer-content">
-       
-       <div class="footer-logo-container">
-         <img src="{{ url_for('static', filename='Long logo with rose.png') }}" alt="Emma and Ethan logo with rose" class="footer-logo">
-       </div>
-
-        <nav class="footer-nav">
-            <a href="/" class="footer-link">Home</a>
-            <a href="/travel" class="footer-link">Travel</a>
-            <a href="/our-story" class="footer-link">Our Story</a>
-            <a href="/wedding" class="footer-link">Ceremony & Reception</a>
-            <a href="/welcome-party" class="footer-link">Welcome Party</a>
-            <a href="/faqs" class="footer-link">FAQs</a>
-            <a href="/registry" class="footer-link">Registry</a>
-        </nav>
-
-        <div class="footer-bottom">
-            <p>
-                &copy; 2026 Emma & Ethan 
-                <span class="divider">•</span> 
-                <button id="privacy-trigger" class="privacy-link-light">Privacy Policy</button>
-            </p>
-        </div>
-
-    </div>
-  </footer>
-
-<div id="privacy-modal" class="modal modal-hidden">
-    <div class="modal-overlay" id="privacy-overlay"></div>
+    <script src="{{ url_for('static', filename='faq.js') }}" defer></script>
     
-    <div class="modal-content privacy-content">
-        <button class="modal-close" id="privacy-close">&times;</button>
-        
-        <h2 class="script-font privacy-title">Privacy Policy</h2>
-        
-        <div class="privacy-body">
-            <p><strong>Last Updated: January 2026</strong></p>
-            <p>This website is a personal wedding website hosted for the purpose of sharing information with our guests. We respect your privacy and are committed to protecting it.</p>
-            
-            <h4>Data Collection</h4>
-            <p>We use Google Analytics to help us understand how our website is being used (e.g., to ensure our RSVP system is functioning correctly). This may collect non-personal information such as your device type, browser version, and general geographic location.</p>
-            
-            <h4>Cookies</h4>
-            <p>We do not use tracking cookies for advertising purposes. Any cookies used are strictly necessary for the functioning of the site or for anonymous analytics.</p>
-            
-            <h4>Personal Information</h4>
-            <p>Any personal information you voluntarily provide via our RSVP form (such as dietary restrictions or names) is used solely for the purpose of planning our wedding celebration and will not be shared with third parties.</p>
-        </div>
-    </div>
-</div>
-  
-
-<script src="{{ url_for('static', filename='faq.js') }}" defer></script>
-
-</body>
+  </body>
 </html>

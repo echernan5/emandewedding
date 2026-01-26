@@ -671,3 +671,422 @@
         border-radius: 0;
     }
 }
+
+/* ===================================================================
+   FLORENCE MOCKUP STYLES (Add to bottom of CSS)
+   =================================================================== */
+
+/* 1. Page Wrapper & Header */
+.faq-page-wrapper {
+    background-color: #fdfbf9; /* Warm off-white, slightly different from cream */
+    padding-bottom: 80px;
+}
+
+.faq-header {
+    text-align: center;
+    padding: 100px 20px 60px;
+    background-image: url("{{ url_for('static', filename='Content/YourFloralImage.jpg') }}"); /* Optional: Add faint floral top if desired */
+    background-size: cover;
+    background-position: center top;
+}
+
+.faq-header .tiny-label {
+    display: block;
+    font-family: var(--font-serif);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: #888;
+    margin-bottom: 1rem;
+}
+
+.faq-header .main-title {
+    font-family: 'DarlineScript', cursive;
+    font-size: 4rem;
+    color: var(--color-charcoal);
+    font-weight: normal;
+}
+
+/* 2. Zig-Zag Section Layout */
+.faq-section {
+    display: flex;
+    flex-direction: column;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 60px 20px;
+    gap: 40px;
+    align-items: center;
+}
+
+@media (min-width: 900px) {
+    .faq-section {
+        flex-direction: row;
+        justify-content: space-between;
+        gap: 80px; /* Space between text and image */
+        padding: 80px 40px;
+    }
+
+    /* This class flips the order (Image Left, Text Right) */
+    .reverse-layout {
+        flex-direction: row-reverse;
+    }
+}
+
+/* 3. Columns */
+.faq-text-col, .faq-image-col {
+    width: 100%;
+}
+
+@media (min-width: 900px) {
+    .faq-text-col { width: 45%; }
+    .faq-image-col { width: 45%; }
+}
+
+/* 4. Image Styling */
+.vertical-img {
+    width: 100%;             /* 1. Force full width of the column */
+    height: 600px;           /* 2. FORCE the height (The Frame) */
+    object-fit: cover;       /* 3. Crop the image to fit (The Scissors) */
+    object-position: center; /* 4. Center the crop */
+    display: block;          /* Removes tiny gap at bottom of images */
+    border-radius: 2px;
+}
+
+/* 5. Typography */
+.serif-heading {
+    font-family: var(--font-serif);
+    font-size: 2rem;
+    line-height: 1.3;
+    color: #333;
+    margin-bottom: 1.5rem;
+}
+
+.body-text {
+    font-family: var(--font-serif);
+    font-size: 0.95rem;
+    line-height: 1.8;
+    color: #666;
+}
+
+.script-category {
+    font-family: 'DarlineScript', cursive;
+    font-size: 2.5rem;
+    color: #999;
+    margin: 0 0 0.5rem 0;
+}
+
+.category-title {
+    font-family: var(--font-serif);
+    font-size: 1.2rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #333;
+    margin-bottom: 2rem;
+}
+
+/* 6. Minimal Accordion (The Florence Look) */
+.clean-accordion {
+    border-top: 1px solid #e0e0e0; /* Top line to start the list */
+}
+
+.accordion-item {
+    border-bottom: 1px solid #e0e0e0; /* Separator lines */
+}
+
+.accordion-trigger {
+    width: 100%;
+    display: flex;
+    justify-content: space-between; /* Pushes arrow to right */
+    align-items: center;
+    padding: 20px 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    transition: color 0.3s;
+}
+
+.accordion-trigger span {
+    font-family: var(--font-serif);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #555;
+    font-weight: bold;
+}
+
+.accordion-trigger i {
+    font-size: 0.8rem;
+    color: #999;
+    transition: transform 0.3s ease;
+}
+
+/* Active State */
+.accordion-trigger.active span {
+    color: var(--color-deep-blue);
+}
+
+.accordion-trigger.active i {
+    transform: rotate(180deg);
+    color: var(--color-deep-blue);
+}
+
+/* Panel Animation */
+.accordion-panel {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease-out;
+}
+
+.accordion-panel p {
+    font-family: var(--font-serif);
+    font-size: 0.95rem;
+    color: #666;
+    line-height: 1.7;
+    padding-bottom: 20px; /* Space inside the answer */
+    padding-right: 20px;
+}
+
+/* 7. Collage Style (Top Section) */
+.collage-col {
+    position: relative;
+    padding: 20px;
+}
+
+.collage-main {
+    width: 90%;
+    height: auto;
+    display: block;
+    position: relative;
+    z-index: 2;
+}
+
+.collage-accent {
+    position: absolute;
+    top: 50%;
+    right: 0;
+    width: 60%;
+    height: 60%;
+    background-color: #f0f0f0; /* Light grey box behind */
+    z-index: 1;
+    transform: translateY(-20%);
+}
+
+/* ===================================================================
+   FLORENCE LAYOUT STYLES
+   =================================================================== */
+
+/* 1. Page Wrapper */
+.faq-page-wrapper {
+    background-color: #fdfbf9; /* Warm off-white paper tone */
+    padding-bottom: 80px;
+}
+
+/* 2. Header */
+.faq-header {
+    text-align: center;
+    padding: 100px 20px 60px;
+}
+
+.faq-header .tiny-label {
+    display: block;
+    font-family: var(--font-serif);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: #888;
+    margin-bottom: 1rem;
+}
+
+.faq-header .main-title {
+    font-family: 'DarlineScript', cursive;
+    font-size: 4rem;
+    color: var(--color-charcoal);
+    font-weight: normal;
+}
+
+/* 3. Zig-Zag Grid Layout */
+.faq-section {
+    display: flex;
+    flex-direction: column;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 60px 20px;
+    gap: 40px;
+    align-items: center;
+}
+
+@media (min-width: 900px) {
+    .faq-section {
+        flex-direction: row;
+        justify-content: space-between;
+        gap: 80px; /* Space between text and image */
+        padding: 80px 40px;
+    }
+
+    /* Flips the order for alternating rows */
+    .reverse-layout {
+        flex-direction: row-reverse;
+    }
+
+    .faq-text-col { width: 45%; }
+    .faq-image-col { width: 45%; }
+}
+
+/* 4. Images */
+.vertical-img {
+    width: 100%;             /* 1. Force full width of the column */
+    height: 600px;           /* 2. FORCE the height (The Frame) */
+    object-fit: cover;       /* 3. Crop the image to fit (The Scissors) */
+    object-position: center; /* 4. Center the crop */
+    display: block;          /* Removes tiny gap at bottom of images */
+    border-radius: 2px;
+}
+
+/* Collage (Intro Section) */
+.collage-col { position: relative; padding: 20px; }
+.collage-main {
+    width: 90%;
+    height: auto;
+    display: block;
+    position: relative;
+    z-index: 2;
+}
+.collage-accent {
+    position: absolute;
+    top: 50%;
+    right: 0;
+    width: 60%;
+    height: 60%;
+    background-color: #e5e5e5;
+    z-index: 1;
+    transform: translateY(-20%);
+}
+
+/* 5. Typography */
+.serif-heading {
+    font-family: var(--font-serif);
+    font-size: 2rem;
+    line-height: 1.3;
+    color: #333;
+    margin-bottom: 1.5rem;
+}
+
+.body-text {
+    font-family: var(--font-serif);
+    font-size: 0.95rem;
+    line-height: 1.8;
+    color: #666;
+}
+
+.script-category {
+    display: block;
+    font-family: 'DarlineScript', cursive;
+    font-size: 2.5rem;
+    color: #999; /* Light grey script */
+    margin-bottom: 0.5rem;
+}
+
+.category-title {
+    font-family: var(--font-serif);
+    font-size: 1.2rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #333;
+    margin-bottom: 2rem;
+}
+
+/* ===================================================================
+   6. CLEAN ACCORDION (INVISIBLE WHEN CLOSED)
+   =================================================================== */
+
+.clean-accordion {
+    border-top: 1px solid #e0e0e0;
+}
+
+.accordion-item {
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.accordion-trigger {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    transition: color 0.3s;
+}
+
+.accordion-trigger span {
+    font-family: var(--font-serif);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #555;
+    font-weight: bold;
+}
+
+.accordion-trigger i {
+    font-size: 0.8rem;
+    color: #999;
+    transition: transform 0.3s ease;
+}
+
+/* Active State */
+.accordion-trigger.active span { color: var(--color-deep-blue); }
+.accordion-trigger.active i {
+    transform: rotate(180deg);
+    color: var(--color-deep-blue);
+}
+
+/* PANEL ANIMATION (THE FIX) */
+.accordion-panel {
+    /* 1. Start completely hidden */
+    max-height: 0;
+    opacity: 0; 
+    overflow: hidden;
+    
+    /* 2. Remove padding from container to prevent "ghost" space */
+    padding: 0; 
+    
+    /* 3. Smooth fade + slide */
+    transition: max-height 0.5s ease, opacity 0.5s ease;
+}
+
+/* Open State */
+.accordion-panel.open {
+    opacity: 1;
+}
+
+/* Answer Text */
+.accordion-panel p {
+    font-family: var(--font-serif);
+    font-size: 0.95rem;
+    color: #666;
+    line-height: 1.7;
+    /* Add padding here instead so it collapses correctly */
+    padding: 10px 0 20px 0;
+    margin: 0;
+}
+
+.vertical-img {
+    width: 90%;             /* 1. Force full width of the column */
+    height: 600px;           /* 2. FORCE the height (The Frame) */
+    object-fit: cover;       /* 3. Crop the image to fit (The Scissors) */
+    object-position: center; /* 4. Center the crop */
+    display: block;          /* Removes tiny gap at bottom of images */
+    border-radius: 2px;
+}
+
+.collage-main {
+    width: 90%;             /* 1. Force full width of the column */
+    height: 600px;           /* 2. FORCE the height (The Frame) */
+    object-fit: cover;       /* 3. Crop the image to fit (The Scissors) */
+    object-position: center; /* 4. Center the crop */
+    display: block;          /* Removes tiny gap at bottom of images */
+    border-radius: 2px;
+}

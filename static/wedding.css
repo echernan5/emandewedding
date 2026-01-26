@@ -429,7 +429,7 @@
   }
   
   .scroll-indicator .line {
-      width: 1px;
+      width: 2px;
       height: 40px;
       background-color: #f5f5f5;
   }
@@ -771,7 +771,7 @@
     position: relative;
     width: auto;
     aspect-ratio: 4 / 3;
-    height: 300px;
+    height: 275px;
     margin-bottom: 3rem;
     overflow: hidden;
     align-content: center;

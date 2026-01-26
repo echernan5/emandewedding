@@ -18,6 +18,9 @@ const els = {
     sumPaid: document.getElementById("sumPaid"),
     sumRemaining: document.getElementById("sumRemaining"),
 
+    scopeSeg: document.querySelector(".segmented"),
+    scopeBtns: document.querySelectorAll(".segBtn[data-scope]"),
+
     // Filters & Controls
     searchInput: document.getElementById("searchInput"),
     filterCategory: document.getElementById("filterCategory"),
@@ -54,7 +57,7 @@ const CATEGORY_MAP = {
     'videography': 'Videography',
     'planner_coordination': 'Day-of Coordination',
     'transportation': 'Transportation',
-    'hotel_loding': 'Hotel/Lodging',
+    'hotel_lodging': 'Hotel/Lodging',
     'florals_decor': 'Florals/Decor'
 };
 
@@ -65,6 +68,7 @@ let searchQuery = "";
 let categoryFilter = "all";
 let payFilter = "all"; // all | overdue | upcoming | paid
 let paymentTab = "all"; // all | upcoming | paid
+let scopeFilter = "all";
 let selectedPayFile = null;
 
 // --- HELPERS ---
@@ -149,62 +153,51 @@ function chipHTML(kind, label) {
 // static/vendors.js - Update this function
 
 function sanitizeVendorForUser(vendorData) {
-    // Deep copy to avoid modifying cache
     const v = JSON.parse(JSON.stringify(vendorData));
     
-    // 1. ADMIN (You) - See everything
-    if (AppUser.isAdmin()) {
-        return v;
-    }
+    if (AppUser.isAdmin()) return v; // Admin sees all raw data to allow toggling later
 
-    // 2. VIEWER (Isabel) - See NO financial info
     if (AppUser.isViewer()) {
         v.payments = []; 
         v.financials = { scheduled: null, paid: null, remaining: null };
         return v;
     }
 
-    // 3. CONTRIBUTOR (Amy/Dave) - See ONLY their share
     if (AppUser.isContributor()) {
         const myName = (AppUser.getFilterName() || "").trim().toLowerCase();
 
-        // Filter payments list
+        // Only include payments that have a line item for this specific contributor
         v.payments = v.payments.filter(p => {
             return p.responsibilities.some(r => 
-                (r.responsible_party || "").trim().toLowerCase() === myName
+                (r.responsible_party || "").trim().toLowerCase().includes(myName)
             );
         });
 
-        // Calculate their specific totals
+        // The totals are now derived strictly from the sum of their assigned responsibilities
         let myScheduled = 0;
         let myPaid = 0;
 
         v.payments.forEach(p => {
-            const myResp = p.responsibilities.find(r => 
-                (r.responsible_party || "").trim().toLowerCase() === myName
-            );
+            p.responsibilities.forEach(r => {
+                const party = (r.responsible_party || "").trim().toLowerCase();
+                if (party.includes(myName)) {
+                    const amt = (Number(r.amount) || 0);
+                    myScheduled += amt;
 
-            if (myResp) {
-                const amt = (Number(myResp.amount) || 0);
-                myScheduled += amt;
+                    const rStatus = (r.reimbursement_status || "").toLowerCase();
+                    const statusStr = (r.status || "").toLowerCase();
+                    
+                    // Logic fix: It's paid if it's reimbursed OR if they paid the vendor directly
+                    const isReimbursed = rStatus === 'received';
+                    const isDirectPay = (rStatus === 'none' || !rStatus) && (statusStr === 'paid' || p.status === 'paid');
 
-                // --- THE FIX IS HERE ---
-                // Check if they paid YOU back (Reimbursement Received)
-                const rStatus = (myResp.reimbursement_status || "").toLowerCase();
-                
-                // Check if they paid the VENDOR directly (Status 'paid' with no reimbursement needed)
-                const statusStr = (myResp.status || "").toLowerCase();
-
-                const isReimbursed = rStatus === 'received'; // <--- THIS COUNTS THE $1,500
-                const isDirectPay = rStatus === 'none' && (statusStr === 'paid' || p.status === 'paid');
-
-                if (isReimbursed || isDirectPay) {
-                    myPaid += amt;
+                    if (isReimbursed || isDirectPay) {
+                        myPaid += amt;
+                    }
                 }
-            }
+            });
         });
 
-        // Attach pre-calculated financials
         v.financials = {
             scheduled: myScheduled,
             paid: myPaid,
@@ -212,7 +205,6 @@ function sanitizeVendorForUser(vendorData) {
         };
         return v;
     }
-
     return v; 
 }
 
@@ -317,61 +309,77 @@ function isOverduePayment(p) {
 // static/vendors.js - Update companyRollup
 
 function companyRollup(detail) {
-    // 1. USE PRE-CALCULATED FINANCIALS (From Sanitizer)
-    if (detail.financials) {
-        
-        // Filter to find payments that still have a balance > 0
-        // (sanitizeVendorForUser has already filtered this list to only show Amy's payments)
-        const unpaidPayments = detail.payments.filter(p => {
-             const t = paymentTotals(p); 
-             return t.remainingVendor > 0; // Only keep ones she hasn't paid yet
-        });
-
-        // Sort by date to find the true "Next" one
-        const nextPayment = unpaidPayments
-            .filter((p) => parseISODate(p.due_date))
-            .sort((a, b) => parseISODate(a.due_date) - parseISODate(b.due_date))[0] || null;
-
-        return {
-            totalScheduled: detail.financials.scheduled,
-            totalPaid: detail.financials.paid,
-            remaining: detail.financials.remaining,
-            
-            // Recalculate counts based on the filtered list
-            overdueCount: unpaidPayments.filter(p => isOverduePayment(p)).length,
-            unpaidCount: unpaidPayments.length, 
-            next: nextPayment 
-        };
-    }
-
-    // 2. STANDARD ROLLUP (Admin) - Keep existing logic
+    // Check if we should be showing the full contract or just the user's portion
+    const isAdmin = AppUser.isAdmin();
+    const isContributor = AppUser.isContributor();
+    const isMineScope = (isAdmin && scopeFilter === 'mine');
+    
     const payments = Array.isArray(detail?.payments) ? detail.payments : [];
-
     let totalScheduled = 0;
-    let totalPaidVendor = 0;
+    let totalPaid = 0;
     let overdueCount = 0;
-    const unpaid = [];
+    let nextDate = null;
+    const today = startOfToday();
 
     payments.forEach((p) => {
-        const t = paymentTotals(p);
-        totalScheduled += t.base;
-        totalPaidVendor += t.paidVendor;
+        let relevantAmount = 0;
+        let relevantPaid = 0;
 
-        if (t.remainingVendor > 0) unpaid.push(p);
-        if (isOverduePayment(p)) overdueCount += 1;
+        if (isAdmin && !isMineScope) {
+            // ADMIN "ALL" VIEW: Sum the total contract installments
+            relevantAmount = Number(p.amount) || 0;
+            let paidSum = 0;
+            (p.responsibilities || []).forEach(r => {
+                const s = normRespStatus(r);
+                if (s === 'paid' || s === 'reimb_pending' || s === 'reimbursed') {
+                    paidSum += (Number(r.amount) || 0);
+                }
+            });
+            relevantPaid = paidSum;
+        } else {
+            // "MINE" OR "CONTRIBUTOR" VIEW: Sum only the responsibilities for specific names
+            const filterName = isMineScope ? "emma" : (AppUser.getFilterName() || "").toLowerCase();
+            const filterPartner = isMineScope ? "ethan" : "";
+
+            (p.responsibilities || []).forEach(r => {
+                const party = (r.responsible_party || "").toLowerCase();
+                const isMatch = party.includes(filterName) || (filterPartner && party.includes(filterPartner));
+                
+                if (isMatch) {
+                    const amt = Number(r.amount) || 0;
+                    relevantAmount += amt;
+                    
+                    const s = normRespStatus(r);
+                    if (s === 'paid' || s === 'reimbursed' || s === 'reimb_pending') {
+                        relevantPaid += amt;
+                    }
+                }
+            });
+        }
+
+        totalScheduled += relevantAmount;
+        totalPaid += relevantPaid;
+
+        // Determine if this specific person has an upcoming or overdue payment
+        const remaining = relevantAmount - relevantPaid;
+        if (remaining > 0.01) {
+            const due = parseISODate(p.due_date);
+            if (due) {
+                const due0 = new Date(due); 
+                due0.setHours(0,0,0,0);
+                if (due0 < today) overdueCount++;
+                if (!nextDate || due0 < nextDate) nextDate = due0;
+            }
+        }
     });
-
-    const next = unpaid
-        .filter((p) => parseISODate(p.due_date))
-        .sort((a, b) => parseISODate(a.due_date) - parseISODate(b.due_date))[0] || null;
 
     return {
         totalScheduled,
-        totalPaid: totalPaidVendor,
-        remaining: Math.max(0, totalScheduled - totalPaidVendor),
+        totalPaid,
+        remaining: totalScheduled - totalPaid,
         overdueCount,
-        unpaidCount: unpaid.length,
-        next,
+        unpaidCount: (totalScheduled - totalPaid) > 0.01 ? 1 : 0,
+        next: nextDate ? { due_date: nextDate } : null
     };
 }
 
@@ -441,16 +449,28 @@ function setStatus(msg) {
 
 async function loadVendors() {
     setStatus("Loading booked vendors…");
+
+    // Check if user is Admin (Emma/Ethan)
+    const isEmmaOrEthan = AppUser.isAdmin(); 
+
+    // Target the specific wrapper we just labeled in the HTML
+    const scopeToggle = document.querySelector(".scope-control-wrapper");
+    
+    if (scopeToggle) {
+        // If not admin, hide the entire "Showing" UI
+        scopeToggle.style.display = isEmmaOrEthan ? "flex" : "none";
+    }
+
     try {
         companies = await fetchJSON(API.vendors("booked"));
         detailsCache.clear();
         hydrateCategoryFilter(companies);
         await warmDetailsForSummary(companies);
-        render();
+        render(); // This will use the new companyRollup logic
         setStatus("");
     } catch (e) {
         console.error(e);
-        setStatus("Could not load vendors. Check console + Flask logs.");
+        setStatus("Could not load vendors.");
     }
 }
 
@@ -627,8 +647,20 @@ function getFilteredCompanies() {
 function render() {
     if (!els.vendorList) return;
 
-    renderSummary();
-    const data = getFilteredCompanies();
+    renderSummary(); // Updates the top cards based on scope
+
+    // 1. FILTER DATA
+    const rawData = getFilteredCompanies(); // Applies Search & Category
+    const data = rawData.filter(c => {
+        // Only hide the entire card if Admin has explicitly toggled "Mine" and has $0 share
+        if (scopeFilter === 'mine' && AppUser.isAdmin()) {
+            const d = detailsCache.get(c.id);
+            if (!d) return false;
+            const roll = companyRollup(d); 
+            return roll.totalScheduled > 0; 
+        }
+        return true;
+    });
 
     if (!data.length) {
         els.vendorList.innerHTML = "";
@@ -637,112 +669,65 @@ function render() {
     }
     els.emptyState?.classList.add("hidden");
 
-    els.vendorList.innerHTML = data
-        .map((c) => {
-            const d = detailsCache.get(c.id);
-            // SANITIZE DATA BEFORE RENDERING
-            const cleanD = sanitizeVendorForUser(d);
-            const roll = d ? companyRollup(cleanD) : null;
+    els.vendorList.innerHTML = data.map((c) => {
+        const d = detailsCache.get(c.id);
+        const cleanD = sanitizeVendorForUser(d);
+        const roll = d ? companyRollup(cleanD) : null; 
 
-            const displayCategory = getCategoryDisplay(c.category);
-            const metaBits = [displayCategory].filter(Boolean).join(" • ");
+        const displayCategory = getCategoryDisplay(c.category);
+        const metaBits = [displayCategory].filter(Boolean).join(" • ");
 
-            // --- CHIP LOGIC ---
-            let chips = "";
-            
-            // Special Check for Contributors with $0 balance
-            const isZeroBalanceContributor = AppUser.isContributor() && (roll && roll.totalScheduled === 0);
+        // CHIPS
+        let chips = "";
+        if (roll) {
+            if (roll.overdueCount > 0) chips += chipHTML("overdue", `${roll.overdueCount} overdue`);
+            else if (roll.remaining > 0 && roll.next) chips += chipHTML("upcoming", `Next: ${fmtDate(roll.next.due_date)}`);
+            else if (roll.totalScheduled > 0 && roll.remaining <= 0.01) chips += chipHTML("paid", "Up to date");
+        } else {
+            chips = chipHTML("", "Loading…");
+        }
 
-            if (isZeroBalanceContributor) {
-                // If Amy doesn't owe anything here, show NO CHIPS.
-                chips = ""; 
-            }
-            else if (roll) {
-                // Standard Logic for everyone else
-                if (roll.overdueCount > 0) chips += chipHTML("overdue", `${roll.overdueCount} overdue`);
-                else if (roll.unpaidCount > 0 && roll.next) 
-                    chips += chipHTML("upcoming", `Next: ${fmtDate(roll.next.due_date)}`);
-                else if (roll.totalScheduled > 0 && roll.remaining === 0)
-                    chips += chipHTML("paid", "Up to date");
-                else if (!AppUser.isViewer())
-                    chips += chipHTML("paid", "Up to date");
-            } else {
-                chips = chipHTML("", "Loading…");
-            }
+        // NUMBERS (vendorBottom)
+        let numsHTML = "";
+        
+        const isViewer = AppUser.isViewer();
+        const isContributor = AppUser.isContributor();
+        const isAdmin = AppUser.isAdmin();
+        const hasFinancialStake = roll && roll.totalScheduled > 0.01;
 
-            // --- PROGRESS BAR & NUMBERS LOGIC ---
-            let numsHTML = ""; // Default to empty string
-
-            if (AppUser.isViewer()) {
-                // 1. VIEWERS: RENDER NOTHING.
-                // Keeps the card clean (Header only).
-                numsHTML = "";
-            } 
-            else if (isZeroBalanceContributor) {
-                // 2. AMY (No Balance): Sees specific reassurance text.
+        // Logic: Show the bottom section ONLY if the user is Admin OR if they have a > $0 share
+        if (!isViewer && roll) {
+            if (isAdmin || hasFinancialStake) {
+                const pct = roll.totalScheduled > 0 ? Math.min(100, Math.max(0, (roll.totalPaid / roll.totalScheduled) * 100)) : 0;
+                const labelSched = (scopeFilter === 'mine' || isContributor) ? "My Share" : "Scheduled";
+                
                 numsHTML = `
-                <div class="vendorNums">
-                  <div class="vendorStat" style="width: 100%;">
-                      <span style="color:#c9c9c9; font-size:0.85rem; font-style:italic;">
-                          No payment needed
-                      </span> 
-                  </div>
-                </div>
-              `;
-            } 
-            else if (roll) {
-                // 3. EVERYONE ELSE (Admin / Active Contributor): Sees Money.
-                const pct = roll.totalScheduled > 0
-                    ? Math.min(100, Math.max(0, (roll.totalPaid / roll.totalScheduled) * 100))
-                    : 0;
-
-                numsHTML = `
-                <div class="vendorNums">
-                  <div class="vendorStat" style="width: 180px;">
-                      <span>${AppUser.isContributor() ? 'My Share' : 'Scheduled'}</span> <b>${fmtMoney(roll.totalScheduled)}</b>
-                  </div>
-                  <div class="vendorStat" style="width: 150px;">
-                      <span>Paid</span> <b>${fmtMoney(roll.totalPaid)}</b>
-                  </div>
-                  <div class="vendorStat" style="width: 190px;">
-                      <span>${AppUser.isContributor() ? 'My Balance' : 'Remaining'}</span> <b>${fmtMoney(roll.remaining)}</b>
-                  </div>
-                  
-                  <div class="vendorProgress" title="${pct.toFixed(0)}% Paid">
-                      <div class="vendorProgressFill" style="width: ${pct}%"></div>
-                  </div>
-                </div>
-              `;
-            } else {
-                 // Loading / Fallback
-                 numsHTML = `<div class="vendorNums">Loading vendor details…</div>`;
+                    <div class="vendorBottom">
+                        <div class="vendorNums">
+                          <div class="vendorStat" style="width: 180px;"><span>${labelSched}</span> <b>${fmtMoney(roll.totalScheduled)}</b></div>
+                          <div class="vendorStat" style="width: 150px;"><span>Paid</span> <b>${fmtMoney(roll.totalPaid)}</b></div>
+                          <div class="vendorStat" style="width: 190px;"><span>Remaining</span> <b>${fmtMoney(roll.remaining)}</b></div>
+                          <div class="vendorProgress" title="${pct.toFixed(0)}%"><div class="vendorProgressFill" style="width: ${pct}%"></div></div>
+                        </div>
+                    </div>
+                `;
             }
+        }
 
-            // RETURN HTML
-            // Logic Change: We only render <div class="vendorBottom"> if numsHTML has content.
-            return `
+        return `
           <article class="vendorCard" data-id="${escapeHTML(c.id)}">
             <div class="vendorTop">
-              <div style="min-width:0;">
-                <div class="vendorMeta">${escapeHTML(metaBits || "—")}</div>
-                <h3 class="vendorName">${escapeHTML(c.name || "Vendor")}</h3>
-              </div>
-  
-              <div class="vendorRight">
-                ${chips}
-                <button class="linkBtn" type="button" data-action="open">View</button>
-              </div>
+              <div><div class="vendorMeta">${escapeHTML(metaBits)}</div><h3 class="vendorName">${escapeHTML(c.name)}</h3></div>
+              <div class="vendorRight">${chips}<button class="linkBtn" type="button" data-action="open">View</button></div>
             </div>
-  
-            ${numsHTML ? `<div class="vendorBottom">${numsHTML}</div>` : ""}
+            ${numsHTML} 
           </article>
         `;
-        })
-        .join("");
+    }).join("");
 
     els.vendorList.querySelectorAll(".vendorCard").forEach((card) => {
         const id = card.getAttribute("data-id");
-        card.querySelector("[data-action='open']")?.addEventListener("click", () => openDrawer(id));
+        card.querySelector("[data-action='open']")?.addEventListener("click", (e) => { e.stopPropagation(); openDrawer(id); });
         card.addEventListener("dblclick", () => openDrawer(id));
     });
 }
@@ -836,6 +821,7 @@ async function openDrawer(companyId) {
     if (els.drawerNotes) els.drawerNotes.textContent = "—";
 
     try {
+        // 1. GET DATA
         let d = detailsCache.get(companyId);
         if (!d) {
             d = await fetchJSON(API.vendorDetails(companyId));
@@ -848,34 +834,27 @@ async function openDrawer(companyId) {
         const c = cleanD.company || {};
         const roll = companyRollup(cleanD);
 
-        // --- 1. HEADER (IDENTITY) ---
+        // --- 2. HEADER (IDENTITY) ---
         const displayCategory = getCategoryDisplay(c.category);
         els.drawerTitle.textContent = c.name || "Vendor";
         els.drawerMeta.textContent = [displayCategory].filter(Boolean).join(" • ") || "—";
         if (els.drawerAvatar) els.drawerAvatar.textContent = initials(c.name || "");
 
         // GENERATE CONTACT CHIPS
-        // Note: You might need to adjust 'c.email' etc based on your actual DB schema
         let contactHTML = "";
-        
-        // Mocking contact data check - assuming c.contact_email exists or similar
-        // If not, we can pull from the first person in the contacts list
         const primaryContact = (d.people && d.people.length > 0) ? d.people[0] : {};
         const email = c.email || primaryContact.email;
         const phone = c.phone || primaryContact.phone;
         const website = c.website;
 
+        if (website) contactHTML += `<a href="${website}" target="_blank" class="contactChip">🔗 Website</a>`;
         if (email) contactHTML += `<a href="mailto:${email}" class="contactChip">✉️ Email</a>`;
         if (phone) contactHTML += `<a href="tel:${phone}" class="contactChip">📞 Call</a>`;
-        if (website) contactHTML += `<a href="${website}" target="_blank" class="contactChip">🔗 Website</a>`;
         
-        // Fallback if empty
         if (!contactHTML) contactHTML = `<span class="contactChip" style="background:transparent; border:1px dashed #e5e7eb; padding:4px 10px;">No quick contacts</span>`;
-
         if (contactContainer) contactContainer.innerHTML = contactHTML;
 
-
-        // --- 2. PAYMENT TAB (FINANCIALS) ---
+        // --- 3. PAYMENT TAB (FINANCIALS) ---
         let statsHTML = "";
         
         if (roll.next && roll.remaining > 0) {
@@ -910,31 +889,93 @@ async function openDrawer(companyId) {
             `;
         }
 
-        // Only inject stats if there are numbers to show
         if (statsContainer && !AppUser.isViewer()) {
             statsContainer.innerHTML = `<div class="drawerStatsGrid">${statsHTML}</div>`;
         } else if (statsContainer) {
-            statsContainer.innerHTML = ""; // Clear for viewer
+            statsContainer.innerHTML = ""; 
         }
 
-        // --- 3. REST OF CONTENT ---
-        if (els.drawerNotes) els.drawerNotes.textContent = (c.notes || "").trim() || "—";
+        // --- 4. NOTES SECTION (MOVED HERE so 'c' and 'd' exist) ---
+        const notesArea = els.drawerNotes;
+        const currentNotes = (c.notes || "").trim();
+        
+        if (AppUser.isAdmin()) {
+            notesArea.innerHTML = `
+                <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                    <div id="noteDisplay" style="white-space: pre-wrap;">${escapeHTML(currentNotes) || "<span class='muted'>No notes.</span>"}</div>
+                    <button id="btnEditNotes" class="linkBtn" style="font-size:0.8rem;">Edit</button>
+                </div>
+                <div id="noteEditMode" style="display:none; margin-top:8px;">
+                    <textarea id="fieldVendorNotes" class="input" rows="4" style="width:100%; margin-bottom:8px;">${escapeHTML(currentNotes)}</textarea>
+                    <div style="display:flex; gap:8px; justify-content:flex-end;">
+                        <button id="btnCancelNote" class="btnSecondary" style="padding:4px 12px; font-size:0.8rem;">Cancel</button>
+                        <button id="btnSaveNote" class="btnPrimary" style="padding:4px 12px; font-size:0.8rem;">Save</button>
+                    </div>
+                </div>
+            `;
+            
+            const btnEdit = notesArea.querySelector("#btnEditNotes");
+            const btnCancel = notesArea.querySelector("#btnCancelNote");
+            const btnSave = notesArea.querySelector("#btnSaveNote");
+            const displayDiv = notesArea.querySelector("#noteDisplay");
+            const editDiv = notesArea.querySelector("#noteEditMode");
+            const textArea = notesArea.querySelector("#fieldVendorNotes");
+
+            btnEdit.addEventListener("click", () => {
+                displayDiv.style.display = "none";
+                btnEdit.style.display = "none";
+                editDiv.style.display = "block";
+                textArea.focus();
+            });
+
+            btnCancel.addEventListener("click", () => {
+                editDiv.style.display = "none";
+                displayDiv.style.display = "block";
+                btnEdit.style.display = "inline-block";
+                textArea.value = currentNotes; 
+            });
+
+            btnSave.addEventListener("click", async () => {
+                const newText = textArea.value;
+                btnSave.textContent = "Saving...";
+                try {
+                    const res = await fetch(`/api/vendors/${companyId}/notes`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ notes: newText })
+                    });
+                    if(!res.ok) throw new Error("Failed");
+                    
+                    d.company.notes = newText;
+                    detailsCache.set(companyId, d);
+                    openDrawer(companyId); 
+                } catch(e) {
+                    alert("Error saving notes.");
+                    btnSave.textContent = "Save";
+                }
+            });
+
+        } else {
+            notesArea.textContent = currentNotes || "—";
+        }
+
+        // --- 5. RENDER LISTS ---
         renderPeople(d.people || []);
         renderPaymentsLedger(cleanD.payments || [], d.company_files || []);
         renderVendorDocs(d.files || []);
 
-        // --- 4. TAB LOGIC ---
+        // --- 6. TAB LOGIC ---
         const tabPayments = document.querySelector("button[data-tab='payments']");
-        const tabPanelPayments = document.getElementById("tab-payments");
         const tabVendor = document.querySelector("button[data-tab='vendor']");
-        const tabPanelVendor = document.getElementById("tab-vendor");
 
-        if (AppUser.isViewer()) {
-            if(tabPayments) tabPayments.style.display = "none";
-            if(tabVendor) tabVendor.click(); // Click event handles class toggling in existing code
+        const shouldHidePayments = AppUser.isViewer() || (AppUser.isContributor() && roll.totalScheduled === 0);
+
+        if (shouldHidePayments) {
+            if (tabPayments) tabPayments.style.display = "none";
+            if (tabVendor) tabVendor.click(); 
         } else {
-            if(tabPayments) tabPayments.style.display = "inline-block";
-            if(tabPayments) tabPayments.click();
+            if (tabPayments) tabPayments.style.display = "inline-block";
+            if (tabPayments) tabPayments.click();
         }
 
     } catch (e) {
@@ -1020,7 +1061,7 @@ function renderPaymentsLedger(payments, allFiles) {
     if (AppUser.isAdmin()) {
         addBtnHTML = `
         <div style="display:flex; justify-content:flex-end; margin-bottom:12px;">
-            <button class="btnSmall" id="btnAddNewPayment" style="display:flex; align-items:center; gap:6px;">
+            <button class="btn btn--primary" id="btnAddNewPayment" style="padding: 6px 14px; font-size: 0.85rem; display:flex; align-items:center; gap:6px;">
                 <span>+</span> Add Payment
             </button>
         </div>
@@ -1348,50 +1389,64 @@ function renderVendorDocs(files) {
     const list = Array.isArray(files) ? files : [];
     if (!els.drawerFiles) return;
 
+    // 1. Add "Add File" Button for Admins
+    let headerHTML = "";
+    if (AppUser.isAdmin()) {
+        headerHTML = `
+            <div style="display:flex; justify-content:flex-end; margin-bottom:12px;">
+                <button class="btnSmall" id="btnAddVendorFile" style="display:flex; align-items:center; gap:6px;">
+                    <span>+</span> Add File
+                </button>
+            </div>
+        `;
+    }
+
     // Use existing helper to group/filter
     const { vendorDocs } = groupFilesByPayment(list);
     const filtered = vendorDocs.filter((f) => !isPlaceholderFile(f));
 
     if (!filtered.length) {
-        els.drawerFiles.innerHTML = `<div class="muted">No vendor documents yet.</div>`;
-        return;
+        els.drawerFiles.innerHTML = `${headerHTML}<div class="muted">No vendor documents yet.</div>`;
+    } else {
+        const groups = new Map();
+        filtered.forEach((f) => {
+            const key = (f.file_type || "file").toLowerCase();
+            if (!groups.has(key)) groups.set(key, []);
+            groups.get(key).push(f);
+        });
+
+        const order = ["contract", "invoice", "receipt"];
+        const keys = [...groups.keys()].sort((a, b) => {
+            const ia = order.indexOf(a);
+            const ib = order.indexOf(b);
+            if (ia === -1 && ib === -1) return a.localeCompare(b);
+            if (ia === -1) return 1;
+            if (ib === -1) return -1;
+            return ia - ib;
+        });
+
+        const listHTML = keys.map((k) => {
+             const items = groups.get(k) || [];
+             const header = `<div class="muted" style="font-weight:950; font-size:12px; letter-spacing:.06em; text-transform:uppercase;">${escapeHTML(fileTypeLabel(k))}</div>`;
+             const rows = items.map(fileRowHTML).join("");
+             return `<div class="stack" style="gap:8px;">${header}${rows}</div>`;
+        }).join("");
+
+        els.drawerFiles.innerHTML = `${headerHTML}<div class="stack">${listHTML}</div>`;
     }
 
-    const groups = new Map();
-    filtered.forEach((f) => {
-        const key = (f.file_type || "file").toLowerCase();
-        if (!groups.has(key)) groups.set(key, []);
-        groups.get(key).push(f);
-    });
-
-    const order = ["contract", "invoice", "receipt"];
-    const keys = [...groups.keys()].sort((a, b) => {
-        const ia = order.indexOf(a);
-        const ib = order.indexOf(b);
-        if (ia === -1 && ib === -1) return a.localeCompare(b);
-        if (ia === -1) return 1;
-        if (ib === -1) return -1;
-        return ia - ib;
-    });
-
-    els.drawerFiles.innerHTML = `
-      <div class="stack">
-        ${keys
-            .map((k) => {
-                const items = groups.get(k) || [];
-                const header = `<div class="muted" style="font-weight:950; font-size:12px; letter-spacing:.06em; text-transform:uppercase;">${escapeHTML(
-                    fileTypeLabel(k)
-                )}</div>`;
-                const rows = items.map(fileRowHTML).join("");
-                return `<div class="stack" style="gap:8px;">${header}${rows}</div>`;
-            })
-            .join("")}
-      </div>
-    `;
-
+    // Attach "Open File" Listeners
     els.drawerFiles.querySelectorAll("button[data-open]").forEach((b) => {
         b.addEventListener("click", () => openSigned(b.getAttribute("data-open")));
     });
+
+    // Attach "Add File" Listener
+    const btnAdd = els.drawerFiles.querySelector("#btnAddVendorFile");
+    if (btnAdd) {
+        btnAdd.addEventListener("click", () => {
+            openUploadModal(els.drawer.getAttribute("data-company-id"));
+        });
+    }
 }
 
 function openPayModal(data) {
@@ -1686,6 +1741,167 @@ async function handlePlanSubmit(e) {
 
 // --- INIT ---
 
+// --- ADD VENDOR MODAL LOGIC ---
+
+const addVendorEls = {
+    modal: document.getElementById("modalAddVendor"),
+    form: document.getElementById("formAddVendor"),
+    btnClose: document.getElementById("btnCloseAddVendor"),
+    btnCancel: document.getElementById("btnCancelAddVendor"),
+    name: document.getElementById("addVendorName"),
+    category: document.getElementById("addVendorCategory"),
+    status: document.getElementById("addVendorStatus"),
+    website: document.getElementById("addVendorWebsite"),
+    contactName: document.getElementById("addVendorContactName"),
+    email: document.getElementById("addVendorEmail"),
+    phone: document.getElementById("addVendorPhone"),
+    notes: document.getElementById("addVendorNotes")
+};
+
+function bindAddVendorEvents() {
+    addVendorEls.btnClose?.addEventListener("click", closeAddVendorModal);
+    addVendorEls.btnCancel?.addEventListener("click", closeAddVendorModal);
+    addVendorEls.form?.addEventListener("submit", handleAddVendorSubmit);
+}
+
+function openAddVendorModal() {
+    if (!addVendorEls.modal) return;
+    
+    // 1. Reset Form
+    addVendorEls.form.reset();
+    
+    // 2. Populate Categories
+    if (addVendorEls.category.children.length === 0) {
+        const sortedCats = Object.entries(CATEGORY_MAP).sort((a, b) => a[1].localeCompare(b[1]));
+        addVendorEls.category.innerHTML = `<option value="" disabled selected>Select a category...</option>`;
+        sortedCats.forEach(([val, label]) => {
+            const opt = document.createElement("option");
+            opt.value = val;
+            opt.textContent = label;
+            addVendorEls.category.appendChild(opt);
+        });
+    }
+
+    addVendorEls.status.value = "booked"; 
+    addVendorEls.modal.style.display = "flex";
+    addVendorEls.modal.setAttribute("aria-hidden", "false");
+    addVendorEls.name.focus();
+}
+
+function closeAddVendorModal() {
+    if (!addVendorEls.modal) return;
+    addVendorEls.modal.style.display = "none";
+    addVendorEls.modal.setAttribute("aria-hidden", "true");
+}
+
+async function handleAddVendorSubmit(e) {
+    e.preventDefault();
+    const btn = addVendorEls.form.querySelector("button[type='submit']");
+    const originalText = btn.textContent;
+    btn.textContent = "Creating...";
+    btn.disabled = true;
+
+    try {
+        const payload = {
+            name: addVendorEls.name.value,
+            category: addVendorEls.category.value,
+            status: addVendorEls.status.value,
+            website: addVendorEls.website.value,
+            contact_name: addVendorEls.contactName.value,
+            email: addVendorEls.email.value,
+            phone: addVendorEls.phone.value,
+            notes: addVendorEls.notes.value
+        };
+
+        const res = await fetch("/api/vendors/save", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+        });
+
+        const json = await res.json();
+        if (!res.ok) throw new Error(json.error || "Failed");
+
+        closeAddVendorModal();
+        await loadVendors();
+
+        if (json.id) openDrawer(json.id);
+
+    } catch (err) {
+        console.error(err);
+        alert(err.message);
+    } finally {
+        btn.textContent = originalText;
+        btn.disabled = false;
+    }
+}
+
+// --- UPLOAD MODAL LOGIC ---
+
+const uploadEls = {
+    modal: document.getElementById("modalUploadFile"),
+    form: document.getElementById("formUploadFile"),
+    btnClose: document.getElementById("btnCloseUpload"),
+    btnCancel: document.getElementById("btnCancelUpload"),
+    companyId: document.getElementById("uploadCompanyId"),
+    displayName: document.getElementById("uploadDisplayName"),
+    fileType: document.getElementById("uploadFileType"),
+    file: document.getElementById("uploadFile")
+};
+
+function bindUploadEvents() {
+    if(!uploadEls.modal) return;
+    uploadEls.btnClose.addEventListener("click", closeUploadModal);
+    uploadEls.btnCancel.addEventListener("click", closeUploadModal);
+    uploadEls.form.addEventListener("submit", handleUploadSubmit);
+}
+
+function openUploadModal(companyId) {
+    uploadEls.form.reset();
+    uploadEls.companyId.value = companyId;
+    uploadEls.modal.style.display = "flex";
+    uploadEls.modal.setAttribute("aria-hidden", "false");
+}
+
+function closeUploadModal() {
+    uploadEls.modal.style.display = "none";
+    uploadEls.modal.setAttribute("aria-hidden", "true");
+}
+
+async function handleUploadSubmit(e) {
+    e.preventDefault();
+    const btn = uploadEls.form.querySelector("button[type='submit']");
+    const originalText = btn.textContent;
+    btn.textContent = "Uploading...";
+    btn.disabled = true;
+
+    try {
+        const formData = new FormData();
+        formData.append("company_id", uploadEls.companyId.value);
+        formData.append("file_name", uploadEls.displayName.value);
+        formData.append("file_type", uploadEls.fileType.value);
+        formData.append("file", uploadEls.file.files[0]);
+
+        const res = await fetch("/api/vendor-files/upload", { method: "POST", body: formData });
+        const json = await res.json();
+        if (!res.ok) throw new Error(json.error || "Failed");
+
+        closeUploadModal();
+        
+        // Refresh
+        const cid = uploadEls.companyId.value;
+        const d = await fetchJSON(API.vendorDetails(cid));
+        detailsCache.set(cid, d);
+        openDrawer(cid);
+
+    } catch (err) {
+        alert(err.message);
+    } finally {
+        btn.textContent = originalText;
+        btn.disabled = false;
+    }
+}
+
 function bindControls() {
     if (els.searchInput) els.searchInput.addEventListener("input", () => { searchQuery = els.searchInput.value || ""; render(); });
     if (els.filterCategory) els.filterCategory.addEventListener("change", () => { categoryFilter = els.filterCategory.value || "all"; render(); });
@@ -1697,8 +1913,26 @@ function bindControls() {
         if (els.filterPay) els.filterPay.value = "all";
         render();
     });
+    // Scope segmented toggle (All vendors / My responsibility)
+    if (els.scopeSeg && els.scopeBtns?.length) {
+        els.scopeSeg.addEventListener("click", (e) => {
+            const btn = e.target.closest(".segBtn[data-scope]");
+            if (!btn) return;
+
+            scopeFilter = btn.dataset.scope || "all";
+
+            // Update UI state
+            els.scopeBtns.forEach(b => {
+                const isActive = (b.dataset.scope === scopeFilter);
+                b.classList.toggle("is-active", isActive);
+                b.setAttribute("aria-selected", isActive ? "true" : "false");
+            });
+
+            render();
+        });
+    }
     if (els.btnRefresh) els.btnRefresh.addEventListener("click", loadVendors);
-    if (els.btnAddVendor) els.btnAddVendor.addEventListener("click", () => alert("Next: Add Vendor flow."));
+    if (els.btnAddVendor) els.btnAddVendor.addEventListener("click", openAddVendorModal);
     if (els.drawerOverlay) els.drawerOverlay.addEventListener("click", closeDrawer);
     if (els.drawerClose) els.drawerClose.addEventListener("click", closeDrawer);
     if (els.btnDrawerClose2) els.btnDrawerClose2.addEventListener("click", closeDrawer);
@@ -1711,6 +1945,8 @@ document.addEventListener("DOMContentLoaded", () => {
     bindDrawerTabs();
     bindPayModalEvents(); 
     bindPlanModalEvents();
+    bindAddVendorEvents();
+    bindUploadEvents();
     loadVendors();
 });
 
@@ -1720,3 +1956,4 @@ window.addEventListener("roleChanged", (e) => {
     loadVendors();
     closeDrawer();
 });
+

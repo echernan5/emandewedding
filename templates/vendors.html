@@ -27,9 +27,7 @@
       </a>
 
       <a href="/vendors" data-route="/vendors">Vendors</a>
-      <a href="logistics.html">Logistics</a>
-      <a href="exports.html">Exports</a>
-      <a href="settings.html">Settings</a>
+      <a href="/export">Exports</a>
     </nav>
 
     <div class="sideBottom" style="position: relative;">
@@ -78,8 +76,15 @@
       </div>
 
       <div class="topbar__right">
-        <button id="btnAddVendor" class="btn btn--primary" type="button">Add vendor</button>
+        <div class="scopeControl scope-control-wrapper" aria-label="Scope">
+          <div class="scopeLabel">Showing</div>
+          <div class="segmented" role="tablist" aria-label="Vendor scope">
+            <button type="button" class="segBtn is-active" data-scope="all">All vendors</button>
+            <button type="button" class="segBtn" data-scope="mine">My responsibility</button>
+          </div>
+        </div>
       </div>
+      
     </header>
 
     <main class="container">
@@ -133,8 +138,9 @@
           <button id="btnClear" class="btn" type="button">Clear</button>
         </div>
 
-        <div class="toolbar__right">
+        <div class="toolbar__right filter-actions" style="display: flex; gap: 8px;">
           <button id="btnRefresh" class="btn" type="button">Refresh</button>
+          <button id="btnAddVendor" class="btn btn--primary" type="button" style="display: none;">Add vendor</button>
         </div>
       </section>
 
@@ -400,6 +406,125 @@
           <div class="modalFooter">
             <button type="button" class="btnSecondary" id="btnCancelPlan">Cancel</button>
             <button type="submit" class="btnPrimary">Save Payment</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div id="modalAddVendor" class="modalOverlay" aria-hidden="true" style="display: none;">
+    <div class="modalShell">
+      <div class="modalHeader">
+        <h2>Add New Vendor</h2>
+        <button type="button" class="closeModal" id="btnCloseAddVendor">×</button>
+      </div>
+      
+      <div class="modalBody">
+        <form id="formAddVendor">
+          <div class="paySection">
+            <div class="formRow">
+              <div class="formGroup" style="flex: 2;">
+                <label>Vendor Name</label>
+                <input type="text" id="addVendorName" placeholder="e.g. Bay Pointe Inn" required>
+              </div>
+              <div class="formGroup" style="flex: 1;">
+                <label>Category</label>
+                <select id="addVendorCategory" required>
+                  </select>
+              </div>
+            </div>
+  
+            <div class="formRow">
+              <div class="formGroup">
+                <label>Status</label>
+                <select id="addVendorStatus">
+                  <option value="booked">Booked</option>
+                  <option value="considering">Considering / In Talks</option>
+                  <option value="archived">Archived</option>
+                </select>
+              </div>
+              <div class="formGroup">
+                <label>Website</label>
+                <input type="url" id="addVendorWebsite" placeholder="https://...">
+              </div>
+            </div>
+
+            <div class="formRow">
+              <div class="formGroup" style="width:100%;">
+                <label>Contact Name</label>
+                <input type="text" id="addVendorContactName">
+              </div>
+            </div>
+  
+            <div class="formRow">
+              <div class="formGroup">
+                <label>Main Email</label>
+                <input type="email" id="addVendorEmail" placeholder="contact@venue.com">
+              </div>
+              <div class="formGroup">
+                <label>Main Phone</label>
+                <input type="tel" id="addVendorPhone" placeholder="(555) 123-4567">
+              </div>
+            </div>
+  
+            <div class="formRow">
+              <div class="formGroup" style="width:100%;">
+                <label>Initial Notes</label>
+                <textarea id="addVendorNotes" rows="2" placeholder="Key details, package info, etc." style="width:100%; resize:vertical;"></textarea>
+              </div>
+            </div>
+          </div>
+  
+          <div class="modalFooter">
+            <button type="button" class="btnSecondary" id="btnCancelAddVendor">Cancel</button>
+            <button type="submit" class="btnPrimary">Create Vendor</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div id="modalUploadFile" class="modalOverlay" aria-hidden="true" style="display: none;">
+    <div class="modalShell">
+      <div class="modalHeader">
+        <h2>Add File</h2>
+        <button type="button" class="closeModal" id="btnCloseUpload">×</button>
+      </div>
+      <div class="modalBody">
+        <form id="formUploadFile">
+          <input type="hidden" id="uploadCompanyId">
+          
+          <div class="paySection">
+            <div class="formRow">
+              <div class="formGroup" style="width:100%;">
+                <label>Display Name</label>
+                <input type="text" id="uploadDisplayName" placeholder="e.g. Signed 2026 Contract" required>
+              </div>
+            </div>
+            
+            <div class="formRow">
+              <div class="formGroup" style="width:100%;">
+                <label>File Type</label>
+                <select id="uploadFileType">
+                  <option value="contract">Contract</option>
+                  <option value="invoice">Invoice</option>
+                  <option value="proposal">Proposal</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+            </div>
+  
+            <div class="formRow">
+               <div class="formGroup" style="width:100%;">
+                  <label>Select File</label>
+                  <input type="file" id="uploadFile" required>
+               </div>
+            </div>
+          </div>
+  
+          <div class="modalFooter">
+            <button type="button" class="btnSecondary" id="btnCancelUpload">Cancel</button>
+            <button type="submit" class="btnPrimary">Upload</button>
           </div>
         </form>
       </div>

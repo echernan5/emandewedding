@@ -13,7 +13,6 @@
   --spacing-desktop: 80px;      /* Matching your section padding */
 }
 
-
 @font-face {
   font-family: 'DarlineScript';
   src: url('/static/Fonts/WOFF/DarlineScript-Regular.woff') format('woff');
@@ -33,7 +32,7 @@
 @font-face {
   font-family: 'DarlineScript';
   src: url('/static/Fonts/WOFF/DarlineScript-Regular.woff') format('woff'); 
-  font-weight: bold; /* Tell browser this is the bold version */
+  font-weight: bold;
   font-style: normal;
   font-display: swap;
 }
@@ -49,7 +48,7 @@
 @font-face {
   font-family: 'DarlineSerif';
   src: url('/static/Fonts/WOFF/DarlineSerif-Light.woff') format('woff');
-  font-weight: 300; /* Light */
+  font-weight: 300;
   font-style: normal;
   font-display: swap;
 }
@@ -62,48 +61,10 @@
   font-display: swap;
 }
 
-.inria-serif-light {
-  font-family: "Inria Serif", serif;
-  font-weight: 300;
-  font-style: normal;
-}
-
-.inria-serif-regular {
-  font-family: "Inria Serif", serif;
-  font-weight: 400;
-  font-style: normal;
-}
-
-.inria-serif-bold {
-  font-family: "Inria Serif", serif;
-  font-weight: 700;
-  font-style: normal;
-}
-
-.inria-serif-light-italic {
-  font-family: "Inria Serif", serif;
-  font-weight: 300;
-  font-style: italic;
-}
-
-.inria-serif-regular-italic {
-  font-family: "Inria Serif", serif;
-  font-weight: 400;
-  font-style: italic;
-}
-
-.inria-serif-bold-italic {
-  font-family: "Inria Serif", serif;
-  font-weight: 700;
-  font-style: italic;
-}
-
-
 /* =================================================================== */
 /* 2. GLOBAL & UTILITY STYLES
 /* =================================================================== */
 
-/* Universal Styles */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -111,51 +72,79 @@
 }
 
 html {
-  scroll-behavior: smooth; /* Smooth scrolling */
-  overflow-x: hidden; /* Prevent horizontal scroll */
+  scroll-behavior: smooth;
+  overflow-x: hidden;
 }
 
+/* CLEANED BODY: Removes all conflicting background rules */
 body {
   padding: 0;
   margin: 0;
   max-width: 100%;
+  background-color: #ffffff;
 }
 
-/* Hides the modal scrollbar from the body */
 body.modal-active {
   overflow: hidden;
 }
 
-/* Hide mobile-specific content on desktop */
 .mobile-only {
   display: none;
 }
 
-/* Re-usable class for section labels */
-.section-label {
-  font-family: "DarlineSerif", serif;
-  text-transform: uppercase;
-  font-style: italic;
-  letter-spacing: 0.2rem;
-  color: #bcbdb5;
-  margin-bottom: 2rem;
+/* =================================================================== */
+/* 3. HERO & CONTAINER LAYOUT (The "Card" Effect)
+/* =================================================================== */
+
+/* The Big Floral Image at the top */
+.floral-hero-wrapper {
+  width: 100%;
+  height: 65vh; /* Takes up 75% of screen height */
+  overflow: hidden;
+  position: relative;
+  z-index: 1;
 }
 
+.floral-hero-img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+/* The White Box that overlaps the flowers */
+.story-container {
+  background-color: #ffffff;
+  width: 100%;
+  max-width: 80vw;
+  
+  /* Centering */
+  margin-left: auto;
+  margin-right: auto;
+  
+  /* THE OVERLAP: Pulls the white box UP over the flowers by 350px */
+  margin-top: -400px; 
+  padding: 80px 40px;
+  
+  /* Shadow & Layering */
+  position: relative;
+  z-index: 10;
+}
+
+/* =================================================================== */
+/* 4. NAVBAR
+/* =================================================================== */
+
 #navbar {
-  /* Positioning & Layout */
   position: sticky;
   top: 0;
   z-index: 1000;
   display: flex;
   justify-content: space-between;
   align-items: center;
-
-  /* Dimensions */
   width: 100%;
   height: 90px;
   padding: 0 1.5rem;
-
-  /* Visuals & Transitions */
   background-color: var(--color-dusty-blue);
   transition: background-color 0.8s ease, transform 0.8s ease;
 }
@@ -173,25 +162,17 @@ body.modal-active {
   width: auto;
 }
 
-/* --- MOBILE MENU OVERLAY --- */
 .nav-menu {
-  /* Hidden by default on mobile */
   display: none;
-  
-  /* Full Screen Overlay */
   position: fixed;
   top: 0;
   left: 0;
   z-index: 1000;
   width: 100%;
   height: 100vh;
-  
-  /* Flex Centering */
   flex-direction: column;
   align-items: center;
   justify-content: center;
-
-  /* Visuals */
   background-color: var(--color-dusty-blue);
 }
 
@@ -199,7 +180,6 @@ body.modal-active {
   display: flex;
 }
 
-/* --- NAV LINKS --- */
 .nav-links {
   display: flex;
   flex-direction: column;
@@ -208,15 +188,12 @@ body.modal-active {
 }
 
 .navbar .nav-link {
-  /* Typography */
   font-family: var(--font-serif);
   font-size: 1.5rem;
   font-style: italic;
   text-transform: uppercase;
   letter-spacing: 0.2rem;
   text-decoration: none;
-  
-  /* Color & Interaction */
   color: white;
   transition: color 0.3s ease;
 }
@@ -227,15 +204,11 @@ body.modal-active {
   text-underline-offset: 5px;
 }
 
-/* --- MOBILE HAMBURGER TOGGLE --- */
 .mobile-nav-toggle {
-  /* Layout */
   display: flex;
   flex-direction: column;
   justify-content: space-around;
   z-index: 1002;
-  
-  /* Dimensions & Reset */
   width: 30px;
   height: 24px;
   padding: 0;
@@ -251,45 +224,29 @@ body.modal-active {
   border-radius: 10px;
 }
 
-/* ===================================================================
-   DESKTOP NAV BREAKPOINT (min-width: 900px)
-   =================================================================== */
 @media (min-width: 900px) {
-  
-  /* 1. Reset Navbar Spacing */
   #navbar {
     justify-content: space-around;
     padding: 0;
   }
-
-  /* 2. Hide Mobile Elements */
   .mobile-nav-toggle {
     display: none;
   }
-
-  /* 3. Reset Menu (Remove Overlay) */
   .nav-menu {
-    /* Restore to flow layout */
     position: static;
     display: flex;
     width: auto;
     height: auto;
     flex-direction: row;
-    
-    /* Remove mobile styles */
     background-color: transparent;
     padding-top: 0;
     z-index: auto;
     transition: none;
   }
-
-  /* 4. Horizontal Links */
   .nav-links {
     flex-direction: row;
     gap: 60px;
   }
-
-  /* 5. Smaller Desktop Font */
   .navbar .nav-link {
     font-size: 0.9rem;
   }
@@ -299,48 +256,40 @@ body.modal-active {
    DROPDOWN MENU STYLES
    ========================================= */
 
-/* The Wrapper (Holds the label + the menu) */
 .nav-item-dropdown {
-  position: relative; /* Anchor point for the popup */
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
   height: 100%;
 }
 
-/* The Trigger Text ("Weekend Events") */
 .dropdown-trigger {
-  cursor: default; /* Shows regular arrow, not pointer, since it's not a link */
-  padding-bottom: 0; /* Remove default padding conflicts */
+  cursor: default;
+  padding-bottom: 0;
 }
 
-/* The Popup Menu (Hidden by default) */
 .dropdown-menu {
   display: none;
   position: absolute;
-  top: 100%; /* Position right below the navbar */
+  top: 100%;
   left: 50%;
-  transform: translateX(-50%); /* Center perfectly */
-  
-  /* Luxury styling */
+  transform: translateX(-50%);
   background-color: #ffffff;
   min-width: 240px;
   padding: 15px 0;
-  box-shadow: 0 5px 20px rgba(0,0,0,0.08); /* Soft, expensive shadow */
-  border-top: 3px solid var(--color-deep-blue); /* Subtle accent strip */
+  box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+  border-top: 3px solid var(--color-deep-blue);
   border-radius: 0 0 4px 4px;
   z-index: 1100;
 }
 
-/* The Links Inside */
 .dropdown-item {
   display: block;
   padding: 12px 25px;
   text-align: center;
   text-decoration: none;
   font-style: italic;
-  
-  /* Typography matching your brand */
   font-family: var(--font-serif);
   font-size: 0.85rem;
   text-transform: uppercase;
@@ -349,42 +298,33 @@ body.modal-active {
   transition: all 0.2s ease;
 }
 
-/* Hover State for Items */
 .dropdown-item:hover {
-  background-color: #f7f9fb; /* Very light grey/blue */
+  background-color: #f7f9fb;
   color: var(--color-deep-blue);
 }
 
-/* --- DESKTOP HOVER INTERACTION --- */
 @media (min-width: 900px) {
-  /* Show menu when hovering the wrapper */
   .nav-item-dropdown:hover .dropdown-menu {
       display: block;
       animation: fadeUp 0.3s ease;
   }
-
-  /* Subtle animation for luxury feel */
   @keyframes fadeUp {
       from { opacity: 0; transform: translate(-50%, 10px); }
       to { opacity: 1; transform: translate(-50%, 0); }
   }
 }
 
-/* --- MOBILE ADJUSTMENTS --- */
-/* On mobile, we want them to just list out underneath */
 @media (max-width: 899px) {
   .nav-item-dropdown {
       flex-direction: column;
       height: auto;
   }
-
   .dropdown-trigger {
-      margin-bottom: 1.5rem; /* Space before sub-items */
+      margin-bottom: 1.5rem;
   }
-
   .dropdown-menu {
-      position: static; /* No longer floating */
-      display: flex; /* Always visible on mobile menu */
+      position: static;
+      display: flex;
       flex-direction: column;
       transform: none;
       background-color: transparent;
@@ -394,144 +334,172 @@ body.modal-active {
       min-width: auto;
       gap: 1.5rem;
   }
-
   .dropdown-item {
-      color: rgba(255, 255, 255, 0.8); /* Slightly dimmer white than main links */
-      font-size: 1.1rem; /* Match mobile link size */
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 1.1rem;
       padding: 0;
-      font-style: italic; /* Differentiate slightly */
+      font-style: italic;
   }
-  
   .dropdown-item:hover {
       background: none;
       color: white;
   }
 }
 
-/* Desktop Hero Adjustment */
-@media (min-width: 900px) {
-    .script-font { font-size: 6rem; }
-}
 
-.story-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 50px 20px 50px 20px;
-}
-/* =========================================
-   EDITORIAL SPLIT LAYOUT
-   ========================================= */
+/* =================================================================== */
+/* 5. EDITORIAL SPLIT (LAYOUT + TYPOGRAPHY)
+/* =================================================================== */
 
-/* The Main Grid Container */
-.editorial-split {
-  display: flex;
-  flex-direction: column; /* Stack on mobile */
-  gap: 3rem;
-  margin-bottom: 4rem;
-  align-items: self-start;
-}
+/* --- TYPOGRAPHY (Restored) --- */
 
-/* --- Left Column: Image --- */
-.split-image-wrapper {
-  width: 100%;
-  position: relative;
-}
-
-.hero-portrait {
-  width: 100%;
-  height: auto;
-  display: block;
-  /* Optional: A very subtle shadow to lift it off the page */
-}
-
-/* --- Right Column: Text --- */
-.split-content-wrapper {
-  width: 100%;
-  text-align: left; /* Essential for the new look */
-}
-
-/* Header Styling (Left Aligned now) */
-.story-header-left {
-  margin-bottom: 2.5rem;
-  text-align: left;
-}
-
-.story-header-left .tiny-label {
-  font-family: "Inria Serif", serif;
-  font-size: 0.9rem;
-  text-transform: uppercase;
-  letter-spacing: 0.2em;
-  color: #555;
-  display: block;
+.story-header-centered {
+  text-align: center;
   margin-bottom: 2rem;
 }
 
-.story-header-left .main-title {
-  font-family: 'DarlineScript', cursive;
-  font-size: 4rem; /* Large but fits in column */
-  line-height: 1;
-  color: #333;
-  font-weight: normal;
-  margin: 0 0 0.5rem 0;
-}
-
-.story-header-left .subtitle {
+.wl-style-title {
   font-family: "Inria Serif", serif;
-  font-style: italic;
-  color: #555;
-  font-size: 0.9rem;
-  letter-spacing: 0.2em;
+  font-size: 2.5rem;
   text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #555;
+  font-weight: normal;
+  margin: 0 0 1rem 0;
 }
 
-/* Paragraph Styling */
-.story-text p {
+.wl-style-subtitle {
   font-family: "Inria Serif", serif;
-  font-size: 1.1rem;
-  line-height: 1.8;
-  color: #444;
-  margin-bottom: 1.5rem;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.25em;
+  color: #888;
+  display: block;
+  margin-top: 10px;
 }
 
-/* The Monogram Signature */
-.signature-left {
-  margin-top: 3rem;
-  text-align: left; /* Aligns with text */
-  opacity: 0.6;
-}
-.monogram-sig {
-  width: 80px;
+/* The Paragraphs */
+.story-text p {
+font-family: "Inria Serif", serif;
+font-size: 0.9rem; 
+line-height: 1.8; 
+
+/* Justified text like a newspaper column */
+text-align: justify;
+text-justify: inter-word;
+
+color: #555;
+margin-bottom: 2rem;
 }
 
-/* =========================================
- DESKTOP GRID (The "Expensive" Split)
- ========================================= */
+/* Remove margin from last paragraph so alignment is perfect */
+.story-text p:last-child {
+  margin-bottom: 0;
+}
+
+/* --- THE LAYOUT (The "Ghost" Fix) --- */
+
 @media (min-width: 900px) {
-  .story-container {
-      /* Increase padding for desktop grandeur */
-      padding: 80px 40px; 
-  }
+.editorial-split {
+    /* Grid aligns empty columns perfectly */
+    display: grid;
+    grid-template-columns: 55% 35%;
+    gap: 5%;
+    
+    /* STRETCH: Image column matches Text column height */
+    align-items: stretch; 
+    
+    margin: 0 auto 5rem auto; 
+    max-width: 1100px;
+    position: relative;
+    justify-content: space-around;
+    padding-bottom: 2rem;
+}
 
+/* TEXT SIDE (The Boss) */
+.split-content-wrapper {
+    width: 100%;
+    /* Height is auto, meaning it is defined ONLY by the text inside */
+    height: auto; 
+}
+
+/* IMAGE SIDE (The Wrapper) */
+.split-image-wrapper {
+    position: relative; 
+    width: 100%;
+    /* We leave height undefined so it inherits from the grid stretch */
+}
+
+/* THE IMAGE (The Ghost) */
+.hero-portrait,
+.split-image-wrapper img {
+    /* ABSOLUTE: Removes image from flow so it doesn't push the box open */
+    position: absolute !important; 
+    
+    /* PINNING: Match bottom, extend top */
+    bottom: 0 !important; 
+    top: -120px !important; 
+    
+    /* FILL: Fill the width of the column */
+    left: 0 !important;
+    width: 100% !important;
+    
+    /* CROP: Don't stretch */
+    height: calc(100% + 120px) !important;
+    object-fit: cover !important; 
+}
+}
+
+/* --- QUOTE SECTION --- */
+.heartfelt-quote {
+  text-align: center;
+  font-family: "Inria Serif", serif;
+  text-transform: uppercase;
+  font-size: 1.4rem;
+  letter-spacing: 0.15em;
+  color: #d1caca; 
+  padding: 60px 20px 60px 20px;
+  line-height: 1.6;
+  border-top: 1px solid #e3e0e0;
+  border-bottom: 1px solid #e3e0e0;
+}
+
+/* --- MOBILE FALLBACK --- */
+@media (max-width: 899px) {
   .editorial-split {
-      display: grid;
-      /* 45% Image, 5% Gap, 50% Text */
-      grid-template-columns: 45% 50%; 
-      gap: 5%;
-      align-items: self-start; /* Centers image vertically with text */
+      display: flex;
+      flex-direction: column-reverse;
+      gap: 3rem;
+      justify-content: space-around;
   }
-  
-  .story-header-left .main-title {
-      font-size: 4rem; /* Larger title on desktop */
+  .wl-style-title {
+      font-size: 2rem;
+  }
+  .split-image-wrapper {
+      height: 400px; 
+      width: 100%;
+      position: relative;
+  }
+  .hero-portrait,
+  .split-image-wrapper img {
+      position: absolute !important;
+      top: 0 !important;
+      left: 0 !important;
+      width: 100% !important;
+      height: 100% !important;
+      object-fit: cover !important;
+      margin-top: -40px !important;
+      bottom: auto !important;
   }
 }
 
-/* =========================================
-   3. THE TIMELINE (Horizontal Scroller)
-   ========================================= */
+/* =================================================================== */
+/* 6. TIMELINE & FOOTER
+/* =================================================================== */
+
 .memory-lane {
-    margin-top: 4rem;
+    margin-top: 2rem;
     padding-top: 4rem;
-    border-top: 1px solid #eee; /* Subtle separator */
 }
 
 .timeline-title {
@@ -548,20 +516,18 @@ body.modal-active {
 .film-strip-scroller {
     display: flex;
     gap: 40px;
-    overflow-x: auto; /* Allow horizontal scroll */
-    padding: 20px 5%; /* Side padding so first item isn't flush */
-    padding-bottom: 40px; /* Space for scrollbar */
-    
-    /* Hide scrollbar for cleaner look */
-    scrollbar-width: none; /* Firefox */
-    -ms-overflow-style: none;  /* IE */
+    overflow-x: auto;
+    padding: 20px 5%;
+    padding-bottom: 40px;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
 }
 .film-strip-scroller::-webkit-scrollbar { 
-    display: none; /* Chrome/Safari */
+    display: none;
 }
 
 .memory-card {
-    flex: 0 0 220px; /* Fixed width cards */
+    flex: 0 0 220px;
     display: flex;
     flex-direction: column;
     gap: 15px;
@@ -575,12 +541,9 @@ body.modal-active {
     transform: translateX(0);
 }
 
-/* Stagger the fade in for the first few items using nth-child could be cool, 
-   but JS observer handles basic fade */
-
 .memory-img-wrapper {
     width: 100%;
-    aspect-ratio: 3/4; /* Classic portrait ratio */
+    aspect-ratio: 3/4;
     overflow: hidden;
     background-color: #f0f0f0;
 }
@@ -589,7 +552,7 @@ body.modal-active {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    filter: grayscale(100%); /* B&W makes it feel like 'history' */
+    filter: grayscale(100%);
     transition: filter 0.5s ease;
 }
 
@@ -612,16 +575,12 @@ body.modal-active {
     margin: 5px 0 0 0;
 }
 
-/* =========================================
-   LUXURY FOOTER STYLES
-   ========================================= */
-
-   .luxury-footer {
+/* FOOTER */
+.luxury-footer {
     width: 100%;
-    /* The "Bookend" Effect: Matches your navbar color */
     background-color: var(--color-dusty-blue); 
     color: #ffffff;
-    padding: 100px 20px 60px; /* Generous top padding feels expensive */
+    padding: 100px 20px 60px;
     text-align: center;
     position: relative;
 }
@@ -635,32 +594,28 @@ body.modal-active {
     gap: 3rem;
 }
 
-/* 1. Control the size here */
 .footer-logo-container {
-  width: 100%;        /* Takes up available space up to the max-width */
-  max-width: 250px;   /* <--- CHANGE THIS VALUE to make it smaller (e.g. 80px) */
-  margin: 0 auto 20px; /* Centers it horizontally and keeps the bottom gap */
+  width: 100%;
+  max-width: 250px;
+  margin: 0 auto 20px;
 }
 
-/* 2. Ensure the image fits inside the container */
 .footer-logo {
-  width: 100%;      /* Forces image to fill the container width */
-  height: auto;     /* Maintains aspect ratio */
-  display: block;   /* Removes any tiny invisible margins under the image */
+  width: 100%;
+  height: auto;
+  display: block;
 }
 
-/* 1. The Sign-Off Script */
 .footer-message h2 {
     font-family: var(--font-script);
     font-size: 2rem;
     color: #ffffff;
     margin: 0;
     line-height: 1.2;
-    text-shadow: 0 2px 10px rgba(0,0,0,0.05); /* Very subtle depth */
+    text-shadow: 0 2px 10px rgba(0,0,0,0.05);
     font-weight: normal;
 }
 
-/* 2. The Navigation Row */
 .footer-nav {
     display: flex;
     align-items: center;
@@ -668,7 +623,7 @@ body.modal-active {
     flex-wrap: wrap;
     gap: 2rem;
     padding: 2rem 0;
-    border-top: 1px solid rgba(255, 255, 255, 0.2); /* Soft semi-transparent line */
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
     border-bottom: 1px solid rgba(255, 255, 255, 0.2);
     width: 100%;
 }
@@ -690,22 +645,20 @@ body.modal-active {
     text-underline-offset: 5px;
 }
 
-/* The Central "E & E" */
 .footer-monogram {
     font-family: var(--font-serif);
     font-size: 1.5rem;
     font-style: italic;
     font-weight: bold;
     color: #ffffff;
-    padding: 0 2rem; /* Extra space around the center item */
+    padding: 0 2rem;
 }
 
-/* 3. The Bottom Details */
 .footer-bottom {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
-    opacity: 0.7; /* Make fine print slightly dimmer */
+    opacity: 0.7;
 }
 
 .footer-bottom p {
@@ -730,37 +683,27 @@ body.modal-active {
     opacity: 0.8;
 }
 
-.location-tag {
-    font-style: italic;
-    margin-top: 5px;
-}
-
-/* --- MOBILE ADJUSTMENTS --- */
 @media (max-width: 768px) {
     .luxury-footer {
         padding: 60px 20px 40px;
     }
-
     .footer-message h2 {
         font-size: 3rem;
     }
-
     .footer-nav {
         flex-direction: column;
         gap: 1.5rem;
-        border: none; /* Remove lines on mobile to save space */
+        border: none;
     }
-
     .footer-monogram {
-        display: none; /* Hide monogram on mobile stack */
+        display: none;
     }
 }
 
-/* =========================================
-   PRIVACY MODAL SPECIFIC STYLES
-   ========================================= */
+/* =================================================================== */
+/* 7. MODALS
+/* =================================================================== */
 
-/* Make the privacy modal narrower than the itinerary one */
 .privacy-content {
     max-width: 800px !important; 
     text-align: left;
@@ -796,65 +739,52 @@ body.modal-active {
 .signature {
     margin-top: 2rem;
     font-family: var(--font-script);
-    font-size: 1.5rem !important; /* Override standard p size */
+    font-size: 1.5rem !important; 
     color: var(--color-dusty-blue) !important;
 }
 
-/* =========================================
-   BASE MODAL STYLES (The Logic)
-   ========================================= */
-
-/* 1. The Wrapper: Covers the whole screen */
 .modal {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 2000; /* Super high so it sits on top of everything */
+  z-index: 2000;
   display: flex;
   align-items: center;
   justify-content: center;
-  
-  /* Animation for smooth fade-in */
   opacity: 1;
   transition: opacity 0.3s ease;
 }
 
-/* 2. The Hiding Class: This is what makes it invisible by default */
 .modal-hidden {
   display: none !important;
   opacity: 0;
   pointer-events: none;
 }
 
-/* 3. The Dark Background Overlay */
 .modal-overlay {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black */
-  backdrop-filter: blur(4px); /* Optional: blurs the background */
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
   cursor: pointer;
 }
 
-/* 4. The White Box Content */
 .modal-content {
   position: relative;
-  z-index: 2001; /* Must be higher than the overlay */
+  z-index: 2001;
   background-color: #ffffff;
   padding: 40px;
   width: 90%;
   max-width: 600px;
-  max-height: 90vh; /* Prevents it from being taller than screen */
-  overflow-y: auto; /* Adds scrollbar inside box if text is too long */
-  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-  border-radius: 4px;
+  max-height: 90vh;
+  overflow-y: auto;
 }
 
-/* 5. The Close Button (X) */
 .modal-close {
   position: absolute;
   top: 15px;
@@ -869,21 +799,4 @@ body.modal-active {
 
 .modal-close:hover {
   color: #333;
-}
-
-.film-strip-scroller {
-  display: flex;
-  gap: 40px; 
-  overflow-x: auto;
-  
-  /* Top: 20px | Right: 10px | Bottom: 40px | Left: 5% */
-  /* Smaller Right padding allows the next card to be seen */
-  padding: 20px 10px 40px 5%; 
-  
-  scrollbar-width: none; 
-  -ms-overflow-style: none;
-  
-  /* Keep your mask logic here */
-  -webkit-mask-image: linear-gradient(to right, black 85%, transparent 100%);
-  mask-image: linear-gradient(to right, black 85%, transparent 100%);
 }

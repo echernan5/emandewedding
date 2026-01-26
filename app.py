@@ -2,10 +2,16 @@ import os
 import psycopg2
 import requests
 import urllib.parse
+import uuid
+import json
+import csv
+import io
+
 from dotenv import load_dotenv
 from flask import Flask, jsonify, request, render_template
 from flask_cors import CORS
 from psycopg2 import sql
+from flask import Response
 
 load_dotenv()
 
@@ -292,7 +298,7 @@ def update_party(party_id):
     finally:
         conn.close()
 
-
+# In app.py
 @app.route("/api/address-book", methods=["GET"])
 def get_address_book():
     query = sql.SQL(
@@ -307,6 +313,7 @@ def get_address_book():
             p.address_state,
             p.address_zip,
             p.is_address_collected,
+            p.assigned_users,  -- <--- NEW JSONB COLUMN
             COALESCE(
               json_agg(
                 json_build_object(
@@ -327,6 +334,32 @@ def get_address_book():
     )
     data, error = get_data_from_query(query)
     return jsonify(data) if not error else (jsonify({"error": error}), 500)
+
+@app.route("/api/parties/<party_id>/assign", methods=["PATCH"])
+def assign_party(party_id):
+    conn = get_db_connection()
+    if not conn:
+        return jsonify({"error": "Database unavailable"}), 500
+    
+    try:
+        data = request.get_json()
+        # Expecting a list like ["group_amy_dave", "user_emily"]
+        assigned_users = data.get("assigned_users", []) 
+
+        with conn.cursor() as cur:
+            cur.execute(
+                "UPDATE parties SET assigned_users = %s::jsonb WHERE id = %s",
+                (json.dumps(assigned_users), party_id)
+            )
+            conn.commit()
+            
+        return jsonify({"ok": True, "id": party_id, "assigned_users": assigned_users})
+
+    except Exception as e:
+        conn.rollback()
+        return jsonify({"error": str(e)}), 500
+    finally:
+        conn.close()
 
 
 # --- VENDORS API ENDPOINTS ---
@@ -482,8 +515,126 @@ def get_vendor_details(company_id):
     finally:
         conn.close()
 
+@app.route('/api/vendors/save', methods=['POST'])
+def save_vendor():
+    conn = get_db_connection()
+    if not conn:
+        return jsonify({"error": "Database unavailable"}), 500
 
-import urllib.parse
+    try:
+        data = request.get_json()
+        
+        # 1. Extract Data
+        name = data.get('name')
+        category = data.get('category')
+        status = data.get('status', 'booked')
+        contact_name = data.get('contact_name') or 'Main Contact'
+        email = data.get('email')
+        phone = data.get('phone')
+        notes = data.get('notes')
+
+        if not name:
+            return jsonify({"error": "Vendor name is required"}), 400
+
+        # 2. Generate Company UUID
+        new_company_id = str(uuid.uuid4())
+
+        with conn.cursor() as cur:
+            # 3. Insert Company
+            cur.execute("""
+                INSERT INTO vendor_companies (id, name, category, status, notes, created_at, updated_at)
+                VALUES (%s, %s, %s, %s, %s, NOW(), NOW())
+            """, (new_company_id, name, category, status, notes))
+            
+            # 4. Insert Primary Contact (if provided)
+            if email or phone:
+                # --- FIX: Generate Person UUID here too ---
+                new_person_id = str(uuid.uuid4())
+                
+                cur.execute("""
+                    INSERT INTO vendor_people (id, company_id, full_name, email, phone, title)
+                    VALUES (%s, %s, 'Primary Contact', %s, %s, 'Main')
+                """, (new_person_id, new_company_id, email, phone))
+
+            conn.commit()
+            
+        return jsonify({"id": new_company_id, "message": "Vendor created successfully"})
+
+    except Exception as e:
+        conn.rollback()
+        print(f"Error saving vendor: {e}")
+        return jsonify({"error": str(e)}), 500
+    finally:
+        conn.close()
+
+@app.route("/api/vendors/<company_id>/notes", methods=["POST"])
+def update_vendor_notes(company_id):
+    conn = get_db_connection()
+    if not conn:
+        return jsonify({"error": "Database unavailable"}), 500
+    try:
+        data = request.get_json()
+        notes = data.get("notes", "")
+        
+        with conn.cursor() as cur:
+            cur.execute(
+                "UPDATE vendor_companies SET notes = %s, updated_at = NOW() WHERE id = %s",
+                (notes, company_id)
+            )
+            conn.commit()
+        return jsonify({"ok": True})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    finally:
+        conn.close()
+
+@app.route("/api/vendor-files/upload", methods=["POST"])
+def upload_vendor_file():
+    conn = get_db_connection()
+    if not conn:
+        return jsonify({"error": "Database unavailable"}), 500
+    try:
+        company_id = request.form.get("company_id")
+        display_name = request.form.get("file_name") # The custom name she wants
+        file = request.files.get("file")
+        doc_type = request.form.get("file_type", "file") # contract, invoice, etc.
+
+        if not company_id or not file or not display_name:
+            return jsonify({"error": "Missing required fields"}), 400
+
+        # Upload to Supabase
+        safe_name = f"{uuid.uuid4()}_{file.filename}"
+        storage_path = f"{company_id}/docs/{safe_name}"
+        
+        bucket = "vendor-files"
+        base_url = SUPABASE_URL.rstrip("/")
+        upload_url = f"{base_url}/storage/v1/object/{bucket}/{storage_path}"
+        
+        headers = {
+            "apikey": SUPABASE_SERVICE_ROLE_KEY or SUPABASE_ANON_KEY,
+            "Authorization": f"Bearer {SUPABASE_SERVICE_ROLE_KEY or SUPABASE_ANON_KEY}",
+            "Content-Type": file.mimetype
+        }
+        
+        r = requests.post(upload_url, headers=headers, data=file.read())
+        if r.status_code >= 400:
+            raise Exception(f"Supabase error: {r.text}")
+
+        # Save to DB
+        with conn.cursor() as cur:
+            cur.execute("""
+                INSERT INTO vendor_files 
+                (id, company_id, file_type, file_name, storage_path, mime_type, uploaded_at)
+                VALUES (%s, %s, %s, %s, %s, %s, NOW())
+            """, (str(uuid.uuid4()), company_id, doc_type, display_name, storage_path, file.mimetype))
+            conn.commit()
+
+        return jsonify({"ok": True})
+    except Exception as e:
+        print(f"Error uploading file: {e}")
+        return jsonify({"error": str(e)}), 500
+    finally:
+        conn.close()
 
 @app.route("/api/vendor-files/signed-url", methods=["GET"])
 def vendor_file_signed_url():
@@ -619,10 +770,170 @@ def save_payment_details():
     finally:
         conn.close()
 
+@app.route("/api/payments/record", methods=["POST"])
+def record_payment():
+    conn = get_db_connection()
+    if not conn:
+        return jsonify({"error": "Database unavailable"}), 500
+
+    try:
+        # 1. Parse Data (Multipart Form Data)
+        payment_id = request.form.get("payment_id")
+        paid_date = request.form.get("paid_date")
+        main_notes = request.form.get("notes")
+        resps_json = request.form.get("responsibilities")
+        file = request.files.get("file")
+
+        if not payment_id:
+             return jsonify({"error": "Missing payment ID"}), 400
+
+        # Parse the JSON string back into a list
+        responsibilities = json.loads(resps_json) if resps_json else []
+
+        with conn.cursor() as cur:
+            # Fetch company_id (needed for file folder path)
+            cur.execute("SELECT company_id FROM vendor_payments WHERE id = %s", (payment_id,))
+            row = cur.fetchone()
+            if not row:
+                return jsonify({"error": "Payment record not found"}), 404
+            company_id = row[0]
+
+            # 2. Upload File to Supabase (if provided)
+            if file:
+                # Create a unique safe filename
+                safe_name = f"{uuid.uuid4()}_{file.filename}"
+                storage_path = f"{company_id}/receipts/{safe_name}"
+                
+                # Upload via Supabase API
+                bucket = "vendor-files"
+                base_url = SUPABASE_URL.rstrip("/")
+                upload_url = f"{base_url}/storage/v1/object/{bucket}/{storage_path}"
+                
+                headers = {
+                    "apikey": SUPABASE_SERVICE_ROLE_KEY or SUPABASE_ANON_KEY,
+                    "Authorization": f"Bearer {SUPABASE_SERVICE_ROLE_KEY or SUPABASE_ANON_KEY}",
+                    "Content-Type": file.mimetype
+                }
+                
+                # Send raw file bytes
+                r = requests.post(upload_url, headers=headers, data=file.read())
+                if r.status_code >= 400:
+                    raise Exception(f"Supabase upload error: {r.text}")
+
+                # Save file reference to DB
+                cur.execute("""
+                    INSERT INTO vendor_files (id, company_id, payment_id, file_type, file_name, storage_path, mime_type, uploaded_at)
+                    VALUES (%s, %s, %s, 'receipt', %s, %s, %s, NOW())
+                """, (str(uuid.uuid4()), company_id, payment_id, file.filename, storage_path, file.mimetype))
+
+            # 3. Update Database Responsibilities
+            # We wipe the 'planned' responsibilities and insert the actual 'paid' breakdown
+            cur.execute("DELETE FROM vendor_payment_responsibilities WHERE payment_id = %s", (payment_id,))
+
+            for r in responsibilities:
+                # r contains: responsible_party, amount, reimbursement_status, paid_by_party, payment_method
+                cur.execute("""
+                    INSERT INTO vendor_payment_responsibilities 
+                    (payment_id, responsible_party, amount, status, reimbursement_status, paid_by_party, paid_date, notes)
+                    VALUES (%s, %s, %s, 'paid', %s, %s, %s, %s)
+                """, (
+                    payment_id,
+                    r.get('responsible_party'),
+                    r.get('amount'),
+                    r.get('reimbursement_status', 'none'),
+                    r.get('paid_by_party'),
+                    paid_date,
+                    f"Method: {r.get('payment_method')}" # Store method in notes
+                ))
+            
+            # Optional: Update main note
+            if main_notes:
+                 cur.execute("UPDATE vendor_payments SET notes = %s, updated_at = NOW() WHERE id = %s", (main_notes, payment_id))
+            
+            conn.commit()
+
+        return jsonify({"ok": True, "id": payment_id})
+
+    except Exception as e:
+        conn.rollback()
+        print(f"Error in record_payment: {e}")
+        return jsonify({"error": str(e)}), 500
+    finally:
+        conn.close()
+
 @app.route("/favicon.ico")
 def favicon():
     return "", 204
 
+@app.route("/api/exports/<export_type>")
+def export_data(export_type):
+    user_name = (request.args.get("name") or "").strip().lower()
+    
+    conn = get_db_connection()
+    if not conn:
+        return "Database unavailable", 500
+    
+    try:
+        cur = conn.cursor()
+        data = []
+        filename = f"{export_type}_export.csv"
+        headers = []
+
+        if export_type == 'guests':
+            cur.execute("SELECT first_name, last_name, rsvp_status, dietary_restrictions FROM guests ORDER BY last_name;")
+            headers = ['First Name', 'Last Name', 'RSVP Status', 'Dietary']
+            data = cur.fetchall()
+
+        elif export_type == 'addresses':
+            cur.execute("SELECT display_name, address_street, address_city, address_state, address_zip FROM parties WHERE is_address_collected = true;")
+            headers = ['Party Name', 'Street', 'City', 'State', 'Zip']
+            data = cur.fetchall()
+
+        elif export_type == 'vendors':
+            cur.execute("SELECT name, category, notes FROM vendor_companies WHERE status = 'booked';")
+            headers = ['Vendor', 'Category', 'Notes']
+            data = cur.fetchall()
+
+        elif export_type == 'my-payments':
+            # Strictly filter by the user's name (e.g., 'amy' or 'emma')
+            query = """
+                SELECT vp.description, r.amount, r.status, r.paid_date 
+                FROM vendor_payment_responsibilities r
+                JOIN vendor_payments vp ON r.payment_id = vp.id
+                WHERE LOWER(r.responsible_party) LIKE %s
+                ORDER BY vp.due_date;
+            """
+            cur.execute(query, (f"%{user_name}%",))
+            headers = ['Description', 'Your Share', 'Status', 'Date Paid']
+            data = cur.fetchall()
+
+        elif export_type == 'all-payments':
+            # This is the master ledger ($19k+ for venue)
+            cur.execute("""
+                SELECT vp.description, vp.amount, vp.due_date, vp.notes 
+                FROM vendor_payments vp 
+                ORDER BY vp.due_date;
+            """)
+            headers = ['Payment Description', 'Total Contract Amount', 'Due Date', 'Notes']
+            data = cur.fetchall()
+
+        # Generate CSV in memory
+        output = io.StringIO()
+        writer = csv.writer(output)
+        writer.writerow(headers)
+        writer.writerows(data)
+        
+        return Response(
+            output.getvalue(),
+            mimetype="text/csv",
+            headers={"Content-disposition": f"attachment; filename={filename}"}
+        )
+
+    except Exception as e:
+        print(f"Export Error: {e}")
+        return str(e), 500
+    finally:
+        conn.close()
 
 # --- FRONTEND PAGE ROUTES ---
 
@@ -695,6 +1006,14 @@ def dashboard():
 def address_book():
     return render_template(
         "address-book.html",
+        supabase_url=os.environ.get("SUPABASE_URL"),
+        supabase_anon_key=os.environ.get("SUPABASE_ANON_KEY"),
+    )
+
+@app.route("/export")
+def exports():
+    return render_template(
+        "export.html",
         supabase_url=os.environ.get("SUPABASE_URL"),
         supabase_anon_key=os.environ.get("SUPABASE_ANON_KEY"),
     )

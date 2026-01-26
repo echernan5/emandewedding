@@ -11,7 +11,6 @@
 
 <body>
   <div class="appShell">
-    <!-- Sidebar -->
     <aside class="sidebar">
       <div class="sideTop">
         <div class="appTitle">Wedding Manager</div>
@@ -20,16 +19,12 @@
   
       <nav class="sideNav">
         <a href="/dashboard">Guest List</a>
-  
         <a href="/address" class="withBadge active">
           Address Book
           <span class="badge" id="missingAddrBadge" style="display:none;">Missing</span>
         </a>
-  
         <a href="/vendors" data-route="/vendors">Vendors</a>
-        <a href="logistics.html">Logistics</a>
-        <a href="exports.html">Exports</a>
-        <a href="settings.html">Settings</a>
+        <a href="/export">Exports</a>
       </nav>
   
       <div class="sideBottom" style="position: relative;">
@@ -68,40 +63,45 @@
         </div>
     </aside>
 
-    <!-- Main -->
     <main class="main">
-      <header class="pageHeader">
-        <div class="headerLeft">
-          <h1>Address Book</h1>
-          <p class="sub">For envelopes: copy addresses fast. For planning: missing ones are easy to spot.</p>
-          <div id="abStatus" class="abStatus" aria-live="polite"></div>
+      <header class="topbar">
+        <div class="topbar__left">
+          <h1 class="title">Address Book</h1>
+          <p class="subtitle">For envelopes: copy addresses fast. For planning: missing ones are easy to spot.</p>
+          <div id="statusLine" class="statusLine"></div>
         </div>
-
-        <div class="headerRight">
-          <div class="summaryPill" id="summaryPill">—</div>
-        </div>
+        <div class="topbar__right">
+           </div>
       </header>
-
-      <section class="controls" aria-label="Controls">
-        <div class="searchWrap">
-          <input id="abSearch" class="input" placeholder="Search party, guest, street, city, state, zip…" />
-        </div>
-
-        <div class="segmented" role="tablist" aria-label="Filter">
-          <button class="segBtn active" data-filter="all" type="button">All</button>
-          <button class="segBtn" data-filter="missing" type="button">Missing</button>
-          <button class="segBtn" data-filter="complete" type="button">Complete</button>
-        </div>
-
-        <button class="btn" id="expandAllBtn" type="button" title="Open edit panels for visible rows">
-          Edit visible
-        </button>
-      </section>
-
-      <section class="list" id="abList" aria-label="Address list"></section>
+    
+      <div class="container">
+        <section class="toolbar" aria-label="Address filters">
+          <div class="toolbar__left">
+            <label class="field">
+              <span class="field__label">Search</span>
+              <input type="text" id="addrSearch" class="input" placeholder="Search party, guest, street, city..." />
+            </label>
+    
+            <label class="field">
+              <span class="field__label">View</span>
+              <select id="addrScope" class="select">
+                <option value="assigned">Your Guests</option>
+                <option value="all">All Guests</option>
+              </select>
+            </label>
+    
+            <div class="segmented" role="tablist" style="margin-left: 12px;">
+              <button class="segBtn filterBtn" data-filter="all">All</button>
+              <button class="segBtn filterBtn is-active active" data-filter="missing">Missing</button>
+              <button class="segBtn filterBtn" data-filter="complete">Complete</button>
+            </div>
+          </div>
+        </section>
+    
+        <div id="abList" class="abList"></div> 
+      </div>
     </main>
-  </div>
-
+    
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
   <script src="{{ url_for('static', filename='addressbook.js') }}" defer></script>

@@ -49,38 +49,49 @@
     </div>
   </nav>
 
+  <div class="floral-hero-wrapper">
+    <img src="{{ url_for('static', filename='Content/flowerbackground2.png') }}" 
+         alt="Floral Header" 
+         class="floral-hero-img">
+  </div>
+
   <div class="story-container">
     
     <div class="editorial-split">
         
-        <div class="split-image-wrapper">
-            <img src="{{ url_for('static', filename='Content/Our Story/Untitled (Your Story).png') }}" alt="Emma and Ethan" class="hero-portrait">
-        </div>
-
         <div class="split-content-wrapper">
             
-            <header class="story-header-left">
-                <span class="tiny-label">They say</span>
-                <h1 class="main-title">"Marry Your Best Friend"</h1>
-                <p class="subtitle">WE COULDN'T AGREE MORE.</p>
+            <header class="story-header-centered">
+                <h1 class="wl-style-title">Our Story</h1>
+                <span class="wl-style-subtitle">How it all started</span>
             </header>
 
-            <article class="story-text">
+            <article class="story-text justified-text">
                 <p>Our story began at sixteen, with a first date in Rome and a first kiss in Venice just two days later. It sounds grand on paper, but to us, it simply feels like the most natural, fitting start to our life together.</p>
                 
-                <p>But the foundation wasn’t built in Italy; it was built in the back of a classroom. Long before the school trip, we were the friends constantly getting dirty looks for talking too much; debating personality test results, swapping favorite music, and getting distracted by each other when we were supposed to be taking notes. We were then, and remain now, the kind of couple who talk nonstop, laugh at inside jokes, and genuinely love being in each other’s orbit.</p>
+                <p>But the foundation wasn’t built in Italy; it was built in the back of a classroom. Long before the school trip, we were the friends constantly getting dirty looks for talking too much; debating personality test results, swapping favorite music, and getting distracted by each other when we were supposed to be taking notes.</p>
 
-                <p>Since then, we’ve done what growing up together requires: long distance, college, and a move to Virginia to start our careers. None of it has been easy, but we’ve learned that life feels lighter when you’re on the same team.</p> 
-                
-                <p>As we count down the days to our marriage, what matters most to us is continuing to show up for each other the way we always have: with care, humor, and intention while finding joy in becoming new versions of ourselves, together.</p>
+                <p>Since then, we’ve done what growing up together requires: long distance, college, and a move to Virginia to start our careers. We were then, and remain now, the kind of couple who talk nonstop, laugh at inside jokes, and genuinely love being in each other’s orbit. As we count down the days to our marriage, what matters most to us is continuing to show up for each other the way we always have: with care, humor, and intention.</p> 
             </article>
-        </div> </div> <section class="memory-lane">
+        </div>
+
+        <div class="split-image-wrapper">
+            <img src="{{ url_for('static', filename='edited2/ethanandemmaengagement-23.jpg') }}" alt="Emma and Ethan" class="hero-portrait">
+        </div>
+
+    </div> 
+
+    <div class="heartfelt-quote">
+        Rooted in friendship, grown with time,<br>
+        and chosen with intention.
+    </div>
+
+    <section class="memory-lane">
         <h2 class="timeline-title">Through the Years</h2>
-        
         <div class="film-strip-scroller">
             <div class="memory-card">
                 <div class="memory-img-wrapper">
-                    <img src="{{ url_for('static', filename='Content/About Us Timeline/2019.jpg') }}" alt="Emma and Ethan in 2019">
+                    <img src="/static/Content/About%20Us%20Timeline/2019.jpg" alt="Emma and Ethan in 2019">
                 </div>
                 <div class="memory-text">
                     <h3>2019</h3>
@@ -89,7 +100,7 @@
             </div>
             <div class="memory-card">
                 <div class="memory-img-wrapper">
-                    <img src="{{ url_for('static', filename='Content/About Us Timeline/2020.jpg') }}" alt="Emma and Ethan in 2020">
+                    <img src="/static/Content/About%20Us%20Timeline/2020.jpg" alt="Emma and Ethan in 2020">
                 </div>
                 <div class="memory-text">
                     <h3>2020</h3>
@@ -98,7 +109,7 @@
             </div>
              <div class="memory-card">
                 <div class="memory-img-wrapper">
-                    <img src="{{ url_for('static', filename='Content/About Us Timeline/2021.jpg') }}" alt="Emma and Ethan in 2021">
+                    <img src="/static/Content/About%20Us%20Timeline/2021.jpg" alt="Emma and Ethan in 2021">
                 </div>
                 <div class="memory-text">
                     <h3>2021</h3>
@@ -107,7 +118,7 @@
             </div>
             <div class="memory-card">
                 <div class="memory-img-wrapper">
-                    <img src="{{ url_for('static', filename='Content/About Us Timeline/2022.jpg') }}" alt="Emma and Ethan in 2022">
+                    <img src="/static/Content/About%20Us%20Timeline/2022.jpg" alt="Emma and Ethan in 2022">
                 </div>
                 <div class="memory-text">
                     <h3>2022</h3>
@@ -116,7 +127,7 @@
             </div>
              <div class="memory-card">
                 <div class="memory-img-wrapper">
-                    <img src="{{ url_for('static', filename='Content/About Us Timeline/2023.jpg') }}" alt="Emma and Ethan in 2023">
+                    <img src="/static/Content/About%20Us%20Timeline/2023.jpg" alt="Emma and Ethan in 2023">
                 </div>
                 <div class="memory-text">
                     <h3>2023</h3>
@@ -125,7 +136,7 @@
             </div>
             <div class="memory-card">
                 <div class="memory-img-wrapper">
-                    <img src="{{ url_for('static', filename='Content/About Us Timeline/2024.jpg') }}" alt="Emma and Ethan in 2024">
+                    <img src="/static/Content/About%20Us%20Timeline/2024.jpg" alt="Emma and Ethan in 2024">
                 </div>
                 <div class="memory-text">
                 <h3>2024</h3>
@@ -134,15 +145,16 @@
             </div>
             <div class="memory-card">
                 <div class="memory-img-wrapper">
-                    <img src="{{ url_for('static', filename='Content/About Us Timeline/IMG_7199 2.JPG') }}" alt="Emma and Ethan in 2025">
+                    <img src="/static/Content/About%20Us%20Timeline/IMG_7199%202.JPG" alt="Emma and Ethan in 2025">
                 </div>
             <div class="memory-text">
                 <h3>2025</h3>
                 <p>The Proposal</p>
             </div>
             </div>
-        </div>
-        </div> </section> </div> 
+    </section>
+
+  </div>
 
     <footer class="luxury-footer">
       <div class="footer-content">

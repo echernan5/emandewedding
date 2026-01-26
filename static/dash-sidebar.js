@@ -87,17 +87,49 @@ window.MOCK_USER = window._MOCK_STATE;
             if (!res.ok) return;
             const rows = await res.json();
 
+            // 1. Determine Current User Scope (Hardcoded to match addressbook.js)
+            const role = window.AppUser.getRole();
+            let myGroupIds = [];
+
+            if (role === 'family') {
+                myGroupIds = ['group_amy_dave']; // Amy's Group ID
+            } else if (role === 'viewer') {
+                myGroupIds = ['user_isabel'];    // Isabel's Group ID
+            }
+
+            // 2. Filter rows based on Missing Data AND Assignments
             const missingCount = rows.filter(r => {
+                // A. Check if address is missing
                 const street = String(r.address_street ?? "").trim();
                 const city = String(r.address_city ?? "").trim();
                 const state = String(r.address_state ?? "").trim();
                 const zip = String(r.address_zip ?? "").trim();
-                return !(street && city && state && zip);
+                const isMissing = !(street && city && state && zip);
+
+                if (!isMissing) return false;
+
+                // B. Check Permissions
+                if (role === 'admin') return true; // Admins count ALL missing
+
+                // C. Check Assignments (Contributors only count their own)
+                const assigned = r.assigned_users || [];
+                // Return true if any of the user's groups are in the row's assignment list
+                return assigned.some(id => myGroupIds.includes(id));
             }).length;
 
+            // 3. Update UI
             if (missingCount > 0) {
                 badge.textContent = `${missingCount} missing`;
                 badge.style.display = "inline-flex";
+                
+                // Optional: visual distinction for "My Tasks" vs "Global Tasks"
+                if (role !== 'admin') {
+                    badge.style.backgroundColor = "#e0f2fe"; // Light blue for assignments
+                    badge.style.color = "#0284c7";
+                } else {
+                    badge.style.backgroundColor = ""; // Reset to default (usually orange/red)
+                    badge.style.color = "";
+                }
             } else {
                 badge.style.display = "none";
             }
@@ -170,12 +202,18 @@ window.MOCK_USER = window._MOCK_STATE;
                     displayRole.textContent = "Viewer";
                 }
     
-                // 3. Dispatch Global Event (So vendors.js knows to refresh)
-                console.log("Switched Role to:", role);
-                menu.style.display = "none";
-                
-                const event = new CustomEvent('roleChanged', { detail: { role: role } });
-                window.dispatchEvent(event);
+               // 3. Dispatch Global Event (So vendors.js knows to refresh)
+               console.log("Switched Role to:", role);
+               menu.style.display = "none";
+               
+               // SAVE ROLE TO STORAGE (Fixes race condition)
+               localStorage.setItem('user_role_key', role);
+
+               // REFRESH BADGE IMMEDIATELY
+               updateGlobalMissingBadge(); // <--- ADD THIS LINE
+
+               const event = new CustomEvent('roleChanged', { detail: { role: role } });
+               window.dispatchEvent(event);
             });
         });
     }
@@ -188,4 +226,5 @@ window.MOCK_USER = window._MOCK_STATE;
 
     // Listen for custom address updates
     window.addEventListener("addressBookUpdated", updateGlobalMissingBadge);
+    window.addEventListener("roleChanged", updateGlobalMissingBadge);
 })();
