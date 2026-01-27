@@ -1,38 +1,89 @@
 import os
 import psycopg2
 import requests
-import urllib.parse
 import uuid
 import json
 import csv
 import io
 
 from dotenv import load_dotenv
-from flask import Flask, jsonify, request, render_template
+from flask import Flask, jsonify, request, render_template, Response
 from flask_cors import CORS
 from psycopg2 import sql
-from flask import Response
 
 load_dotenv()
 
 app = Flask(__name__)
+app.config["MAX_CONTENT_LENGTH"] = 20 * 1024 * 1024  # 20MB
 
-# Use a more permissive CORS for development; restrict in production
-CORS(app, origins=["http://127.0.0.1:5500", "null"])
+# -----------------------------
+# Environment / CORS
+# -----------------------------
+ENV = os.environ.get("FLASK_ENV", "production")
 
-# --- CONFIGURATION ---
+if ENV == "development":
+    CORS(app, origins=["http://127.0.0.1:5500", "http://localhost:5500"])
+else:
+    CORS(
+        app,
+        origins=[
+            "https://emma-and-ethans-wedding-site.onrender.com",
+            "https://emmaandethan.com",
+            "https://www.emmaandethan.com",
+        ],
+    )
+
+# -----------------------------
+# Config
+# -----------------------------
 DATABASE_URL = os.environ.get("DATABASE_URL")
 if not DATABASE_URL:
     raise RuntimeError("DATABASE_URL environment variable is not set.")
 
+# Render Postgres often requires sslmode=require
+if "sslmode=" not in DATABASE_URL:
+    DATABASE_URL += ("&" if "?" in DATABASE_URL else "?") + "sslmode=require"
+
 SUPABASE_URL = os.environ.get("SUPABASE_URL")
 SUPABASE_ANON_KEY = os.environ.get("SUPABASE_ANON_KEY")
-SUPABASE_SERVICE_ROLE_KEY = os.environ.get("SUPABASE_SERVICE_ROLE_KEY")  # recommended for signed urls
+SUPABASE_SERVICE_ROLE_KEY = os.environ.get("SUPABASE_SERVICE_ROLE_KEY")
 
 if not SUPABASE_URL or not SUPABASE_ANON_KEY:
     raise RuntimeError("SUPABASE_URL and SUPABASE_ANON_KEY must be set.")
 
+# Admin protection for private dashboard APIs
+ADMIN_API_KEY = os.environ.get("ADMIN_API_KEY")  # set this in Render env vars
 
+
+def require_admin():
+    """
+    Protect private admin/dashboard APIs with a simple shared secret header.
+    Client must send: X-Admin-Key: <ADMIN_API_KEY>
+    """
+    if not ADMIN_API_KEY:
+        # Misconfigured server
+        return jsonify({"error": "ADMIN_API_KEY is not set on the server."}), 500
+
+    incoming = request.headers.get("X-Admin-Key")
+    if incoming != ADMIN_API_KEY:
+        return jsonify({"error": "Unauthorized"}), 401
+
+    return None
+
+
+def require_service_key():
+    """
+    Service role key is required for server-side storage operations
+    (uploads, signed URLs, listing private objects).
+    """
+    if not SUPABASE_SERVICE_ROLE_KEY:
+        return None, (jsonify({"error": "Storage not configured (missing SUPABASE_SERVICE_ROLE_KEY)."}), 500)
+    return SUPABASE_SERVICE_ROLE_KEY, None
+
+
+# -----------------------------
+# DB helpers
+# -----------------------------
 def get_db_connection():
     try:
         return psycopg2.connect(DATABASE_URL)
@@ -59,10 +110,15 @@ def get_data_from_query(query, params=None):
         conn.close()
 
 
-# --- GUEST & PARTY API ENDPOINTS ---
-
+# -----------------------------
+# Dashboard / Guests / Parties
+# -----------------------------
 @app.route("/api/dashboard/metrics", methods=["GET"])
 def get_dashboard_metrics():
+    guard = require_admin()
+    if guard:
+        return guard
+
     query = sql.SQL("SELECT * FROM dashboard_stats;")
     stats, error = get_data_from_query(query)
     if error or not stats:
@@ -72,6 +128,10 @@ def get_dashboard_metrics():
 
 @app.route("/api/guests", methods=["GET"])
 def get_guests():
+    guard = require_admin()
+    if guard:
+        return guard
+
     query = sql.SQL(
         """
         SELECT id, legacy_key AS "partyName", address_street AS street,
@@ -87,6 +147,10 @@ def get_guests():
 
 @app.route("/api/guestlist", methods=["GET"])
 def get_guestlist():
+    guard = require_admin()
+    if guard:
+        return guard
+
     query = sql.SQL(
         """
         SELECT
@@ -115,6 +179,10 @@ def get_guestlist():
 
 @app.route("/api/guests/<guest_id>", methods=["PATCH"])
 def update_guest(guest_id):
+    guard = require_admin()
+    if guard:
+        return guard
+
     payload = request.get_json(force=True) or {}
 
     allowed = {
@@ -166,6 +234,10 @@ def update_guest(guest_id):
 
 @app.route("/api/parties/<party_id>", methods=["GET"])
 def get_party_details(party_id):
+    guard = require_admin()
+    if guard:
+        return guard
+
     conn = get_db_connection()
     if not conn:
         return jsonify({"error": "Database unavailable"}), 500
@@ -222,6 +294,10 @@ def get_party_details(party_id):
 
 @app.route("/api/parties/<party_id>", methods=["PATCH"])
 def update_party(party_id):
+    guard = require_admin()
+    if guard:
+        return guard
+
     payload = request.get_json(force=True) or {}
 
     allowed = {
@@ -290,7 +366,9 @@ def update_party(party_id):
             if not updated:
                 return jsonify({"error": "Party not found"}), 404
 
-        return jsonify({"ok": True, "id": party_id, "is_address_collected": updates.get("is_address_collected")})
+        return jsonify(
+            {"ok": True, "id": party_id, "is_address_collected": updates.get("is_address_collected")}
+        )
 
     except Exception as e:
         conn.rollback()
@@ -298,9 +376,13 @@ def update_party(party_id):
     finally:
         conn.close()
 
-# In app.py
+
 @app.route("/api/address-book", methods=["GET"])
 def get_address_book():
+    guard = require_admin()
+    if guard:
+        return guard
+
     query = sql.SQL(
         """
         SELECT
@@ -313,7 +395,7 @@ def get_address_book():
             p.address_state,
             p.address_zip,
             p.is_address_collected,
-            p.assigned_users,  -- <--- NEW JSONB COLUMN
+            p.assigned_users,
             COALESCE(
               json_agg(
                 json_build_object(
@@ -335,24 +417,28 @@ def get_address_book():
     data, error = get_data_from_query(query)
     return jsonify(data) if not error else (jsonify({"error": error}), 500)
 
+
 @app.route("/api/parties/<party_id>/assign", methods=["PATCH"])
 def assign_party(party_id):
+    guard = require_admin()
+    if guard:
+        return guard
+
     conn = get_db_connection()
     if not conn:
         return jsonify({"error": "Database unavailable"}), 500
-    
+
     try:
-        data = request.get_json()
-        # Expecting a list like ["group_amy_dave", "user_emily"]
-        assigned_users = data.get("assigned_users", []) 
+        data = request.get_json(silent=True) or {}
+        assigned_users = data.get("assigned_users", [])
 
         with conn.cursor() as cur:
             cur.execute(
                 "UPDATE parties SET assigned_users = %s::jsonb WHERE id = %s",
-                (json.dumps(assigned_users), party_id)
+                (json.dumps(assigned_users), party_id),
             )
             conn.commit()
-            
+
         return jsonify({"ok": True, "id": party_id, "assigned_users": assigned_users})
 
     except Exception as e:
@@ -362,10 +448,15 @@ def assign_party(party_id):
         conn.close()
 
 
-# --- VENDORS API ENDPOINTS ---
-
+# -----------------------------
+# Vendors
+# -----------------------------
 @app.route("/api/vendors", methods=["GET"])
 def get_vendors():
+    guard = require_admin()
+    if guard:
+        return guard
+
     status = (request.args.get("status") or "booked").strip().lower()
 
     query = sql.SQL(
@@ -391,13 +482,17 @@ def get_vendors():
 
 @app.route("/api/vendors/<company_id>", methods=["GET"])
 def get_vendor_details(company_id):
+    guard = require_admin()
+    if guard:
+        return guard
+
     conn = get_db_connection()
     if not conn:
         return jsonify({"error": "Database unavailable"}), 500
 
     try:
         with conn.cursor() as cur:
-            # 1. Fetch Company
+            # 1. Company
             cur.execute(
                 """
                 SELECT id, name, category, status, notes, created_at, updated_at
@@ -412,7 +507,7 @@ def get_vendor_details(company_id):
             cols = [d[0] for d in cur.description]
             company = dict(zip(cols, row))
 
-            # 2. Fetch People
+            # 2. People
             cur.execute(
                 """
                 SELECT id, company_id, full_name, email, phone, title
@@ -426,7 +521,7 @@ def get_vendor_details(company_id):
             cols = [d[0] for d in cur.description]
             people = [dict(zip(cols, r)) for r in rows]
 
-            # 3. Fetch Payments + Subqueries for Responsibilities & Files
+            # 3. Payments with responsibilities + files
             cur.execute(
                 """
                 SELECT
@@ -487,7 +582,7 @@ def get_vendor_details(company_id):
             cols = [d[0] for d in cur.description]
             payments = [dict(zip(cols, r)) for r in rows]
 
-            # 4. Fetch Company-level files
+            # 4. Company-level files
             cur.execute(
                 """
                 SELECT id, company_id, payment_id, file_type, file_name, storage_path, mime_type, uploaded_at
@@ -502,12 +597,9 @@ def get_vendor_details(company_id):
             cols = [d[0] for d in cur.description]
             company_files = [dict(zip(cols, r)) for r in rows]
 
-        return jsonify({
-            "company": company,
-            "people": people,
-            "payments": payments,
-            "company_files": company_files,
-        })
+        return jsonify(
+            {"company": company, "people": people, "payments": payments, "company_files": company_files}
+        )
 
     except Exception as e:
         print(f"Server Error in get_vendor_details: {e}")
@@ -515,49 +607,53 @@ def get_vendor_details(company_id):
     finally:
         conn.close()
 
-@app.route('/api/vendors/save', methods=['POST'])
+
+@app.route("/api/vendors/save", methods=["POST"])
 def save_vendor():
+    guard = require_admin()
+    if guard:
+        return guard
+
     conn = get_db_connection()
     if not conn:
         return jsonify({"error": "Database unavailable"}), 500
 
     try:
-        data = request.get_json()
-        
-        # 1. Extract Data
-        name = data.get('name')
-        category = data.get('category')
-        status = data.get('status', 'booked')
-        contact_name = data.get('contact_name') or 'Main Contact'
-        email = data.get('email')
-        phone = data.get('phone')
-        notes = data.get('notes')
+        data = request.get_json() or {}
+
+        name = data.get("name")
+        category = data.get("category")
+        status = data.get("status", "booked")
+        email = data.get("email")
+        phone = data.get("phone")
+        notes = data.get("notes")
 
         if not name:
             return jsonify({"error": "Vendor name is required"}), 400
 
-        # 2. Generate Company UUID
         new_company_id = str(uuid.uuid4())
 
         with conn.cursor() as cur:
-            # 3. Insert Company
-            cur.execute("""
+            cur.execute(
+                """
                 INSERT INTO vendor_companies (id, name, category, status, notes, created_at, updated_at)
                 VALUES (%s, %s, %s, %s, %s, NOW(), NOW())
-            """, (new_company_id, name, category, status, notes))
-            
-            # 4. Insert Primary Contact (if provided)
+                """,
+                (new_company_id, name, category, status, notes),
+            )
+
             if email or phone:
-                # --- FIX: Generate Person UUID here too ---
                 new_person_id = str(uuid.uuid4())
-                
-                cur.execute("""
+                cur.execute(
+                    """
                     INSERT INTO vendor_people (id, company_id, full_name, email, phone, title)
                     VALUES (%s, %s, 'Primary Contact', %s, %s, 'Main')
-                """, (new_person_id, new_company_id, email, phone))
+                    """,
+                    (new_person_id, new_company_id, email, phone),
+                )
 
             conn.commit()
-            
+
         return jsonify({"id": new_company_id, "message": "Vendor created successfully"})
 
     except Exception as e:
@@ -567,19 +663,24 @@ def save_vendor():
     finally:
         conn.close()
 
+
 @app.route("/api/vendors/<company_id>/notes", methods=["POST"])
 def update_vendor_notes(company_id):
+    guard = require_admin()
+    if guard:
+        return guard
+
     conn = get_db_connection()
     if not conn:
         return jsonify({"error": "Database unavailable"}), 500
     try:
-        data = request.get_json()
+        data = request.get_json() or {}
         notes = data.get("notes", "")
-        
+
         with conn.cursor() as cur:
             cur.execute(
                 "UPDATE vendor_companies SET notes = %s, updated_at = NOW() WHERE id = %s",
-                (notes, company_id)
+                (notes, company_id),
             )
             conn.commit()
         return jsonify({"ok": True})
@@ -588,45 +689,59 @@ def update_vendor_notes(company_id):
     finally:
         conn.close()
 
+
+# -----------------------------
+# Vendor files (Supabase Storage)
+# -----------------------------
 @app.route("/api/vendor-files/upload", methods=["POST"])
 def upload_vendor_file():
+    guard = require_admin()
+    if guard:
+        return guard
+
     conn = get_db_connection()
     if not conn:
         return jsonify({"error": "Database unavailable"}), 500
     try:
         company_id = request.form.get("company_id")
-        display_name = request.form.get("file_name") # The custom name she wants
+        display_name = request.form.get("file_name")
         file = request.files.get("file")
-        doc_type = request.form.get("file_type", "file") # contract, invoice, etc.
+        doc_type = request.form.get("file_type", "file")
 
         if not company_id or not file or not display_name:
             return jsonify({"error": "Missing required fields"}), 400
 
-        # Upload to Supabase
         safe_name = f"{uuid.uuid4()}_{file.filename}"
         storage_path = f"{company_id}/docs/{safe_name}"
-        
+
         bucket = "vendor-files"
         base_url = SUPABASE_URL.rstrip("/")
         upload_url = f"{base_url}/storage/v1/object/{bucket}/{storage_path}"
-        
+
+        api_key, err = require_service_key()
+        if err:
+            return err
+
         headers = {
-            "apikey": SUPABASE_SERVICE_ROLE_KEY or SUPABASE_ANON_KEY,
-            "Authorization": f"Bearer {SUPABASE_SERVICE_ROLE_KEY or SUPABASE_ANON_KEY}",
-            "Content-Type": file.mimetype
+            "apikey": api_key,
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": file.mimetype,
         }
-        
-        r = requests.post(upload_url, headers=headers, data=file.read())
+
+        # Stream file instead of loading into memory
+        r = requests.post(upload_url, headers=headers, data=file.stream, timeout=30)
         if r.status_code >= 400:
             raise Exception(f"Supabase error: {r.text}")
 
-        # Save to DB
         with conn.cursor() as cur:
-            cur.execute("""
-                INSERT INTO vendor_files 
+            cur.execute(
+                """
+                INSERT INTO vendor_files
                 (id, company_id, file_type, file_name, storage_path, mime_type, uploaded_at)
                 VALUES (%s, %s, %s, %s, %s, %s, NOW())
-            """, (str(uuid.uuid4()), company_id, doc_type, display_name, storage_path, file.mimetype))
+                """,
+                (str(uuid.uuid4()), company_id, doc_type, display_name, storage_path, file.mimetype),
+            )
             conn.commit()
 
         return jsonify({"ok": True})
@@ -636,22 +751,27 @@ def upload_vendor_file():
     finally:
         conn.close()
 
+
 @app.route("/api/vendor-files/signed-url", methods=["GET"])
 def vendor_file_signed_url():
+    guard = require_admin()
+    if guard:
+        return guard
+
     storage_path = request.args.get("path")
     if not storage_path:
         return jsonify({"error": "Missing ?path="}), 400
 
     bucket = "vendor-files"
-    expires_in = 60 * 60 
-    api_key = SUPABASE_SERVICE_ROLE_KEY or SUPABASE_ANON_KEY
+    expires_in = 60 * 60
 
-    # clean base url (remove trailing slash)
+    api_key, err = require_service_key()
+    if err:
+        return err
+
     base_url = SUPABASE_URL.rstrip("/")
-    
-    # 1. Request the signature from Supabase
     sign_api_url = f"{base_url}/storage/v1/object/sign/{bucket}/{storage_path}"
-    
+
     try:
         resp = requests.post(
             sign_api_url,
@@ -668,25 +788,14 @@ def vendor_file_signed_url():
         if resp.status_code >= 400:
             return jsonify({"error": data.get("message") or "Object not found"}), 500
 
-        # 2. Extract the signed URL from the response
-        # It usually looks like: "/object/sign/vendor-files/...?token=xyz"
         raw_signed_url = data.get("signedURL") or data.get("signedUrl") or data.get("url")
-        
         if not raw_signed_url:
             return jsonify({"error": "No URL returned from Supabase"}), 500
 
-        # 3. THE FIX: Manually build the correct URL structure.
-        # We assume the response might be missing '/storage/v1' or have other quirks.
-        # The safest bet is to extract the query string (the token) and rebuild the path.
-        
         if "?" in raw_signed_url:
-            token_query = raw_signed_url.split("?")[1] # gets "token=eyJ..."
-            
-            # Construct the definitive correct URL manually
-            # Structure: [SUPABASE_URL]/storage/v1/object/sign/[bucket]/[path]?[token]
+            token_query = raw_signed_url.split("?", 1)[1]
             final_url = f"{base_url}/storage/v1/object/sign/{bucket}/{storage_path}?{token_query}"
         else:
-            # Fallback if no token found (public bucket scenario?)
             final_url = f"{base_url}/storage/v1/object/public/{bucket}/{storage_path}"
 
         return jsonify({"url": final_url})
@@ -694,31 +803,50 @@ def vendor_file_signed_url():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+
 @app.route("/api/debug-storage/<company_id>/<folder>")
 def debug_storage(company_id, folder):
-    # Construct the folder path (e.g., vendor_id/receipts)
+    guard = require_admin()
+    if guard:
+        return guard
+
+    if ENV != "development":
+        return "", 404
+
     path = f"{company_id}/{folder}"
     bucket = "vendor-files"
-    list_url = f"{SUPABASE_URL}/storage/v1/object/list/{bucket}"
-    api_key = SUPABASE_SERVICE_ROLE_KEY or SUPABASE_ANON_KEY
+    list_url = f"{SUPABASE_URL.rstrip('/')}/storage/v1/object/list/{bucket}"
+
+    api_key, err = require_service_key()
+    if err:
+        return err
 
     resp = requests.post(
         list_url,
         headers={"apikey": api_key, "Authorization": f"Bearer {api_key}"},
-        json={"prefix": path}
+        json={"prefix": path},
+        timeout=15,
     )
     return jsonify(resp.json())
 
+
+# -----------------------------
+# Payments
+# -----------------------------
 @app.route("/api/payments/save", methods=["POST"])
 def save_payment_details():
+    guard = require_admin()
+    if guard:
+        return guard
+
     conn = get_db_connection()
     if not conn:
         return jsonify({"error": "Database unavailable"}), 500
 
     try:
-        data = request.json
+        data = request.get_json() or {}
         company_id = data.get("company_id")
-        payment_id = data.get("payment_id") 
+        payment_id = data.get("payment_id")
         description = data.get("description")
         amount = data.get("amount")
         due_date = data.get("due_date")
@@ -728,8 +856,8 @@ def save_payment_details():
         cur = conn.cursor()
 
         if payment_id:
-            # --- UPDATE EXISTING ---
-            cur.execute("""
+            cur.execute(
+                """
                 UPDATE vendor_payments
                 SET description = %s,
                     amount = %s,
@@ -737,28 +865,37 @@ def save_payment_details():
                     notes = %s,
                     updated_at = NOW()
                 WHERE id = %s RETURNING id;
-            """, (description, amount, due_date, notes, payment_id))
-            pid = cur.fetchone()[0]
+                """,
+                (description, amount, due_date, notes, payment_id),
+            )
+            row = cur.fetchone()
+            if not row:
+                conn.rollback()
+                return jsonify({"error": "Payment not found"}), 404
+            pid = row[0]
         else:
-            # --- INSERT NEW ---
-            # THE FIX: Removed 'status' from columns and 'upcoming' from values
-            cur.execute("""
-                INSERT INTO vendor_payments 
+            cur.execute(
+                """
+                INSERT INTO vendor_payments
                 (company_id, description, amount, due_date, notes)
                 VALUES (%s, %s, %s, %s, %s)
                 RETURNING id;
-            """, (company_id, description, amount, due_date, notes))
+                """,
+                (company_id, description, amount, due_date, notes),
+            )
             pid = cur.fetchone()[0]
 
-        # --- UPDATE RESPONSIBILITIES ---
         cur.execute("DELETE FROM vendor_payment_responsibilities WHERE payment_id = %s", (pid,))
-        
+
         for r in responsibilities:
-            cur.execute("""
-                INSERT INTO vendor_payment_responsibilities 
+            cur.execute(
+                """
+                INSERT INTO vendor_payment_responsibilities
                 (payment_id, responsible_party, amount, reimbursement_status)
                 VALUES (%s, %s, %s, 'none');
-            """, (pid, r.get("responsible_party"), r.get("amount")))
+                """,
+                (pid, r.get("responsible_party"), r.get("amount")),
+            )
 
         conn.commit()
         return jsonify({"ok": True, "id": pid})
@@ -770,14 +907,18 @@ def save_payment_details():
     finally:
         conn.close()
 
+
 @app.route("/api/payments/record", methods=["POST"])
 def record_payment():
+    guard = require_admin()
+    if guard:
+        return guard
+
     conn = get_db_connection()
     if not conn:
         return jsonify({"error": "Database unavailable"}), 500
 
     try:
-        # 1. Parse Data (Multipart Form Data)
         payment_id = request.form.get("payment_id")
         paid_date = request.form.get("paid_date")
         main_notes = request.form.get("notes")
@@ -785,71 +926,73 @@ def record_payment():
         file = request.files.get("file")
 
         if not payment_id:
-             return jsonify({"error": "Missing payment ID"}), 400
+            return jsonify({"error": "Missing payment ID"}), 400
 
-        # Parse the JSON string back into a list
         responsibilities = json.loads(resps_json) if resps_json else []
 
         with conn.cursor() as cur:
-            # Fetch company_id (needed for file folder path)
             cur.execute("SELECT company_id FROM vendor_payments WHERE id = %s", (payment_id,))
             row = cur.fetchone()
             if not row:
                 return jsonify({"error": "Payment record not found"}), 404
             company_id = row[0]
 
-            # 2. Upload File to Supabase (if provided)
             if file:
-                # Create a unique safe filename
                 safe_name = f"{uuid.uuid4()}_{file.filename}"
                 storage_path = f"{company_id}/receipts/{safe_name}"
-                
-                # Upload via Supabase API
+
                 bucket = "vendor-files"
                 base_url = SUPABASE_URL.rstrip("/")
                 upload_url = f"{base_url}/storage/v1/object/{bucket}/{storage_path}"
-                
+
+                api_key, err = require_service_key()
+                if err:
+                    return err
+
                 headers = {
-                    "apikey": SUPABASE_SERVICE_ROLE_KEY or SUPABASE_ANON_KEY,
-                    "Authorization": f"Bearer {SUPABASE_SERVICE_ROLE_KEY or SUPABASE_ANON_KEY}",
-                    "Content-Type": file.mimetype
+                    "apikey": api_key,
+                    "Authorization": f"Bearer {api_key}",
+                    "Content-Type": file.mimetype,
                 }
-                
-                # Send raw file bytes
-                r = requests.post(upload_url, headers=headers, data=file.read())
+
+                r = requests.post(upload_url, headers=headers, data=file.stream, timeout=30)
                 if r.status_code >= 400:
                     raise Exception(f"Supabase upload error: {r.text}")
 
-                # Save file reference to DB
-                cur.execute("""
+                cur.execute(
+                    """
                     INSERT INTO vendor_files (id, company_id, payment_id, file_type, file_name, storage_path, mime_type, uploaded_at)
                     VALUES (%s, %s, %s, 'receipt', %s, %s, %s, NOW())
-                """, (str(uuid.uuid4()), company_id, payment_id, file.filename, storage_path, file.mimetype))
+                    """,
+                    (str(uuid.uuid4()), company_id, payment_id, file.filename, storage_path, file.mimetype),
+                )
 
-            # 3. Update Database Responsibilities
-            # We wipe the 'planned' responsibilities and insert the actual 'paid' breakdown
             cur.execute("DELETE FROM vendor_payment_responsibilities WHERE payment_id = %s", (payment_id,))
 
             for r in responsibilities:
-                # r contains: responsible_party, amount, reimbursement_status, paid_by_party, payment_method
-                cur.execute("""
-                    INSERT INTO vendor_payment_responsibilities 
+                cur.execute(
+                    """
+                    INSERT INTO vendor_payment_responsibilities
                     (payment_id, responsible_party, amount, status, reimbursement_status, paid_by_party, paid_date, notes)
                     VALUES (%s, %s, %s, 'paid', %s, %s, %s, %s)
-                """, (
-                    payment_id,
-                    r.get('responsible_party'),
-                    r.get('amount'),
-                    r.get('reimbursement_status', 'none'),
-                    r.get('paid_by_party'),
-                    paid_date,
-                    f"Method: {r.get('payment_method')}" # Store method in notes
-                ))
-            
-            # Optional: Update main note
-            if main_notes:
-                 cur.execute("UPDATE vendor_payments SET notes = %s, updated_at = NOW() WHERE id = %s", (main_notes, payment_id))
-            
+                    """,
+                    (
+                        payment_id,
+                        r.get("responsible_party"),
+                        r.get("amount"),
+                        r.get("reimbursement_status", "none"),
+                        r.get("paid_by_party"),
+                        paid_date,
+                        f"Method: {r.get('payment_method')}",
+                    ),
+                )
+
+            if main_notes is not None:
+                cur.execute(
+                    "UPDATE vendor_payments SET notes = %s, updated_at = NOW() WHERE id = %s",
+                    (main_notes, payment_id),
+                )
+
             conn.commit()
 
         return jsonify({"ok": True, "id": payment_id})
@@ -861,72 +1004,85 @@ def record_payment():
     finally:
         conn.close()
 
-@app.route("/favicon.ico")
-def favicon():
-    return "", 204
 
+# -----------------------------
+# Exports
+# -----------------------------
 @app.route("/api/exports/<export_type>")
 def export_data(export_type):
+    guard = require_admin()
+    if guard:
+        return guard
+
     user_name = (request.args.get("name") or "").strip().lower()
-    
+
     conn = get_db_connection()
     if not conn:
         return "Database unavailable", 500
-    
+
     try:
         cur = conn.cursor()
         data = []
         filename = f"{export_type}_export.csv"
         headers = []
 
-        if export_type == 'guests':
-            cur.execute("SELECT first_name, last_name, rsvp_status, dietary_restrictions FROM guests ORDER BY last_name;")
-            headers = ['First Name', 'Last Name', 'RSVP Status', 'Dietary']
+        if export_type == "guests":
+            cur.execute(
+                "SELECT first_name, last_name, rsvp_status, dietary_restrictions FROM guests ORDER BY last_name;"
+            )
+            headers = ["First Name", "Last Name", "RSVP Status", "Dietary"]
             data = cur.fetchall()
 
-        elif export_type == 'addresses':
-            cur.execute("SELECT display_name, address_street, address_city, address_state, address_zip FROM parties WHERE is_address_collected = true;")
-            headers = ['Party Name', 'Street', 'City', 'State', 'Zip']
+        elif export_type == "addresses":
+            cur.execute(
+                """
+                SELECT display_name, address_street, address_city, address_state, address_zip
+                FROM parties
+                WHERE is_address_collected = true;
+                """
+            )
+            headers = ["Party Name", "Street", "City", "State", "Zip"]
             data = cur.fetchall()
 
-        elif export_type == 'vendors':
+        elif export_type == "vendors":
             cur.execute("SELECT name, category, notes FROM vendor_companies WHERE status = 'booked';")
-            headers = ['Vendor', 'Category', 'Notes']
+            headers = ["Vendor", "Category", "Notes"]
             data = cur.fetchall()
 
-        elif export_type == 'my-payments':
-            # Strictly filter by the user's name (e.g., 'amy' or 'emma')
+        elif export_type == "my-payments":
             query = """
-                SELECT vp.description, r.amount, r.status, r.paid_date 
+                SELECT vp.description, r.amount, r.status, r.paid_date
                 FROM vendor_payment_responsibilities r
                 JOIN vendor_payments vp ON r.payment_id = vp.id
                 WHERE LOWER(r.responsible_party) LIKE %s
                 ORDER BY vp.due_date;
             """
             cur.execute(query, (f"%{user_name}%",))
-            headers = ['Description', 'Your Share', 'Status', 'Date Paid']
+            headers = ["Description", "Your Share", "Status", "Date Paid"]
             data = cur.fetchall()
 
-        elif export_type == 'all-payments':
-            # This is the master ledger ($19k+ for venue)
-            cur.execute("""
-                SELECT vp.description, vp.amount, vp.due_date, vp.notes 
-                FROM vendor_payments vp 
+        elif export_type == "all-payments":
+            cur.execute(
+                """
+                SELECT vp.description, vp.amount, vp.due_date, vp.notes
+                FROM vendor_payments vp
                 ORDER BY vp.due_date;
-            """)
-            headers = ['Payment Description', 'Total Contract Amount', 'Due Date', 'Notes']
+                """
+            )
+            headers = ["Payment Description", "Total Contract Amount", "Due Date", "Notes"]
             data = cur.fetchall()
+        else:
+            return jsonify({"error": "Unknown export type"}), 400
 
-        # Generate CSV in memory
         output = io.StringIO()
         writer = csv.writer(output)
         writer.writerow(headers)
         writer.writerows(data)
-        
+
         return Response(
             output.getvalue(),
             mimetype="text/csv",
-            headers={"Content-disposition": f"attachment; filename={filename}"}
+            headers={"Content-disposition": f"attachment; filename={filename}"},
         )
 
     except Exception as e:
@@ -935,7 +1091,19 @@ def export_data(export_type):
     finally:
         conn.close()
 
-# --- FRONTEND PAGE ROUTES ---
+
+# -----------------------------
+# Misc / Frontend pages
+# -----------------------------
+@app.route("/favicon.ico")
+def favicon():
+    return "", 204
+
+
+@app.route("/health")
+def health():
+    return jsonify({"ok": True}), 200
+
 
 @app.route("/")
 def home():
@@ -969,6 +1137,7 @@ def wedding():
 @app.route("/welcome-party")
 def welcomeparty():
     return render_template("welcome-party.html")
+
 
 @app.route("/faqs")
 def faqs():
@@ -1010,6 +1179,7 @@ def address_book():
         supabase_anon_key=os.environ.get("SUPABASE_ANON_KEY"),
     )
 
+
 @app.route("/export")
 def exports():
     return render_template(
@@ -1021,4 +1191,5 @@ def exports():
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port, debug=True)
+    debug = os.environ.get("FLASK_DEBUG") == "1" or ENV == "development"
+    app.run(host="0.0.0.0", port=port, debug=debug)
