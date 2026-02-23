@@ -6,6 +6,17 @@
   <title>Wedding Vendors</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='vendors.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='dash-sidebar.css') }}">
+  <!-- Supabase JS CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- Inject keys from Flask -->
+  <script>
+    window.SUPABASE_URL = "{{ supabase_url }}";
+    window.SUPABASE_ANON_KEY = "{{ supabase_anon_key }}";
+  </script>
+
+  <!-- Members-only redirect -->
+  <script src="{{ url_for('static', filename='auth-guard.js') }}"></script>
 </head>
 <body>
 <div class="mobileOverlay" data-close-sidebar></div>

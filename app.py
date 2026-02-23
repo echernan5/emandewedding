@@ -51,25 +51,35 @@ SUPABASE_SERVICE_ROLE_KEY = os.environ.get("SUPABASE_SERVICE_ROLE_KEY")
 if not SUPABASE_URL or not SUPABASE_ANON_KEY:
     raise RuntimeError("SUPABASE_URL and SUPABASE_ANON_KEY must be set.")
 
-# Admin protection for private dashboard APIs
-ADMIN_API_KEY = os.environ.get("ADMIN_API_KEY")  # set this in Render env vars
-
-
-def require_admin():
+def require_user(min_role="viewer"):
     """
-    Protect private admin/dashboard APIs with a simple shared secret header.
-    Client must send: X-Admin-Key: <ADMIN_API_KEY>
+    Requires a valid Supabase session token (Authorization: Bearer <token>).
+    Right now: just verifies the token exists + is valid.
+    Later: we’ll add role checks using your profiles table.
     """
-    if not ADMIN_API_KEY:
-        # Misconfigured server
-        return jsonify({"error": "ADMIN_API_KEY is not set on the server."}), 500
+    auth = request.headers.get("Authorization", "")
+    if not auth.startswith("Bearer "):
+        return None, (jsonify({"error": "Missing Authorization bearer token"}), 401)
 
-    incoming = request.headers.get("X-Admin-Key")
-    if incoming != ADMIN_API_KEY:
-        return jsonify({"error": "Unauthorized"}), 401
+    token = auth.split(" ", 1)[1].strip()
+    if not token:
+        return None, (jsonify({"error": "Missing token"}), 401)
 
-    return None
+    # Verify token with Supabase
+    resp = requests.get(
+        f"{SUPABASE_URL.rstrip('/')}/auth/v1/user",
+        headers={
+            "apikey": SUPABASE_ANON_KEY,
+            "Authorization": f"Bearer {token}",
+        },
+        timeout=10,
+    )
 
+    if resp.status_code != 200:
+        return None, (jsonify({"error": "Invalid/expired session"}), 401)
+
+    user = resp.json()
+    return user, None
 
 def require_service_key():
     """
@@ -80,6 +90,37 @@ def require_service_key():
         return None, (jsonify({"error": "Storage not configured (missing SUPABASE_SERVICE_ROLE_KEY)."}), 500)
     return SUPABASE_SERVICE_ROLE_KEY, None
 
+def get_profile(user_id: str):
+    conn = get_db_connection()
+    if not conn:
+        return None
+    try:
+        with conn.cursor() as cur:
+            cur.execute(
+                "SELECT id, role, full_name, display_role FROM profiles WHERE id = %s",
+                (user_id,),
+            )
+            row = cur.fetchone()
+            if not row:
+                return None
+            return {"id": row[0], "role": row[1], "full_name": row[2], "display_role": row[3]}
+    finally:
+        conn.close()
+
+@app.route("/api/me", methods=["GET"])
+def api_me():
+    sb_user, err = require_user()
+    if err:
+        return err
+
+    profile = get_profile(sb_user["id"])
+    if not profile:
+        return jsonify({"error": "No profile row for this user"}), 403
+
+    return jsonify({
+        "user": {"id": sb_user["id"], "email": sb_user.get("email")},
+        "profile": profile
+    })
 
 # -----------------------------
 # DB helpers
@@ -115,9 +156,9 @@ def get_data_from_query(query, params=None):
 # -----------------------------
 @app.route("/api/dashboard/metrics", methods=["GET"])
 def get_dashboard_metrics():
-    guard = require_admin()
-    if guard:
-        return guard
+    user, err = require_user()
+    if err:
+        return err
 
     query = sql.SQL("SELECT * FROM dashboard_stats;")
     stats, error = get_data_from_query(query)
@@ -128,9 +169,9 @@ def get_dashboard_metrics():
 
 @app.route("/api/guests", methods=["GET"])
 def get_guests():
-    guard = require_admin()
-    if guard:
-        return guard
+    user, err = require_user()
+    if err:
+        return err
 
     query = sql.SQL(
         """
@@ -147,9 +188,9 @@ def get_guests():
 
 @app.route("/api/guestlist", methods=["GET"])
 def get_guestlist():
-    guard = require_admin()
-    if guard:
-        return guard
+    user, err = require_user()
+    if err:
+        return err
 
     query = sql.SQL(
         """
@@ -179,9 +220,9 @@ def get_guestlist():
 
 @app.route("/api/guests/<guest_id>", methods=["PATCH"])
 def update_guest(guest_id):
-    guard = require_admin()
-    if guard:
-        return guard
+    user, err = require_user()
+    if err:
+        return err
 
     payload = request.get_json(force=True) or {}
 
@@ -234,9 +275,9 @@ def update_guest(guest_id):
 
 @app.route("/api/parties/<party_id>", methods=["GET"])
 def get_party_details(party_id):
-    guard = require_admin()
-    if guard:
-        return guard
+    user, err = require_user()
+    if err:
+        return err
 
     conn = get_db_connection()
     if not conn:
@@ -294,9 +335,9 @@ def get_party_details(party_id):
 
 @app.route("/api/parties/<party_id>", methods=["PATCH"])
 def update_party(party_id):
-    guard = require_admin()
-    if guard:
-        return guard
+    user, err = require_user()
+    if err:
+        return err
 
     payload = request.get_json(force=True) or {}
 
@@ -379,9 +420,9 @@ def update_party(party_id):
 
 @app.route("/api/address-book", methods=["GET"])
 def get_address_book():
-    guard = require_admin()
-    if guard:
-        return guard
+    user, err = require_user()
+    if err:
+        return err
 
     query = sql.SQL(
         """
@@ -420,9 +461,9 @@ def get_address_book():
 
 @app.route("/api/parties/<party_id>/assign", methods=["PATCH"])
 def assign_party(party_id):
-    guard = require_admin()
-    if guard:
-        return guard
+    user, err = require_user()
+    if err:
+        return err
 
     conn = get_db_connection()
     if not conn:
@@ -453,9 +494,9 @@ def assign_party(party_id):
 # -----------------------------
 @app.route("/api/vendors", methods=["GET"])
 def get_vendors():
-    guard = require_admin()
-    if guard:
-        return guard
+    user, err = require_user()
+    if err:
+        return err
 
     status = (request.args.get("status") or "booked").strip().lower()
 
@@ -482,9 +523,9 @@ def get_vendors():
 
 @app.route("/api/vendors/<company_id>", methods=["GET"])
 def get_vendor_details(company_id):
-    guard = require_admin()
-    if guard:
-        return guard
+    user, err = require_user()
+    if err:
+        return err
 
     conn = get_db_connection()
     if not conn:
@@ -610,9 +651,9 @@ def get_vendor_details(company_id):
 
 @app.route("/api/vendors/save", methods=["POST"])
 def save_vendor():
-    guard = require_admin()
-    if guard:
-        return guard
+    user, err = require_user()
+    if err:
+        return err
 
     conn = get_db_connection()
     if not conn:
@@ -666,9 +707,9 @@ def save_vendor():
 
 @app.route("/api/vendors/<company_id>/notes", methods=["POST"])
 def update_vendor_notes(company_id):
-    guard = require_admin()
-    if guard:
-        return guard
+    user, err = require_user()
+    if err:
+        return err
 
     conn = get_db_connection()
     if not conn:
@@ -695,9 +736,9 @@ def update_vendor_notes(company_id):
 # -----------------------------
 @app.route("/api/vendor-files/upload", methods=["POST"])
 def upload_vendor_file():
-    guard = require_admin()
-    if guard:
-        return guard
+    user, err = require_user()
+    if err:
+        return err
 
     conn = get_db_connection()
     if not conn:
@@ -754,9 +795,9 @@ def upload_vendor_file():
 
 @app.route("/api/vendor-files/signed-url", methods=["GET"])
 def vendor_file_signed_url():
-    guard = require_admin()
-    if guard:
-        return guard
+    user, err = require_user()
+    if err:
+        return err
 
     storage_path = request.args.get("path")
     if not storage_path:
@@ -806,9 +847,9 @@ def vendor_file_signed_url():
 
 @app.route("/api/debug-storage/<company_id>/<folder>")
 def debug_storage(company_id, folder):
-    guard = require_admin()
-    if guard:
-        return guard
+    user, err = require_user()
+    if err:
+        return err
 
     if ENV != "development":
         return "", 404
@@ -835,9 +876,9 @@ def debug_storage(company_id, folder):
 # -----------------------------
 @app.route("/api/payments/save", methods=["POST"])
 def save_payment_details():
-    guard = require_admin()
-    if guard:
-        return guard
+    user, err = require_user()
+    if err:
+        return err
 
     conn = get_db_connection()
     if not conn:
@@ -910,9 +951,9 @@ def save_payment_details():
 
 @app.route("/api/payments/record", methods=["POST"])
 def record_payment():
-    guard = require_admin()
-    if guard:
-        return guard
+    user, err = require_user()
+    if err:
+        return err
 
     conn = get_db_connection()
     if not conn:
@@ -1010,9 +1051,9 @@ def record_payment():
 # -----------------------------
 @app.route("/api/exports/<export_type>")
 def export_data(export_type):
-    guard = require_admin()
-    if guard:
-        return guard
+    user, err = require_user()
+    if err:
+        return err
 
     user_name = (request.args.get("name") or "").strip().lower()
 

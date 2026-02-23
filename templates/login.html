@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Login • Wedding Manager</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Arial; margin: 0; background:#fafafa; }
+    .wrap { max-width: 420px; margin: 10vh auto; background:white; padding: 24px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,.08); }
+    label { display:block; font-size: 13px; margin: 14px 0 6px; color:#334155; }
+    input { width:100%; padding: 12px 12px; border:1px solid #e2e8f0; border-radius: 10px; font-size: 15px; }
+    button { width:100%; margin-top: 16px; padding: 12px; border:0; border-radius: 10px; font-size: 15px; cursor:pointer; }
+    button.primary { background:#111827; color:white; }
+    .msg { margin-top: 12px; font-size: 14px; color:#b91c1c; }
+    .ok { color:#15803d; }
+  </style>
+
+  <!-- Supabase JS CDN (ONLY ONCE) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script>
+    // values injected by Flask
+    window.SUPABASE_URL = "{{ supabase_url }}";
+    window.SUPABASE_ANON_KEY = "{{ supabase_anon_key }}";
+
+    // create ONE client and keep it globally accessible
+    window.sb = window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
+  </script>
+</head>
+<body>
+  <div class="wrap">
+    <h2 style="margin:0 0 6px;">Wedding Manager</h2>
+    <div style="color:#64748b; font-size:14px;">Sign in to access the dashboard.</div>
+
+    <label>Email</label>
+    <input id="email" type="email" autocomplete="email" />
+
+    <label>Password</label>
+    <input id="password" type="password" autocomplete="current-password" />
+
+    <button class="primary" id="loginBtn">Sign in</button>
+    <div class="msg" id="msg"></div>
+  </div>
+
+  <script>
+    const msgEl = document.getElementById("msg");
+    const setMsg = (t, ok=false) => { msgEl.textContent = t; msgEl.className = "msg" + (ok ? " ok" : ""); };
+
+    // If already logged in, go straight to dashboard
+    (async () => {
+      const { data } = await window.sb.auth.getSession();
+      if (data?.session?.access_token) window.location.href = "/dashboard";
+    })();
+
+    document.getElementById("loginBtn").addEventListener("click", async () => {
+      setMsg("");
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+
+      const { error } = await window.sb.auth.signInWithPassword({ email, password });
+      if (error) return setMsg(error.message);
+
+      setMsg("Signed in. Redirecting…", true);
+      window.location.href = "/dashboard";
+    });
+  </script>
+</body>
+</html>
