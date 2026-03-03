@@ -16,52 +16,75 @@ async function waitForAuth() {
     throw new Error("Auth not ready (AppAuth.token missing)");
   }
 
-// --- ROLE / PERMISSIONS SHIM (FIXES: AppUser.isAdmin is not a function) ---
+// --- ROLE / PERMISSIONS SHIM (self-healing) ---
+// Put this right after waitForAuth(), before `const els = { ... }`
+
+// --- ROLE / PERMISSIONS SHIM (self-healing, creates AppUser early) ---
 // Put this right after waitForAuth(), before `const els = { ... }`
 
 (function ensureAppUserRoleHelpers() {
-    // Ensure AppUser exists
-    if (!window.AppUser) window.AppUser = {};
+    // ✅ CRITICAL: guarantee the global exists immediately
+    window.AppUser = window.AppUser || {};
   
-    const getRoleLabelSafe = () => {
+    function getRoleLabelSafe() {
       try {
-        if (typeof window.AppUser.getRoleLabel === "function") {
+        if (window.AppUser && typeof window.AppUser.getRoleLabel === "function") {
           return String(window.AppUser.getRoleLabel() || "").toLowerCase().trim();
         }
       } catch (_) {}
-      // Optional fallback: if you store role somewhere else, add it here
-      // return String(localStorage.getItem("role") || "").toLowerCase().trim();
       return "";
-    };
-  
-    const roleHas = (needle) => getRoleLabelSafe().includes(String(needle).toLowerCase());
-  
-    // Only define if missing (so you don't overwrite future versions)
-    if (typeof window.AppUser.isAdmin !== "function") {
-      window.AppUser.isAdmin = () => roleHas("admin");
     }
   
-    if (typeof window.AppUser.isViewer !== "function") {
-      window.AppUser.isViewer = () => roleHas("viewer");
+    function attach() {
+      // ✅ If something overwrote it with null/undefined, recreate it
+      if (!window.AppUser) window.AppUser = {};
+  
+      const roleHas = (needle) =>
+        getRoleLabelSafe().includes(String(needle).toLowerCase());
+  
+      // Add missing helpers (don’t overwrite if they exist)
+      if (typeof window.AppUser.isAdmin !== "function") {
+        window.AppUser.isAdmin = () => roleHas("admin");
+      }
+  
+      if (typeof window.AppUser.isViewer !== "function") {
+        window.AppUser.isViewer = () => roleHas("viewer");
+      }
+  
+      // Map Contributor => editor (handle "editor" and "editors")
+      if (typeof window.AppUser.isContributor !== "function") {
+        window.AppUser.isContributor = () => roleHas("editor") || roleHas("editors");
+      }
+  
+      if (typeof window.AppUser.getFilterName !== "function") {
+        window.AppUser.getFilterName = () => {
+          if (typeof window.AppUser.getName === "function") {
+            return String(window.AppUser.getName() || "").trim();
+          }
+          return "";
+        };
+      }
+  
+      return true;
     }
   
-    // Your code uses "Contributor" logic — map that to Editor (or contributor) role labels.
-    if (typeof window.AppUser.isContributor !== "function") {
-      window.AppUser.isContributor = () =>
-        roleHas("editor") || roleHas("contributor"); // adjust if your label differs
-    }
+    // Run once immediately
+    attach();
   
-    // Used in your responsibility filtering
-    if (typeof window.AppUser.getFilterName !== "function") {
-      window.AppUser.getFilterName = () => {
-        if (typeof window.AppUser.getName === "function") {
-          return String(window.AppUser.getName() || "").trim();
-        }
-        return "";
-      };
-    }
+    // Self-heal briefly in case another script overwrites AppUser after this runs
+    let tries = 0;
+    const timer = setInterval(() => {
+      tries++;
+      attach();
+      if (typeof window.AppUser.isAdmin === "function" || tries > 200) {
+        clearInterval(timer);
+      }
+    }, 25);
+  
+    // Re-attach after role changes
+    window.addEventListener("roleChanged", () => attach());
   })();
-  
+
 const els = {
     // Summary Stats
     statusLine: document.getElementById("statusLine"),
@@ -217,61 +240,105 @@ function chipHTML(kind, label) {
 // static/vendors.js - Update this function
 
 function sanitizeVendorForUser(vendorData) {
-    const v = JSON.parse(JSON.stringify(vendorData));
-    
-    if (AppUser.isAdmin()) return v; // Admin sees all raw data to allow toggling later
-
-    if (AppUser.isViewer()) {
-        v.payments = []; 
-        v.financials = { scheduled: null, paid: null, remaining: null };
-        return v;
+    // If details aren't loaded yet, don't blow up the whole render cycle
+    if (!vendorData) return vendorData;
+  
+    // Safe deep-clone (don’t mutate cached object)
+    let v;
+    try {
+      v = JSON.parse(JSON.stringify(vendorData));
+    } catch (e) {
+      // Fallback if something weird/non-serializable sneaks in
+      v = { ...vendorData };
     }
-
-    if (AppUser.isContributor()) {
-        const myName = (AppUser.getFilterName() || "").trim().toLowerCase();
-
-        // Only include payments that have a line item for this specific contributor
-        v.payments = v.payments.filter(p => {
-            return p.responsibilities.some(r => 
-                (r.responsible_party || "").trim().toLowerCase().includes(myName)
-            );
-        });
-
-        // The totals are now derived strictly from the sum of their assigned responsibilities
-        let myScheduled = 0;
-        let myPaid = 0;
-
-        v.payments.forEach(p => {
-            p.responsibilities.forEach(r => {
-                const party = (r.responsible_party || "").trim().toLowerCase();
-                if (party.includes(myName)) {
-                    const amt = (Number(r.amount) || 0);
-                    myScheduled += amt;
-
-                    const rStatus = (r.reimbursement_status || "").toLowerCase();
-                    const statusStr = (r.status || "").toLowerCase();
-                    
-                    // Logic fix: It's paid if it's reimbursed OR if they paid the vendor directly
-                    const isReimbursed = rStatus === 'received';
-                    const isDirectPay = (rStatus === 'none' || !rStatus) && (statusStr === 'paid' || p.status === 'paid');
-
-                    if (isReimbursed || isDirectPay) {
-                        myPaid += amt;
-                    }
-                }
-            });
-        });
-
-        v.financials = {
-            scheduled: myScheduled,
-            paid: myPaid,
-            remaining: myScheduled - myPaid
-        };
-        return v;
+  
+    // Normalize shapes so downstream code never hits undefined.filter / undefined.some
+    v.payments = Array.isArray(v.payments) ? v.payments : [];
+    v.files = Array.isArray(v.files) ? v.files : [];
+    v.company_files = Array.isArray(v.company_files) ? v.company_files : [];
+    v.people = Array.isArray(v.people) ? v.people : [];
+  
+    // Always use window.AppUser to avoid “AppUser is not defined” / overwritten globals
+    const AU = window.AppUser || {};
+    const isAdmin = typeof AU.isAdmin === "function" ? AU.isAdmin() : false;
+    const isViewer = typeof AU.isViewer === "function" ? AU.isViewer() : false;
+    const isContributor = typeof AU.isContributor === "function" ? AU.isContributor() : false;
+  
+    // Admin sees everything
+    if (isAdmin) return v;
+  
+    // Viewer: hide all financials + payments
+    if (isViewer) {
+      v.payments = [];
+      v.financials = { scheduled: null, paid: null, remaining: null };
+      return v;
     }
-    return v; 
-}
-
+  
+    // Contributor/editor: show only their responsibilities
+    if (isContributor) {
+      const myNameRaw =
+        typeof AU.getFilterName === "function"
+          ? AU.getFilterName()
+          : typeof AU.getName === "function"
+          ? AU.getName()
+          : "";
+  
+      const myName = String(myNameRaw || "").trim().toLowerCase();
+      if (!myName) {
+        // If we can't identify them, safest is: no financial visibility
+        v.payments = [];
+        v.financials = { scheduled: 0, paid: 0, remaining: 0 };
+        return v;
+      }
+  
+      // Keep only payments where they appear in responsibilities
+      v.payments = v.payments.filter((p) => {
+        const resps = Array.isArray(p?.responsibilities) ? p.responsibilities : [];
+        return resps.some((r) =>
+          String(r?.responsible_party || "").trim().toLowerCase().includes(myName)
+        );
+      });
+  
+      // Recompute totals based ONLY on their responsibilities
+      let myScheduled = 0;
+      let myPaid = 0;
+  
+      v.payments.forEach((p) => {
+        const resps = Array.isArray(p?.responsibilities) ? p.responsibilities : [];
+  
+        resps.forEach((r) => {
+          const party = String(r?.responsible_party || "").trim().toLowerCase();
+          if (!party.includes(myName)) return;
+  
+          const amt = Number(r?.amount) || 0;
+          myScheduled += amt;
+  
+          const reimbStatus = String(r?.reimbursement_status || "").toLowerCase().trim();
+          const respStatus = String(r?.status || "").toLowerCase().trim();
+          const paymentStatus = String(p?.status || "").toLowerCase().trim();
+  
+          // Paid if reimbursed OR direct pay with status paid
+          const isReimbursed = reimbStatus === "received";
+          const isDirectPay =
+            (reimbStatus === "none" || !reimbStatus) &&
+            (respStatus === "paid" || paymentStatus === "paid");
+  
+          if (isReimbursed || isDirectPay) myPaid += amt;
+        });
+      });
+  
+      v.financials = {
+        scheduled: myScheduled,
+        paid: myPaid,
+        remaining: myScheduled - myPaid,
+      };
+  
+      return v;
+    }
+  
+    // Unknown role: safest is pass-through (or you could clamp financials here if you prefer)
+    return v;
+  }
 
 // --- LOGIC: ROLLUPS & STATUS ---
 
@@ -373,12 +440,13 @@ function isOverduePayment(p) {
 // static/vendors.js - Update companyRollup
 
 function companyRollup(detail) {
-    // Check if we should be showing the full contract or just the user's portion
-    const isAdmin = AppUser.isAdmin();
-    const isContributor = AppUser.isContributor();
-    const isMineScope = (isAdmin && scopeFilter === 'mine');
-    
+    const AU = window.AppUser || {};
+    const isAdmin = typeof AU.isAdmin === "function" ? AU.isAdmin() : false;
+    const isContributor = typeof AU.isContributor === "function" ? AU.isContributor() : false;
+    const isMineScope = isAdmin && scopeFilter === "mine";
+  
     const payments = Array.isArray(detail?.payments) ? detail.payments : [];
+
     let totalScheduled = 0;
     let totalPaid = 0;
     let overdueCount = 0;
@@ -402,7 +470,7 @@ function companyRollup(detail) {
             relevantPaid = paidSum;
         } else {
             // "MINE" OR "CONTRIBUTOR" VIEW: Sum only the responsibilities for specific names
-            const filterName = isMineScope ? "emma" : (AppUser.getFilterName() || "").toLowerCase();
+            const filterName = isMineScope ? "emma" : String((AU.getFilterName?.() || "")).toLowerCase();
             const filterPartner = isMineScope ? "ethan" : "";
 
             (p.responsibilities || []).forEach(r => {
