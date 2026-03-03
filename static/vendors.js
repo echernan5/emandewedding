@@ -16,6 +16,52 @@ async function waitForAuth() {
     throw new Error("Auth not ready (AppAuth.token missing)");
   }
 
+// --- ROLE / PERMISSIONS SHIM (FIXES: AppUser.isAdmin is not a function) ---
+// Put this right after waitForAuth(), before `const els = { ... }`
+
+(function ensureAppUserRoleHelpers() {
+    // Ensure AppUser exists
+    if (!window.AppUser) window.AppUser = {};
+  
+    const getRoleLabelSafe = () => {
+      try {
+        if (typeof window.AppUser.getRoleLabel === "function") {
+          return String(window.AppUser.getRoleLabel() || "").toLowerCase().trim();
+        }
+      } catch (_) {}
+      // Optional fallback: if you store role somewhere else, add it here
+      // return String(localStorage.getItem("role") || "").toLowerCase().trim();
+      return "";
+    };
+  
+    const roleHas = (needle) => getRoleLabelSafe().includes(String(needle).toLowerCase());
+  
+    // Only define if missing (so you don't overwrite future versions)
+    if (typeof window.AppUser.isAdmin !== "function") {
+      window.AppUser.isAdmin = () => roleHas("admin");
+    }
+  
+    if (typeof window.AppUser.isViewer !== "function") {
+      window.AppUser.isViewer = () => roleHas("viewer");
+    }
+  
+    // Your code uses "Contributor" logic — map that to Editor (or contributor) role labels.
+    if (typeof window.AppUser.isContributor !== "function") {
+      window.AppUser.isContributor = () =>
+        roleHas("editor") || roleHas("contributor"); // adjust if your label differs
+    }
+  
+    // Used in your responsibility filtering
+    if (typeof window.AppUser.getFilterName !== "function") {
+      window.AppUser.getFilterName = () => {
+        if (typeof window.AppUser.getName === "function") {
+          return String(window.AppUser.getName() || "").trim();
+        }
+        return "";
+      };
+    }
+  })();
+  
 const els = {
     // Summary Stats
     statusLine: document.getElementById("statusLine"),
