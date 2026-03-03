@@ -13,6 +13,14 @@
     getInitials: () => "EH",
     getRoleLabel: () => "Bride", // optional subtitle
   };
+
+  async function waitForAuth() {
+    for (let i = 0; i < 50; i++) { // ~5 seconds
+      if (window.AppAuth?.token) return window.AppAuth.token;
+      await new Promise((r) => setTimeout(r, 100));
+    }
+    throw new Error("Auth not ready (AppAuth.token missing)");
+  }
   
   /* =========================================
      ZONE 2: SIDEBAR UI
@@ -58,13 +66,16 @@
     async function updateGlobalMissingBadge() {
       const badge = document.querySelector("#missingAddrBadge");
       if (!badge) return;
-  
+    
       try {
-        const res = await fetch("/api/address-book", { credentials: "same-origin" });
-        if (!res.ok) return;
-        const rows = await res.json();
-  
-        // If you want: badge shows ALL missing for now (since no per-user assignments)
+        const token = await waitForAuth();
+        const res = await fetch("/api/address-book", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+    
+        if (!res.ok) return;           // 👈 important
+        const rows = await res.json();  // 👈 this was missing
+    
         const missingCount = rows.filter((r) => {
           const street = String(r.address_street ?? "").trim();
           const city = String(r.address_city ?? "").trim();
@@ -72,7 +83,7 @@
           const zip = String(r.address_zip ?? "").trim();
           return !(street && city && state && zip);
         }).length;
-  
+    
         if (missingCount > 0) {
           badge.textContent = `${missingCount} missing`;
           badge.style.display = "inline-flex";
