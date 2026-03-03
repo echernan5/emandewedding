@@ -6,6 +6,14 @@ const API = {
   assignParty: (partyId) => `/api/parties/${partyId}/assign`
 };
 
+async function waitForAuth() {
+  for (let i = 0; i < 50; i++) { // ~5 seconds
+    if (window.AppAuth?.token) return window.AppAuth.token;
+    await new Promise((r) => setTimeout(r, 100));
+  }
+  throw new Error("Auth not ready (AppAuth.token missing)");
+}
+
 // --- DEFINITIONS ---
 const ASSIGNMENT_GROUPS = [
     { id: 'group_emma_ethan', label: 'Emma & Ethan', color: '#fce7f3', text: '#be185d' }, 
@@ -95,7 +103,10 @@ async function loadAddressBook() {
   initViewDropdown();
 
   try {
-    const res = await fetch(`${API.addressBook}?scope=all`);
+    const token = await waitForAuth();
+    const res = await fetch(`${API.addressBook}?scope=all`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
     if (!res.ok) throw new Error("Load failed");
     state.rows = await res.json();
     setStatus("");
@@ -369,22 +380,31 @@ function bindListEvents(list) {
       try {
         if(saveMsg) saveMsg.textContent = "Saving...";
 
+        const token = await waitForAuth();
+
         if (state.currentUser.role === 'admin') {
             const checkboxes = form.querySelectorAll('input[name="assign_group"]:checked');
             const newAssignments = Array.from(checkboxes).map(cb => cb.value);
             
             await fetch(API.assignParty(partyId), {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ assigned_users: newAssignments })
+              method: 'PATCH',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({ assigned_users: newAssignments })
             });
+            
             const r = state.rows.find(x => String(x.id) === String(partyId));
             if(r) r.assigned_users = newAssignments;
         }
 
         const res = await fetch(API.patchParty(partyId), {
           method: "PATCH",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
           body: JSON.stringify(addrPayload)
         });
         if (!res.ok) throw new Error("Save failed");

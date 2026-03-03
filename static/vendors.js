@@ -8,6 +8,14 @@ const API = {
     signedUrl: (path) => `/api/vendor-files/signed-url?path=${encodeURIComponent(path)}`,
 };
 
+async function waitForAuth() {
+    for (let i = 0; i < 50; i++) {
+      if (window.AppAuth?.token) return window.AppAuth.token;
+      await new Promise((r) => setTimeout(r, 100));
+    }
+    throw new Error("Auth not ready (AppAuth.token missing)");
+  }
+
 const els = {
     // Summary Stats
     statusLine: document.getElementById("statusLine"),
@@ -128,8 +136,18 @@ function fmtDate(d) {
     return `${m} ${day}, ${y}`;
 }
 
-async function fetchJSON(url) {
-    const res = await fetch(url, { headers: { Accept: "application/json" } });
+async function fetchJSON(url, options = {}) {
+    const token = await waitForAuth();
+  
+    const res = await fetch(url, {
+      ...options,
+      headers: {
+        Accept: "application/json",
+        Authorization: `Bearer ${token}`,
+        ...(options.headers || {}),
+      },
+    });
+  
     const data = await res.json().catch(() => ({}));
     if (!res.ok) throw new Error(data.error || `${res.status} ${res.statusText}`);
     return data;
@@ -938,22 +956,29 @@ async function openDrawer(companyId) {
             btnSave.addEventListener("click", async () => {
                 const newText = textArea.value;
                 btnSave.textContent = "Saving...";
+              
                 try {
-                    const res = await fetch(`/api/vendors/${companyId}/notes`, {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ notes: newText })
-                    });
-                    if(!res.ok) throw new Error("Failed");
-                    
-                    d.company.notes = newText;
-                    detailsCache.set(companyId, d);
-                    openDrawer(companyId); 
-                } catch(e) {
-                    alert("Error saving notes.");
-                    btnSave.textContent = "Save";
+                  const token = await waitForAuth(); // ✅ put it up here
+              
+                  const res = await fetch(`/api/vendors/${companyId}/notes`, {
+                    method: "POST",
+                    headers: {
+                      "Content-Type": "application/json",
+                      Authorization: `Bearer ${token}`,
+                    },
+                    body: JSON.stringify({ notes: newText }),
+                  });
+              
+                  if (!res.ok) throw new Error("Failed");
+              
+                  d.company.notes = newText;
+                  detailsCache.set(companyId, d);
+                  openDrawer(companyId);
+                } catch (e) {
+                  alert("Error saving notes.");
+                  btnSave.textContent = "Save";
                 }
-            });
+              });
 
         } else {
             notesArea.textContent = currentNotes || "—";
@@ -1559,7 +1584,12 @@ async function handlePaySubmit(e) {
         formData.append("responsibilities", JSON.stringify(responsibilities));
         if (selectedPayFile) formData.append("file", selectedPayFile);
 
-        const res = await fetch("/api/payments/record", { method: "POST", body: formData });
+        const token = await waitForAuth();
+        const res = await fetch("/api/payments/record", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+        body: formData
+        });
         const json = await res.json();
         if (!res.ok) throw new Error(json.error || "Failed");
 
@@ -1718,10 +1748,14 @@ async function handlePlanSubmit(e) {
                 amount: payload.amount
             });
         }
+        const token = await waitForAuth();
         const res = await fetch("/api/payments/save", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload)
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(payload),
         });
         const json = await res.json();
         if (!res.ok) throw new Error(json.error || "Failed");
@@ -1813,12 +1847,15 @@ async function handleAddVendorSubmit(e) {
             notes: addVendorEls.notes.value
         };
 
+        const token = await waitForAuth();
         const res = await fetch("/api/vendors/save", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload)
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(payload),
         });
-
         const json = await res.json();
         if (!res.ok) throw new Error(json.error || "Failed");
 
@@ -1882,7 +1919,12 @@ async function handleUploadSubmit(e) {
         formData.append("file_type", uploadEls.fileType.value);
         formData.append("file", uploadEls.file.files[0]);
 
-        const res = await fetch("/api/vendor-files/upload", { method: "POST", body: formData });
+        const token = await waitForAuth();
+        const res = await fetch("/api/vendor-files/upload", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+        body: formData
+        });
         const json = await res.json();
         if (!res.ok) throw new Error(json.error || "Failed");
 
