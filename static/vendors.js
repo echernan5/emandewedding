@@ -583,7 +583,8 @@ async function loadVendors() {
     setStatus("Loading booked vendors…");
 
     // Check if user is Admin (Emma/Ethan)
-    const isEmmaOrEthan = AppUser.isAdmin(); 
+    const AU = window.AppUser || {};
+    const isEmmaOrEthan = typeof AU.isAdmin === "function" ? AU.isAdmin() : false;
 
     // Target the specific wrapper we just labeled in the HTML
     const scopeToggle = document.querySelector(".scope-control-wrapper");
@@ -644,109 +645,108 @@ function renderSummary() {
     const data = getFilteredCompanies();
     const strip = document.querySelector(".summaryStrip");
     if (!strip) return;
-
-    // --- 1. VIEWER VIEW (Isabel / Bridesmaids) ---
-    // If user is a viewer, they don't see financial cards.
-    if (AppUser.isViewer()) {
-        let totalContacts = 0;
-        let missingInfoCount = 0;
-        const categories = new Set();
-
-        data.forEach(c => {
-            const d = detailsCache.get(c.id);
-            if (d) {
-                // Count unique categories
-                if (c.category) categories.add(c.category);
-                
-                // Count total people listed across vendors
-                if (d.people) totalContacts += d.people.length;
-
-                // Flag vendors missing basic contact data
-                const primary = d.people?.[0] || {};
-                if (!primary.email || !primary.phone) {
-                    missingInfoCount++;
-                }
-            }
-        });
-
-        strip.innerHTML = `
-            <div class="metricCard is-blue">
-                <div class="metricLabel">Booked Vendors</div>
-                <div class="metricValue">${data.length}</div>
-            </div>
-            <div class="metricCard is-blue">
-                <div class="metricLabel">Team Members</div>
-                <div class="metricValue">${totalContacts}</div>
-            </div>
-            <div class="metricCard is-blue">
-                <div class="metricLabel">Categories</div>
-                <div class="metricValue">${categories.size}</div>
-            </div>
-        `;
-        return; // Stop here for viewers
+  
+    // ✅ Always read role from window.AppUser safely
+    const AU = window.AppUser || {};
+    const isViewer = typeof AU.isViewer === "function" ? AU.isViewer() : false;
+    const isContributor = typeof AU.isContributor === "function" ? AU.isContributor() : false;
+  
+    // --- 1) VIEWER VIEW (no financials) ---
+    if (isViewer) {
+      let totalContacts = 0;
+      let missingInfoCount = 0; // kept in case you want to display later
+      const categories = new Set();
+  
+      data.forEach((c) => {
+        const d = detailsCache.get(c.id);
+        if (!d) return;
+  
+        if (c.category) categories.add(c.category);
+  
+        if (Array.isArray(d.people)) totalContacts += d.people.length;
+  
+        const primary = (d.people && d.people[0]) ? d.people[0] : {};
+        if (!primary.email || !primary.phone) missingInfoCount++;
+      });
+  
+      strip.innerHTML = `
+        <div class="metricCard is-blue">
+          <div class="metricLabel">Booked Vendors</div>
+          <div class="metricValue">${data.length}</div>
+        </div>
+        <div class="metricCard is-blue">
+          <div class="metricLabel">Team Members</div>
+          <div class="metricValue">${totalContacts}</div>
+        </div>
+        <div class="metricCard is-blue">
+          <div class="metricLabel">Categories</div>
+          <div class="metricValue">${categories.size}</div>
+        </div>
+      `;
+      return;
     }
-
-    // --- 2. ADMIN & CONTRIBUTOR VIEW (Standard Financials) ---
+  
+    // --- 2) ADMIN & CONTRIBUTOR VIEW (financials) ---
     let upcomingCount = 0;
     let overdueCount = 0;
     let totalScheduled = 0;
     let totalPaid = 0;
     let totalRemaining = 0;
-
-    data.forEach(c => {
-        const d = detailsCache.get(c.id);
-        const cleanD = sanitizeVendorForUser(d); 
-        const roll = d ? companyRollup(cleanD) : null;
-
-        if (roll) {
-            if (roll.unpaidCount > 0) upcomingCount++;
-            if (roll.overdueCount > 0) overdueCount++;
-
-            // Only add financials if the user is allowed to see them
-            totalScheduled += roll.totalScheduled;
-            totalPaid += roll.totalPaid;
-            totalRemaining += roll.remaining;
-        }
+  
+    data.forEach((c) => {
+      const d = detailsCache.get(c.id);
+      if (!d) return;
+  
+      const cleanD = sanitizeVendorForUser(d);
+      const roll = companyRollup(cleanD);
+      if (!roll) return;
+  
+      if (roll.unpaidCount > 0) upcomingCount++;
+      if (roll.overdueCount > 0) overdueCount++;
+  
+      totalScheduled += Number(roll.totalScheduled || 0);
+      totalPaid += Number(roll.totalPaid || 0);
+      totalRemaining += Number(roll.remaining || 0);
     });
-
+  
     const cardsHTML = `
-        <div class="metricCard is-blue">
-            <div class="metricLabel">Booked Vendors</div>
-            <div class="metricValue">${data.length}</div>
-        </div>
-        <div class="metricCard ${upcomingCount > 0 ? 'is-orange' : ''}">
-            <div class="metricLabel">Upcoming Payments</div>
-            <div class="metricValue">${upcomingCount}</div>
-        </div>
-        <div class="metricCard ${overdueCount > 0 ? 'is-red' : ''}">
-            <div class="metricLabel">Overdue</div>
-            <div class="metricValue">${overdueCount}</div>
-        </div>
+      <div class="metricCard is-blue">
+        <div class="metricLabel">Booked Vendors</div>
+        <div class="metricValue">${data.length}</div>
+      </div>
+      <div class="metricCard ${upcomingCount > 0 ? "is-orange" : ""}">
+        <div class="metricLabel">Upcoming Payments</div>
+        <div class="metricValue">${upcomingCount}</div>
+      </div>
+      <div class="metricCard ${overdueCount > 0 ? "is-red" : ""}">
+        <div class="metricLabel">Overdue</div>
+        <div class="metricValue">${overdueCount}</div>
+      </div>
     `;
-
-    const labelSched = AppUser.isContributor() ? "My Commitment" : "Total Scheduled";
-    const labelRem = AppUser.isContributor() ? "My Balance" : "Remaining";
-
+  
+    const labelSched = isContributor ? "My Commitment" : "Total Scheduled";
+    const labelRem = isContributor ? "My Balance" : "Remaining";
+  
     const finHTML = `
-        <div class="stripRight">
-            <div class="finStat">
-                <div class="finLabel">${labelSched}</div>
-                <div class="finValue">${fmtMoney(totalScheduled)}</div>
-            </div>
-            <div class="finStat">
-                <div class="finLabel">Paid</div>
-                <div class="finValue" style="color:#15803d;">${fmtMoney(totalPaid)}</div>
-            </div>
-            <div style="width:1px; height: 32px; background:#e5e7eb; margin:0 12px;"></div>
-            <div class="finStat is-bold">
-                <div class="finLabel">${labelRem}</div>
-                <div class="finValue">${fmtMoney(totalRemaining)}</div>
-            </div>
+      <div class="stripRight">
+        <div class="finStat">
+          <div class="finLabel">${labelSched}</div>
+          <div class="finValue">${fmtMoney(totalScheduled)}</div>
         </div>
+        <div class="finStat">
+          <div class="finLabel">Paid</div>
+          <div class="finValue" style="color:#15803d;">${fmtMoney(totalPaid)}</div>
+        </div>
+        <div style="width:1px; height: 32px; background:#e5e7eb; margin:0 12px;"></div>
+        <div class="finStat is-bold">
+          <div class="finLabel">${labelRem}</div>
+          <div class="finValue">${fmtMoney(totalRemaining)}</div>
+        </div>
+      </div>
     `;
-
+  
     strip.innerHTML = cardsHTML + finHTML;
-}
+  }
 
 function getFilteredCompanies() {
     const q = searchQuery.trim().toLowerCase();
@@ -922,6 +922,7 @@ function bindDrawerTabs() {
 
 async function openDrawer(companyId) {
     if (!companyId) return;
+    const cid = companyId;
     openDrawerShell();
     els.drawer?.setAttribute("data-company-id", companyId);
 
@@ -1070,11 +1071,12 @@ async function openDrawer(companyId) {
             btnSave.addEventListener("click", async () => {
                 const newText = textArea.value;
                 btnSave.textContent = "Saving...";
+                btnSave.disabled = true;
               
                 try {
-                  const token = await waitForAuth(); // ✅ put it up here
+                  const token = await waitForAuth();
               
-                  const res = await fetch(`/api/vendors/${companyId}/notes`, {
+                  const res = await fetch(`/api/vendors/${cid}/notes`, {
                     method: "POST",
                     headers: {
                       "Content-Type": "application/json",
@@ -1083,14 +1085,20 @@ async function openDrawer(companyId) {
                     body: JSON.stringify({ notes: newText }),
                   });
               
-                  if (!res.ok) throw new Error("Failed");
+                  const json = await res.json().catch(() => ({}));
+                  if (!res.ok) throw new Error(json.error || "Failed");
               
+                  // update cache + re-open drawer
+                  d.company = d.company || {};
                   d.company.notes = newText;
-                  detailsCache.set(companyId, d);
-                  openDrawer(companyId);
+                  detailsCache.set(cid, d);
+                  openDrawer(cid);
                 } catch (e) {
+                  console.error(e);
                   alert("Error saving notes.");
                   btnSave.textContent = "Save";
+                } finally {
+                  btnSave.disabled = false;
                 }
               });
 
@@ -1878,6 +1886,7 @@ async function handlePlanSubmit(e) {
         const d = await fetchJSON(API.vendorDetails(companyId));
         detailsCache.set(companyId, d);
         openDrawer(companyId);
+        const cid = companyId;
         loadVendors();
     } catch (err) {
         alert(err.message);
