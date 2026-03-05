@@ -22,67 +22,78 @@ async function waitForAuth() {
 // --- ROLE / PERMISSIONS SHIM (self-healing, creates AppUser early) ---
 // Put this right after waitForAuth(), before `const els = { ... }`
 
+// --- ROLE / PERMISSIONS SHIM (pulls role from /api/me, not display_role) ---
 (function ensureAppUserRoleHelpers() {
-    // ✅ CRITICAL: guarantee the global exists immediately
     window.AppUser = window.AppUser || {};
   
-    function getRoleLabelSafe() {
-      try {
-        if (window.AppUser && typeof window.AppUser.getRoleLabel === "function") {
-          return String(window.AppUser.getRoleLabel() || "").toLowerCase().trim();
+    function safeLower(v) {
+      return String(v || "").toLowerCase().trim();
+    }
+  
+    function attachHelpers() {
+        const getRole = () => safeLower(window.AppUser?.roleFromProfile);
+      
+        window.AppUser.isAdmin = () => getRole() === "admin";
+        window.AppUser.isContributor = () => getRole() === "editor";
+        window.AppUser.isViewer = () => getRole() === "viewer";
+      
+        if (typeof window.AppUser.getFilterName !== "function") {
+          window.AppUser.getFilterName = () => {
+            // if you don’t have getName, fall back to profile name
+            if (typeof window.AppUser.getName === "function") {
+              return String(window.AppUser.getName() || "").trim();
+            }
+            return String(window.AppUser.fullName || "").trim();
+          };
         }
-      } catch (_) {}
-      return "";
     }
   
-    function attach() {
-      // ✅ If something overwrote it with null/undefined, recreate it
-      if (!window.AppUser) window.AppUser = {};
+    async function ensureProfileLoaded() {
+      // If we already have it, great
+      if (window.AppUser.roleFromProfile) return;
   
-      const roleHas = (needle) =>
-        getRoleLabelSafe().includes(String(needle).toLowerCase());
+      try {
+        const token = await waitForAuth();
+        const res = await fetch("/api/me", {
+          headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(data.error || "Failed to load /api/me");
   
-      // Add missing helpers (don’t overwrite if they exist)
-      if (typeof window.AppUser.isAdmin !== "function") {
-        window.AppUser.isAdmin = () => roleHas("admin");
+        // ✅ THIS is the only thing permissions should use
+        window.AppUser.roleFromProfile = data?.profile?.role || "viewer";
+  
+        // (Optional) keep display_role for UI label elsewhere if you want it:
+        window.AppUser.displayRole = data?.profile?.display_role || "";
+  
+        // (Optional) set name too, if you want consistent "mine" filters:
+        window.AppUser.fullName = data?.profile?.full_name || "";
+      } catch (e) {
+        console.warn("Could not load profile role; defaulting to viewer.", e);
+        window.AppUser.roleFromProfile = "viewer";
       }
-  
-      if (typeof window.AppUser.isViewer !== "function") {
-        window.AppUser.isViewer = () => roleHas("viewer");
-      }
-  
-      // Map Contributor => editor (handle "editor" and "editors")
-      if (typeof window.AppUser.isContributor !== "function") {
-        window.AppUser.isContributor = () => roleHas("editor") || roleHas("editors");
-      }
-  
-      if (typeof window.AppUser.getFilterName !== "function") {
-        window.AppUser.getFilterName = () => {
-          if (typeof window.AppUser.getName === "function") {
-            return String(window.AppUser.getName() || "").trim();
-          }
-          return "";
-        };
-      }
-  
-      return true;
     }
   
-    // Run once immediately
-    attach();
+    // Run now + self-heal briefly
+    (async () => {
+      await ensureProfileLoaded();
+      attachHelpers();
+    })();
   
-    // Self-heal briefly in case another script overwrites AppUser after this runs
     let tries = 0;
-    const timer = setInterval(() => {
+    const timer = setInterval(async () => {
       tries++;
-      attach();
-      if (typeof window.AppUser.isAdmin === "function" || tries > 200) {
-        clearInterval(timer);
-      }
-    }, 25);
+      if (!window.AppUser.roleFromProfile) await ensureProfileLoaded();
+      attachHelpers();
+      if (window.AppUser.roleFromProfile || tries > 200) clearInterval(timer);
+    }, 50);
   
-    // Re-attach after role changes
-    window.addEventListener("roleChanged", () => attach());
+    // If your app dispatches roleChanged, re-pull profile role
+    window.addEventListener("roleChanged", async () => {
+      window.AppUser.roleFromProfile = null;
+      await ensureProfileLoaded();
+      attachHelpers();
+    });
   })();
 
 const els = {

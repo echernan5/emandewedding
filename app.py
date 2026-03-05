@@ -51,11 +51,17 @@ SUPABASE_SERVICE_ROLE_KEY = os.environ.get("SUPABASE_SERVICE_ROLE_KEY")
 if not SUPABASE_URL or not SUPABASE_ANON_KEY:
     raise RuntimeError("SUPABASE_URL and SUPABASE_ANON_KEY must be set.")
 
+# Put this near the top of app.py (after SUPABASE_* are defined)
+ROLE_RANK = {"viewer": 1, "editor": 2, "admin": 3}
+
 def require_user(min_role="viewer"):
     """
-    Requires a valid Supabase session token (Authorization: Bearer <token>).
-    Right now: just verifies the token exists + is valid.
-    Later: we’ll add role checks using your profiles table.
+    Requires a valid Supabase session token (Authorization: Bearer <token>),
+    loads the user's profile from `profiles`, and enforces a minimum role.
+
+    Returns: (ctx, err)
+      - ctx = {"user": <supabase_user_json>, "profile": <profile_dict>}
+      - err = (jsonify(...), status_code) or None
     """
     auth = request.headers.get("Authorization", "")
     if not auth.startswith("Bearer "):
@@ -66,20 +72,40 @@ def require_user(min_role="viewer"):
         return None, (jsonify({"error": "Missing token"}), 401)
 
     # Verify token with Supabase
-    resp = requests.get(
-        f"{SUPABASE_URL.rstrip('/')}/auth/v1/user",
-        headers={
-            "apikey": SUPABASE_ANON_KEY,
-            "Authorization": f"Bearer {token}",
-        },
-        timeout=10,
-    )
+    try:
+        resp = requests.get(
+            f"{SUPABASE_URL.rstrip('/')}/auth/v1/user",
+            headers={
+                "apikey": SUPABASE_ANON_KEY,
+                "Authorization": f"Bearer {token}",
+            },
+            timeout=10,
+        )
+    except Exception as e:
+        return None, (jsonify({"error": f"Auth service unreachable: {str(e)}"}), 502)
 
     if resp.status_code != 200:
         return None, (jsonify({"error": "Invalid/expired session"}), 401)
 
-    user = resp.json()
-    return user, None
+    sb_user = resp.json()
+
+    # Load profile row
+    profile = get_profile(sb_user["id"])
+    if not profile:
+        return None, (jsonify({"error": "No profile row for this user"}), 403)
+
+    # Enforce role
+    role = (profile.get("role") or "viewer").lower().strip()
+    need = (min_role or "viewer").lower().strip()
+
+    if ROLE_RANK.get(role, 0) < ROLE_RANK.get(need, 0):
+        return None, (jsonify({"error": "Forbidden"}), 403)
+
+    ctx = {
+        "user": {"id": sb_user.get("id"), "email": sb_user.get("email")},
+        "profile": profile,
+    }
+    return ctx, None
 
 def require_service_key():
     """
@@ -109,17 +135,13 @@ def get_profile(user_id: str):
 
 @app.route("/api/me", methods=["GET"])
 def api_me():
-    sb_user, err = require_user()
+    ctx, err = require_user()
     if err:
         return err
 
-    profile = get_profile(sb_user["id"])
-    if not profile:
-        return jsonify({"error": "No profile row for this user"}), 403
-
     return jsonify({
-        "user": {"id": sb_user["id"], "email": sb_user.get("email")},
-        "profile": profile
+        "user": ctx["user"],
+        "profile": ctx["profile"]
     })
 
 # -----------------------------
@@ -156,7 +178,7 @@ def get_data_from_query(query, params=None):
 # -----------------------------
 @app.route("/api/dashboard/metrics", methods=["GET"])
 def get_dashboard_metrics():
-    user, err = require_user()
+    ctx, err = require_user()
     if err:
         return err
 
@@ -169,7 +191,7 @@ def get_dashboard_metrics():
 
 @app.route("/api/guests", methods=["GET"])
 def get_guests():
-    user, err = require_user()
+    ctx, err = require_user()
     if err:
         return err
 
@@ -188,7 +210,7 @@ def get_guests():
 
 @app.route("/api/guestlist", methods=["GET"])
 def get_guestlist():
-    user, err = require_user()
+    ctx, err = require_user()
     if err:
         return err
 
@@ -220,7 +242,7 @@ def get_guestlist():
 
 @app.route("/api/guests/<guest_id>", methods=["PATCH"])
 def update_guest(guest_id):
-    user, err = require_user()
+    ctx, err = require_user()
     if err:
         return err
 
@@ -275,7 +297,7 @@ def update_guest(guest_id):
 
 @app.route("/api/parties/<party_id>", methods=["GET"])
 def get_party_details(party_id):
-    user, err = require_user()
+    ctx, err = require_user()
     if err:
         return err
 
@@ -335,7 +357,7 @@ def get_party_details(party_id):
 
 @app.route("/api/parties/<party_id>", methods=["PATCH"])
 def update_party(party_id):
-    user, err = require_user()
+    ctx, err = require_user()
     if err:
         return err
 
@@ -420,7 +442,7 @@ def update_party(party_id):
 
 @app.route("/api/address-book", methods=["GET"])
 def get_address_book():
-    user, err = require_user()
+    ctx, err = require_user()
     if err:
         return err
 
@@ -461,7 +483,7 @@ def get_address_book():
 
 @app.route("/api/parties/<party_id>/assign", methods=["PATCH"])
 def assign_party(party_id):
-    user, err = require_user()
+    ctx, err = require_user()
     if err:
         return err
 
@@ -494,7 +516,7 @@ def assign_party(party_id):
 # -----------------------------
 @app.route("/api/vendors", methods=["GET"])
 def get_vendors():
-    user, err = require_user()
+    ctx, err = require_user()
     if err:
         return err
 
@@ -523,7 +545,7 @@ def get_vendors():
 
 @app.route("/api/vendors/<company_id>", methods=["GET"])
 def get_vendor_details(company_id):
-    user, err = require_user()
+    ctx, err = require_user()
     if err:
         return err
 
@@ -651,7 +673,7 @@ def get_vendor_details(company_id):
 
 @app.route("/api/vendors/save", methods=["POST"])
 def save_vendor():
-    user, err = require_user()
+    ctx, err = require_user()
     if err:
         return err
 
@@ -707,7 +729,7 @@ def save_vendor():
 
 @app.route("/api/vendors/<company_id>/notes", methods=["POST"])
 def update_vendor_notes(company_id):
-    user, err = require_user()
+    ctx, err = require_user()
     if err:
         return err
 
@@ -736,7 +758,7 @@ def update_vendor_notes(company_id):
 # -----------------------------
 @app.route("/api/vendor-files/upload", methods=["POST"])
 def upload_vendor_file():
-    user, err = require_user()
+    ctx, err = require_user()
     if err:
         return err
 
@@ -795,7 +817,7 @@ def upload_vendor_file():
 
 @app.route("/api/vendor-files/signed-url", methods=["GET"])
 def vendor_file_signed_url():
-    user, err = require_user()
+    ctx, err = require_user()
     if err:
         return err
 
@@ -847,7 +869,7 @@ def vendor_file_signed_url():
 
 @app.route("/api/debug-storage/<company_id>/<folder>")
 def debug_storage(company_id, folder):
-    user, err = require_user()
+    ctx, err = require_user()
     if err:
         return err
 
@@ -876,7 +898,7 @@ def debug_storage(company_id, folder):
 # -----------------------------
 @app.route("/api/payments/save", methods=["POST"])
 def save_payment_details():
-    user, err = require_user()
+    ctx, err = require_user()
     if err:
         return err
 
@@ -951,7 +973,7 @@ def save_payment_details():
 
 @app.route("/api/payments/record", methods=["POST"])
 def record_payment():
-    user, err = require_user()
+    ctx, err = require_user()
     if err:
         return err
 
@@ -1051,7 +1073,7 @@ def record_payment():
 # -----------------------------
 @app.route("/api/exports/<export_type>")
 def export_data(export_type):
-    user, err = require_user()
+    ctx, err = require_user()
     if err:
         return err
 
