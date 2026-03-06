@@ -20,6 +20,7 @@
 <div class="mobileOverlay" data-close-sidebar></div>
 
 <div class="app">
+  <!-- SIDEBAR -->
   <aside class="sidebar">
     <div class="sideTop">
       <div class="appTitle">Wedding Manager</div>
@@ -28,11 +29,51 @@
 
     <nav class="sideNav">
       <a href="/dashboard">Guest List</a>
-      <a href="/address" class="withBadge">Address Book</a>
-      <a href="/timeline" class="active" data-route="/timeline">Timeline</a>
+
+      <a href="/address" class="withBadge active">
+        Address Book
+        <span class="badge" id="missingAddrBadge" style="display:none;">Missing</span>
+      </a>
+
       <a href="/vendors" data-route="/vendors">Vendors</a>
+      <a href="/timeline" class="active" data-route="/timeline">Timeline</a>
       <a href="/export">Exports</a>
     </nav>
+
+    <div class="sideBottom" style="position: relative;">
+        <div class="userChip" id="userMenuTrigger" style="cursor: pointer;">
+          <div class="userAvatar" id="userAvatarDisplay">EH</div>
+          <div class="userText">
+            <div class="userName" id="userNameDisplay">Emma Hernandez</div>
+            <div class="userRole" id="userRoleDisplay">Bride</div>
+          </div>
+        </div>
+      
+        <div id="userRoleMenu" class="roleMenu" style="display: none;">
+            <div class="roleMenuHeader">Switch View</div>
+            <button type="button" class="roleMenuItem" data-role="admin">
+                <span class="roleIcon">EH</span>
+                <div class="roleDetails">
+                    <span class="roleName">Emma Hernandez</span>
+                    <span class="roleLabel">Bride (Admin)</span>
+                </div>
+            </button>
+            <button type="button" class="roleMenuItem" data-role="family">
+                <span class="roleIcon" style="background:#e0f2fe; color:#0369a1;">AE</span>
+                <div class="roleDetails">
+                    <span class="roleName">Amy Eiduke</span>
+                    <span class="roleLabel">Family (Restricted)</span>
+                </div>
+            </button>
+            <button type="button" class="roleMenuItem" data-role="viewer">
+                <span class="roleIcon" style="background:#f3fdf0; color:#338015;">IS</span>
+                <div class="roleDetails">
+                    <span class="roleName">Isabel Hernandez</span>
+                    <span class="roleLabel">Bridesmaid (View)</span>
+                </div>
+            </button>
+        </div>
+      </div>
   </aside>
 
   <div class="main">
