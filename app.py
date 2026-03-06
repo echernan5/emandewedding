@@ -1278,7 +1278,20 @@ def get_timeline():
     ctx, err = require_user()
     if err: return err
     
-    query = "SELECT * FROM timeline_events ORDER BY start_time ASC;"
+    # Use ::text to cast times and dates to strings so jsonify can read them
+    query = """
+        SELECT 
+            id, 
+            description, 
+            wedding_party, 
+            vendor, 
+            start_time::text, 
+            end_time::text, 
+            color_code,
+            created_at::text
+        FROM timeline_events 
+        ORDER BY start_time ASC;
+    """
     data, error = get_data_from_query(query)
     return jsonify(data) if not error else (jsonify({"error": error}), 500)
 
