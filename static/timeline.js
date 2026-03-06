@@ -15,11 +15,20 @@ function escapeHTML(str) {
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
-    // 1. Role Check
-    const AU = window.AppUser || {};
-    const isAdmin = typeof AU.isAdmin === "function" ? AU.isAdmin() : false;
-    if (isAdmin) {
-        document.getElementById("btnAddEvent").style.display = "block";
+    // 1. Role Check (Direct API call to guarantee it works on this page)
+    try {
+        const token = await waitForAuth();
+        const meRes = await fetch("/api/me", {
+            headers: { Authorization: `Bearer ${token}` }
+        });
+        const meData = await meRes.json();
+        
+        // If the database confirms the logged-in user is an admin, show the button
+        if (meData?.profile?.role === "admin") {
+            document.getElementById("btnAddEvent").style.display = "block";
+        }
+    } catch (e) {
+        console.error("Could not verify admin role:", e);
     }
 
     // 2. Load Data
@@ -96,7 +105,7 @@ function renderGantt(events) {
                 </span>
             `).join("");
         };
-        
+
         // Left Sidebar Texts (Updated to use renderTags)
         html += `
             <div class="gantt-cell col-desc" style="grid-column: 1; grid-row: ${rowNum};">${escapeHTML(ev.description)}</div>
