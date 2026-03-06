@@ -1297,7 +1297,6 @@ def get_timeline():
 
 @app.route("/api/timeline", methods=["POST"])
 def add_timeline_event():
-    # Enforce Admin-only access
     ctx, err = require_user(min_role="admin")
     if err: return err
     
@@ -1307,10 +1306,17 @@ def add_timeline_event():
         with conn.cursor() as cur:
             cur.execute(
                 """
-                INSERT INTO timeline_events (description, wedding_party, vendor, start_time, end_time)
-                VALUES (%s, %s, %s, %s, %s) RETURNING id;
+                INSERT INTO timeline_events (description, wedding_party, vendor, start_time, end_time, color_code)
+                VALUES (%s, %s, %s, %s, %s, %s) RETURNING id;
                 """,
-                (data.get("description"), data.get("wedding_party"), data.get("vendor"), data.get("start_time"), data.get("end_time"))
+                (
+                    data.get("description"), 
+                    data.get("wedding_party"), 
+                    data.get("vendor"), 
+                    data.get("start_time"), 
+                    data.get("end_time"),
+                    data.get("color_code") # ✅ Added color_code here
+                )
             )
             new_id = cur.fetchone()[0]
             conn.commit()

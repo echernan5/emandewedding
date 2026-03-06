@@ -83,11 +83,29 @@ function renderGantt(events) {
     events.forEach((ev, idx) => {
         const rowNum = idx + 2; // Row 1 is the header
 
-        // Left Sidebar Texts
+        // Helper to generate the HTML for the tags
+        // Helper to generate the HTML for the tags
+        const renderTags = (tagsArray) => {
+            // Safety check: force it to be an array even if the DB returns a string
+            let tags = Array.isArray(tagsArray) ? tagsArray : (tagsArray ? [tagsArray] : []);
+            
+            if (!tags.length) return `<span class="muted" style="font-size: 11px;">—</span>`;
+            return tags.map(tag => `
+                <span class="chip" style="padding: 2px 6px; font-size: 10px; margin: 2px 2px 0 0; display: inline-block;">
+                    ${escapeHTML(tag)}
+                </span>
+            `).join("");
+        };
+        
+        // Left Sidebar Texts (Updated to use renderTags)
         html += `
             <div class="gantt-cell col-desc" style="grid-column: 1; grid-row: ${rowNum};">${escapeHTML(ev.description)}</div>
-            <div class="gantt-cell col-party" style="grid-column: 2; grid-row: ${rowNum};">${escapeHTML(ev.wedding_party)}</div>
-            <div class="gantt-cell col-vendor" style="grid-column: 3; grid-row: ${rowNum};">${escapeHTML(ev.vendor)}</div>
+            <div class="gantt-cell col-party" style="grid-column: 2; grid-row: ${rowNum}; flex-wrap: wrap;">
+                ${renderTags(ev.wedding_party)}
+            </div>
+            <div class="gantt-cell col-vendor" style="grid-column: 3; grid-row: ${rowNum}; flex-wrap: wrap;">
+                ${renderTags(ev.vendor)}
+            </div>
         `;
 
         // Chart Block Placement
@@ -146,10 +164,16 @@ async function handleAddEvent(e) {
     btn.disabled = true;
     btn.textContent = "Saving...";
 
+    // Helper function to get all selected values from a multi-select
+    const getSelected = (selectId) => {
+        const select = document.getElementById(selectId);
+        return Array.from(select.selectedOptions).map(opt => opt.value);
+    };
+
     const payload = {
         description: document.getElementById("evDescription").value,
-        wedding_party: document.getElementById("evParty").value,
-        vendor: document.getElementById("evVendor").value,
+        wedding_party: getSelected("evParty"), // Now returns an array like ["Emma/Ethan", "Family"]
+        vendor: getSelected("evVendor"),       // Now returns an array
         start_time: document.getElementById("evStart").value,
         end_time: document.getElementById("evEnd").value,
         color_code: document.getElementById("evColor").value
