@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Wedding Timeline</title>
+  
+  <link rel="stylesheet" href="{{ url_for('static', filename='vendors.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='dash-sidebar.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='timeline.css') }}">
+  
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    window.SUPABASE_URL = "{{ supabase_url }}";
+    window.SUPABASE_ANON_KEY = "{{ supabase_anon_key }}";
+  </script>
+  <script src="{{ url_for('static', filename='auth-guard.js') }}"></script>
+</head>
+<body>
+<div class="mobileOverlay" data-close-sidebar></div>
+
+<div class="app">
+  <aside class="sidebar">
+    <div class="sideTop">
+      <div class="appTitle">Wedding Manager</div>
+      <div class="eventLine">Emma &amp; Ethan • Jun 18, 2027</div>
+    </div>
+
+    <nav class="sideNav">
+      <a href="/dashboard">Guest List</a>
+      <a href="/address" class="withBadge">Address Book</a>
+      <a href="/timeline" class="active" data-route="/timeline">Timeline</a>
+      <a href="/vendors" data-route="/vendors">Vendors</a>
+      <a href="/export">Exports</a>
+    </nav>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <div class="topbar__left">
+        <h1 class="title">Timeline</h1>
+        <p class="subtitle">Master schedule for the wedding day. Times span from 6:00 AM to Midnight.</p>
+        <div id="statusLine" class="statusLine"></div>
+      </div>
+      <div class="topbar__right">
+        <button id="btnAddEvent" class="btn btn--primary" type="button" style="display: none;">+ Add Event</button>
+      </div>
+    </header>
+
+    <main class="container" style="max-width: 1600px;">
+        
+      <div class="gantt-wrapper">
+         <div id="ganttGrid" class="gantt-grid">
+             </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<div id="modalAddEvent" class="modalOverlay" aria-hidden="true" style="display: none;">
+  <div class="modalShell">
+    <div class="modalHeader">
+      <h2>Add Timeline Event</h2>
+      <button type="button" class="closeModal" id="btnCloseEventModal">×</button>
+    </div>
+    
+    <div class="modalBody">
+      <form id="formAddEvent">
+        <div class="paySection">
+          <div class="formRow">
+            <div class="formGroup" style="width: 100%;">
+              <label>Item Description</label>
+              <input type="text" id="evDescription" placeholder="e.g. Hair & Makeup begins" required>
+            </div>
+          </div>
+          <div class="formRow">
+            <div class="formGroup">
+              <label>Wedding Party</label>
+              <input type="text" id="evParty" placeholder="e.g. Bride & Bridesmaids">
+            </div>
+            <div class="formGroup">
+              <label>Vendor</label>
+              <input type="text" id="evVendor" placeholder="e.g. Blushing Ivory">
+            </div>
+          </div>
+          <div class="formRow">
+            <div class="formGroup">
+              <label>Start Time</label>
+              <input type="time" id="evStart" required>
+            </div>
+            <div class="formGroup">
+              <label>End Time</label>
+              <input type="time" id="evEnd" required>
+            </div>
+            <div class="formGroup">
+              <label>Color Tag</label>
+              <select id="evColor">
+                <option value="#bbf7d0">Green (Standard)</option>
+                <option value="#bfdbfe">Blue (Vendor arrival)</option>
+                <option value="#fecaca">Red (Critical)</option>
+                <option value="#fef08a">Yellow (Prep)</option>
+                <option value="#e9d5ff">Purple (Ceremony)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="modalFooter">
+          <button type="button" class="btnSecondary" id="btnCancelEvent">Cancel</button>
+          <button type="submit" class="btnPrimary">Save Event</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script src="{{ url_for('static', filename='timeline.js') }}" defer></script>
+<script src="{{ url_for('static', filename='dash-sidebar.js') }}" defer></script>
+</body>
+</html>

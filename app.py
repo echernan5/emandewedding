@@ -948,16 +948,26 @@ def save_payment_details():
             )
             pid = cur.fetchone()[0]
 
+        HOUSEHOLD_MAP = {
+            "Emma/Ethan": "hernandez-wlodarczyk",
+            "Amy/Dave": "eiduke-wlodarczyk",
+            "Dad": "hernandez",
+            "Mom": "rayburn"
+        }
+
         cur.execute("DELETE FROM vendor_payment_responsibilities WHERE payment_id = %s", (pid,))
 
         for r in responsibilities:
+            party = r.get("responsible_party")
+            household_id = HOUSEHOLD_MAP.get(party)
+
             cur.execute(
                 """
                 INSERT INTO vendor_payment_responsibilities
-                (payment_id, responsible_party, amount, reimbursement_status)
-                VALUES (%s, %s, %s, 'none');
+                (payment_id, responsible_party, amount, reimbursement_status, responsible_household_id)
+                VALUES (%s, %s, %s, 'none', %s);
                 """,
-                (pid, r.get("responsible_party"), r.get("amount")),
+                (pid, party, r.get("amount"), household_id),
             )
 
         conn.commit()
@@ -1030,26 +1040,37 @@ def record_payment():
                     (str(uuid.uuid4()), company_id, payment_id, file.filename, storage_path, file.mimetype),
                 )
 
+            HOUSEHOLD_MAP = {
+                "Emma/Ethan": "hernandez-wlodarczyk",
+                "Amy/Dave": "eiduke-wlodarczyk",
+                "Dad": "hernandez",
+                "Mom": "rayburn"
+            }
+
             cur.execute("DELETE FROM vendor_payment_responsibilities WHERE payment_id = %s", (payment_id,))
 
             for r in responsibilities:
+                party = r.get("responsible_party")
+                household_id = HOUSEHOLD_MAP.get(party)
+
                 cur.execute(
                     """
                     INSERT INTO vendor_payment_responsibilities
-                    (payment_id, responsible_party, amount, status, reimbursement_status, paid_by_party, paid_date, notes)
-                    VALUES (%s, %s, %s, 'paid', %s, %s, %s, %s)
+                    (payment_id, responsible_party, amount, status, reimbursement_status, paid_by_party, paid_date, notes, responsible_household_id)
+                    VALUES (%s, %s, %s, 'paid', %s, %s, %s, %s, %s)
                     """,
                     (
                         payment_id,
-                        r.get("responsible_party"),
+                        party,
                         r.get("amount"),
                         r.get("reimbursement_status", "none"),
                         r.get("paid_by_party"),
                         paid_date,
                         f"Method: {r.get('payment_method')}",
+                        household_id
                     ),
                 )
-
+            
             if main_notes is not None:
                 cur.execute(
                     "UPDATE vendor_payments SET notes = %s, updated_at = NOW() WHERE id = %s",
@@ -1241,6 +1262,51 @@ def address_book():
         supabase_url=os.environ.get("SUPABASE_URL"),
         supabase_anon_key=os.environ.get("SUPABASE_ANON_KEY"),
     )
+
+# --- Page Route ---
+@app.route("/timeline")
+def timeline_page():
+    return render_template(
+        "timeline.html",
+        supabase_url=os.environ.get("SUPABASE_URL"),
+        supabase_anon_key=os.environ.get("SUPABASE_ANON_KEY"),
+    )
+
+# --- API Routes ---
+@app.route("/api/timeline", methods=["GET"])
+def get_timeline():
+    ctx, err = require_user()
+    if err: return err
+    
+    query = "SELECT * FROM timeline_events ORDER BY start_time ASC;"
+    data, error = get_data_from_query(query)
+    return jsonify(data) if not error else (jsonify({"error": error}), 500)
+
+@app.route("/api/timeline", methods=["POST"])
+def add_timeline_event():
+    # Enforce Admin-only access
+    ctx, err = require_user(min_role="admin")
+    if err: return err
+    
+    data = request.json
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cur:
+            cur.execute(
+                """
+                INSERT INTO timeline_events (description, wedding_party, vendor, start_time, end_time)
+                VALUES (%s, %s, %s, %s, %s) RETURNING id;
+                """,
+                (data.get("description"), data.get("wedding_party"), data.get("vendor"), data.get("start_time"), data.get("end_time"))
+            )
+            new_id = cur.fetchone()[0]
+            conn.commit()
+        return jsonify({"ok": True, "id": new_id})
+    except Exception as e:
+        conn.rollback()
+        return jsonify({"error": str(e)}), 500
+    finally:
+        conn.close()
 
 
 @app.route("/export")
