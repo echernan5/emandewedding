@@ -11,12 +11,13 @@
 
 .gantt-grid {
     display: grid;
-    /* Col 1: Desc (200px)
-      Col 2: Party (120px)
-      Col 3: Vendor (150px)
-      Cols 4-75: Time increments (72 columns of 15mins = 18 hours). Min 28px wide.
+    /* SHRUNK COLUMNS:
+      Col 1: Desc (160px instead of 220px)
+      Col 2: Party (110px instead of 140px)
+      Col 3: Vendor (130px instead of 160px)
+      Cols 4-75: Time increments min 16px instead of 28px
     */
-    grid-template-columns: 220px 140px 160px repeat(72, minmax(28px, 1fr));
+    grid-template-columns: 160px 110px 130px repeat(72, minmax(16px, 1fr));
     min-width: max-content; 
 }
 
@@ -35,10 +36,10 @@
     z-index: 20; /* Keep above scrolling content */
 }
 
-/* Keep the first 3 columns sticky on the LEFT when scrolling horizontally */
+/* Adjust sticky left positions to match the new shrunk columns */
 .col-desc { position: sticky; left: 0; z-index: 15; background: #fff; border-right: 1px solid var(--border-soft); }
-.col-party { position: sticky; left: 220px; z-index: 15; background: #fff; border-right: 1px solid var(--border-soft); }
-.col-vendor { position: sticky; left: 360px; z-index: 15; background: #fff; border-right: 2px solid var(--border); }
+.col-party { position: sticky; left: 160px; z-index: 15; background: #fff; border-right: 1px solid var(--border-soft); }
+.col-vendor { position: sticky; left: 270px; z-index: 15; background: #fff; border-right: 2px solid var(--border); }
 
 /* Higher z-index for the top-left corner cells so they don't scroll underneath */
 .gantt-header-cell.col-desc { z-index: 25; }
@@ -99,6 +100,58 @@
     font-weight: 600;
     color: #111827;
     box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: flex;
+    align-items: center;
+    border: 1px solid rgba(0,0,0,0.08);
+}
+
+.gantt-grid {
+    display: grid;
+    /* SHRUNK COLUMNS:
+      Col 1: Desc (160px instead of 220px)
+      Col 2: Party (110px instead of 140px)
+      Col 3: Vendor (130px instead of 160px)
+      Cols 4-75: Time increments min 16px instead of 28px
+    */
+    grid-template-columns: 160px 110px 130px repeat(72, minmax(16px, 1fr));
+    min-width: max-content; 
+}
+
+/* Adjust sticky left positions to match the new shrunk columns */
+.col-desc { position: sticky; left: 0; z-index: 15; background: #fff; border-right: 1px solid var(--border-soft); }
+.col-party { position: sticky; left: 160px; z-index: 15; background: #fff; border-right: 1px solid var(--border-soft); }
+.col-vendor { position: sticky; left: 270px; z-index: 15; background: #fff; border-right: 2px solid var(--border); }
+
+/* Make headers smaller and tighter */
+.gantt-header-cell, .gantt-time-header {
+    padding: 6px 8px; /* Was 10px 12px */
+    font-size: 10px;  /* Was 11px */
+}
+
+/* Make rows much shorter with less empty space */
+.gantt-cell {
+    padding: 6px 8px; /* Was 12px */
+    font-size: 11.5px; /* Was 13px */
+}
+
+/* Make the colored time blocks thinner */
+.gantt-block-container {
+    padding: 2px 4px; /* Was 4px */
+    border-bottom: 1px solid var(--border-soft);
+    z-index: 2;
+}
+
+.gantt-block {
+    height: 100%;
+    min-height: 20px; /* Was 28px */
+    padding: 2px 6px; /* Was 4px 8px */
+    border-radius: 4px; /* Slightly sharper corners */
+    font-size: 10.5px; /* Smaller text inside the block */
+    font-weight: 600;
+    color: #111827;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;

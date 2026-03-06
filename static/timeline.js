@@ -15,27 +15,30 @@ function escapeHTML(str) {
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
-    // 1. Role Check (Direct API call to guarantee it works on this page)
-    try {
-        const token = await waitForAuth();
-        const meRes = await fetch("/api/me", {
-            headers: { Authorization: `Bearer ${token}` }
-        });
-        const meData = await meRes.json();
-        
-        // If the database confirms the logged-in user is an admin, show the button
-        if (meData?.profile?.role === "admin") {
-            document.getElementById("btnAddEvent").style.display = "block";
+    const addBtn = document.getElementById("btnAddEvent");
+    
+    // 1. Check permissions (Defaults to admin)
+    const updateButtonVisibility = () => {
+        const currentRole = localStorage.getItem("user_role_key") || "admin";
+        if (currentRole === "admin") {
+            addBtn.style.display = "block";
+        } else {
+            addBtn.style.display = "none";
         }
-    } catch (e) {
-        console.error("Could not verify admin role:", e);
-    }
+    };
+    
+    updateButtonVisibility();
+
+    // Listen for the sidebar switcher!
+    window.addEventListener("roleChanged", (e) => {
+        updateButtonVisibility();
+    });
 
     // 2. Load Data
     await loadTimeline();
 
     // 3. Bind Modal Events
-    document.getElementById("btnAddEvent").addEventListener("click", openModal);
+    addBtn.addEventListener("click", openModal);
     document.getElementById("btnCloseEventModal").addEventListener("click", closeModal);
     document.getElementById("btnCancelEvent").addEventListener("click", closeModal);
     document.getElementById("formAddEvent").addEventListener("submit", handleAddEvent);

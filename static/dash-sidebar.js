@@ -116,4 +116,42 @@
   
     window.addEventListener("addressBookUpdated", updateGlobalMissingBadge);
   })();
+
+  /* =========================================
+     ZONE 4: ROLE SWITCHER (NEW)
+     ========================================= */
+     document.addEventListener("DOMContentLoaded", () => {
+      const trigger = document.getElementById("userMenuTrigger");
+      const menu = document.getElementById("userRoleMenu");
+
+      if (trigger && menu) {
+          // Toggle menu on click
+          trigger.addEventListener("click", (e) => {
+              e.stopPropagation(); // Stop click from immediately closing menu
+              menu.style.display = menu.style.display === "none" || !menu.style.display ? "block" : "none";
+          });
+
+          // Close menu when clicking outside
+          document.addEventListener("click", () => {
+              menu.style.display = "none";
+          });
+
+          // Handle Role Selection
+          document.querySelectorAll(".roleMenuItem").forEach(btn => {
+              btn.addEventListener("click", (e) => {
+                  const newRole = e.currentTarget.dataset.role;
+                  
+                  // Save to local storage
+                  localStorage.setItem("user_role_key", newRole);
+                  
+                  // Update the UI label immediately
+                  const roleName = e.currentTarget.querySelector(".roleLabel").textContent.split(' ')[0];
+                  document.getElementById("userRoleDisplay").textContent = roleName;
+                  
+                  // Tell the rest of the app the role changed
+                  window.dispatchEvent(new CustomEvent("roleChanged", { detail: { role: newRole } }));
+              });
+          });
+      }
+  });
   
