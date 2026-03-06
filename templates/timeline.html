@@ -20,7 +20,6 @@
 <div class="mobileOverlay" data-close-sidebar></div>
 
 <div class="app">
-  <!-- SIDEBAR -->
   <aside class="sidebar">
     <div class="sideTop">
       <div class="appTitle">Wedding Manager</div>
@@ -30,7 +29,7 @@
     <nav class="sideNav">
       <a href="/dashboard">Guest List</a>
 
-      <a href="/address" class="withBadge active">
+      <a href="/address" class="withBadge">
         Address Book
         <span class="badge" id="missingAddrBadge" style="display:none;">Missing</span>
       </a>
@@ -88,11 +87,11 @@
       </div>
     </header>
 
-    <main class="container" style="max-width: 1600px;">
+    <main class="container" style="max-width: 100%; padding-left: 12px; padding-right: 12px;">
         
       <div class="gantt-wrapper">
          <div id="ganttGrid" class="gantt-grid">
-             </div>
+         </div>
       </div>
 
     </main>
@@ -102,12 +101,14 @@
 <div id="modalAddEvent" class="modalOverlay" aria-hidden="true" style="display: none;">
   <div class="modalShell">
     <div class="modalHeader">
-      <h2>Add Timeline Event</h2>
+      <h2 id="modalEventTitle">Add Timeline Event</h2>
       <button type="button" class="closeModal" id="btnCloseEventModal">×</button>
     </div>
     
     <div class="modalBody">
       <form id="formAddEvent">
+        <input type="hidden" id="evId">
+
         <div class="paySection">
           <div class="formRow">
             <div class="formGroup" style="width: 100%;">
@@ -115,20 +116,39 @@
               <input type="text" id="evDescription" placeholder="e.g. Hair & Makeup begins" required>
             </div>
           </div>
+          
           <div class="formRow">
             <div class="formGroup">
-              <label>Wedding Party</label>
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <label>Wedding Party</label>
+                <button type="button" style="background: none; border: none; color: #6b7280; font-size: 10px; cursor: pointer; text-decoration: underline; padding: 0;" onclick="document.getElementById('evParty').selectedIndex = -1;">Clear</button>
+              </div>
               <select id="evParty" class="select" multiple size="4" style="height: auto;">
                 <option value="All">All</option>
-                <option value="Emma/Ethan">Emma & Ethan</option>
-                <option value="Bridesmaids">Bridesmaids</option>
-                <option value="Groomsmen">Groomsmen</option>
-                <option value="Family">Family</option>
+                <option value="Alita">Alita</option>
+                <option value="Amy">Amy</option>
+                <option value="Ashlynn">Ashlynn</option>
+                <option value="Carlos">Carlos</option>
+                <option value="Carrie">Carrie</option>
+                <option value="Dave">Dave</option>
+                <option value="Emma">Emma</option>
+                <option value="Ethan">Ethan</option>
+                <option value="Isabel">Isabel</option>
+                <option value="Jacob">Jacob</option>
+                <option value="Lillian">Lillian</option>
+                <option value="Mia">Mia</option>
+                <option value="Olivia">Olivia</option>
+                <option value="Ryan">Ryan</option>
+                <option value="Zack">Zack</option>
               </select>
-              <small class="muted" style="font-size: 11px; margin-top: 4px;">Hold Cmd/Ctrl to select multiple</small>
+              <small class="muted" style="font-size: 11px; margin-top: 4px;">Cmd/Ctrl + Click to toggle selections</small>
             </div>
+            
             <div class="formGroup">
-              <label>Vendor</label>
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <label>Vendor</label>
+                <button type="button" style="background: none; border: none; color: #6b7280; font-size: 10px; cursor: pointer; text-decoration: underline; padding: 0;" onclick="document.getElementById('evVendor').selectedIndex = -1;">Clear</button>
+              </div>
               <select id="evVendor" class="select" multiple size="4" style="height: auto;">
                 <option value="Blushing Ivory Bridal Co.">Blushing Ivory Bridal Co.</option>
                 <option value="Chrystin Melanie Photography">Chrystin Melanie Photography</option>
@@ -137,8 +157,10 @@
                 <option value="Bay Pointe Inn">Bay Pointe Inn</option>
                 <option value="Bluewater Kings Band">Bluewater Kings Band</option>
               </select>
+              <small class="muted" style="font-size: 11px; margin-top: 4px;">Cmd/Ctrl + Click to toggle selections</small>
             </div>
           </div>
+
           <div class="formRow">
             <div class="formGroup">
               <label>Start Time</label>
@@ -162,6 +184,8 @@
         </div>
 
         <div class="modalFooter">
+          <button type="button" class="btnSecondary" id="btnDeleteEvent" style="display: none; color: #ef4444; border-color: #ef4444; margin-right: auto;">Delete</button>
+          
           <button type="button" class="btnSecondary" id="btnCancelEvent">Cancel</button>
           <button type="submit" class="btnPrimary">Save Event</button>
         </div>

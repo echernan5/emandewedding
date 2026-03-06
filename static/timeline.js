@@ -32,13 +32,14 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Listen for the sidebar switcher!
     window.addEventListener("roleChanged", (e) => {
         updateButtonVisibility();
+        loadTimeline(); // Refresh to hide/show edit links when changing roles
     });
 
     // 2. Load Data
     await loadTimeline();
 
     // 3. Bind Modal Events
-    addBtn.addEventListener("click", openModal);
+    addBtn.addEventListener("click", () => openModal(null)); // Pass null explicitly for new events
     document.getElementById("btnCloseEventModal").addEventListener("click", closeModal);
     document.getElementById("btnCancelEvent").addEventListener("click", closeModal);
     document.getElementById("formAddEvent").addEventListener("submit", handleAddEvent);
@@ -63,6 +64,8 @@ async function loadTimeline() {
 function renderGantt(events) {
     const grid = document.getElementById("ganttGrid");
     grid.innerHTML = "";
+    const currentRole = localStorage.getItem("user_role_key") || "admin";
+    const isAdmin = currentRole === "admin";
 
     // --- 1. RENDER HEADERS ---
     let html = `
@@ -96,22 +99,28 @@ function renderGantt(events) {
         const rowNum = idx + 2; // Row 1 is the header
 
         // Helper to generate the HTML for the tags
-        // Helper to generate the HTML for the tags
         const renderTags = (tagsArray) => {
-            // Safety check: force it to be an array even if the DB returns a string
             let tags = Array.isArray(tagsArray) ? tagsArray : (tagsArray ? [tagsArray] : []);
-            
             if (!tags.length) return `<span class="muted" style="font-size: 11px;">—</span>`;
+            
+            // Compact tags styling
             return tags.map(tag => `
-                <span class="chip" style="padding: 2px 6px; font-size: 10px; margin: 2px 2px 0 0; display: inline-block;">
+                <span class="chip" style="padding: 1px 4px; font-size: 9px; margin: 1px 1px 0 0; display: inline-block;">
                     ${escapeHTML(tag)}
                 </span>
             `).join("");
         };
 
-        // Left Sidebar Texts (Updated to use renderTags)
+        // Render Description column (Clickable if admin)
+        const descHtml = isAdmin 
+            ? `<div class="gantt-cell col-desc edit-trigger" data-id="${ev.id}" style="grid-column: 1; grid-row: ${rowNum}; cursor: pointer; color: #2563eb;">
+                 <span style="border-bottom: 1px dashed #2563eb;">${escapeHTML(ev.description)}</span>
+               </div>`
+            : `<div class="gantt-cell col-desc" style="grid-column: 1; grid-row: ${rowNum};">${escapeHTML(ev.description)}</div>`;
+
+        html += descHtml;
+        
         html += `
-            <div class="gantt-cell col-desc" style="grid-column: 1; grid-row: ${rowNum};">${escapeHTML(ev.description)}</div>
             <div class="gantt-cell col-party" style="grid-column: 2; grid-row: ${rowNum}; flex-wrap: wrap;">
                 ${renderTags(ev.wedding_party)}
             </div>
@@ -134,6 +143,17 @@ function renderGantt(events) {
     });
 
     grid.innerHTML = html;
+
+    // Attach click listeners to edit events (Admin only)
+    if (isAdmin) {
+        grid.querySelectorAll('.edit-trigger').forEach(el => {
+            el.addEventListener('click', () => {
+                const evId = el.getAttribute('data-id');
+                const evData = events.find(e => String(e.id) === String(evId));
+                if (evData) openModal(evData);
+            });
+        });
+    }
 }
 
 /** Converts "07:15:00" to CSS Grid Column Number */
@@ -144,13 +164,11 @@ function timeToCol(timeStr) {
     const h = parseInt(parts[0], 10);
     const m = parseInt(parts[1], 10);
     
-    // Safety clamp to our start hour
     if (h < START_HOUR) return 4; 
     
     const hourDiff = h - START_HOUR;
-    const minDiff = m / 15; // 15 min increments
+    const minDiff = m / 15; 
     
-    // Column 1,2,3 are text. Time starts at column 4.
     return 4 + (hourDiff * 4) + Math.round(minDiff);
 }
 
@@ -158,9 +176,41 @@ function timeToCol(timeStr) {
 const modal = document.getElementById("modalAddEvent");
 const form = document.getElementById("formAddEvent");
 
-function openModal() {
+function openModal(eventData = null) {
     form.reset();
-    document.getElementById("evColor").value = "#bbf7d0"; // Default green
+    document.getElementById("evParty").selectedIndex = -1;
+    document.getElementById("evVendor").selectedIndex = -1;
+    
+    const isEdit = eventData && eventData.id;
+    document.getElementById("modalEventTitle").textContent = isEdit ? "Edit Event" : "Add Timeline Event";
+    
+    const deleteBtn = document.getElementById("btnDeleteEvent");
+    if(deleteBtn) deleteBtn.style.display = isEdit ? "block" : "none";
+    
+    if (isEdit) {
+        // Populate existing data
+        document.getElementById("evId").value = eventData.id;
+        document.getElementById("evDescription").value = eventData.description || "";
+        document.getElementById("evStart").value = eventData.start_time || "";
+        document.getElementById("evEnd").value = eventData.end_time || "";
+        document.getElementById("evColor").value = eventData.color_code || "#bbf7d0";
+        
+        // Helper to select multiple options
+        const setMulti = (id, arr) => {
+            const sel = document.getElementById(id);
+            const vals = Array.isArray(arr) ? arr : (arr ? [arr] : []);
+            Array.from(sel.options).forEach(opt => {
+                opt.selected = vals.includes(opt.value);
+            });
+        };
+        setMulti("evParty", eventData.wedding_party);
+        setMulti("evVendor", eventData.vendor);
+    } else {
+        // Clear ID for new events
+        document.getElementById("evId").value = "";
+        document.getElementById("evColor").value = "#bbf7d0"; // Default green
+    }
+    
     modal.style.display = "flex";
     modal.setAttribute("aria-hidden", "false");
 }
@@ -176,16 +226,16 @@ async function handleAddEvent(e) {
     btn.disabled = true;
     btn.textContent = "Saving...";
 
-    // Helper function to get all selected values from a multi-select
     const getSelected = (selectId) => {
         const select = document.getElementById(selectId);
         return Array.from(select.selectedOptions).map(opt => opt.value);
     };
 
     const payload = {
+        id: document.getElementById("evId").value || null, // Include ID if editing
         description: document.getElementById("evDescription").value,
-        wedding_party: getSelected("evParty"), // Now returns an array like ["Emma/Ethan", "Family"]
-        vendor: getSelected("evVendor"),       // Now returns an array
+        wedding_party: getSelected("evParty"), 
+        vendor: getSelected("evVendor"),      
         start_time: document.getElementById("evStart").value,
         end_time: document.getElementById("evEnd").value,
         color_code: document.getElementById("evColor").value
@@ -206,7 +256,7 @@ async function handleAddEvent(e) {
         if (!res.ok) throw new Error(json.error || "Failed to save");
 
         closeModal();
-        await loadTimeline(); // Refresh grid
+        await loadTimeline();
 
     } catch (err) {
         alert(err.message);
@@ -215,3 +265,30 @@ async function handleAddEvent(e) {
         btn.textContent = "Save Event";
     }
 }
+
+// Add Delete Button Listener
+document.getElementById("btnDeleteEvent")?.addEventListener("click", async () => {
+    const evId = document.getElementById("evId").value;
+    if (!evId || !confirm("Are you sure you want to delete this event?")) return;
+    
+    const btn = document.getElementById("btnDeleteEvent");
+    btn.textContent = "Deleting...";
+    btn.disabled = true;
+    
+    try {
+        const token = await waitForAuth();
+        const res = await fetch(`/api/timeline/${evId}`, {
+            method: "DELETE",
+            headers: { "Authorization": `Bearer ${token}` }
+        });
+        if (!res.ok) throw new Error("Failed to delete");
+        
+        closeModal();
+        await loadTimeline();
+    } catch (err) {
+        alert(err.message);
+    } finally {
+        btn.textContent = "Delete";
+        btn.disabled = false;
+    }
+});

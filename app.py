@@ -1304,23 +1304,49 @@ def add_timeline_event():
     conn = get_db_connection()
     try:
         with conn.cursor() as cur:
-            cur.execute(
-                """
-                INSERT INTO timeline_events (description, wedding_party, vendor, start_time, end_time, color_code)
-                VALUES (%s, %s, %s, %s, %s, %s) RETURNING id;
-                """,
-                (
-                    data.get("description"), 
-                    data.get("wedding_party"), 
-                    data.get("vendor"), 
-                    data.get("start_time"), 
-                    data.get("end_time"),
-                    data.get("color_code") # ✅ Added color_code here
+            event_id = data.get("id")
+            
+            # If an ID was passed, Update the existing row
+            if event_id:
+                cur.execute(
+                    """
+                    UPDATE timeline_events 
+                    SET description=%s, wedding_party=%s, vendor=%s, start_time=%s, end_time=%s, color_code=%s
+                    WHERE id=%s RETURNING id;
+                    """,
+                    (data.get("description"), data.get("wedding_party"), data.get("vendor"), 
+                     data.get("start_time"), data.get("end_time"), data.get("color_code"), event_id)
                 )
-            )
+            # If no ID, Insert a new row
+            else:
+                cur.execute(
+                    """
+                    INSERT INTO timeline_events (description, wedding_party, vendor, start_time, end_time, color_code)
+                    VALUES (%s, %s, %s, %s, %s, %s) RETURNING id;
+                    """,
+                    (data.get("description"), data.get("wedding_party"), data.get("vendor"), 
+                     data.get("start_time"), data.get("end_time"), data.get("color_code"))
+                )
             new_id = cur.fetchone()[0]
             conn.commit()
         return jsonify({"ok": True, "id": new_id})
+    except Exception as e:
+        conn.rollback()
+        return jsonify({"error": str(e)}), 500
+    finally:
+        conn.close()
+
+@app.route("/api/timeline/<event_id>", methods=["DELETE"])
+def delete_timeline_event(event_id):
+    ctx, err = require_user(min_role="admin")
+    if err: return err
+    
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cur:
+            cur.execute("DELETE FROM timeline_events WHERE id = %s", (event_id,))
+            conn.commit()
+        return jsonify({"ok": True})
     except Exception as e:
         conn.rollback()
         return jsonify({"error": str(e)}), 500
