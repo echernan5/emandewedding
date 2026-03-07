@@ -271,3 +271,61 @@
     align-items: center;
     box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
+
+/* --- UPDATED GRID LAYOUT (Added Time Column) --- */
+.gantt-grid {
+    display: grid;
+    /* Col 1: Desc (160px)
+      Col 2: Time (130px)
+      Col 3: Party (130px)
+      Col 4: Vendor (130px)
+      Cols 5-76: Time increments min 16px 
+    */
+    grid-template-columns: 160px 130px 130px 130px repeat(72, minmax(16px, 1fr));
+    min-width: max-content; 
+}
+
+/* Updated Sticky Positions (Must match the column widths above) */
+.col-desc   { position: sticky; left: 0;     z-index: 15; background: #fff; border-right: 1px solid var(--border-soft); }
+.col-time   { position: sticky; left: 160px; z-index: 15; background: #fff; border-right: 1px solid var(--border-soft); }
+.col-party  { position: sticky; left: 290px; z-index: 15; background: #fff; border-right: 1px solid var(--border-soft); }
+.col-vendor { position: sticky; left: 420px; z-index: 15; background: #fff; border-right: 2px solid var(--border); }
+
+/* Top headers need to stay above the scrolling row items */
+.gantt-header-cell.col-desc   { z-index: 25; }
+.gantt-header-cell.col-time   { z-index: 25; }
+.gantt-header-cell.col-party  { z-index: 25; }
+.gantt-header-cell.col-vendor { z-index: 25; }
+
+/* Update the block container to allow precise fractional width overflows */
+.gantt-block-container {
+    padding: 2px 0; /* Removed horizontal padding so percentage widths are 100% accurate */
+    border-bottom: 1px solid var(--border-soft);
+    z-index: 2;
+    position: relative;
+    overflow: visible; /* Allows the bar to stretch across multiple columns natively */
+}
+
+/* --- INLINE EDITING STYLES --- */
+.inline-input {
+    width: 100%;
+    border: 1px solid transparent;
+    background: transparent;
+    font-family: inherit;
+    font-size: 11px;
+    color: inherit;
+    padding: 4px;
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+.inline-input:hover { border-color: #e5e7eb; background: #f9fafb; }
+.inline-input:focus { outline: none; border-color: #2563eb; background: #fff; box-shadow: 0 0 0 2px rgba(37,99,235,0.1); }
+
+.time-input-group { display: flex; align-items: center; gap: 2px; }
+.time-input { width: auto; padding: 2px; letter-spacing: -0.5px; }
+
+/* A tiny edit button to access the modal for color/phase changes */
+.btn-mini-edit {
+    background: transparent; border: none; color: #9ca3af; cursor: pointer; padding: 2px; font-size: 12px;
+}
+.btn-mini-edit:hover { color: #2563eb; }
