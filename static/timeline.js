@@ -99,8 +99,13 @@ function renderGantt(events) {
     const isAdmin = (localStorage.getItem("user_role_key") || "admin") === "admin";
 
     const phaseNames = {
-        "1_getting_ready": "Getting Ready", "2_setup": "Set Up", "3_ceremony": "Ceremony",
-        "4_cocktail_hour": "Cocktail Hour", "5_reception": "Reception", "6_tear_down": "Tear Down"
+        "0_vendor_coverage": "Vendor Coverage", // Add this line!
+        "1_getting_ready": "Getting Ready", 
+        "2_setup": "Set Up", 
+        "3_ceremony": "Ceremony",
+        "4_cocktail_hour": "Cocktail Hour", 
+        "5_reception": "Reception", 
+        "6_tear_down": "Tear Down"
     };
 
     const renderTags = (tagsArray) => {

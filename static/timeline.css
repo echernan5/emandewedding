@@ -155,6 +155,7 @@
 }
 
 /* --- PHASE COLORS (Backgrounds & Left Borders) --- */
+.phase-0_vendor_coverage { background: #f8fafc; color: #64748b; border-left: 6px solid #94a3b8; }
 .phase-1_getting_ready { background: #e0f8f7; color: #0CB2AF; border-left: 6px solid #0CB2AF; } 
 .phase-2_setup         { background: #f4f9eb; color: #A1C65D; border-left: 6px solid #A1C65D; } 
 .phase-3_ceremony      { background: #fff9e6; color: #d1a500; border-left: 6px solid #FAC723; } 
@@ -163,6 +164,7 @@
 .phase-6_tear_down     { background: #f4f1f7; color: #936FAC; border-left: 6px solid #936FAC; } 
 
 /* --- COORDINATED GANTT BARS --- */
+.gantt-block-container.phase-0_vendor_coverage .gantt-block { background-color: #94a3b8; color: white; }
 .gantt-block-container.phase-1_getting_ready .gantt-block { background-color: #0CB2AF; color: white; }
 .gantt-block-container.phase-2_setup         .gantt-block { background-color: #A1C65D; color: white; }
 .gantt-block-container.phase-3_ceremony      .gantt-block { background-color: #FAC723; color: #333; }
