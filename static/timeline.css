@@ -2,13 +2,14 @@
 /* =========================================
    1. MAIN WRAPPER & GRID LAYOUT
    ========================================= */
-   .gantt-wrapper {
+.gantt-wrapper {
     background: var(--panel);
     border: 1px solid var(--border);
     border-radius: var(--radius);
     box-shadow: 0 6px 18px rgba(17,24,39,.06);
     overflow: auto; 
     max-height: calc(100vh - 180px); 
+    min-height: 400px; 
 }
 
 .gantt-grid {
