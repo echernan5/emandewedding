@@ -1305,6 +1305,11 @@ def add_timeline_event():
     if not conn:
         return jsonify({"error": "Database unavailable"}), 500
 
+    # --- THIS IS THE FIX ---
+    # Convert empty strings ("") into None (NULL for the database)
+    start_time = data.get("start_time") or None
+    end_time = data.get("end_time") or None
+
     try:
         with conn.cursor() as cur:
             event_id = data.get("id")
@@ -1322,8 +1327,8 @@ def add_timeline_event():
                         data.get("description"), 
                         data.get("wedding_party"), 
                         data.get("vendor"), 
-                        data.get("start_time"), 
-                        data.get("end_time"), 
+                        start_time, # <-- Uses the safe variable
+                        end_time,   # <-- Uses the safe variable
                         data.get("color_code"),
                         data.get("phase"),
                         event_id
@@ -1343,8 +1348,8 @@ def add_timeline_event():
                         data.get("description"), 
                         data.get("wedding_party"), 
                         data.get("vendor"), 
-                        data.get("start_time"), 
-                        data.get("end_time"), 
+                        start_time, # <-- Uses the safe variable
+                        end_time,   # <-- Uses the safe variable
                         data.get("color_code"),
                         data.get("phase")
                     )

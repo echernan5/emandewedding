@@ -55,7 +55,7 @@ async function loadTimeline() {
         const token = await waitForAuth();
         const res = await fetch("/api/timeline", { headers: { Authorization: `Bearer ${token}` } });
         currentEvents = await res.json(); 
-        t(currentEvents);
+        renderGantt(currentEvents); // <-- FIXED: Changed 't' to 'renderGantt'
         document.getElementById("statusLine").textContent = "";
     } catch (e) {
         document.getElementById("statusLine").textContent = "Failed to load timeline.";
