@@ -180,3 +180,39 @@
 /* Specific Phase Colors (Optional) */
 .phase-ceremony { border-left: 6px solid #e9d5ff; }
 .phase-reception { border-left: 6px solid #bfdbfe; }
+
+/* Updated Base Header for Horizontal Stickiness */
+.gantt-phase-header {
+    grid-column: 1 / -1;
+    position: sticky;
+    left: 0;
+    z-index: 12;
+    padding: 8px 16px;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    border-bottom: 1px solid rgba(0,0,0,0.08);
+    display: flex;
+    align-items: center;
+}
+
+/* New Palette Mapping */
+/* Getting Ready: Light Sea Green */
+.phase-1_getting_ready { background: #e6f7f7; color: #0CB2AF; border-left: 6px solid #0CB2AF; } 
+/* Set Up: Yellow Green */
+.phase-2_setup         { background: #f6f9ef; color: #A1C65D; border-left: 6px solid #A1C65D; } 
+/* Ceremony: Saffron */
+.phase-3_ceremony      { background: #fffbeb; color: #d9a300; border-left: 6px solid #FAC723; } 
+/* Cocktail Hour: Carrot Orange */
+.phase-4_cocktail_hour { background: #fef4e9; color: #F29222; border-left: 6px solid #F29222; } 
+/* Reception: Cinnabar */
+.phase-5_reception     { background: #fdf5f4; color: #E95E50; border-left: 6px solid #E95E50; } 
+/* Tear Down: Vintage Lavender */
+.phase-6_tear_down     { background: #f4f1f7; color: #936FAC; border-left: 6px solid #936FAC; } 
+
+/* Keeps the background color extending across the full row during horizontal scroll */
+.gantt-phase-header::after {
+    content: "";
+    flex-grow: 1;
+}

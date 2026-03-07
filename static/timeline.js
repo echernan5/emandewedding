@@ -118,7 +118,7 @@ function renderGantt(events) {
 
         // Render Phase Header Row (Spans all columns)
         html += `
-            <div class="gantt-phase-header" style="grid-row: ${currentRow}; grid-column: 1 / -1;">
+            <div class="gantt-phase-header phase-${phaseKey}" style="grid-row: ${currentRow}; grid-column: 1 / -1;">
                 ${phaseNames[phaseKey]}
             </div>
         `;
