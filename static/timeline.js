@@ -184,15 +184,15 @@ function renderGantt(events) {
             }
 
             const placement = getGanttPlacement(ev.start_time, ev.end_time);
-            
-            // Added detailed hover title so they can read clipped text!
             const hoverText = `${escapeHTML(ev.description)} (${formatTimeDisplay(ev.start_time)} - ${formatTimeDisplay(ev.end_time)})`;
             
+            // Removed the native 'title' attribute and added the custom tooltip div
             html += `
                 <div class="gantt-block-container phase-${phaseKey}" style="grid-column: ${placement.startCol}; grid-row: ${currentRow}; margin-left: ${placement.marginLeftPct}%; width: ${placement.widthPct}%;">
-                    <div class="gantt-block" title="${hoverText}">
+                    <div class="gantt-block">
                         ${escapeHTML(ev.description)}
                     </div>
+                    <div class="gantt-tooltip">${hoverText}</div>
                 </div>
             `;
             currentRow++;

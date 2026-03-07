@@ -156,7 +156,7 @@
 }
 
 /* --- PHASE COLORS (Backgrounds & Left Borders) --- */
-.phase-0_vendor_coverage { background: #f8fafc; color: #64748b; border-left: 6px solid #94a3b8; }
+.phase-0_vendor_coverage { background: #f8fafc; color: #818181; border-left: 6px solid #ababab; }
 .phase-1_getting_ready { background: #e0f8f7; color: #0CB2AF; border-left: 6px solid #0CB2AF; } 
 .phase-2_setup         { background: #f4f9eb; color: #A1C65D; border-left: 6px solid #A1C65D; } 
 .phase-3_ceremony      { background: #fff9e6; color: #d1a500; border-left: 6px solid #FAC723; } 
@@ -165,7 +165,7 @@
 .phase-6_tear_down     { background: #f4f1f7; color: #936FAC; border-left: 6px solid #936FAC; } 
 
 /* --- COORDINATED GANTT BARS --- */
-.gantt-block-container.phase-0_vendor_coverage .gantt-block { background-color: #94a3b8; color: white; }
+.gantt-block-container.phase-0_vendor_coverage .gantt-block { background-color: #ababab; color: white; }
 .gantt-block-container.phase-1_getting_ready .gantt-block { background-color: #0CB2AF; color: white; }
 .gantt-block-container.phase-2_setup         .gantt-block { background-color: #A1C65D; color: white; }
 .gantt-block-container.phase-3_ceremony      .gantt-block { background-color: #FAC723; color: #333; }
@@ -197,3 +197,47 @@
     background: transparent; border: none; color: #9ca3af; cursor: pointer; padding: 2px; font-size: 12px;
 }
 .btn-mini-edit:hover { color: #2563eb; }
+
+/* =========================================
+   7. CUSTOM TOOLTIPS
+   ========================================= */
+   .gantt-tooltip {
+    visibility: hidden;
+    opacity: 0;
+    background-color: #1e293b; /* Dark slate background */
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 6px 10px;
+    position: absolute;
+    z-index: 100;
+    bottom: 120%; /* Floats just above the bar */
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    transition: opacity 0.15s ease-in-out, bottom 0.15s ease-in-out;
+    pointer-events: none; /* Prevents the tooltip from blocking clicks */
+}
+
+/* The tiny downward-pointing triangle on the tooltip */
+.gantt-tooltip::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #1e293b transparent transparent transparent;
+}
+
+/* Show the tooltip and slide it up slightly on hover */
+.gantt-block-container:hover .gantt-tooltip {
+    visibility: visible;
+    opacity: 1;
+    bottom: 130%; 
+}
