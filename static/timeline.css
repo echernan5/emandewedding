@@ -14,12 +14,12 @@
 .gantt-grid {
     display: grid;
     /* Col 1: Desc (160px)
-      Col 2: Time (130px)
-      Col 3: Party (130px)
-      Col 4: Vendor (130px)
-      Cols 5-76: Time increments (15min each, min 16px) 
+       Col 2: Time (130px)
+       Col 3: Party (130px)
+       Col 4: Vendor (130px)
+       Cols 5-220: Exact 5-minute increments (18 hours * 12 = 216 cols locked to 15px!) 
     */
-    grid-template-columns: 160px 130px 130px 130px repeat(72, minmax(16px, 1fr));
+    grid-template-columns: 160px 130px 130px 130px repeat(216, 15px);
     min-width: max-content; 
 }
 
@@ -46,7 +46,6 @@
 .col-party  { position: sticky; left: 290px; z-index: 15; background: #fff; border-right: 1px solid var(--border-soft); }
 .col-vendor { position: sticky; left: 420px; z-index: 15; background: #fff; border-right: 2px solid var(--border); }
 
-/* Ensure top headers stay above scrolling row items */
 .gantt-header-cell.col-desc   { z-index: 25; }
 .gantt-header-cell.col-time   { z-index: 25; }
 .gantt-header-cell.col-party  { z-index: 25; }
@@ -73,12 +72,20 @@
    ========================================= */
 .gantt-grid-line {
     grid-row: 2 / -1; 
-    border-left: 1px dashed var(--border-soft);
     pointer-events: none;
     z-index: 1;
 }
+/* New faint 5-minute lines */
+.gantt-grid-line.five-min-line {
+    border-left: 1px solid #f8fafc; 
+}
+/* 15-minute marks */
+.gantt-grid-line.quarter-line {
+    border-left: 1px dashed var(--border-soft); 
+}
+/* Top of the hour */
 .gantt-grid-line.hour-line {
-    border-left: 1px solid var(--border);
+    border-left: 1px solid var(--border); 
 }
 
 /* =========================================
@@ -94,7 +101,7 @@
 }
 
 .gantt-block-container {
-    padding: 2px 0; /* Zero horizontal padding for exact % placement */
+    padding: 2px 0; 
     border-bottom: 1px solid var(--border-soft);
     z-index: 2;
     position: relative;
@@ -104,9 +111,9 @@
 .gantt-block {
     height: 100%;
     min-height: 20px;
-    padding: 2px 6px;
+    padding: 2px 4px; /* Shrunk so text fits inside tiny 5min blocks */
     border-radius: 4px;
-    font-size: 10.5px;
+    font-size: 10px;
     font-weight: 700;
     white-space: nowrap;
     overflow: hidden;

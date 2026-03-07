@@ -55,13 +55,14 @@ async function loadTimeline() {
         const token = await waitForAuth();
         const res = await fetch("/api/timeline", { headers: { Authorization: `Bearer ${token}` } });
         currentEvents = await res.json(); 
-        renderGantt(currentEvents);
+        t(currentEvents);
         document.getElementById("statusLine").textContent = "";
     } catch (e) {
         document.getElementById("statusLine").textContent = "Failed to load timeline.";
     }
 }
 
+// Calculates exact minute-by-minute widths for the 5-minute Grid
 function getGanttPlacement(startStr, endStr) {
     const parseTime = (str) => {
         if (!str) return null;
@@ -72,19 +73,22 @@ function getGanttPlacement(startStr, endStr) {
     let startMin = parseTime(startStr) || (START_HOUR * 60);
     let endMin = parseTime(endStr);
     
-    if (!endMin || endMin <= startMin) endMin = startMin + 15; 
+    // Default to 5 minutes if no end time is provided
+    if (!endMin || endMin <= startMin) endMin = startMin + 5; 
     const startHourBound = START_HOUR * 60;
     if (startMin < startHourBound) startMin = startHourBound;
 
+    // Grid starts at column 5. Divide by 5 for 5-minute columns
     const minutesFromStart = startMin - startHourBound;
-    const blockIndex = Math.floor(minutesFromStart / 15);
+    const blockIndex = Math.floor(minutesFromStart / 5);
     const startCol = 5 + blockIndex; 
 
-    const offsetMinutes = minutesFromStart % 15;
-    const marginLeftPct = (offsetMinutes / 15) * 100;
+    // Fractional offsets
+    const offsetMinutes = minutesFromStart % 5;
+    const marginLeftPct = (offsetMinutes / 5) * 100;
     
     const duration = endMin - startMin;
-    const widthPct = (duration / 15) * 100;
+    const widthPct = (duration / 5) * 100;
 
     return { startCol, marginLeftPct, widthPct };
 }
@@ -113,11 +117,12 @@ function renderGantt(events) {
         <div class="gantt-header-cell col-vendor" style="grid-column: 4; grid-row: 1;">Vendor</div>
     `;
 
+    // 12 columns per hour now!
     for (let h = START_HOUR; h < END_HOUR; h++) {
         const displayHour = h > 12 ? h - 12 : (h === 0 ? 12 : h);
         const ampm = h >= 12 ? 'PM' : 'AM';
-        const startCol = 5 + ((h - START_HOUR) * 4);
-        html += `<div class="gantt-time-header" style="grid-column: ${startCol} / ${startCol + 4};">${displayHour} ${ampm}</div>`;
+        const startCol = 5 + ((h - START_HOUR) * 12); 
+        html += `<div class="gantt-time-header" style="grid-column: ${startCol} / ${startCol + 12};">${displayHour} ${ampm}</div>`;
     }
 
     // 2. ROWS
@@ -134,9 +139,6 @@ function renderGantt(events) {
         if (phaseEvents.length === 0) return;
 
         const label = isUncategorized ? "Needs Phase Assignment" : phaseNames[phaseKey];
-        
-        // --- THIS IS THE CHROME BUG FIX! ---
-        // Notice the <span class="sticky-phase-label"> inside the div
         html += `
             <div class="gantt-phase-header phase-${phaseKey}" style="grid-row: ${currentRow}; grid-column: 1 / -1; ${isUncategorized ? 'background:#fef2f2; color:#b91c1c;' : ''}">
                 <span class="sticky-phase-label">${label}</span>
@@ -177,9 +179,13 @@ function renderGantt(events) {
             }
 
             const placement = getGanttPlacement(ev.start_time, ev.end_time);
+            
+            // Added detailed hover title so they can read clipped text!
+            const hoverText = `${escapeHTML(ev.description)} (${formatTimeDisplay(ev.start_time)} - ${formatTimeDisplay(ev.end_time)})`;
+            
             html += `
                 <div class="gantt-block-container phase-${phaseKey}" style="grid-column: ${placement.startCol}; grid-row: ${currentRow}; margin-left: ${placement.marginLeftPct}%; width: ${placement.widthPct}%;">
-                    <div class="gantt-block" title="${formatTimeDisplay(ev.start_time)} - ${formatTimeDisplay(ev.end_time)}">
+                    <div class="gantt-block" title="${hoverText}">
                         ${escapeHTML(ev.description)}
                     </div>
                 </div>
@@ -188,10 +194,17 @@ function renderGantt(events) {
         });
     });
 
+    // 3. BACKGROUND GRID (Drawing lines for 5, 15, and 60 min intervals)
     for (let h = START_HOUR; h <= END_HOUR; h++) {
-        for (let q = 0; q < 4; q++) {
-            const col = 5 + ((h - START_HOUR) * 4) + q;
-            const lineClass = q === 0 ? "gantt-grid-line hour-line" : "gantt-grid-line";
+        for (let q = 0; q < 12; q++) {
+            if (h === END_HOUR && q > 0) break;
+            const col = 5 + ((h - START_HOUR) * 12) + q;
+            
+            let lineClass = "gantt-grid-line";
+            if (q === 0) lineClass += " hour-line";
+            else if (q % 3 === 0) lineClass += " quarter-line";
+            else lineClass += " five-min-line";
+            
             html += `<div class="${lineClass}" style="grid-column: ${col}; grid-row: 2 / ${currentRow};"></div>`;
         }
     }
