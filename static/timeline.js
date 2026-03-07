@@ -222,13 +222,23 @@ function renderGantt(events) {
 
     // --- NEW: FILTERING LOGIC ---
     let filteredEvents = events;
+        
     if (window.activeFilters.party.length > 0) {
-        filteredEvents = filteredEvents.filter(e => e.wedding_party && e.wedding_party.some(p => window.activeFilters.party.includes(p)));
+        filteredEvents = filteredEvents.filter(e => {
+            if (!e.wedding_party) return false;
+            // 1. Does the event include any of the specifically checked people?
+            const hasSelected = e.wedding_party.some(p => window.activeFilters.party.includes(p));
+            // 2. Is the event universally assigned to "All"?
+            const hasAll = e.wedding_party.some(p => p.toLowerCase() === 'all');
+            
+            // Keep the event if either condition is true!
+            return hasSelected || hasAll;
+        });
     }
+
     if (window.activeFilters.vendor.length > 0) {
         filteredEvents = filteredEvents.filter(e => e.vendor && e.vendor.some(v => window.activeFilters.vendor.includes(v)));
     }
-
     // 2. ROWS
     let currentRow = 2;
     const groups = Object.keys(phaseNames);
