@@ -54,7 +54,7 @@ async function loadTimeline() {
     try {
         const token = await waitForAuth();
         const res = await fetch("/api/timeline", { headers: { Authorization: `Bearer ${token}` } });
-        currentEvents = await res.json(); // Save to global memory
+        currentEvents = await res.json(); 
         renderGantt(currentEvents);
         document.getElementById("statusLine").textContent = "";
     } catch (e) {
@@ -62,7 +62,6 @@ async function loadTimeline() {
     }
 }
 
-// Calculates exact minute-by-minute widths for the Gantt bar
 function getGanttPlacement(startStr, endStr) {
     const parseTime = (str) => {
         if (!str) return null;
@@ -73,17 +72,14 @@ function getGanttPlacement(startStr, endStr) {
     let startMin = parseTime(startStr) || (START_HOUR * 60);
     let endMin = parseTime(endStr);
     
-    // Safety fallback
     if (!endMin || endMin <= startMin) endMin = startMin + 15; 
     const startHourBound = START_HOUR * 60;
     if (startMin < startHourBound) startMin = startHourBound;
 
-    // Grid starts at column 5 (1:Desc, 2:Time, 3:Party, 4:Vendor)
     const minutesFromStart = startMin - startHourBound;
     const blockIndex = Math.floor(minutesFromStart / 15);
     const startCol = 5 + blockIndex; 
 
-    // Fractional offsets
     const offsetMinutes = minutesFromStart % 15;
     const marginLeftPct = (offsetMinutes / 15) * 100;
     
@@ -120,7 +116,7 @@ function renderGantt(events) {
     for (let h = START_HOUR; h < END_HOUR; h++) {
         const displayHour = h > 12 ? h - 12 : (h === 0 ? 12 : h);
         const ampm = h >= 12 ? 'PM' : 'AM';
-        const startCol = 5 + ((h - START_HOUR) * 4); // Shifted to start at Col 5
+        const startCol = 5 + ((h - START_HOUR) * 4);
         html += `<div class="gantt-time-header" style="grid-column: ${startCol} / ${startCol + 4};">${displayHour} ${ampm}</div>`;
     }
 
@@ -128,7 +124,6 @@ function renderGantt(events) {
     let currentRow = 2;
     const groups = Object.keys(phaseNames);
     
-    // Catch uncategorized items
     const uncategorizedEvents = events.filter(e => !groups.includes(e.phase));
     const allGroupsToRender = [...groups];
     if (uncategorizedEvents.length > 0) allGroupsToRender.push("uncategorized");
@@ -139,11 +134,17 @@ function renderGantt(events) {
         if (phaseEvents.length === 0) return;
 
         const label = isUncategorized ? "Needs Phase Assignment" : phaseNames[phaseKey];
-        html += `<div class="gantt-phase-header phase-${phaseKey}" style="grid-row: ${currentRow}; grid-column: 1 / -1; ${isUncategorized ? 'background:#fef2f2; color:#b91c1c;' : ''}">${label}</div>`;
+        
+        // --- THIS IS THE CHROME BUG FIX! ---
+        // Notice the <span class="sticky-phase-label"> inside the div
+        html += `
+            <div class="gantt-phase-header phase-${phaseKey}" style="grid-row: ${currentRow}; grid-column: 1 / -1; ${isUncategorized ? 'background:#fef2f2; color:#b91c1c;' : ''}">
+                <span class="sticky-phase-label">${label}</span>
+            </div>
+        `;
         currentRow++;
 
         phaseEvents.forEach(ev => {
-            // INLINE EDITING HTML (If Admin)
             if (isAdmin) {
                 html += `
                     <div class="gantt-cell col-desc" style="grid-column: 1; grid-row: ${currentRow}; display:flex; align-items:center;">
@@ -165,7 +166,6 @@ function renderGantt(events) {
                     </div>
                 `;
             } else {
-                // READ ONLY HTML (If Viewer)
                 html += `
                     <div class="gantt-cell col-desc" style="grid-column: 1; grid-row: ${currentRow};">${escapeHTML(ev.description)}</div>
                     <div class="gantt-cell col-time" style="grid-column: 2; grid-row: ${currentRow}; font-size:10px; font-weight:600;">
@@ -176,7 +176,6 @@ function renderGantt(events) {
                 `;
             }
 
-            // GANTT BAR (Uses fractional placement)
             const placement = getGanttPlacement(ev.start_time, ev.end_time);
             html += `
                 <div class="gantt-block-container phase-${phaseKey}" style="grid-column: ${placement.startCol}; grid-row: ${currentRow}; margin-left: ${placement.marginLeftPct}%; width: ${placement.widthPct}%;">
@@ -189,7 +188,6 @@ function renderGantt(events) {
         });
     });
 
-    // 3. BACKGROUND GRID
     for (let h = START_HOUR; h <= END_HOUR; h++) {
         for (let q = 0; q < 4; q++) {
             const col = 5 + ((h - START_HOUR) * 4) + q;
@@ -200,7 +198,6 @@ function renderGantt(events) {
 
     grid.innerHTML = html;
 
-    // Attach modal openers to the tiny pencil icons
     if (isAdmin) {
         grid.querySelectorAll('.edit-trigger').forEach(el => {
             el.addEventListener('click', () => {
@@ -211,7 +208,6 @@ function renderGantt(events) {
     }
 }
 
-// --- INLINE EDIT AUTO-SAVE ---
 async function handleInlineSave(inputEl) {
     const id = inputEl.getAttribute("data-id");
     const field = inputEl.getAttribute("data-field");
@@ -220,24 +216,22 @@ async function handleInlineSave(inputEl) {
     const ev = currentEvents.find(e => String(e.id) === String(id));
     if (!ev) return;
 
-    // If they typed into the array fields, convert comma-separated string back to array
     if (field === "wedding_party" || field === "vendor") {
         value = value.split(',').map(s => s.trim()).filter(Boolean);
     }
 
     ev[field] = value;
-    inputEl.style.opacity = "0.5"; // Visual feedback that it's saving
+    inputEl.style.opacity = "0.5"; 
 
     try {
         const token = await waitForAuth();
         const res = await fetch("/api/timeline", {
             method: "POST",
             headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
-            body: JSON.stringify(ev) // Re-submit the whole updated object
+            body: JSON.stringify(ev)
         });
         if (!res.ok) throw new Error("Save failed");
         
-        // If they changed a time, instantly re-render the grid to move the bar
         if (field === "start_time" || field === "end_time") {
             renderGantt(currentEvents);
         }
@@ -248,7 +242,6 @@ async function handleInlineSave(inputEl) {
     }
 }
 
-// --- MODAL LOGIC (Kept for Color/Phase assignment & Deletion) ---
 const modal = document.getElementById("modalAddEvent");
 const form = document.getElementById("formAddEvent");
 

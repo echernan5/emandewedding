@@ -1,49 +1,55 @@
 /* Inherits global vars from vendors.css */
-
-.gantt-wrapper {
+/* =========================================
+   1. MAIN WRAPPER & GRID LAYOUT
+   ========================================= */
+   .gantt-wrapper {
     background: var(--panel);
     border: 1px solid var(--border);
     border-radius: var(--radius);
     box-shadow: 0 6px 18px rgba(17,24,39,.06);
-    overflow: auto; /* Allows horizontal scrolling */
-    max-height: calc(100vh - 180px); /* Keeps headers sticky on screen */
+    overflow: auto; 
+    max-height: calc(100vh - 180px); 
 }
 
 .gantt-grid {
     display: grid;
-    /* SHRUNK COLUMNS:
-      Col 1: Desc (160px instead of 220px)
-      Col 2: Party (110px instead of 140px)
-      Col 3: Vendor (130px instead of 160px)
-      Cols 4-75: Time increments min 16px instead of 28px
+    /* Col 1: Desc (160px)
+      Col 2: Time (130px)
+      Col 3: Party (130px)
+      Col 4: Vendor (130px)
+      Cols 5-76: Time increments (15min each, min 16px) 
     */
-    grid-template-columns: 160px 110px 130px repeat(72, minmax(16px, 1fr));
+    grid-template-columns: 160px 130px 130px 130px repeat(72, minmax(16px, 1fr));
     min-width: max-content; 
 }
 
-/* Base style for all headers */
+/* =========================================
+   2. STICKY COLUMNS & HEADERS
+   ========================================= */
 .gantt-header-cell {
     position: sticky;
     top: 0;
     background: #f9fafb;
     border-bottom: 2px solid var(--border);
-    padding: 10px 12px;
-    font-size: 11px;
+    padding: 6px 8px;
+    font-size: 10px;
     font-weight: 700;
     color: var(--muted);
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    z-index: 20; /* Keep above scrolling content */
+    z-index: 20; 
 }
 
-/* Adjust sticky left positions to match the new shrunk columns */
-.col-desc { position: sticky; left: 0; z-index: 15; background: #fff; border-right: 1px solid var(--border-soft); }
-.col-party { position: sticky; left: 160px; z-index: 15; background: #fff; border-right: 1px solid var(--border-soft); }
-.col-vendor { position: sticky; left: 270px; z-index: 15; background: #fff; border-right: 2px solid var(--border); }
+/* Base sticky columns */
+.col-desc   { position: sticky; left: 0;     z-index: 15; background: #fff; border-right: 1px solid var(--border-soft); }
+.col-time   { position: sticky; left: 160px; z-index: 15; background: #fff; border-right: 1px solid var(--border-soft); }
+.col-party  { position: sticky; left: 290px; z-index: 15; background: #fff; border-right: 1px solid var(--border-soft); }
+.col-vendor { position: sticky; left: 420px; z-index: 15; background: #fff; border-right: 2px solid var(--border); }
 
-/* Higher z-index for the top-left corner cells so they don't scroll underneath */
-.gantt-header-cell.col-desc { z-index: 25; }
-.gantt-header-cell.col-party { z-index: 25; }
+/* Ensure top headers stay above scrolling row items */
+.gantt-header-cell.col-desc   { z-index: 25; }
+.gantt-header-cell.col-time   { z-index: 25; }
+.gantt-header-cell.col-party  { z-index: 25; }
 .gantt-header-cell.col-vendor { z-index: 25; }
 
 /* The horizontal Time Headers (e.g. 6 AM) */
@@ -51,9 +57,9 @@
     border-bottom: 2px solid var(--border);
     border-left: 1px solid var(--border-soft);
     background: #f9fafb;
-    padding: 8px 4px;
+    padding: 6px 8px;
     text-align: center;
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 700;
     color: var(--muted);
     grid-row: 1;
@@ -62,205 +68,43 @@
     z-index: 10;
 }
 
-/* Background grid lines for the chart area */
+/* =========================================
+   3. BACKGROUND GRID LINES
+   ========================================= */
 .gantt-grid-line {
-    grid-row: 2 / -1; /* Span from row 2 to the very bottom */
+    grid-row: 2 / -1; 
     border-left: 1px dashed var(--border-soft);
     pointer-events: none;
     z-index: 1;
 }
-/* Highlight the top of the hour slightly darker */
 .gantt-grid-line.hour-line {
     border-left: 1px solid var(--border);
 }
 
-/* Standard List Cells */
+/* =========================================
+   4. DATA CELLS & GANTT BARS
+   ========================================= */
 .gantt-cell {
-    padding: 12px;
-    font-size: 13px;
+    padding: 6px 8px;
+    font-size: 11.5px;
     font-weight: 500;
     border-bottom: 1px solid var(--border-soft);
     display: flex;
     align-items: center;
 }
 
-/* The actual colored time block */
 .gantt-block-container {
-    padding: 4px;
-    border-bottom: 1px solid var(--border-soft);
-    z-index: 2; /* Sit above the dashed lines */
-}
-
-.gantt-block {
-    height: 100%;
-    min-height: 28px;
-    padding: 4px 8px;
-    border-radius: 6px;
-    font-size: 12px;
-    font-weight: 600;
-    color: #111827;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: flex;
-    align-items: center;
-    border: 1px solid rgba(0,0,0,0.08);
-}
-
-.gantt-grid {
-    display: grid;
-    /* SHRUNK COLUMNS:
-      Col 1: Desc (160px instead of 220px)
-      Col 2: Party (110px instead of 140px)
-      Col 3: Vendor (130px instead of 160px)
-      Cols 4-75: Time increments min 16px instead of 28px
-    */
-    grid-template-columns: 160px 110px 130px repeat(72, minmax(16px, 1fr));
-    min-width: max-content; 
-}
-
-/* Adjust sticky left positions to match the new shrunk columns */
-.col-desc { position: sticky; left: 0; z-index: 15; background: #fff; border-right: 1px solid var(--border-soft); }
-.col-party { position: sticky; left: 160px; z-index: 15; background: #fff; border-right: 1px solid var(--border-soft); }
-.col-vendor { position: sticky; left: 270px; z-index: 15; background: #fff; border-right: 2px solid var(--border); }
-
-/* Make headers smaller and tighter */
-.gantt-header-cell, .gantt-time-header {
-    padding: 6px 8px; /* Was 10px 12px */
-    font-size: 10px;  /* Was 11px */
-}
-
-/* Make rows much shorter with less empty space */
-.gantt-cell {
-    padding: 6px 8px; /* Was 12px */
-    font-size: 11.5px; /* Was 13px */
-}
-
-/* Make the colored time blocks thinner */
-.gantt-block-container {
-    padding: 2px 4px; /* Was 4px */
+    padding: 2px 0; /* Zero horizontal padding for exact % placement */
     border-bottom: 1px solid var(--border-soft);
     z-index: 2;
+    position: relative;
+    overflow: visible; 
 }
 
-.gantt-block {
-    height: 100%;
-    min-height: 20px; /* Was 28px */
-    padding: 2px 6px; /* Was 4px 8px */
-    border-radius: 4px; /* Slightly sharper corners */
-    font-size: 10.5px; /* Smaller text inside the block */
-    font-weight: 600;
-    color: #111827;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: flex;
-    align-items: center;
-    border: 1px solid rgba(0,0,0,0.08);
-}
-
-/* Phase Header Row */
-.gantt-phase-header {
-    grid-column: 1 / -1; /* Spans the entire grid from left text to end of time */
-    background: #f3f4f6;
-    border-top: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
-    padding: 8px 12px;
-    font-size: 11px;
-    font-weight: 800;
-    text-transform: uppercase;
-    color: #4b5563;
-    letter-spacing: 0.1em;
-    position: sticky;
-    left: 0; /* Keeps text visible while scrolling time */
-    z-index: 12;
-}
-
-/* Specific Phase Colors (Optional) */
-.phase-ceremony { border-left: 6px solid #e9d5ff; }
-.phase-reception { border-left: 6px solid #bfdbfe; }
-
-/* Updated Base Header for Horizontal Stickiness */
-.gantt-phase-header {
-    grid-column: 1 / -1;
-    position: sticky;
-    left: 0;
-    z-index: 12;
-    padding: 8px 16px;
-    font-size: 11px;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    border-bottom: 1px solid rgba(0,0,0,0.08);
-    display: flex;
-    align-items: center;
-}
-
-/* New Palette Mapping */
-/* Getting Ready: Light Sea Green */
-.phase-1_getting_ready { background: #e6f7f7; color: #0CB2AF; border-left: 6px solid #0CB2AF; } 
-/* Set Up: Yellow Green */
-.phase-2_setup         { background: #f6f9ef; color: #A1C65D; border-left: 6px solid #A1C65D; } 
-/* Ceremony: Saffron */
-.phase-3_ceremony      { background: #fffbeb; color: #d9a300; border-left: 6px solid #FAC723; } 
-/* Cocktail Hour: Carrot Orange */
-.phase-4_cocktail_hour { background: #fef4e9; color: #F29222; border-left: 6px solid #F29222; } 
-/* Reception: Cinnabar */
-.phase-5_reception     { background: #fdf5f4; color: #E95E50; border-left: 6px solid #E95E50; } 
-/* Tear Down: Vintage Lavender */
-.phase-6_tear_down     { background: #f4f1f7; color: #936FAC; border-left: 6px solid #936FAC; } 
-
-/* Keeps the background color extending across the full row during horizontal scroll */
-.gantt-phase-header::after {
-    content: "";
-    flex-grow: 1;
-}
-
-/* --- UPDATED PHASE HEADERS --- */
-.gantt-phase-header {
-    grid-column: 1 / -1; /* Spans the whole width */
-    position: sticky;
-    left: 0;
-    z-index: 18; /* Higher than sticky columns (15) but lower than main headers (20) */
-    padding: 8px 16px;
-    font-size: 11px;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    display: flex;
-    align-items: center;
-    border-bottom: 1px solid rgba(0,0,0,0.1);
-}
-
-/* Ensure the background color covers the entire row width when pinned */
-.gantt-phase-header::after {
-    content: "";
-    flex-grow: 1;
-}
-
-/* Phase Mapping Colors from your Palette */
-.phase-1_getting_ready { background: #e0f8f7; color: #0CB2AF; border-left: 6px solid #0CB2AF; } 
-.phase-2_setup         { background: #f4f9eb; color: #A1C65D; border-left: 6px solid #A1C65D; } 
-.phase-3_ceremony      { background: #fff9e6; color: #d1a500; border-left: 6px solid #FAC723; } 
-.phase-4_cocktail_hour { background: #fef4e9; color: #F29222; border-left: 6px solid #F29222; } 
-.phase-5_reception     { background: #fdf2f1; color: #E95E50; border-left: 6px solid #E95E50; } 
-.phase-6_tear_down     { background: #f4f1f7; color: #936FAC; border-left: 6px solid #936FAC; } 
-
-/* --- COORDINATED GANTT BARS --- */
-/* The bars now inherit the border color of their respective phase */
-.gantt-block-container.phase-1_getting_ready .gantt-block { background-color: #0CB2AF; color: white; }
-.gantt-block-container.phase-2_setup         .gantt-block { background-color: #A1C65D; color: white; }
-.gantt-block-container.phase-3_ceremony      .gantt-block { background-color: #FAC723; color: #333; }
-.gantt-block-container.phase-4_cocktail_hour .gantt-block { background-color: #F29222; color: white; }
-.gantt-block-container.phase-5_reception     .gantt-block { background-color: #E95E50; color: white; }
-.gantt-block-container.phase-6_tear_down     .gantt-block { background-color: #936FAC; color: white; }
-
-/* Keep existing general block styles */
 .gantt-block {
     height: 100%;
     min-height: 20px;
-    padding: 2px 8px;
+    padding: 2px 6px;
     border-radius: 4px;
     font-size: 10.5px;
     font-weight: 700;
@@ -272,41 +116,56 @@
     box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
 
-/* --- UPDATED GRID LAYOUT (Added Time Column) --- */
-.gantt-grid {
-    display: grid;
-    /* Col 1: Desc (160px)
-      Col 2: Time (130px)
-      Col 3: Party (130px)
-      Col 4: Vendor (130px)
-      Cols 5-76: Time increments min 16px 
-    */
-    grid-template-columns: 160px 130px 130px 130px repeat(72, minmax(16px, 1fr));
-    min-width: max-content; 
+/* =========================================
+   5. PHASE SECTION HEADERS
+   ========================================= */
+/* Wrapper covers the full row but is NOT sticky (Chrome bug fix) */
+.gantt-phase-header {
+    grid-column: 1 / -1; 
+    z-index: 18; 
+    padding: 8px 0; 
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
 }
 
-/* Updated Sticky Positions (Must match the column widths above) */
-.col-desc   { position: sticky; left: 0;     z-index: 15; background: #fff; border-right: 1px solid var(--border-soft); }
-.col-time   { position: sticky; left: 160px; z-index: 15; background: #fff; border-right: 1px solid var(--border-soft); }
-.col-party  { position: sticky; left: 290px; z-index: 15; background: #fff; border-right: 1px solid var(--border-soft); }
-.col-vendor { position: sticky; left: 420px; z-index: 15; background: #fff; border-right: 2px solid var(--border); }
-
-/* Top headers need to stay above the scrolling row items */
-.gantt-header-cell.col-desc   { z-index: 25; }
-.gantt-header-cell.col-time   { z-index: 25; }
-.gantt-header-cell.col-party  { z-index: 25; }
-.gantt-header-cell.col-vendor { z-index: 25; }
-
-/* Update the block container to allow precise fractional width overflows */
-.gantt-block-container {
-    padding: 2px 0; /* Removed horizontal padding so percentage widths are 100% accurate */
-    border-bottom: 1px solid var(--border-soft);
-    z-index: 2;
-    position: relative;
-    overflow: visible; /* Allows the bar to stretch across multiple columns natively */
+/* Fills the rest of the row with background color */
+.gantt-phase-header::after {
+    content: "";
+    flex-grow: 1;
 }
 
-/* --- INLINE EDITING STYLES --- */
+/* THIS element does the actual sticking */
+.sticky-phase-label {
+    position: sticky;
+    left: 0;
+    padding-left: 16px;
+    display: inline-block;
+}
+
+/* --- PHASE COLORS (Backgrounds & Left Borders) --- */
+.phase-1_getting_ready { background: #e0f8f7; color: #0CB2AF; border-left: 6px solid #0CB2AF; } 
+.phase-2_setup         { background: #f4f9eb; color: #A1C65D; border-left: 6px solid #A1C65D; } 
+.phase-3_ceremony      { background: #fff9e6; color: #d1a500; border-left: 6px solid #FAC723; } 
+.phase-4_cocktail_hour { background: #fef4e9; color: #F29222; border-left: 6px solid #F29222; } 
+.phase-5_reception     { background: #fdf2f1; color: #E95E50; border-left: 6px solid #E95E50; } 
+.phase-6_tear_down     { background: #f4f1f7; color: #936FAC; border-left: 6px solid #936FAC; } 
+
+/* --- COORDINATED GANTT BARS --- */
+.gantt-block-container.phase-1_getting_ready .gantt-block { background-color: #0CB2AF; color: white; }
+.gantt-block-container.phase-2_setup         .gantt-block { background-color: #A1C65D; color: white; }
+.gantt-block-container.phase-3_ceremony      .gantt-block { background-color: #FAC723; color: #333; }
+.gantt-block-container.phase-4_cocktail_hour .gantt-block { background-color: #F29222; color: white; }
+.gantt-block-container.phase-5_reception     .gantt-block { background-color: #E95E50; color: white; }
+.gantt-block-container.phase-6_tear_down     .gantt-block { background-color: #936FAC; color: white; }
+
+/* =========================================
+   6. INLINE EDITING
+   ========================================= */
 .inline-input {
     width: 100%;
     border: 1px solid transparent;
@@ -324,7 +183,6 @@
 .time-input-group { display: flex; align-items: center; gap: 2px; }
 .time-input { width: auto; padding: 2px; letter-spacing: -0.5px; }
 
-/* A tiny edit button to access the modal for color/phase changes */
 .btn-mini-edit {
     background: transparent; border: none; color: #9ca3af; cursor: pointer; padding: 2px; font-size: 12px;
 }
