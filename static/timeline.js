@@ -1,7 +1,40 @@
 const START_HOUR = 6;
 const END_HOUR = 24; 
-let currentEvents = []; // Global memory for inline editing
+let currentEvents = []; 
 
+// --- NEW: Global Filter State & Functions ---
+window.activeFilters = { party: [], vendor: [] };
+
+window.toggleFilterPopup = (type, event) => {
+    event.stopPropagation();
+    const popup = document.getElementById(`${type}FilterPopup`);
+    document.querySelectorAll('.filter-popup').forEach(p => {
+        if (p !== popup) p.classList.remove('show');
+    });
+    popup.classList.toggle('show');
+};
+
+window.applyFilter = (type) => {
+    const popup = document.getElementById(`${type}FilterPopup`);
+    const checked = Array.from(popup.querySelectorAll('input:checked')).map(cb => cb.value);
+    window.activeFilters[type] = checked;
+    renderGantt(currentEvents); 
+};
+
+window.clearFilter = (type) => {
+    window.activeFilters[type] = [];
+    renderGantt(currentEvents);
+};
+
+window.stopProp = (event) => {
+    event.stopPropagation();
+};
+
+document.addEventListener('click', () => {
+    document.querySelectorAll('.filter-popup').forEach(p => p.classList.remove('show'));
+});
+
+// --- CORE FUNCTIONS ---
 async function waitForAuth() {
     for (let i = 0; i < 50; i++) {
         if (window.AppAuth?.token) return window.AppAuth.token;
@@ -35,14 +68,45 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     await loadTimeline();
 
+    // --- GLOBAL TOOLTIP SETUP ---
+    const tooltip = document.createElement('div');
+    tooltip.id = 'global-tooltip';
+    document.body.appendChild(tooltip);
+
+    const gridEl = document.getElementById("ganttGrid");
+
+    gridEl.addEventListener('mouseover', (e) => {
+        const block = e.target.closest('.gantt-block');
+        if (block && block.dataset.tooltip) {
+            tooltip.textContent = block.dataset.tooltip;
+            tooltip.style.opacity = '1';
+            tooltip.style.visibility = 'visible';
+        }
+    });
+
+    gridEl.addEventListener('mousemove', (e) => {
+        const block = e.target.closest('.gantt-block');
+        if (block && block.dataset.tooltip) {
+            tooltip.style.left = (e.clientX + 15) + 'px';
+            tooltip.style.top = (e.clientY + 15) + 'px';
+        }
+    });
+
+    gridEl.addEventListener('mouseout', (e) => {
+        const block = e.target.closest('.gantt-block');
+        if (block) {
+            tooltip.style.opacity = '0';
+            tooltip.style.visibility = 'hidden';
+        }
+    });
+
     // Modal Events
     addBtn.addEventListener("click", () => openModal(null));
     document.getElementById("btnCloseEventModal").addEventListener("click", closeModal);
     document.getElementById("btnCancelEvent").addEventListener("click", closeModal);
     document.getElementById("formAddEvent").addEventListener("submit", handleAddEvent);
 
-    // INLINE EDIT AUTO-SAVE LISTENER
-    document.getElementById("ganttGrid").addEventListener("change", async (e) => {
+    gridEl.addEventListener("change", async (e) => {
         if (e.target.classList.contains("inline-input")) {
             await handleInlineSave(e.target);
         }
@@ -55,14 +119,13 @@ async function loadTimeline() {
         const token = await waitForAuth();
         const res = await fetch("/api/timeline", { headers: { Authorization: `Bearer ${token}` } });
         currentEvents = await res.json(); 
-        renderGantt(currentEvents); // <-- FIXED: Changed 't' to 'renderGantt'
+        renderGantt(currentEvents); 
         document.getElementById("statusLine").textContent = "";
     } catch (e) {
         document.getElementById("statusLine").textContent = "Failed to load timeline.";
     }
 }
 
-// Calculates exact minute-by-minute widths for the 5-minute Grid
 function getGanttPlacement(startStr, endStr) {
     const parseTime = (str) => {
         if (!str) return null;
@@ -73,17 +136,14 @@ function getGanttPlacement(startStr, endStr) {
     let startMin = parseTime(startStr) || (START_HOUR * 60);
     let endMin = parseTime(endStr);
     
-    // Default to 5 minutes if no end time is provided
     if (!endMin || endMin <= startMin) endMin = startMin + 5; 
     const startHourBound = START_HOUR * 60;
     if (startMin < startHourBound) startMin = startHourBound;
 
-    // Grid starts at column 5. Divide by 5 for 5-minute columns
     const minutesFromStart = startMin - startHourBound;
     const blockIndex = Math.floor(minutesFromStart / 5);
     const startCol = 5 + blockIndex; 
 
-    // Fractional offsets
     const offsetMinutes = minutesFromStart % 5;
     const marginLeftPct = (offsetMinutes / 5) * 100;
     
@@ -99,7 +159,7 @@ function renderGantt(events) {
     const isAdmin = (localStorage.getItem("user_role_key") || "admin") === "admin";
 
     const phaseNames = {
-        "0_vendor_coverage": "Vendor Coverage", // Add this line!
+        "0_vendor_coverage": "Vendor Coverage", 
         "1_getting_ready": "Getting Ready", 
         "2_setup": "Set Up", 
         "3_ceremony": "Ceremony",
@@ -114,15 +174,45 @@ function renderGantt(events) {
         return tags.map(tag => `<span class="chip" style="padding: 1px 4px; font-size: 9px; margin: 1px 1px 0 0; display: inline-block;">${escapeHTML(tag)}</span>`).join("");
     };
 
+    // --- NEW: GENERATE FILTER POPUP HTML ---
+    const allParties = [...new Set(events.flatMap(e => e.wedding_party || []))].filter(Boolean).sort();
+    const allVendors = [...new Set(events.flatMap(e => e.vendor || []))].filter(Boolean).sort();
+
+    const renderFilterPopup = (type, options, activeList) => {
+        let listHTML = options.map(opt => {
+            const checked = activeList.includes(opt) ? 'checked' : '';
+            return `<label><input type="checkbox" value="${escapeHTML(opt)}" ${checked}> ${escapeHTML(opt)}</label>`;
+        }).join('');
+        
+        return `
+            <div class="filter-popup" id="${type}FilterPopup" onclick="window.stopProp(event)">
+                <div class="filter-list">${listHTML}</div>
+                <div class="filter-actions">
+                    <button type="button" onclick="window.clearFilter('${type}')">Clear</button>
+                    <button type="button" onclick="window.applyFilter('${type}')">Apply</button>
+                </div>
+            </div>
+        `;
+    };
+
     // 1. HEADERS
     let html = `
         <div class="gantt-header-cell col-desc" style="grid-column: 1; grid-row: 1;">Item Description</div>
         <div class="gantt-header-cell col-time" style="grid-column: 2; grid-row: 1;">Time</div>
-        <div class="gantt-header-cell col-party" style="grid-column: 3; grid-row: 1;">Wedding Party</div>
-        <div class="gantt-header-cell col-vendor" style="grid-column: 4; grid-row: 1;">Vendor</div>
+        
+        <div class="gantt-header-cell col-party with-filter" style="grid-column: 3; grid-row: 1;">
+            <span>Wedding Party</span>
+            <button class="filter-btn ${window.activeFilters.party.length ? 'active' : ''}" onclick="window.toggleFilterPopup('party', event)">▼</button>
+            ${renderFilterPopup('party', allParties, window.activeFilters.party)}
+        </div>
+        
+        <div class="gantt-header-cell col-vendor with-filter" style="grid-column: 4; grid-row: 1;">
+            <span>Vendor</span>
+            <button class="filter-btn ${window.activeFilters.vendor.length ? 'active' : ''}" onclick="window.toggleFilterPopup('vendor', event)">▼</button>
+            ${renderFilterPopup('vendor', allVendors, window.activeFilters.vendor)}
+        </div>
     `;
 
-    // 12 columns per hour now!
     for (let h = START_HOUR; h < END_HOUR; h++) {
         const displayHour = h > 12 ? h - 12 : (h === 0 ? 12 : h);
         const ampm = h >= 12 ? 'PM' : 'AM';
@@ -130,17 +220,29 @@ function renderGantt(events) {
         html += `<div class="gantt-time-header" style="grid-column: ${startCol} / ${startCol + 12};">${displayHour} ${ampm}</div>`;
     }
 
+    // --- NEW: FILTERING LOGIC ---
+    let filteredEvents = events;
+    if (window.activeFilters.party.length > 0) {
+        filteredEvents = filteredEvents.filter(e => e.wedding_party && e.wedding_party.some(p => window.activeFilters.party.includes(p)));
+    }
+    if (window.activeFilters.vendor.length > 0) {
+        filteredEvents = filteredEvents.filter(e => e.vendor && e.vendor.some(v => window.activeFilters.vendor.includes(v)));
+    }
+
     // 2. ROWS
     let currentRow = 2;
     const groups = Object.keys(phaseNames);
     
-    const uncategorizedEvents = events.filter(e => !groups.includes(e.phase));
+    // We only render phases that have surviving events after filtering
+    const uncategorizedEvents = filteredEvents.filter(e => !groups.includes(e.phase));
     const allGroupsToRender = [...groups];
     if (uncategorizedEvents.length > 0) allGroupsToRender.push("uncategorized");
 
     allGroupsToRender.forEach(phaseKey => {
         const isUncategorized = phaseKey === "uncategorized";
-        const phaseEvents = isUncategorized ? uncategorizedEvents : events.filter(e => e.phase === phaseKey);
+        const phaseEvents = isUncategorized ? uncategorizedEvents : filteredEvents.filter(e => e.phase === phaseKey);
+        
+        // Skip empty phases automatically!
         if (phaseEvents.length === 0) return;
 
         const label = isUncategorized ? "Needs Phase Assignment" : phaseNames[phaseKey];
@@ -152,6 +254,9 @@ function renderGantt(events) {
         currentRow++;
 
         phaseEvents.forEach(ev => {
+            const startVal = ev.start_time ? ev.start_time.substring(0,5) : "";
+            const endVal = ev.end_time ? ev.end_time.substring(0,5) : "";
+
             if (isAdmin) {
                 html += `
                     <div class="gantt-cell col-desc" style="grid-column: 1; grid-row: ${currentRow}; display:flex; align-items:center;">
@@ -160,9 +265,9 @@ function renderGantt(events) {
                     </div>
                     <div class="gantt-cell col-time" style="grid-column: 2; grid-row: ${currentRow};">
                         <div class="time-input-group">
-                            <input type="time" class="inline-input time-input" data-id="${ev.id}" data-field="start_time" value="${ev.start_time}">
+                            <input type="time" class="inline-input time-input" data-id="${ev.id}" data-field="start_time" value="${startVal}">
                             <span class="muted">-</span>
-                            <input type="time" class="inline-input time-input" data-id="${ev.id}" data-field="end_time" value="${ev.end_time}">
+                            <input type="time" class="inline-input time-input" data-id="${ev.id}" data-field="end_time" value="${endVal}">
                         </div>
                     </div>
                     <div class="gantt-cell col-party" style="grid-column: 3; grid-row: ${currentRow};">
@@ -186,20 +291,21 @@ function renderGantt(events) {
             const placement = getGanttPlacement(ev.start_time, ev.end_time);
             const hoverText = `${escapeHTML(ev.description)} (${formatTimeDisplay(ev.start_time)} - ${formatTimeDisplay(ev.end_time)})`;
             
-            // Removed the native 'title' attribute and added the custom tooltip div
+            // --- NEW: Add the muted time right inside the Gantt block ---
             html += `
                 <div class="gantt-block-container phase-${phaseKey}" style="grid-column: ${placement.startCol}; grid-row: ${currentRow}; margin-left: ${placement.marginLeftPct}%; width: ${placement.widthPct}%;">
-                    <div class="gantt-block">
-                        <span class="sticky-bar-text">${escapeHTML(ev.description)}</span>
+                    <div class="gantt-block" data-tooltip="${hoverText}">
+                        <span class="sticky-bar-text">
+                            ${escapeHTML(ev.description)} 
+                            <span class="bar-time">${formatTimeDisplay(ev.start_time)} - ${formatTimeDisplay(ev.end_time)}</span>
+                        </span>
                     </div>
-                    <div class="gantt-tooltip">${hoverText}</div>
                 </div>
             `;
             currentRow++;
         });
     });
 
-    // 3. BACKGROUND GRID (Drawing lines for 5, 15, and 60 min intervals)
     for (let h = START_HOUR; h <= END_HOUR; h++) {
         for (let q = 0; q < 12; q++) {
             if (h === END_HOUR && q > 0) break;
@@ -226,7 +332,6 @@ function renderGantt(events) {
     }
 }
 
-// --- INLINE EDIT AUTO-SAVE ---
 async function handleInlineSave(inputEl) {
     const id = inputEl.getAttribute("data-id");
     const field = inputEl.getAttribute("data-field");
@@ -235,27 +340,25 @@ async function handleInlineSave(inputEl) {
     const ev = currentEvents.find(e => String(e.id) === String(id));
     if (!ev) return;
 
-    // --- NEW: Safety check to prevent saving blank times ---
     if ((field === "start_time" || field === "end_time") && !value) {
         alert("Time cannot be left blank.");
-        inputEl.value = ev[field]; // Reset back to the original saved time
-        return; // Stop the save process
+        inputEl.value = ev[field] ? ev[field].substring(0,5) : ""; 
+        return; 
     }
 
-    // If they typed into the array fields, convert comma-separated string back to array
     if (field === "wedding_party" || field === "vendor") {
         value = value.split(',').map(s => s.trim()).filter(Boolean);
     }
 
     ev[field] = value;
-    inputEl.style.opacity = "0.5"; // Visual feedback that it's saving
+    inputEl.style.opacity = "0.5"; 
 
     try {
         const token = await waitForAuth();
         const res = await fetch("/api/timeline", {
             method: "POST",
             headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
-            body: JSON.stringify(ev) // Re-submit the whole updated object
+            body: JSON.stringify(ev)
         });
         
         if (!res.ok) {
@@ -263,7 +366,6 @@ async function handleInlineSave(inputEl) {
             throw new Error(errorJson.error || "Save failed");
         }
         
-        // If they changed a time, instantly re-render the grid to move the bar
         if (field === "start_time" || field === "end_time") {
             renderGantt(currentEvents);
         }
@@ -286,8 +388,8 @@ function openModal(eventData = null) {
     if (isEdit) {
         document.getElementById("evId").value = eventData.id;
         document.getElementById("evDescription").value = eventData.description || "";
-        document.getElementById("evStart").value = eventData.start_time || "";
-        document.getElementById("evEnd").value = eventData.end_time || "";
+        document.getElementById("evStart").value = eventData.start_time ? eventData.start_time.substring(0,5) : "";
+        document.getElementById("evEnd").value = eventData.end_time ? eventData.end_time.substring(0,5) : "";
         document.getElementById("evColor").value = eventData.color_code || "#bbf7d0";
         document.getElementById("evPhase").value = eventData.phase || "1_getting_ready";
         

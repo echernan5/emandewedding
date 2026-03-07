@@ -208,46 +208,116 @@
 .btn-mini-edit:hover { color: #2563eb; }
 
 /* =========================================
-   7. CUSTOM TOOLTIPS
+   7. GLOBAL TOOLTIP
    ========================================= */
-   .gantt-tooltip {
-    visibility: hidden;
-    opacity: 0;
-    background-color: #1e293b; /* Dark slate background */
+   #global-tooltip {
+    position: fixed; /* Attaches to the browser window, completely breaking out of the grid */
+    z-index: 9999;   /* Now it is truly on top of everything */
+    background-color: #1e293b;
     color: #fff;
-    text-align: center;
-    border-radius: 6px;
     padding: 6px 10px;
-    position: absolute;
-    z-index: 100;
-    bottom: 120%; /* Floats just above the bar */
-    left: 50%;
-    transform: translateX(-50%);
-    white-space: nowrap;
+    border-radius: 6px;
     font-size: 11px;
     font-weight: 500;
-    letter-spacing: 0.02em;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    transition: opacity 0.15s ease-in-out, bottom 0.15s ease-in-out;
-    pointer-events: none; /* Prevents the tooltip from blocking clicks */
+    white-space: nowrap;
+    pointer-events: none; /* Prevents it from blocking clicks */
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.1s ease-in-out;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
-/* The tiny downward-pointing triangle on the tooltip */
-.gantt-tooltip::after {
-    content: "";
+/* =========================================
+   8. FILTER MENUS & BAR TIMES
+   ========================================= */
+   .gantt-header-cell.with-filter {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    overflow: visible; /* CRITICAL: Allows the popup to drop down outside the cell */
+}
+
+.filter-btn {
+    background: none;
+    border: none;
+    color: #9ca3af;
+    cursor: pointer;
+    padding: 2px 4px;
+    border-radius: 4px;
+    font-size: 10px;
+    margin-left: auto;
+}
+
+.filter-btn:hover { background: rgba(0,0,0,0.05); color: #4b5563; }
+.filter-btn.active { color: #2563eb; background: #eff6ff; }
+
+/* The Dropdown Container */
+.filter-popup {
     position: absolute;
     top: 100%;
-    left: 50%;
-    margin-left: -5px;
-    border-width: 5px;
-    border-style: solid;
-    border-color: #1e293b transparent transparent transparent;
+    right: 0;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    padding: 8px;
+    z-index: 100;
+    display: none; /* Hidden by default */
+    flex-direction: column;
+    gap: 4px;
+    min-width: 160px;
+    color: #333;
+    text-transform: none;
+    letter-spacing: normal;
+    font-weight: 500;
+    font-size: 11px;
 }
 
-/* Show the tooltip and slide it up slightly on hover */
-.gantt-block-container:hover .gantt-tooltip {
-    visibility: visible;
-    opacity: 1;
-    bottom: 130%; 
-    z-index: 100;
+.filter-popup.show { display: flex; }
+
+.filter-list {
+    max-height: 150px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.filter-list label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    padding: 2px 4px;
+    border-radius: 4px;
+}
+
+.filter-list label:hover { background: #f3f4f6; }
+
+.filter-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 6px;
+    border-top: 1px solid #eee;
+    padding-top: 6px;
+}
+
+.filter-actions button {
+    background: none;
+    border: none;
+    color: #2563eb;
+    cursor: pointer;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 4px;
+}
+.filter-actions button:hover { text-decoration: underline; }
+
+/* The embedded time inside the Gantt bars */
+.bar-time {
+    opacity: 0.75; /* Automatically mutes the text relative to the current bar color! */
+    font-weight: 500;
+    font-size: 0.9em;
+    margin-left: 6px;
+    letter-spacing: 0.02em;
 }
