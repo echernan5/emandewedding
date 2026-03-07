@@ -221,6 +221,7 @@ function renderGantt(events) {
     }
 }
 
+// --- INLINE EDIT AUTO-SAVE ---
 async function handleInlineSave(inputEl) {
     const id = inputEl.getAttribute("data-id");
     const field = inputEl.getAttribute("data-field");
@@ -229,22 +230,35 @@ async function handleInlineSave(inputEl) {
     const ev = currentEvents.find(e => String(e.id) === String(id));
     if (!ev) return;
 
+    // --- NEW: Safety check to prevent saving blank times ---
+    if ((field === "start_time" || field === "end_time") && !value) {
+        alert("Time cannot be left blank.");
+        inputEl.value = ev[field]; // Reset back to the original saved time
+        return; // Stop the save process
+    }
+
+    // If they typed into the array fields, convert comma-separated string back to array
     if (field === "wedding_party" || field === "vendor") {
         value = value.split(',').map(s => s.trim()).filter(Boolean);
     }
 
     ev[field] = value;
-    inputEl.style.opacity = "0.5"; 
+    inputEl.style.opacity = "0.5"; // Visual feedback that it's saving
 
     try {
         const token = await waitForAuth();
         const res = await fetch("/api/timeline", {
             method: "POST",
             headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
-            body: JSON.stringify(ev)
+            body: JSON.stringify(ev) // Re-submit the whole updated object
         });
-        if (!res.ok) throw new Error("Save failed");
         
+        if (!res.ok) {
+            const errorJson = await res.json();
+            throw new Error(errorJson.error || "Save failed");
+        }
+        
+        // If they changed a time, instantly re-render the grid to move the bar
         if (field === "start_time" || field === "end_time") {
             renderGantt(currentEvents);
         }
