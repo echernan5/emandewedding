@@ -19,14 +19,14 @@
        Col 4: Vendor (130px)
        Cols 5-220: Exact 5-minute increments (18 hours * 12 = 216 cols locked to 15px!) 
     */
-    grid-template-columns: 160px 130px 130px 130px repeat(216, 15px);
+    grid-template-columns: 160px 130px 130px 130px repeat(216, 10px);
     min-width: max-content; 
 }
 
 /* =========================================
    2. STICKY COLUMNS & HEADERS
    ========================================= */
-.gantt-header-cell {
+   .gantt-header-cell {
     position: sticky;
     top: 0;
     background: #f9fafb;
@@ -37,19 +37,20 @@
     color: var(--muted);
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    z-index: 20; 
+    z-index: 25; /* INCREASED: Was 20 */
 }
 
-/* Base sticky columns */
+/* Base sticky columns (Left side) */
 .col-desc   { position: sticky; left: 0;     z-index: 15; background: #fff; border-right: 1px solid var(--border-soft); }
 .col-time   { position: sticky; left: 160px; z-index: 15; background: #fff; border-right: 1px solid var(--border-soft); }
 .col-party  { position: sticky; left: 290px; z-index: 15; background: #fff; border-right: 1px solid var(--border-soft); }
 .col-vendor { position: sticky; left: 420px; z-index: 15; background: #fff; border-right: 2px solid var(--border); }
 
-.gantt-header-cell.col-desc   { z-index: 25; }
-.gantt-header-cell.col-time   { z-index: 25; }
-.gantt-header-cell.col-party  { z-index: 25; }
-.gantt-header-cell.col-vendor { z-index: 25; }
+/* Top-Left Corner Headers (Must be the highest so they float above everything) */
+.gantt-header-cell.col-desc   { z-index: 30; } /* INCREASED: Was 25 */
+.gantt-header-cell.col-time   { z-index: 30; } /* INCREASED: Was 25 */
+.gantt-header-cell.col-party  { z-index: 30; } /* INCREASED: Was 25 */
+.gantt-header-cell.col-vendor { z-index: 30; } /* INCREASED: Was 25 */
 
 /* The horizontal Time Headers (e.g. 6 AM) */
 .gantt-time-header {
@@ -57,14 +58,14 @@
     border-left: 1px solid var(--border-soft);
     background: #f9fafb;
     padding: 6px 8px;
-    text-align: center;
-    font-size: 10px;
+    text-align: left;
+    font-size: 12px;
     font-weight: 700;
     color: var(--muted);
     grid-row: 1;
     position: sticky;
     top: 0;
-    z-index: 10;
+    z-index: 25; /* INCREASED: Was 10. Now correctly floats above the phase headers (which are 18) */
 }
 
 /* =========================================
