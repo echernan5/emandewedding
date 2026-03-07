@@ -112,16 +112,25 @@
 .gantt-block {
     height: 100%;
     min-height: 20px;
-    padding: 2px 4px; /* Shrunk so text fits inside tiny 5min blocks */
     border-radius: 4px;
     font-size: 10px;
     font-weight: 700;
     white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    overflow: clip; 
     display: flex;
     align-items: center;
     box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.sticky-bar-text {
+    position: sticky;
+    /* 550px gets it past the 4 frozen columns, + 4px for some nice padding */
+    left: 554px; 
+    padding: 2px 4px;
+    display: inline-block;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 /* =========================================
@@ -240,4 +249,5 @@
     visibility: visible;
     opacity: 1;
     bottom: 130%; 
+    z-index: 100;
 }

@@ -190,7 +190,7 @@ function renderGantt(events) {
             html += `
                 <div class="gantt-block-container phase-${phaseKey}" style="grid-column: ${placement.startCol}; grid-row: ${currentRow}; margin-left: ${placement.marginLeftPct}%; width: ${placement.widthPct}%;">
                     <div class="gantt-block">
-                        ${escapeHTML(ev.description)}
+                        <span class="sticky-bar-text">${escapeHTML(ev.description)}</span>
                     </div>
                     <div class="gantt-tooltip">${hoverText}</div>
                 </div>
