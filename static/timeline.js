@@ -65,11 +65,9 @@ function renderGantt(events) {
     const grid = document.getElementById("ganttGrid");
     grid.innerHTML = "";
     
-    // 1. Role Check
     const currentRole = localStorage.getItem("user_role_key") || "admin";
     const isAdmin = currentRole === "admin";
 
-    // 2. Define Phase Mapping
     const phaseNames = {
         "1_getting_ready": "Getting Ready",
         "2_setup": "Set Up",
@@ -79,44 +77,35 @@ function renderGantt(events) {
         "6_tear_down": "Tear Down"
     };
 
-    // Helper: Generate HTML for multi-select tags
     const renderTags = (tagsArray) => {
         let tags = Array.isArray(tagsArray) ? tagsArray : (tagsArray ? [tagsArray] : []);
         if (!tags.length) return `<span class="muted" style="font-size: 11px;">—</span>`;
-        
-        return tags.map(tag => `
-            <span class="chip" style="padding: 1px 4px; font-size: 9px; margin: 1px 1px 0 0; display: inline-block;">
-                ${escapeHTML(tag)}
-            </span>
-        `).join("");
+        return tags.map(tag => `<span class="chip" style="padding: 1px 4px; font-size: 9px; margin: 1px 1px 0 0; display: inline-block;">${escapeHTML(tag)}</span>`).join("");
     };
 
-    // --- 3. RENDER GLOBAL HEADERS ---
+    // --- 1. RENDER GLOBAL HEADERS ---
     let html = `
         <div class="gantt-header-cell col-desc" style="grid-column: 1; grid-row: 1;">Item Description</div>
         <div class="gantt-header-cell col-party" style="grid-column: 2; grid-row: 1;">Wedding Party</div>
         <div class="gantt-header-cell col-vendor" style="grid-column: 3; grid-row: 1;">Vendor</div>
     `;
 
-    // Render Time Headers (6 AM to Midnight)
     for (let h = START_HOUR; h < END_HOUR; h++) {
         const displayHour = h > 12 ? h - 12 : (h === 0 ? 12 : h);
         const ampm = h >= 12 ? 'PM' : 'AM';
         const startCol = 4 + ((h - START_HOUR) * 4);
-        const endCol = startCol + 4;
-        
-        html += `<div class="gantt-time-header" style="grid-column: ${startCol} / ${endCol};">${displayHour} ${ampm}</div>`;
+        html += `<div class="gantt-time-header" style="grid-column: ${startCol} / ${startCol + 4};">${displayHour} ${ampm}</div>`;
     }
 
-    // --- 4. RENDER PHASE GROUPS AND ROWS ---
-    let currentRow = 2; // Row 1 is the header
+    // --- 2. RENDER PHASE GROUPS AND ROWS ---
+    let currentRow = 2;
     const groups = Object.keys(phaseNames);
 
     groups.forEach(phaseKey => {
         const phaseEvents = events.filter(e => e.phase === phaseKey);
         if (phaseEvents.length === 0) return;
 
-        // Render Phase Header Row (Spans all columns)
+        // Render Phase Header (Horizontal Stickiness applied via CSS)
         html += `
             <div class="gantt-phase-header phase-${phaseKey}" style="grid-row: ${currentRow}; grid-column: 1 / -1;">
                 ${phaseNames[phaseKey]}
@@ -124,9 +113,8 @@ function renderGantt(events) {
         `;
         currentRow++;
 
-        // Render individual activities for this phase
+        // Render events
         phaseEvents.forEach(ev => {
-            // Left Sidebar Cells (Clickable if Admin)
             const descHtml = isAdmin 
                 ? `<div class="gantt-cell col-desc edit-trigger" data-id="${ev.id}" style="grid-column: 1; grid-row: ${currentRow}; cursor: pointer; color: #2563eb;">
                      <span style="border-bottom: 1px dashed #2563eb;">${escapeHTML(ev.description)}</span>
@@ -143,13 +131,13 @@ function renderGantt(events) {
                 </div>
             `;
 
-            // Time Block Placement
             const startCol = timeToCol(ev.start_time);
             const endCol = Math.max(startCol + 1, timeToCol(ev.end_time));
 
+            // Applied phase class here to coordinate bar colors
             html += `
-                <div class="gantt-block-container" style="grid-column: ${startCol} / ${endCol}; grid-row: ${currentRow};">
-                    <div class="gantt-block" style="background-color: ${escapeHTML(ev.color_code)};">
+                <div class="gantt-block-container phase-${phaseKey}" style="grid-column: ${startCol} / ${endCol}; grid-row: ${currentRow};">
+                    <div class="gantt-block">
                         ${escapeHTML(ev.description)}
                     </div>
                 </div>
@@ -158,26 +146,22 @@ function renderGantt(events) {
         });
     });
 
-    // --- 5. RENDER BACKGROUND GRID LINES ---
-    // Draw lines from the top header to the very last data row
+    // Background Grid Lines
     for (let h = START_HOUR; h <= END_HOUR; h++) {
         for (let q = 0; q < 4; q++) {
-            if (h === END_HOUR && q > 0) break; // Don't draw past midnight
+            if (h === END_HOUR && q > 0) break;
             const col = 4 + ((h - START_HOUR) * 4) + q;
             const lineClass = q === 0 ? "gantt-grid-line hour-line" : "gantt-grid-line";
             html += `<div class="${lineClass}" style="grid-column: ${col}; grid-row: 2 / ${currentRow};"></div>`;
         }
     }
 
-    // Inject generated HTML into the grid
     grid.innerHTML = html;
 
-    // --- 6. ATTACH EDIT LISTENERS (ADMIN ONLY) ---
     if (isAdmin) {
         grid.querySelectorAll('.edit-trigger').forEach(el => {
             el.addEventListener('click', () => {
                 const evId = el.getAttribute('data-id');
-                // Ensure ID comparison works whether it's a string or UUID
                 const evData = events.find(e => String(e.id) === String(evId));
                 if (evData) openModal(evData);
             });

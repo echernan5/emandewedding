@@ -216,3 +216,58 @@
     content: "";
     flex-grow: 1;
 }
+
+/* --- UPDATED PHASE HEADERS --- */
+.gantt-phase-header {
+    grid-column: 1 / -1; /* Spans the whole width */
+    position: sticky;
+    left: 0;
+    z-index: 18; /* Higher than sticky columns (15) but lower than main headers (20) */
+    padding: 8px 16px;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+}
+
+/* Ensure the background color covers the entire row width when pinned */
+.gantt-phase-header::after {
+    content: "";
+    flex-grow: 1;
+}
+
+/* Phase Mapping Colors from your Palette */
+.phase-1_getting_ready { background: #e0f8f7; color: #0CB2AF; border-left: 6px solid #0CB2AF; } 
+.phase-2_setup         { background: #f4f9eb; color: #A1C65D; border-left: 6px solid #A1C65D; } 
+.phase-3_ceremony      { background: #fff9e6; color: #d1a500; border-left: 6px solid #FAC723; } 
+.phase-4_cocktail_hour { background: #fef4e9; color: #F29222; border-left: 6px solid #F29222; } 
+.phase-5_reception     { background: #fdf2f1; color: #E95E50; border-left: 6px solid #E95E50; } 
+.phase-6_tear_down     { background: #f4f1f7; color: #936FAC; border-left: 6px solid #936FAC; } 
+
+/* --- COORDINATED GANTT BARS --- */
+/* The bars now inherit the border color of their respective phase */
+.gantt-block-container.phase-1_getting_ready .gantt-block { background-color: #0CB2AF; color: white; }
+.gantt-block-container.phase-2_setup         .gantt-block { background-color: #A1C65D; color: white; }
+.gantt-block-container.phase-3_ceremony      .gantt-block { background-color: #FAC723; color: #333; }
+.gantt-block-container.phase-4_cocktail_hour .gantt-block { background-color: #F29222; color: white; }
+.gantt-block-container.phase-5_reception     .gantt-block { background-color: #E95E50; color: white; }
+.gantt-block-container.phase-6_tear_down     .gantt-block { background-color: #936FAC; color: white; }
+
+/* Keep existing general block styles */
+.gantt-block {
+    height: 100%;
+    min-height: 20px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 10.5px;
+    font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
