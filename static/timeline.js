@@ -64,17 +64,41 @@ async function loadTimeline() {
 function renderGantt(events) {
     const grid = document.getElementById("ganttGrid");
     grid.innerHTML = "";
+    
+    // 1. Role Check
     const currentRole = localStorage.getItem("user_role_key") || "admin";
     const isAdmin = currentRole === "admin";
 
-    // --- 1. RENDER HEADERS ---
+    // 2. Define Phase Mapping
+    const phaseNames = {
+        "1_getting_ready": "Getting Ready",
+        "2_setup": "Set Up",
+        "3_ceremony": "Ceremony",
+        "4_cocktail_hour": "Cocktail Hour",
+        "5_reception": "Reception",
+        "6_tear_down": "Tear Down"
+    };
+
+    // Helper: Generate HTML for multi-select tags
+    const renderTags = (tagsArray) => {
+        let tags = Array.isArray(tagsArray) ? tagsArray : (tagsArray ? [tagsArray] : []);
+        if (!tags.length) return `<span class="muted" style="font-size: 11px;">—</span>`;
+        
+        return tags.map(tag => `
+            <span class="chip" style="padding: 1px 4px; font-size: 9px; margin: 1px 1px 0 0; display: inline-block;">
+                ${escapeHTML(tag)}
+            </span>
+        `).join("");
+    };
+
+    // --- 3. RENDER GLOBAL HEADERS ---
     let html = `
         <div class="gantt-header-cell col-desc" style="grid-column: 1; grid-row: 1;">Item Description</div>
         <div class="gantt-header-cell col-party" style="grid-column: 2; grid-row: 1;">Wedding Party</div>
         <div class="gantt-header-cell col-vendor" style="grid-column: 3; grid-row: 1;">Vendor</div>
     `;
 
-    // Time Headers (Spans 4 columns per hour)
+    // Render Time Headers (6 AM to Midnight)
     for (let h = START_HOUR; h < END_HOUR; h++) {
         const displayHour = h > 12 ? h - 12 : (h === 0 ? 12 : h);
         const ampm = h >= 12 ? 'PM' : 'AM';
@@ -84,71 +108,76 @@ function renderGantt(events) {
         html += `<div class="gantt-time-header" style="grid-column: ${startCol} / ${endCol};">${displayHour} ${ampm}</div>`;
     }
 
-    // Background Grid Lines
+    // --- 4. RENDER PHASE GROUPS AND ROWS ---
+    let currentRow = 2; // Row 1 is the header
+    const groups = Object.keys(phaseNames);
+
+    groups.forEach(phaseKey => {
+        const phaseEvents = events.filter(e => e.phase === phaseKey);
+        if (phaseEvents.length === 0) return;
+
+        // Render Phase Header Row (Spans all columns)
+        html += `
+            <div class="gantt-phase-header" style="grid-row: ${currentRow}; grid-column: 1 / -1;">
+                ${phaseNames[phaseKey]}
+            </div>
+        `;
+        currentRow++;
+
+        // Render individual activities for this phase
+        phaseEvents.forEach(ev => {
+            // Left Sidebar Cells (Clickable if Admin)
+            const descHtml = isAdmin 
+                ? `<div class="gantt-cell col-desc edit-trigger" data-id="${ev.id}" style="grid-column: 1; grid-row: ${currentRow}; cursor: pointer; color: #2563eb;">
+                     <span style="border-bottom: 1px dashed #2563eb;">${escapeHTML(ev.description)}</span>
+                   </div>`
+                : `<div class="gantt-cell col-desc" style="grid-column: 1; grid-row: ${currentRow};">${escapeHTML(ev.description)}</div>`;
+
+            html += descHtml;
+            html += `
+                <div class="gantt-cell col-party" style="grid-column: 2; grid-row: ${currentRow}; flex-wrap: wrap;">
+                    ${renderTags(ev.wedding_party)}
+                </div>
+                <div class="gantt-cell col-vendor" style="grid-column: 3; grid-row: ${currentRow}; flex-wrap: wrap;">
+                    ${renderTags(ev.vendor)}
+                </div>
+            `;
+
+            // Time Block Placement
+            const startCol = timeToCol(ev.start_time);
+            const endCol = Math.max(startCol + 1, timeToCol(ev.end_time));
+
+            html += `
+                <div class="gantt-block-container" style="grid-column: ${startCol} / ${endCol}; grid-row: ${currentRow};">
+                    <div class="gantt-block" style="background-color: ${escapeHTML(ev.color_code)};">
+                        ${escapeHTML(ev.description)}
+                    </div>
+                </div>
+            `;
+            currentRow++;
+        });
+    });
+
+    // --- 5. RENDER BACKGROUND GRID LINES ---
+    // Draw lines from the top header to the very last data row
     for (let h = START_HOUR; h <= END_HOUR; h++) {
         for (let q = 0; q < 4; q++) {
             if (h === END_HOUR && q > 0) break; // Don't draw past midnight
             const col = 4 + ((h - START_HOUR) * 4) + q;
             const lineClass = q === 0 ? "gantt-grid-line hour-line" : "gantt-grid-line";
-            html += `<div class="${lineClass}" style="grid-column: ${col};"></div>`;
+            html += `<div class="${lineClass}" style="grid-column: ${col}; grid-row: 2 / ${currentRow};"></div>`;
         }
     }
 
-    // --- 2. RENDER ROWS ---
-    events.forEach((ev, idx) => {
-        const rowNum = idx + 2; // Row 1 is the header
-
-        // Helper to generate the HTML for the tags
-        const renderTags = (tagsArray) => {
-            let tags = Array.isArray(tagsArray) ? tagsArray : (tagsArray ? [tagsArray] : []);
-            if (!tags.length) return `<span class="muted" style="font-size: 11px;">—</span>`;
-            
-            // Compact tags styling
-            return tags.map(tag => `
-                <span class="chip" style="padding: 1px 4px; font-size: 9px; margin: 1px 1px 0 0; display: inline-block;">
-                    ${escapeHTML(tag)}
-                </span>
-            `).join("");
-        };
-
-        // Render Description column (Clickable if admin)
-        const descHtml = isAdmin 
-            ? `<div class="gantt-cell col-desc edit-trigger" data-id="${ev.id}" style="grid-column: 1; grid-row: ${rowNum}; cursor: pointer; color: #2563eb;">
-                 <span style="border-bottom: 1px dashed #2563eb;">${escapeHTML(ev.description)}</span>
-               </div>`
-            : `<div class="gantt-cell col-desc" style="grid-column: 1; grid-row: ${rowNum};">${escapeHTML(ev.description)}</div>`;
-
-        html += descHtml;
-        
-        html += `
-            <div class="gantt-cell col-party" style="grid-column: 2; grid-row: ${rowNum}; flex-wrap: wrap;">
-                ${renderTags(ev.wedding_party)}
-            </div>
-            <div class="gantt-cell col-vendor" style="grid-column: 3; grid-row: ${rowNum}; flex-wrap: wrap;">
-                ${renderTags(ev.vendor)}
-            </div>
-        `;
-
-        // Chart Block Placement
-        const startCol = timeToCol(ev.start_time);
-        const endCol = Math.max(startCol + 1, timeToCol(ev.end_time)); // Ensure it spans at least 1 cell
-
-        html += `
-            <div class="gantt-block-container" style="grid-column: ${startCol} / ${endCol}; grid-row: ${rowNum};">
-                <div class="gantt-block" style="background-color: ${escapeHTML(ev.color_code)};">
-                    ${escapeHTML(ev.description)}
-                </div>
-            </div>
-        `;
-    });
-
+    // Inject generated HTML into the grid
     grid.innerHTML = html;
 
-    // Attach click listeners to edit events (Admin only)
+    // --- 6. ATTACH EDIT LISTENERS (ADMIN ONLY) ---
     if (isAdmin) {
         grid.querySelectorAll('.edit-trigger').forEach(el => {
             el.addEventListener('click', () => {
                 const evId = el.getAttribute('data-id');
+                // Ensure ID comparison works whether it's a string or UUID
                 const evData = events.find(e => String(e.id) === String(evId));
                 if (evData) openModal(evData);
             });
@@ -194,6 +223,7 @@ function openModal(eventData = null) {
         document.getElementById("evStart").value = eventData.start_time || "";
         document.getElementById("evEnd").value = eventData.end_time || "";
         document.getElementById("evColor").value = eventData.color_code || "#bbf7d0";
+        document.getElementById("evPhase").value = eventData.phase || "1_getting_ready";
         
         // Helper to select multiple options
         const setMulti = (id, arr) => {
@@ -238,7 +268,8 @@ async function handleAddEvent(e) {
         vendor: getSelected("evVendor"),      
         start_time: document.getElementById("evStart").value,
         end_time: document.getElementById("evEnd").value,
-        color_code: document.getElementById("evColor").value
+        color_code: document.getElementById("evColor").value,
+        phase: document.getElementById("evPhase").value
     };
 
     try {

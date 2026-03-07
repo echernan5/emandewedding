@@ -1278,60 +1278,89 @@ def get_timeline():
     ctx, err = require_user()
     if err: return err
     
-    # Use ::text to cast times and dates to strings so jsonify can read them
     query = """
         SELECT 
             id, 
             description, 
             wedding_party, 
             vendor, 
+            phase,
             start_time::text, 
             end_time::text, 
-            color_code,
-            created_at::text
+            color_code
         FROM timeline_events 
-        ORDER BY start_time ASC;
+        ORDER BY phase, start_time ASC; -- Group by phase first
     """
     data, error = get_data_from_query(query)
     return jsonify(data) if not error else (jsonify({"error": error}), 500)
 
 @app.route("/api/timeline", methods=["POST"])
 def add_timeline_event():
+    # 1. Enforce Admin-only access using your existing auth rank
     ctx, err = require_user(min_role="admin")
     if err: return err
     
     data = request.json
     conn = get_db_connection()
+    if not conn:
+        return jsonify({"error": "Database unavailable"}), 500
+
     try:
         with conn.cursor() as cur:
             event_id = data.get("id")
             
-            # If an ID was passed, Update the existing row
+            # 2. UPDATE existing row if an ID is present
             if event_id:
                 cur.execute(
                     """
                     UPDATE timeline_events 
-                    SET description=%s, wedding_party=%s, vendor=%s, start_time=%s, end_time=%s, color_code=%s
+                    SET description=%s, wedding_party=%s, vendor=%s, 
+                        start_time=%s, end_time=%s, color_code=%s, phase=%s
                     WHERE id=%s RETURNING id;
                     """,
-                    (data.get("description"), data.get("wedding_party"), data.get("vendor"), 
-                     data.get("start_time"), data.get("end_time"), data.get("color_code"), event_id)
+                    (
+                        data.get("description"), 
+                        data.get("wedding_party"), 
+                        data.get("vendor"), 
+                        data.get("start_time"), 
+                        data.get("end_time"), 
+                        data.get("color_code"),
+                        data.get("phase"),
+                        event_id
+                    )
                 )
-            # If no ID, Insert a new row
+            
+            # 3. INSERT new row if no ID exists
             else:
                 cur.execute(
                     """
-                    INSERT INTO timeline_events (description, wedding_party, vendor, start_time, end_time, color_code)
-                    VALUES (%s, %s, %s, %s, %s, %s) RETURNING id;
+                    INSERT INTO timeline_events 
+                        (description, wedding_party, vendor, start_time, end_time, color_code, phase)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s) 
+                    RETURNING id;
                     """,
-                    (data.get("description"), data.get("wedding_party"), data.get("vendor"), 
-                     data.get("start_time"), data.get("end_time"), data.get("color_code"))
+                    (
+                        data.get("description"), 
+                        data.get("wedding_party"), 
+                        data.get("vendor"), 
+                        data.get("start_time"), 
+                        data.get("end_time"), 
+                        data.get("color_code"),
+                        data.get("phase")
+                    )
                 )
-            new_id = cur.fetchone()[0]
+            
+            result = cur.fetchone()
             conn.commit()
-        return jsonify({"ok": True, "id": new_id})
+            
+            if not result:
+                return jsonify({"error": "Event not found or failed to save"}), 404
+                
+            return jsonify({"ok": True, "id": result[0]})
+
     except Exception as e:
         conn.rollback()
+        print(f"Error saving timeline event: {e}")
         return jsonify({"error": str(e)}), 500
     finally:
         conn.close()
