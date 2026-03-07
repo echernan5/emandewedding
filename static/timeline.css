@@ -140,14 +140,14 @@
 .gantt-phase-header {
     grid-column: 1 / -1; 
     z-index: 18; 
-    padding: 8px 0; 
+    padding: 0; /* Removed vertical padding so the inner border touches top/bottom */
     font-size: 11px;
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 0.1em;
     border-bottom: 1px solid rgba(0,0,0,0.1);
     display: flex;
-    align-items: center;
+    align-items: stretch; /* Forces inner label to stretch full height */
 }
 
 /* Fills the rest of the row with background color */
@@ -160,18 +160,30 @@
 .sticky-phase-label {
     position: sticky;
     left: 0;
-    padding-left: 16px;
-    display: inline-block;
+    padding: 8px 10px; /* Moved vertical padding here, left padding slightly reduced */
+    display: flex;
+    align-items: center;
 }
 
-/* --- PHASE COLORS (Backgrounds & Left Borders) --- */
-.phase-0_vendor_coverage { background: #f8fafc; color: #818181; border-left: 6px solid #ababab; }
-.phase-1_getting_ready { background: #e0f8f7; color: #0CB2AF; border-left: 6px solid #0CB2AF; } 
-.phase-2_setup         { background: #f4f9eb; color: #A1C65D; border-left: 6px solid #A1C65D; } 
-.phase-3_ceremony      { background: #fff9e6; color: #d1a500; border-left: 6px solid #FAC723; } 
-.phase-4_cocktail_hour { background: #fef4e9; color: #F29222; border-left: 6px solid #F29222; } 
-.phase-5_reception     { background: #fdf2f1; color: #E95E50; border-left: 6px solid #E95E50; } 
-.phase-6_tear_down     { background: #f4f1f7; color: #936FAC; border-left: 6px solid #936FAC; } 
+/* --- PHASE COLORS (Backgrounds) --- */
+/* Scoped specifically to headers so Gantt block containers don't get weird tabs */
+.gantt-phase-header.phase-0_vendor_coverage { background: #f8fafc; color: #818181; }
+.gantt-phase-header.phase-1_getting_ready { background: #e0f8f7; color: #0CB2AF; } 
+.gantt-phase-header.phase-2_setup         { background: #f4f9eb; color: #A1C65D; } 
+.gantt-phase-header.phase-3_ceremony      { background: #fff9e6; color: #d1a500; } 
+.gantt-phase-header.phase-4_cocktail_hour { background: #fef4e9; color: #F29222; } 
+.gantt-phase-header.phase-5_reception     { background: #fdf2f1; color: #E95E50; } 
+.gantt-phase-header.phase-6_tear_down     { background: #f4f1f7; color: #936FAC; } 
+
+/* --- PHASE COLORS (Sticky Left Borders) --- */
+/* Attached to the sticky label so the color stripe doesn't scroll away */
+.gantt-phase-header.phase-0_vendor_coverage .sticky-phase-label { border-left: 6px solid #ababab; }
+.gantt-phase-header.phase-1_getting_ready .sticky-phase-label { border-left: 6px solid #0CB2AF; }
+.gantt-phase-header.phase-2_setup         .sticky-phase-label { border-left: 6px solid #A1C65D; }
+.gantt-phase-header.phase-3_ceremony      .sticky-phase-label { border-left: 6px solid #FAC723; }
+.gantt-phase-header.phase-4_cocktail_hour .sticky-phase-label { border-left: 6px solid #F29222; }
+.gantt-phase-header.phase-5_reception     .sticky-phase-label { border-left: 6px solid #E95E50; }
+.gantt-phase-header.phase-6_tear_down     .sticky-phase-label { border-left: 6px solid #936FAC; }
 
 /* --- COORDINATED GANTT BARS --- */
 .gantt-block-container.phase-0_vendor_coverage .gantt-block { background-color: #ababab; color: white; }
@@ -181,6 +193,7 @@
 .gantt-block-container.phase-4_cocktail_hour .gantt-block { background-color: #F29222; color: white; }
 .gantt-block-container.phase-5_reception     .gantt-block { background-color: #E95E50; color: white; }
 .gantt-block-container.phase-6_tear_down     .gantt-block { background-color: #936FAC; color: white; }
+
 
 /* =========================================
    6. INLINE EDITING
