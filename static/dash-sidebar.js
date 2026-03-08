@@ -14,19 +14,34 @@ async function waitForAuth() {
 // Helper function to keep our code clean
 // Helper function to keep our code clean
 // Helper function to map primary colors to their gradient pairs
+// Helper function to map primary colors to their gradient pairs
 function getSecondaryColor(primary) {
-  // Standardize case just to be safe
   const color = (primary || "").toUpperCase();
   const colorMap = {
-      "#0CB2AF": "#A1C65D", // Teal -> Green
-      "#A1C65D": "#FAC723", // Green -> Yellow
-      "#FAC723": "#F29222", // Yellow -> Orange
-      "#F29222": "#E95E50", // Orange -> Red
-      "#E95E50": "#936FAC", // Red -> Purple
-      "#936FAC": "#0CB2AF", // Purple -> Teal
-      "#ABABAB": "#71717A"  // Grey -> Darker Grey
+      "#0CB2AF": "#A1C65D",
+      "#A1C65D": "#FAC723",
+      "#FAC723": "#F29222",
+      "#F29222": "#E95E50",
+      "#E95E50": "#936FAC",
+      "#936FAC": "#0CB2AF",
+      "#ABABAB": "#71717A" 
   };
   return colorMap[color] || "#475569";
+}
+
+// NEW: Helper function to get the soft background and dark text colors
+function getAvatarStyle(primary) {
+  const color = (primary || "").toUpperCase();
+  const styles = {
+      "#0CB2AF": { bg: "#e0f6f5", text: "#098280" }, // Teal
+      "#A1C65D": { bg: "#f2f8e8", text: "#7a9b42" }, // Green
+      "#FAC723": { bg: "#fef9e4", text: "#b58d0b" }, // Yellow
+      "#F29222": { bg: "#fdf2e8", text: "#c46f11" }, // Orange
+      "#E95E50": { bg: "#fdeced", text: "#bd3c30" }, // Red
+      "#936FAC": { bg: "#f4f0f7", text: "#73528a" }, // Purple
+      "#ABABAB": { bg: "#f4f4f4", text: "#6b6b6b" }  // Grey
+  };
+  return styles[color] || { bg: "#f1f5f9", text: "#475569" };
 }
 
 // Helper function to keep our code clean
@@ -37,19 +52,20 @@ function updateSidebarUI(profile) {
   // Update the Sidebar Avatar
   const initials = (profile.full_name || "G").split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
   const avatarDisplay = document.getElementById("userAvatarDisplay");
+  
   if (avatarDisplay) {
       avatarDisplay.textContent = initials;
       if (profile.theme_color) {
-          avatarDisplay.style.backgroundColor = profile.theme_color;
+          const style = getAvatarStyle(profile.theme_color);
+          avatarDisplay.style.backgroundColor = style.bg;
+          avatarDisplay.style.color = style.text;
       }
   }
 
-  // Paint the Sidebar Background Gradient!
+  // Paint the Sidebar Background Gradient
   const sidebar = document.querySelector(".sidebar");
   if (sidebar && profile.theme_color) {
       const secondaryColor = getSecondaryColor(profile.theme_color);
-      // By setting the primary color to 65%, it dominates the sidebar
-      // and only fades near the bottom where the profile menu is!
       sidebar.style.background = `linear-gradient(180deg, ${profile.theme_color} 0%, ${profile.theme_color} 65%, ${secondaryColor} 100%)`;
   }
 }

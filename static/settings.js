@@ -20,6 +20,37 @@ document.addEventListener("DOMContentLoaded", async () => {
     const formPassword = document.getElementById("formPassword");
 
     // 1. LOAD DATA
+    // NEW: Helper function for the avatars
+    function getAvatarStyle(primary) {
+        const color = (primary || "").toUpperCase();
+        const styles = {
+            "#0CB2AF": { bg: "#e0f6f5", text: "#098280" }, 
+            "#A1C65D": { bg: "#f2f8e8", text: "#7a9b42" }, 
+            "#FAC723": { bg: "#fef9e4", text: "#b58d0b" }, 
+            "#F29222": { bg: "#fdf2e8", text: "#c46f11" }, 
+            "#E95E50": { bg: "#fdeced", text: "#bd3c30" }, 
+            "#936FAC": { bg: "#f4f0f7", text: "#73528a" }, 
+            "#ABABAB": { bg: "#f4f4f4", text: "#6b6b6b" }  
+        };
+        return styles[color] || { bg: "#f1f5f9", text: "#475569" };
+    }
+
+    // Exact same mapping function for the live preview
+    function getSecondaryColor(primary) {
+        const color = (primary || "").toUpperCase();
+        const colorMap = {
+            "#0CB2AF": "#A1C65D",
+            "#A1C65D": "#FAC723",
+            "#FAC723": "#F29222",
+            "#F29222": "#E95E50",
+            "#E95E50": "#936FAC", 
+            "#936FAC": "#0CB2AF", 
+            "#ABABAB": "#71717A"  
+        };
+        return colorMap[color] || "#475569";
+    }
+
+    // 1. LOAD DATA
     try {
         const token = await waitForAuth();
         const res = await fetch("/api/me", { headers: { "Authorization": `Bearer ${token}` }});
@@ -37,43 +68,35 @@ document.addEventListener("DOMContentLoaded", async () => {
             const activeRadio = document.querySelector(`input[value="${savedColor}"]`);
             if (activeRadio) activeRadio.checked = true;
             
-            // Set initial avatar text
+            // Set initial avatar text & colors
             const initials = (profile.full_name || "G").split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
             avatarPreview.textContent = initials;
-            avatarPreview.style.backgroundColor = savedColor;
+            
+            const style = getAvatarStyle(savedColor);
+            avatarPreview.style.backgroundColor = style.bg;
+            avatarPreview.style.color = style.text;
         }
     } catch (e) {
         console.error("Failed to load profile data", e);
     }
 
-    // 2. LIVE PAINTING (The magic gradient effect)
-    
-    // Exact same mapping function for the live preview
-    function getSecondaryColor(primary) {
-        const color = (primary || "").toUpperCase();
-        const colorMap = {
-            "#0CB2AF": "#A1C65D",
-            "#A1C65D": "#FAC723",
-            "#FAC723": "#F29222",
-            "#F29222": "#E95E50",
-            "#E95E50": "#936FAC", 
-            "#936FAC": "#0CB2AF", 
-            "#ABABAB": "#71717A"  
-        };
-        return colorMap[color] || "#475569";
-    }
-
+    // 2. LIVE PAINTING (The magic gradient & avatar effect)
     colorRadios.forEach(radio => {
         radio.addEventListener("change", (e) => {
             const chosenColor = e.target.value;
             const secondaryColor = getSecondaryColor(chosenColor);
+            const style = getAvatarStyle(chosenColor);
             
             // Paint the large preview box
-            avatarPreview.style.backgroundColor = chosenColor;
+            avatarPreview.style.backgroundColor = style.bg;
+            avatarPreview.style.color = style.text;
             
             // Paint the sidebar avatar
             const sidebarAvatar = document.getElementById("userAvatarDisplay");
-            if (sidebarAvatar) sidebarAvatar.style.backgroundColor = chosenColor;
+            if (sidebarAvatar) {
+                sidebarAvatar.style.backgroundColor = style.bg;
+                sidebarAvatar.style.color = style.text;
+            }
 
             // Paint the sidebar gradient smoothly
             const sidebar = document.querySelector(".sidebar");
