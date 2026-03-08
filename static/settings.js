@@ -65,7 +65,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             emailInput.value = data.user.email || ""; 
             
             // Check the correct color radio button
-            const savedColor = profile.theme_color || "#0CB2AF";
+            const savedColor = profile.theme_color || "#668BC2";
             const activeRadio = document.querySelector(`input[value="${savedColor}"]`);
             if (activeRadio) activeRadio.checked = true;
             
@@ -96,7 +96,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             avatarPreview.style.color = "var(--theme-700)";
         });
     });
-    
+
     // 3. SAVE COLOR TO DATABASE
     formColor.addEventListener("submit", async (e) => {
         e.preventDefault();

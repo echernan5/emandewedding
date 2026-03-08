@@ -1,1845 +1,249 @@
-:root{
-    --bg:#f8f8f8;
-    --panel:#ffffff;
-    --panel-soft:#fafafa;
-  
-    --border:#e5e7eb;
-    --border-soft:#eef0f3;
-  
-    --text:#262626;
-    --muted:#828282;
-  
-    --accent:#1f9bd1;
-    --accent-soft: rgba(31,155,209,.12);
-    --accent-line: rgba(31,155,209,.28);
-  
-    --good:rgb(15, 118, 30);
-    --goodBg: rgba(15, 118, 30, 0.1);
-  
-    --danger:#b42318;
-    --dangerBg: rgba(180,35,24,0.10);
-  
-    --warn:#646464;
-    --warnBg: rgba(169, 169, 169, 0.14);
+/* =========================================
+   TIMELINE GANTT CHART — THEMED EDITION
+   ========================================= */
 
-    --reimb: rgb(80, 141, 172);
-    --reimbBg: rgba(80, 141, 172, 0.10);
-  
-    --shadow: 0 10px 28px rgba(17,24,39,.10);
-    --radius:12px;
-  }
-  
-  *{ box-sizing:border-box }
-  html,body{ height:100% }
-  
-  body{
-    margin:0;
-    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-    background: var(--bg);
-    color: var(--text);
-  }
-  
-  .hidden{ display:none !important }
-  .muted{ color:var(--muted) }
-
-  .muted {
-    font-weight: 600;
-  }
-  
-  .app{
-    display: grid;
-    grid-template-columns: 260px 1fr;
-    min-height: 100vh;
-  }
-  .main{ min-width:0; }
-  
-  /* Header */
-  .topbar{
-    display:flex;
-    justify-content:space-between;
-    align-items:flex-end;
-    gap:16px;
-    padding:18px 22px 14px;
-    background: var(--panel);
-    border-bottom:1px solid var(--border);
-  }
-  
-  .title{
-    margin: 0;
-    font-size: 28px;
-    font-weight: 500;
-  }
-  
-  .subtitle{
-    margin-top: 4px;
-    font-size: 12.5px;
-    color: var(--muted);
-    max-width: 720px;
-  }
-  
-  .statusLine{
-    margin-top:10px;
-    font-size:12.5px;
-    font-weight:700;
-    color:var(--muted);
-  }
-  
-  .container{
-    max-width:1200px;
-    margin:0 auto;
-    padding:16px 18px 36px;
-  }
-  
-  /* Summary strip */
-  .summaryStrip{
-    display:grid;
-    grid-template-columns: repeat(3, 1fr) 1.4fr;
-    gap:10px;
-    background: var(--panel);
-    border:1px solid var(--border);
-    border-radius: var(--radius);
-    box-shadow: 0 6px 18px rgba(17,24,39,.06);
-    padding:12px;
-  }
-  
-  .stripCard{
-    border:1px solid var(--border-soft);
-    border-radius: 12px;
-    padding:10px 12px;
-    background:#fff;
-  }
-  
-  .stripCard .k{
-    font-size:11.5px;
-    color:var(--muted);
-    font-weight:800;
-  }
-  .stripCard .v{
-    margin-top:2px;
-    font-size:22px;
-    font-weight: 600;
-  }
-  
-  .stripRight{
-    display:flex;
-    gap:10px;
-    justify-content:flex-end;
-    align-items:stretch;
-    flex-wrap:wrap;
-  }
-  
-  .pill{
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    padding:10px 12px;
-    border-radius: 999px;
-    border:1px solid var(--border);
-    background:#fff;
-    font-size:12.5px;
-    font-weight: 600;
-    color:#3b3b3b;
-    white-space:nowrap;
-  }
-  
-  .pill--soft{
-    background: var(--panel-soft);
-    border-color: var(--border-soft);
-    color:#555;
-  }
-  
-  /* Toolbar (reuse your dashboard vibe) */
-  .toolbar{
-    margin-top:14px;
-    display:flex;
-    justify-content:space-between;
-    gap:12px;
-    padding:12px;
-    background: var(--panel);
-    border:1px solid var(--border);
-    border-radius: var(--radius);
-    box-shadow: 0 6px 18px rgba(17,24,39,.06);
-  }
-  
-  .toolbar__left{
-    display:flex;
-    gap:12px;
-    flex-wrap:wrap;
-    align-items:flex-end;
-  }
-  
-  .toolbar__right{
-    display:flex;
-    align-items:flex-end;
-  }
-  
-  .field{
-    display:flex;
-    flex-direction:column;
-    gap:4px;
-  }
-  
-  .field__label{
-    font-size:12px;
-    color:var(--muted);
-    font-weight:700;
-  }
-  
-  .input,.select{
-    height:36px;
-    min-width:200px;
-    padding:0 12px;
-    border-radius:10px;
-    border:1px solid var(--border);
-    background: var(--panel-soft);
-    font-size:14px;
-    color: var(--text);
-  }
-  
-  #searchInput.input{ min-width:320px; }
-  
-  .input:focus, .select:focus{
-    outline:none;
-    border-color: var(--accent-line);
-    box-shadow: 0 0 0 3px var(--accent-soft);
-    background:#fff;
-  }
-  
-  .btn{
-    height:36px;
-    padding:0 14px;
-    border-radius:10px;
-    border:1px solid var(--border);
-    background:#f3f4f6;
-    font-weight:600;
-    cursor:pointer;
-  }
-  
-  .btn:hover{ background:#e9eaee }
-  .btn--primary{
-    background: linear-gradient(#f7fbff, #f1f6ff);
-    border-color: rgba(31,155,209,.25);
-  }
-  .btn--primary:hover{
-    background: linear-gradient(#f1f7ff, #eaf2ff);
-  }
-  
-  /* Vendor cards */
-  .vendorList{
-    margin-top:14px;
-    display:grid;
-    gap:10px;
-  }
-  
-  .vendorCard{
-    background: var(--panel);
-    border:1px solid var(--border);
-    border-radius: var(--radius);
-    box-shadow: 0 6px 18px rgba(17,24,39,.06);
-    overflow:hidden;
-  }
-  
-  .vendorTop{
-    padding:14px;
-    display:flex;
-    justify-content:space-between;
-    gap:12px;
-    align-items:flex-start;
-  }
-  
-  .vendorName{
-    font-size:18px;
-    font-weight:500;
-    margin:0;
-  }
-  
-  .vendorMeta{
-    margin-bottom:4px;
-    font-size:12.5px;
-    color:var(--muted);
-    font-weight:500;
-  }
-  
-  .vendorRight{
-    display:flex;
-    gap:8px;
-    flex-wrap:wrap;
-    justify-content:flex-end;
-    align-items:center;
-  }
-  
-  .chip{
-    display:inline-flex;
-    align-items:center;
-    gap:8px;
-    padding:6px 10px;
-    border-radius:999px;
-    border:1px solid var(--border);
-    background:#fff;
-    font-size:12px;
-    font-weight:600;
-    color:#374151;
-  }
-  
-  .chipDot{
-    width:8px;
-    height:8px;
-    border-radius:99px;
-    background:#c7c9cf;
-  }
-  
-  .chip--paid{ background: var(--goodBg); border-color: rgba(15,118,110,0.25); color: var(--good); }
-  .chip--paid .chipDot{ background: var(--good); }
-  
-  .chip--overdue{ background: var(--dangerBg); border-color: rgba(180,35,24,0.25); color: var(--danger); }
-  .chip--overdue .chipDot{ background: var(--danger); }
-  
-  .chip--upcoming{ background: var(--warnBg); border-color: rgba(168, 168, 168, 0.3); color: var(--warn); }
-  .chip--upcoming .chipDot{ background: #b4b4b4; }
-
-  /* Blue styling for the specific reimbursement state */
-  .chip--reimb-pending{ background: var(--reimbBg); border-color: rgba(15,118,110,0.25); color: var(--reimb); }
-  .chip--reimb-pending .chipDot{ background: var(--reimb); }
-  
-  /* Optional: style the whole row if it's in this state */
-  .responsibilityRow.is-reimb-pending {
-  }
-  
-  .vendorBottom{
-    border-top:1px solid var(--border-soft);
-    background:#fff;
-    padding:10px 14px;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    gap:10px;
-  }
-  
-  .vendorNums{
-    display:flex;
-    gap:14px;
-    flex-wrap:wrap;
-    color:var(--muted);
-    font-size:12.5px;
-    font-weight:500;
-  }
-  
-  .vendorNums b{ color: var(--text); font-weight:600; }
-  
-  .linkBtn{
-    border:1px solid var(--border);
-    background:#fff;
-    height:34px;
-    padding:0 12px;
-    border-radius:10px;
-    font-weight:600;
-    cursor:pointer;
-  }
-  .linkBtn:hover{ background:#f3f4f6; }
-  
-  /* Empty */
-  .emptyState{
-    margin-top:14px;
-    padding:24px;
-    border:1px dashed var(--border);
-    border-radius: var(--radius);
-    background:#fafafa;
-  }
-  .emptyState h3{ margin:0 0 6px; }
-  
-  /* Drawer */
-  .drawer{
-    position:fixed;
-    inset:0;
-    opacity:0;
-    pointer-events:none;
-    transition:opacity .18s ease;
-    z-index:999;
-  }
-  .drawer.is-open{ opacity:1; pointer-events:auto; }
-  
-  .drawer__overlay{
-    position:absolute;
-    inset:0;
-    background:rgba(0,0,0,.28);
-  }
-  
-  .drawer__panel{
-    position:absolute;
-    right:0;
-    top:0;
-    bottom:0;
-    width:min(980px, 92vw);
-    background:var(--panel);
-    border-left:1px solid var(--border);
-    box-shadow: var(--shadow);
-    display:flex;
-    flex-direction:column;
-  }
-  
-  .drawer__header{
-    padding:18px 20px;
-    border-bottom:1px solid var(--border);
-    display:flex;
-    align-items:flex-start;
-    justify-content:space-between;
-    gap:14px;
-  }
-  
-  .drawerHead{
-    display:flex;
-    align-items:flex-start;
-    gap:14px;
-    min-width:0;
-  }
-  
-  .drawerAvatar{
-    width:50px;
-    height:50px;
-    border-radius:8px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-weight:700;
-    background:#f7f7f7;;
-    border:1px solid rgba(31,155,209,.25);
-    color:#5d7996;
-    flex:0 0 auto;
-    font-size: 20px;
-  }
-  
-  .drawer__title{
-    font-size:24px;
-    font-weight:500;
-    margin:0;
-  }
-  
-  .drawerHeadMeta{
-    margin-top:4px;
-    font-size:12.5px;
-    color:var(--muted);
-    font-weight:500;
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
-  }
-  
-  .drawerChips{
-    display:flex;
-    gap:8px;
-    flex-wrap:wrap;
-    margin: 0px auto;
-  }
-  
-  .iconBtn{
-    width:36px;
-    height:36px;
-    border-radius:10px;
-    border:1px solid var(--border);
-    background:#f3f4f6;
-    cursor:pointer;
-    flex:0 0 auto;
-  }
-  .iconBtn:hover{ background:#e9eaee }
-  
-  .drawer__content{
-    padding:18px 20px 90px;
-    overflow:auto;
-    background-color: var(--bg);
-  }
-  
-  .drawerSectionTitle{
-    margin:0 0 10px;
-    font-size:12.5px;
-    letter-spacing:.08em;
-    color:#6e6e6e;
-    font-weight:500;
-    text-transform:uppercase;
-  }
-  
-  .drawerGrid{
-    display:grid;
-    grid-template-columns: 1fr 1fr;
-    gap:14px;
-  }
-  
-  .drawerCard{
-    border:1px solid var(--border);
-    border-radius:14px;
-    background:#fff;
-    box-shadow: 0 10px 24px rgba(17,24,39,.06);
-    overflow:hidden;
-  }
-  
-  .drawerCard__body{
-    padding:14px;
-  }
-  
-  .drawerActions{
-    position:sticky;
-    bottom:0;
-    margin-top:auto;
-    padding:12px 14px;
-    border-top:1px solid var(--border);
-    background: rgba(255,255,255,.9);
-    backdrop-filter: blur(10px);
-    display:flex;
-    justify-content:flex-end;
-    gap:10px;
-  }
-  
-  /* People / Files / Payments lists */
-  .stack{
-    display:flex;
-    flex-direction:column;
-    gap:10px;
-  }
-  
-  .row{
-    display:flex;
-    justify-content:space-between;
-    gap:10px;
-    align-items:flex-start;
-    border:1px solid var(--border-soft);
-    border-radius:12px;
-    padding:10px 12px;
-    background:#fff;
-  }
-  
-  .rowLeft{ min-width:0; }
-  
-  .rowTitle{
-    font-weight:500;
-    font-size:14px;
-  }
-  .rowSub{
-    margin-top:3px;
-    font-size:12.5px;
-    color:var(--muted);
-    font-weight:500;
-  }
-  
-  .noteBox{
-    background: var(--panel-soft);
-    border:1px solid var(--border-soft);
-    border-radius:12px;
-    padding:12px;
-    color:#4b5563;
-    font-weight:700;
-    font-size:13px;
-    line-height:1.35;
-    min-height:84px;
-    white-space:pre-wrap;
-  }
-  
-  @media (max-width: 980px){
-    .summaryStrip{ grid-template-columns: 1fr; }
-    .drawerGrid{ grid-template-columns: 1fr; }
-    .input,.select{ min-width:100%; }
-    .toolbar__right{ align-items:stretch; }
-    .app{ grid-template-columns: 1fr; }
-    .sidebar{ display:none; }
-  }
-  
-  .payTabs { display:flex; gap:8px; background:#f3f4f6; padding:6px; border-radius:999px; margin-bottom: 20px;}
-.payTab { border:0; background:transparent; padding:8px 12px; border-radius:999px; font-weight:700; cursor:pointer; }
-.payTab.is-active { background:#fff; box-shadow:0 1px 2px rgba(0,0,0,.08); }
-
-.ledgerSection { margin-top:12px; }
-.ledgerHeader { font-size:12px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:#6b7280; margin:8px 0; }
-
-.payCard { border:1px solid rgba(0,0,0,.08); border-radius:14px; padding:12px; background:#fff; }
-.payTop { display:flex; justify-content:space-between; gap:12px; }
-.payTitle { color:#6b7280; font-weight:500; margin-top:4px; font-size: 12px;}
-.paySub { font-weight:600; font-size: 18px; }
-.payRight { display:flex; flex-direction:column; align-items:flex-end; gap:6px; }
-.payMeta { font-size:12px; color:#6b7280; font-weight:500; }
-
-.payDocs { margin-top:10px; padding-top:10px; border-top:1px solid rgba(0,0,0,.06); }
-.docStack { display:flex; flex-direction:column; gap:10px; }
-.docRow { display:flex; justify-content:space-between; align-items:center; gap:12px; padding:10px; border:1px solid rgba(0,0,0,.06); border-radius:12px; background:#fafafa; }
-.docTitle { font-weight:500; }
-.docSub { font-size:12px; color:#6b7280; font-weight:500; margin-top:2px; }
-.docMissing { font-size:12px; font-weight:500; margin-bottom:8px; color:#6b7280; }
-
-.drawerTabs {
-    display: flex;
-    gap: 8px;
-    border-bottom: 1px solid var(--border);
-    margin-bottom: 16px;
-  }
-  
-  .tabBtn {
-    padding: 8px 14px;
-    border-radius: 8px 8px 0 0;
-    border: none;
-    background: var(--bg);
-    font-weight: 600;
-    cursor: pointer;
-    border-bottom-color: white;
-  }
-  
-  .tabBtn.active {
-    background: var(--panel);
-    border: 1px solid var(--border);
-  }
-  
-  .drawerTabPanel {
-    display: none;
-  }
-  
-  .drawerTabPanel.is-active {
-    display: block;
-  }
-
-  .drawerTabs{
-    display:flex;
-    gap:10px;
-    padding: 12px 18px 0;
-    border-bottom: 1px solid var(--border);
-  }
-  
-  .tabBtn{
-    border:1px solid var(--border);
-    background: var(--bg);
-    padding:10px 14px;
-    border-radius:12px 12px 0 0;
-    font-weight:800;
-    cursor:pointer;
-  }
-  
-  .tabBtn.is-active{
-    background: white;
-  }
-  
-  .drawerTabPanel{ display:none; padding: 16px 18px; background-color: white; border-radius: 15px; border: 1px solid var(--border);}
-  .drawerTabPanel.is-active{ display:block; }
-  
-  /* Payment card hooks */
-  .paymentCard{
-    border:1px solid var(--border);
-    border-radius:14px;
-    background:#fff;
-    box-shadow: 0 10px 24px rgba(17,24,39,.06);
-    overflow:hidden;
-  }
-  
-    .paymentCard__body { 
-        padding: 14px;
-    }
-
-.paymentTitle { font-weight: 600; }          /* description */
-.paymentMeta { margin-top: 6px; }
-.paymentMeta__details { opacity: 0.8; font-size: 13px; }
-.paymentNotes { margin-top: 10px; opacity: 0.85; }
-
-/* Sections */
-.paymentSection { margin-top: 14px; }
-.paymentSection__title {
-  font-size: 12px;
-  letter-spacing: .06em;
-  text-transform: uppercase;
-  font-weight: 550;
-  opacity: .75;
+/* 1. MAIN WRAPPER & GRID LAYOUT */
+.gantt-wrapper {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-elevated);
+  overflow: auto; 
+  max-height: calc(100vh - 150px); 
+  min-height: 400px; 
 }
 
-/* Responsibilities */
-.responsibilityRow { display:flex; justify-content:space-between; gap: 12px; padding: 10px 0; }
-.responsibilityName { font-weight: 750; }
-.responsibilityMeta { font-size: 13px; opacity: .75; }
-.responsibilityAmount { font-weight: 600; }
-
-/* Easy state styling */
-.paymentCard.is-overdue .paymentTitle { }
-.paymentCard.is-paid .paymentTitle { }
-.responsibilityRow.is-reimb-pending .responsibilityName { }
-
-/* =========================
-   Payments (new card markup)
-   ========================= */
-
-   #drawerPayments .stack { gap: 12px; }
-
-   /* Card shell */
-   .paymentCard{
-     border:1px solid var(--border);
-     border-radius:14px;
-     background:#fff;
-     box-shadow: 0 10px 24px rgba(17,24,39,.06);
-     overflow:hidden;
-   }
-   
-   .paymentCard__body{
-     padding:14px;
-   }
-   
-   /* Subtle state accents */
-   .paymentCard.is-overdue{
-     border-color: rgba(180,35,24,0.28);
-     box-shadow: 0 10px 24px rgba(180,35,24,.06);
-   }
-   
-   .paymentCard.is-paid{
-     border-color: rgba(15,118,110,0.22);
-   }
-   
-   /* Header */
-   .paymentHeader{ display:block; }
-   
-   .paymentTitle{
-     font-size:16px;
-     font-weight:650;
-     margin:0;
-   }
-   
-   .paymentMeta{
-     margin-top:6px;
-     display:flex;
-     flex-wrap:wrap;
-     gap:10px;
-     align-items:center;
-   }
-   
-   .paymentMeta__status{
-     display:inline-flex;
-     align-items:center;
-   }
-   
-   /* The “Due • Total • Paid • Remaining” line */
-   .paymentMeta__details{
-     display:inline-flex;
-     flex-wrap:wrap;
-     gap:8px;
-     align-items:center;
-     font-size:12.5px;
-     color:var(--muted);
-     font-weight:600;
-   }
-   
-   .paymentMeta__dot{
-     opacity:.5;
-   }
-   
-   .paymentMeta__remaining{
-     color: var(--text);
-     font-weight:800;
-   }
-   
-   .paymentCard.is-overdue .paymentMeta__remaining{
-     color: var(--danger);
-   }
-   
-   .paymentCard.is-paid .paymentMeta__remaining{
-     color: var(--good);
-   }
-   
-   /* Notes under header */
-   .paymentNotes{
-     margin-top:10px;
-     padding:10px 12px;
-     border-radius:12px;
-     border:1px solid var(--border-soft);
-     background: var(--panel-soft);
-     color:#4b5563;
-     font-size:13px;
-     font-weight:650;
-     line-height:1.35;
-   }
-   
-   /* Sections */
-   .paymentSection{
-     margin-top:14px;
-     padding-top:14px;
-     border-top:1px solid var(--border-soft);
-   }
-   
-   .paymentSection__title{
-     margin:0 0 10px;
-     font-size:11.5px;
-     letter-spacing:.08em;
-     text-transform:uppercase;
-     color:#797979;
-     font-weight:550;
-   }
-   
-   /* Responsibilities list */
-   .responsibilityList{
-     display:flex;
-     flex-direction:column;
-     gap:10px;
-   }
-   
-   .responsibilityRow{
-     display:flex;
-     justify-content:space-between;
-     gap:12px;
-     align-items:flex-start;
-     border:1px solid var(--border-soft);
-     border-radius:12px;
-     padding:10px 12px;
-     background:#fff;
-   }
-   
-   .responsibilityRow__left{ min-width:0; }
-   
-   .responsibilityName{
-     font-size:14px;
-     font-weight:650;
-   }
-   
-   .responsibilityMeta{
-     margin-top:3px;
-     font-size:12.5px;
-     color:var(--muted);
-     font-weight:400;
-     line-height:1.25;
-   }
-   
-   .responsibilityRow__right{
-     display:flex;
-     flex-direction:column;
-     align-items:flex-end;
-     gap:6px;
-     flex:0 0 auto;
-   }
-   
-   .responsibilityAmount{
-     font-weight:600;
-     font-size:13.5px;
-     color:var(--text);
-   }
-   
-   /* Responsibility states */
-   
-   .responsibilityRow.is-paid{
-     border-color: rgba(15,118,110,0.22);
-     background: rgba(15,118,110,0.06);
-   }
-   
-   /* Empty text inside a payment */
-   .paymentEmpty{
-     border:1px dashed var(--border);
-     border-radius:12px;
-     padding:10px 12px;
-     background:#fafafa;
-     color:var(--muted);
-     font-size:12.5px;
-     font-weight:650;
-   }
-   
-   /* Files section: reuse your existing row look but tighter */
-   .paymentFiles__list{
-     display:flex;
-     flex-direction:column;
-     gap:10px;
-   }
-   
-   /* Let you style invoices vs receipts if you want */
-   /* Make the Open button consistent inside payment files */
-   .paymentSection--files .linkBtn{
-     height:32px;
-     border-radius:10px;
-     font-weight:500;
-   }
-
-   /* Payment card (hierarchy-focused) */
-.paymentCard{
-    border:1px solid var(--border);
-    border-radius:16px;
-    background:#fff;
-    box-shadow: 0 10px 24px rgba(17,24,39,.06);
-    overflow:hidden;
-  }
-  
-  .paymentCard__body{ padding:16px; }
-  
-  /* Header layout */
-  .paymentHeader__top{
-    display:flex;
-    justify-content:space-between;
-    gap:16px;
-    align-items:flex-start;
-  }
-  
-  .paymentHeader__left{ min-width:0; }
-  
-  .paymentTitle{
-    font-size:18px;
-    font-weight:600;
-    margin:0;
-  }
-  
-  .paymentSub{
-    margin-top:8px;
-    display:flex;
-    align-items:center;
-    gap:10px;
-    flex-wrap:wrap;
-    color:var(--muted);
-    font-weight:500;
-    font-size:14px;
-  }
-  
-  .paymentDue{ color: #454545; font-size: 14px; font-weight: 600; }
-  
-  /* Total on the right */
-  .paymentHeader__right{
-    text-align:right;
-    flex:0 0 auto;
-  }
-  
-  .paymentTotalLabel{
-    font-size:12px;
-    letter-spacing:.08em;
-    text-transform:uppercase;
-    color:var(--muted);
-    font-weight:500;
-    opacity:.9;
-  }
-  
-  .paymentTotal{
-    margin-top:4px;
-    font-size:20px;
-    font-weight:600;
-  }
-  
-  /* Paid / Remaining line */
-  .paymentSummary{
-    margin-top:10px;
-    display:flex;
-    align-items:center;
-    gap:10px;
-    color:var(--muted);
-    font-size:13px;
-    font-weight:600;
-  }
-  
-  .paymentSummary b{
-    color:var(--text);
-    font-weight:700;
-  }
-  
-  .paymentSummary__dot{ opacity:.5; }
-  
-  .paymentRemaining{}
-  
-  /* Notes */
-  .paymentNotes{
-    margin-top:10px;
-    color:var(--muted);
-    font-size:13px;
-    font-weight:700;
-    line-height:1.35;
-  }
-  
-  /* Spacing between header and sections */
-  .paymentSection{ margin-top:16px; }
-  .paymentSection__title{
-    font-size:12px;
-    letter-spacing:.08em;
-    text-transform:uppercase;
-    font-weight:550;
-    color:#797979;
-    margin:0 0 10px;
-  }
-  
-  /* Responsibility rows */
-  .responsibilityRow{
-    display:flex;
-    justify-content:space-between;
-    align-items:flex-start;
-    gap:12px;
-    padding:12px;
-    border:1px solid var(--border-soft);
-    border-radius:14px;
-    background:#fff;
-  }
-  
-  .responsibilityLeft{ min-width:0; }
-  
-  .responsibilityName{
-    font-weight:600;
-    font-size:14px;
-  }
-  
-  .responsibilityMeta{
-    margin-top:4px;
-    font-size:12.5px;
-    color:var(--muted);
-    font-weight:400;
-  }
-  
-  .responsibilityRight{
-    display:flex;
-    flex-direction:column;
-    align-items:flex-end;
-    gap:8px;
-  }
-  
-  .responsibilityAmount{
-    font-weight:600;
-    font-size:14px;
-  }
-  
-  
-  .paymentMiniMeta {
-    font-size: 14px;
-    margin-top: 4px;
+.gantt-grid {
+  display: grid;
+  /* Col 1: Desc (160px), Col 2: Time (130px), Col 3: Party (130px), Col 4: Vendor (130px)
+     Cols 5-220: Exact 5-minute increments (18 hours * 12 = 216 cols locked to 10px) */
+  grid-template-columns: 160px 130px 130px 130px repeat(216, 10px);
+  min-width: max-content; 
 }
 
-/* Hide details by default */
-.paymentDetails {
-    display: none;
-    border-top: 1px solid #eee; /* Optional separator */
-    margin-top: 12px;
-}
-
-/* Show details when expanded */
-.paymentCard.is-expanded .paymentDetails {
-    display: block;
-    animation: fadeIn 0.2s ease-in-out;
-}
-
-/* Rotate the chevron when expanded */
-.paymentChevron {
-    transition: transform 0.2s ease;
-}
-
-.paymentCard.is-expanded .paymentChevron {
-    transform: rotate(180deg);
-}
-
-/* Smooth fade in animation */
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-5px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-/* Blue chip for pending reimbursements */
-.chip--reimb-pending {
-    background-color: #e0f2fe; /* Light blue bg */
-    color: #0284c7;            /* Blue text */
-}
-
-.chip--reimb-pending .chipDot {
-    background-color: #0284c7;
-}
-
-/* Layout for the numbers area */
-.vendorNums {
-    display: flex;
-    align-items: center;
-    justify-content: space-between; /* Pushes bar to the right */
-    width: 100%;
-    gap: 16px;
-}
-
-.vendorNumsText {
-    display: flex;
-    gap: 16px;
-    font-size: 0.9em;
-    color: #555;
-}
-
-.vendorNumsText span b {
-    color: #111;
-    font-weight: 500;
-}
-
-/* The Progress Bar Container */
-.vendorProgress {
-    flex-grow: 0;
-    flex-shrink: 0;
-    width: 120px; /* Fixed width for consistency */
-    height: 8px;  /* Subtle height */
-    background-color: #e5e7eb; /* Light grey background */
-    border-radius: 99px;
-    overflow: hidden;
-}
-
-/* The Green Fill */
-.vendorProgressFill {
-    height: 100%;
-    background-color: #10b981; /* Emerald green to match 'Paid' chips */
-    border-radius: 99px;
-    transition: width 0.4s ease-out; /* Smooth animation on load */
-}
-
-/* Container: Align items to start (left) instead of spaced out */
-.vendorNums {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start; /* Changed from space-between */
-    width: 100%;
-    /* No gap needed because we use fixed widths on children */
-}
-
-/* Individual Stat Columns */
-.vendorStat {
-    display: flex;
-    gap: 6px;
-    font-size: 14px;
-    flex-shrink: 0; /* Prevents squishing if window is small */
-}
-
-.vendorStat b {
-    color: #111;
-    font-weight: 500;
-}
-
-/* Progress Bar */
-.vendorProgress {
-    flex-shrink: 0;
-    width: 100px; /* Fixed width for the bar itself */
-    height: 8px;
-    background-color: #e5e7eb;
-    border-radius: 99px;
-    overflow: hidden;
-    /* margin-left: 0; Ensures it sits right next to the previous column */
-}
-
-.vendorProgressFill {
-    height: 100%;
-    background-color: #90a4bd;
-    border-radius: 99px;
-    transition: width 0.4s ease-out;
-}
-
-/* Modal Overlay */
-.modalOverlay {
-    position: fixed; inset: 0; background: rgba(0,0,0,0.5);
-    display: flex; align-items: center; justify-content: center;
-    z-index: 1000;
-}
-
-/* Modal Shell */
-.modalShell {
-    background: white; width: 100%; max-width: 500px;
-    border-radius: 12px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
-    display: flex; flex-direction: column; max-height: 90vh;
-}
-
-.modalHeader {
-    padding: 16px 24px; border-bottom: 1px solid #e5e7eb;
-    display: flex; justify-content: space-between; align-items: center;
-}
-.modalHeader h2 { margin: 0; font-size: 1.25rem; font-weight: 600; }
-.closeModal { background: none; border: none; font-size: 24px; cursor: pointer; color: #9ca3af; }
-
-.modalBody { padding: 24px; overflow-y: auto; }
-
-/* Form Layout */
-.paySection { margin-bottom: 24px; }
-.formRow { display: flex; gap: 16px; margin-bottom: 12px; }
-.formGroup { display: flex; flex-direction: column; gap: 6px; flex: 1; }
-.formGroup label { font-size: 0.85rem; font-weight: 500; color: #374151; }
-.formGroup input, .formGroup select {
-    padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 0.95rem;
-}
-.readOnlyInput { background: #f3f4f6; border-color: transparent; color: #6b7280; }
-
-/* Input with Icon ($) */
-.inputIconWrapper { position: relative; display: flex; align-items: center; }
-.inputIconWrapper span { position: absolute; left: 10px; color: #6b7280; }
-.inputIconWrapper input { padding-left: 24px; width: 100%; }
-
-/* File Drop Zone */
-.fileDropZone {
-    border: 2px dashed #d1d5db; border-radius: 8px; padding: 20px;
-    text-align: center; color: #6b7280; cursor: pointer; transition: all 0.2s;
-}
-.fileDropZone:hover { border-color: #10b981; background: #ecfdf5; color: #047857; }
-
-/* Toggle Switch */
-.toggleSwitch { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; cursor: pointer; }
-
-/* Split Rows */
-.splitHeaders { display: grid; grid-template-columns: 2fr 1fr 1.5fr 30px; gap: 8px; margin-bottom: 8px; font-size: 0.75rem; color: #6b7280; font-weight: 600; text-transform: uppercase; }
-.splitRow { display: grid; grid-template-columns: 2fr 1fr 1.5fr 30px; gap: 8px; margin-bottom: 8px; }
-.splitRow input, .splitRow select { width: 100%; padding: 6px; font-size: 0.85rem; }
-.removeRow { background: none; border: none; color: #ef4444; cursor: pointer; font-size: 1.2rem; line-height: 1; }
-
-.modalFooter {
-    padding: 16px 24px; border-top: 1px solid #e5e7eb;
-    display: flex; justify-content: flex-end; gap: 12px;
-}
-.btnPrimary { background: #111; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 500; }
-.btnSecondary { background: white; border: 1px solid #d1d5db; color: #374151; padding: 10px 20px; border-radius: 6px; cursor: pointer; }
-.btnLink { background: none; border: none; color: #2563eb; cursor: pointer; font-size: 0.9rem; padding: 0; margin-top: 8px; text-decoration: underline; }
-
-/* Update this existing class */
-.toggleSwitch { 
-    display: flex; 
-    align_items: center; /* Critical for vertical alignment */
-    gap: 10px; 
-    font-size: 0.9rem; 
-    cursor: pointer; 
-    color: #4b5563;
-}
-
-/* Make the checkbox itself larger/cleaner if supported */
-.toggleSwitch input[type="checkbox"] {
-    accent-color: #111; /* Makes the checkmark black instead of default blue */
-    width: 16px; 
-    height: 16px;
-    margin: 0;
-    cursor: pointer;
-}
-
-/* Update .formGroup input, .formGroup select, .formGroup textarea */
-.formGroup input, 
-.formGroup select, 
-.formGroup textarea {
-    padding: 10px 12px; /* More breathing room */
-    border: 1px solid #e5e7eb; /* Softer grey than #d1d5db */
-    border-radius: 8px; /* Softer corners */
-    font-size: 0.95rem;
-    font-family: inherit; /* Ensure it uses your main font */
-    background-color: #fff;
-    transition: border-color 0.2s, box-shadow 0.2s;
-}
-
-.formGroup input:focus, 
-.formGroup select:focus, 
-.formGroup textarea:focus {
-    outline: none;
-    border-color: #111; /* Classy black focus border */
-    box-shadow: 0 0 0 3px rgba(0,0,0,0.05); /* Very subtle ring */
-}
-
-/* Fix the Date Input height to match Text Inputs */
-.formGroup input[type="date"] {
-    min-height: 42px; /* Forces height consistency */
-}
-
-.fileDropZone {
-    border: 2px dashed #d1d5db; 
-    border-radius: 12px; /* Match input radius */
-    padding: 32px 20px; /* Taller touch target */
-    text-align: center; 
-    color: #6b7280; 
-    background-color: #f9fafb; /* Subtle fill */
-    cursor: pointer; 
-    transition: all 0.2s ease;
-    font-size: 0.9rem;
-}
-
-.fileDropZone:hover { 
-    border-color: #9ca3af; 
-    background-color: #f3f4f6; 
-    color: #111; 
-}
-
-.modalHeader {
-    padding: 20px 24px; /* More vertical space */
-    border-bottom: 1px solid #f3f4f6; /* Lighter separator */
-}
-
-.modalHeader h2 { 
-    font-family: "Your Serif Font", serif; /* Enforce the vibe */
-    font-size: 1.5rem; 
-    color: #111;
-}
-
-.modalFooter {
-    padding: 20px 24px; 
-    border-top: 1px solid #f3f4f6; 
-    background-color: #fff; /* Ensure it's white */
-    border-bottom-left-radius: 12px;
-    border-bottom-right-radius: 12px;
-}
-
-input#payAmount {
-    text-align: right;
-}
-
-/* The "Mark Paid" Button */
-.btnMarkPaid {
-    background-color: transparent;
-    border: 1px solid #d1d5db;
-    color: #374151;
-    padding: 6px 12px;
-    font-size: 0.75rem; /* Small and discrete */
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.btnMarkPaid:hover {
-    border-color: #111;
-    color: #111;
-    background-color: #f9fafb;
-}
-
-/* Update the 'Upcoming' chip to be Orange/Yellow */
-.chip--upcoming {
-  background-color: #fff7ed; /* Very light orange */
-  color: #d16c00;            /* Deep orange text */
-}
-
-.chip--upcoming .chipDot {
-  background-color: #d16c00; /* Bright orange dot */
-}
-
-/* --- NEW DRAWER STYLES --- */
-
-/* 1. The Financial Summary Row (Replaces Chips) */
-.drawerStatsGrid {
-  display: flex;
-  gap: 24px;
-  margin-top: 16px;
-  margin-bottom: 24px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid #f3f4f6;
-}
-
-.drawerStatItem {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.drawerStatLabel {
-  font-size: 0.75rem;
+/* 2. STICKY COLUMNS & HEADERS */
+.gantt-header-cell {
+  position: sticky;
+  top: 0;
+  background: #fff;
+  border-bottom: 2px solid var(--border);
+  padding: 6px 8px;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--muted);
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: #6b7280; /* Muted gray */
-  font-weight: 600;
+  z-index: 25; 
 }
 
-.drawerStatValue {
-  font-size: 1.25rem; /* Big and readable */
-  font-weight: 600;
-  color: #111827; /* Dark black */
-  font-variant-numeric: tabular-nums;
-}
+/* Base sticky columns (Left side) */
+.col-desc   { position: sticky; left: 0;     z-index: 15; background: #fff; border-right: 1px solid var(--border-soft); }
+.col-time   { position: sticky; left: 160px; z-index: 15; background: #fff; border-right: 1px solid var(--border-soft); }
+.col-party  { position: sticky; left: 290px; z-index: 15; background: #fff; border-right: 1px solid var(--border-soft); }
+.col-vendor { position: sticky; left: 420px; z-index: 15; background: #fff; border-right: 2px solid var(--border); }
 
-.drawerStatValue.is-highlight {
-  color: #b45309; /* Warm orange for "Next Due" date */
-}
+/* Top-Left Corner Headers */
+.gantt-header-cell.col-desc   { z-index: 30; } 
+.gantt-header-cell.col-time   { z-index: 30; } 
+.gantt-header-cell.col-party  { z-index: 30; } 
+.gantt-header-cell.col-vendor { z-index: 30; } 
 
-/* 2. Minimal Tabs (Removes the heavy gray bar) */
-.minimalTabs {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 20px;
-  border-bottom: 1px solid #e5e7eb;
-  padding-bottom: 0; /* Align with border */
-}
-
-.minimalTabBtn {
-  background: none;
-  border: none;
-  padding: 8px 12px;
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: #7b7b7b;
-  cursor: pointer;
-  border-bottom: 2px solid transparent; /* Invisible border for hover state */
-  transition: all 0.2s;
-}
-
-.minimalTabBtn:hover {
-  color: #464646;
-}
-
-.minimalTabBtn.is-active {
-  color: #111827;
-  border-bottom-color: #111827; /* Active state is just a clean underline */
-}
-
-/* --- 1. THE "HERO" STATS GRID --- */
-.drawerStatsGrid {
-  display: grid;
-  grid-template-columns: 1.2fr 1fr 1fr; /* First column is wider for the Date */
-  gap: 16px;
-  margin-top: 20px;
-  margin-bottom: 24px;
-  align-items: stretch;
-}
-
-.drawerStatItem {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: 12px 16px;
-  border-radius: 12px;
-  /* Default: No background, just clean text for the money stuff */
-  background-color: transparent; 
-}
-
-.drawerStatLabel {
-  font-size: 0.7rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  font-weight: 700;
-  margin-bottom: 6px;
-}
-
-/* Default Label Color */
-.drawerStatItem .drawerStatLabel { color: #9ca3af; }
-/* Hero Label Color (Darker Orange) */
-.drawerStatItem.is-hero .drawerStatLabel { color: #c2410c; }
-
-.drawerStatValue {
-  font-size: 1.4rem; /* Big */
-  font-weight: 700;
-  color: #1f2937;
-  line-height: 1.1;
-  font-variant-numeric: tabular-nums;
-}
-
-.drawerStatItem.is-hero .drawerStatValue { color: #9a3412; }
-
-
-/* --- 2. UNOBTRUSIVE TEXT TABS --- */
-.minimalTabs {
-  display: inline-flex; /* Only take up needed width */
-  gap: 4px;
-  margin-bottom: 16px;
-  background: #f3f4f6; /* Very light gray pill container */
-  padding: 4px;
-  border-radius: 8px;
-}
-
-.minimalTabBtn {
-  background: none;
-  border: none;
-  padding: 6px 16px;
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: #747474;
-  cursor: pointer;
-  border-radius: 6px;
-  transition: all 0.2s;
-}
-
-.minimalTabBtn:hover {
-  color: #111827;
-  background-color: rgba(255,255,255,0.5);
-}
-
-.minimalTabBtn.is-active {
-  background-color: #ffffff; /* White card look */
-  color: #111827; /* Black text */
-  box-shadow: 0 1px 2px rgba(0,0,0,0.05); /* Tiny shadow */
-}
-
-/* Update this class to center content horizontally */
-.drawerStatItem {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center; /* <--- This centers the text horizontally */
-  text-align: center;  /* <--- This ensures multi-line text centers */
-  padding: 12px 16px;
-  border-radius: 12px;
-  background-color: transparent; 
-}
-
-/* Optional: Ensure the grid itself is centered if it doesn't fill width */
-.drawerStatsGrid {
-  display: grid;
-  grid-template-columns: 1.2fr 1fr 1fr;
-  gap: 16px;
-  margin-top: 20px;
-  margin-bottom: 24px;
-  align-items: stretch;
-  justify-content: center; /* <--- Safety centering */
-}
-
-/* Positions the title on the left and tabs on the right */
-.paymentHeaderRow {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16px; /* Adjust spacing below the header */
-}
-
-/* Ensure the title doesn't have its own bottom margin pushing things down */
-.paymentHeaderRow .drawerSectionTitle {
-  margin-bottom: 0;
-}
-
-/* Update Minimal Tabs to remove their old margins/backgrounds if needed */
-.minimalTabs {
-  display: inline-flex;
-  gap: 4px;
-  background: #f3f4f6;
-  padding: 4px;
-  border-radius: 8px;
-  margin-bottom: 0; /* Remove old margin since the Row handles it */
-}
-
-/* Update this class */
-.drawer__header {
-  display: flex;
-  flex-direction: column; /* <--- THIS IS THE KEY FIX. Stacks top-to-bottom. */
-  width: 100%;
-  padding: 24px 32px; /* Adjust padding as you like */
-  border-bottom: 1px solid #e5e7eb;
+/* Horizontal Time Headers (e.g. 6 AM) */
+.gantt-time-header {
+  border-bottom: 2px solid var(--border);
+  border-left: 1px solid var(--border-soft);
   background: #fff;
-  gap: 16px; /* Adds space between the Title Row and the Hero Grid */
+  padding: 6px 8px;
+  text-align: left;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--muted);
+  grid-row: 1;
+  position: sticky;
+  top: 0;
+  z-index: 25; 
 }
 
-/* Eyebrow Label above the Hero Grid */
-.drawerGridLabel {
-  text-align: center;
-  font-size: 0.7rem;
+/* 3. BACKGROUND GRID LINES */
+.gantt-grid-line { grid-row: 2 / -1; pointer-events: none; z-index: 1; }
+.gantt-grid-line.five-min-line { border-left: 1px solid var(--border-soft); opacity: 0.5; }
+.gantt-grid-line.quarter-line { border-left: 1px dashed var(--border); }
+.gantt-grid-line.hour-line { border-left: 1px solid var(--border); }
+
+/* 4. DATA CELLS & GANTT BARS */
+.gantt-cell {
+  padding: 6px 8px;
+  font-size: 11.5px;
   font-weight: 600;
-  color: #9ca3af;      /* Light gray */
+  border-bottom: 1px solid var(--border-soft);
+  display: flex;
+  align-items: center;
+}
+
+.gantt-block-container {
+  padding: 2px 0; 
+  border-bottom: 1px solid var(--border-soft);
+  z-index: 2;
+  position: relative;
+  overflow: visible; 
+}
+
+.gantt-block {
+  height: 100%;
+  min-height: 20px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: clip; 
+  display: flex;
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.sticky-bar-text {
+  position: sticky;
+  left: 554px; 
+  padding: 2px 4px;
+  display: inline-block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bar-time {
+  opacity: 0.8; 
+  font-weight: 600;
+  font-size: 0.9em;
+  margin-left: 6px;
+  letter-spacing: 0.02em;
+}
+
+/* 5. PHASE SECTION HEADERS (THE 7-STEP GRADIENT!) */
+.gantt-phase-header {
+  grid-column: 1 / -1; 
+  z-index: 18; 
+  padding: 0; 
+  font-size: 11px;
+  font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  margin-top: 8px;     /* Push it down slightly from the vendor name */
-  margin-bottom: -12px;/* Pull the grid closer to it */
-}
-
-/* --- HEADER CONTACT CHIPS (Replaces the Hero Grid in Header) --- */
-.drawerHeaderContact {
+  border-bottom: 1px solid var(--border);
   display: flex;
-  gap: 8px;
-  margin-top: 16px;
-  flex-wrap: wrap;
+  align-items: stretch; 
+  background: #fff;
+  color: var(--theme-700);
 }
 
-.contactChip {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 0.8rem;
-  color: #4b5563;
-  background: #f3f4f6;
-  padding: 6px 12px;
-  border-radius: 20px; /* Fully rounded pills */
-  text-decoration: none;
-  transition: all 0.2s;
-  border: 1px solid transparent;
-}
+.gantt-phase-header::after { content: ""; flex-grow: 1; }
 
-.contactChip:hover {
-  background: #e5e7eb;
-  color: #111827;
-  border-color: #d1d5db;
-}
-
-/* --- ADJUST THE STATS GRID TO FIT INSIDE THE TAB --- */
-/* We remove the big margin-top because it's no longer under the header */
-.drawerStatsGrid {
-  /* Keep previous flex settings */
-  display: flex;
-  justify-content: center;
-  align-items: stretch;
-  gap: 16px;
-  width: 100%;
-  
-  /* Updates for being inside the tab */
-  margin-top: 0; 
-  margin-bottom: 32px;
-  padding: 16px;
-  background: #fafafa; /* Subtle background to separate it from list */
-  border-radius: 12px;
-  border: 1px dashed #e5e7eb; /* Dashed border makes it feel like a "Summary" area */
-}
-
-/* --- RICH CONTACT CARDS --- */
-.contactCard {
-  display: flex;
-  gap: 20px;
-  padding: 24px;
-  background: #ffffff;
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
-  margin-bottom: 16px;
-  transition: box-shadow 0.2s, transform 0.2s;
-  align-items: flex-start;
-}
-
-.contactCard:hover {
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-  border-color: #d1d5db;
-}
-
-/* 1. The Avatar (Visual Anchor) */
-.contactAvatar {
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  background-color: #f3f4f6; /* Default gray */
-  color: #4b5563;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.25rem;
-  font-weight: 600;
-  flex-shrink: 0;
-  border: 1px solid #e5e7eb;
-}
-
-/* Randomize colors slightly based on logic if you want, or stick to elegant gray/blue */
-.contactAvatar.is-blue { background: #eff6ff; color: #1d4ed8; border-color: #dbeafe; }
-.contactAvatar.is-green { background: #f0fdf4; color: #15803d; border-color: #bbf7d0; }
-
-/* 2. Main Info Column */
-.contactMain {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.contactHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-}
-
-.contactName {
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: #111827;
-  line-height: 1.2;
-}
-
-.contactRole {
-  display: inline-block;
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: #6b7280;
-  background: #f9fafb;
-  border: 1px solid #e5e7eb;
-  padding: 2px 8px;
-  border-radius: 6px;
-  margin-top: 6px;
-}
-
-/* 3. Contact Details Grid (Email/Phone) */
-.contactMethods {
-  display: grid;
-  grid-template-columns: 1fr; /* Stack on mobile */
-  gap: 8px;
-  margin-top: 8px;
-}
-
-@media (min-width: 500px) {
-  .contactMethods {
-      grid-template-columns: 1fr 1fr; /* Side by side on larger drawers */
-  }
-}
-
-.contactMethodRow {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 0.9rem;
-  color: #4b5563;
-  text-decoration: none;
-  padding: 6px 0;
-}
-
-.contactMethodRow:hover {
-  color: #111827;
-  text-decoration: underline;
-}
-
-.contactIcon {
-  width: 16px;
-  height: 16px;
-  opacity: 0.5;
-}
-
-/* --- SUMMARY STRIP CONTAINER --- */
-.summaryStrip {
-  display: flex;
-  gap: 24px;
-  margin-bottom: 32px;
-  align-items: stretch; /* Ensure cards are same height */
-  flex-wrap: wrap;
-}
-
-/* --- THE NEW ACCENT CARDS --- */
-.metricCard {
-  flex: 1;
-  min-width: 140px;
-  background: #ffffff;
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
-  padding: 20px 24px;
-  position: relative;
-  overflow: hidden;
-  /* subtle shadow */
-  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
-/* The Colored Top Line */
-.metricCard::before {
-  content: "";
-  position: absolute;
-  top: 0;
+.sticky-phase-label {
+  position: sticky;
   left: 0;
-  right: 0;
-  height: 4px; /* Thickness of the color bar */
-  background: #e5e7eb; /* Default color */
-}
-
-/* Color Variants */
-.metricCard.is-blue::before   { background-color: var(--good); } /* Booked */
-.metricCard.is-orange::before { background-color: #f97316; } /* Upcoming */
-.metricCard.is-red::before    { background-color: #ef4444; } /* Overdue */
-
-.metricLabel {
-  font-size: 0.8rem;
-  color: #6b7280;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  margin-bottom: 8px;
-}
-
-.metricValue {
-  font-size: 2rem;
-  font-weight: 700;
-  color: #111827;
-  line-height: 1;
-  font-variant-numeric: tabular-nums;
-}
-
-/* --- CLEANER FINANCIALS (RIGHT SIDE) --- */
-/* Instead of pills, we'll make this a clean text group */
-.stripRight {
-  display: flex;
-  gap: 24px;
-  align-items: center;
-  background: #ffffff;
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
-  padding: 0 32px; /* Wide padding */
-  margin-left: auto; /* Push to right */
-  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-}
-
-.finStat {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end; /* Right align numbers */
-  gap: 4px;
-}
-
-.finLabel {
-  font-size: 0.75rem;
-  color: #9ca3af;
-  font-weight: 600;
-  text-transform: uppercase;
-}
-
-.finValue {
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: #374151;
-}
-
-/* Make "Remaining" stand out */
-.finStat.is-bold .finValue {
-  color: #111827;
-  font-weight: 700;
-  font-size: 1.25rem;
-}
-
-/* --- THE FIX FOR FLOATING ACCENT BARS --- */
-.metricCard::before {
-  content: "";
-  position: absolute;
-  /* Adjust these three values to 'float' the bar */
-  top: 10px;           /* Distance from top */
-  left: 12px;          /* Distance from left */
-  right: 12px;         /* Distance from right */
-  
-  height: 4px;         /* Thickness */
-  border-radius: 99px; /* Makes the bar ends rounded pills */
-  background: #e5e7eb; /* Default gray */
-  z-index: 1;
-}
-
-.metricCard {
-  flex: 1;
-  min-width: 140px;
-  background: #ffffff;
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
-  padding: 24px 24px 20px; /* Increased top padding to clear the bar */
-  position: relative;
-  overflow: hidden;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end; /* Pushes content down slightly */
-}
-
-/* Segmented Control Styling */
-.segmented {
-  display: inline-flex;
-  background: #f3f4f6; /* Gray-100 */
-  padding: 2px;
-  border-radius: 8px;
-  border: 1px solid #e5e7eb;
-}
-
-.segBtn {
-  border: none;
-  background: transparent;
-  padding: 6px 12px;
-  font-size: 0.8rem;
-  font-weight: 500;
-  color: #6b7280; /* Gray-500 */
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.segBtn.is-active {
-  background: white;
-  color: #111827; /* Gray-900 */
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-}
-
-.segBtn:hover:not(.is-active) {
-  color: #374151;
-}
-
-/* Layout adjustment to keep it next to summary labels */
-.scope-control-wrapper {
+  padding: 8px 10px; 
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-left: auto;
 }
 
-.scope-label {
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: #9ca3af;
+/* --- MONOCHROMATIC PHASE MAPPING --- */
+/* We map the 7 phases directly to your 7 theme steps! */
+
+/* Phase 0: s100 */
+.gantt-phase-header.phase-0_vendor_coverage .sticky-phase-label { border-left: 6px solid var(--theme-100); }
+.gantt-block-container.phase-0_vendor_coverage .gantt-block { background-color: var(--theme-100); color: var(--theme-700); border: 1px solid var(--theme-300); }
+
+/* Phase 1: s200 */
+.gantt-phase-header.phase-1_getting_ready .sticky-phase-label { border-left: 6px solid var(--theme-200); }
+.gantt-block-container.phase-1_getting_ready .gantt-block { background-color: var(--theme-200); color: var(--theme-700); border: 1px solid var(--theme-400); }
+
+/* Phase 2: s300 */
+.gantt-phase-header.phase-2_setup .sticky-phase-label { border-left: 6px solid var(--theme-300); }
+.gantt-block-container.phase-2_setup .gantt-block { background-color: var(--theme-300); color: var(--theme-700); }
+
+/* Phase 3: s400 */
+.gantt-phase-header.phase-3_ceremony .sticky-phase-label { border-left: 6px solid var(--theme-400); }
+.gantt-block-container.phase-3_ceremony .gantt-block { background-color: var(--theme-400); color: #fff; }
+
+/* Phase 4: s500 */
+.gantt-phase-header.phase-4_cocktail_hour .sticky-phase-label { border-left: 6px solid var(--theme-500); }
+.gantt-block-container.phase-4_cocktail_hour .gantt-block { background-color: var(--theme-500); color: #fff; }
+
+/* Phase 5: s600 */
+.gantt-phase-header.phase-5_reception .sticky-phase-label { border-left: 6px solid var(--theme-600); }
+.gantt-block-container.phase-5_reception .gantt-block { background-color: var(--theme-600); color: #fff; }
+
+/* Phase 6: s700 */
+.gantt-phase-header.phase-6_tear_down .sticky-phase-label { border-left: 6px solid var(--theme-700); }
+.gantt-block-container.phase-6_tear_down .gantt-block { background-color: var(--theme-700); color: #fff; }
+
+/* Uncategorized Fallback */
+.gantt-phase-header.phase-uncategorized { background: #fef2f2; color: #b91c1c; }
+.gantt-phase-header.phase-uncategorized .sticky-phase-label { border-left: 6px solid #ef4444; }
+
+
+/* 6. INLINE EDITING & CHIPS */
+.inline-input {
+  width: 100%; border: 1px solid transparent; background: transparent;
+  font-family: inherit; font-size: 11px; color: inherit; padding: 4px;
+  border-radius: 4px; transition: all 0.2s; font-weight: 500;
 }
+.inline-input:hover { border-color: var(--theme-200); background: var(--theme-100); }
+.inline-input:focus { outline: none; border-color: var(--theme-500); background: #fff; box-shadow: 0 0 0 2px var(--theme-200); }
+
+.time-input-group { display: flex; align-items: center; gap: 2px; }
+.time-input { width: auto; padding: 2px; letter-spacing: -0.5px; }
+
+.btn-mini-edit { background: transparent; border: none; color: var(--muted); cursor: pointer; padding: 2px; font-size: 12px; }
+.btn-mini-edit:hover { color: var(--theme-600); }
+
+.chip {
+  background: var(--theme-100);
+  border: 1px solid var(--theme-200);
+  color: var(--theme-700);
+  font-weight: 600;
+  border-radius: 4px;
+}
+
+/* 7. GLOBAL TOOLTIP */
+#global-tooltip {
+  position: fixed; z-index: 9999; 
+  background-color: var(--theme-700); color: #fff;
+  padding: 6px 10px; border-radius: 6px; font-size: 11px; font-weight: 600;
+  white-space: nowrap; pointer-events: none; visibility: hidden; opacity: 0;
+  transition: opacity 0.1s ease-in-out; box-shadow: var(--shadow-elevated);
+}
+
+/* 8. FILTER MENUS */
+.gantt-header-cell.with-filter {
+  display: flex; justify-content: space-between; align-items: center; overflow: visible; 
+}
+
+.filter-btn {
+  background: none; border: none; color: var(--muted); cursor: pointer;
+  padding: 2px 4px; border-radius: 4px; font-size: 10px; margin-left: auto;
+}
+.filter-btn:hover { background: var(--theme-100); color: var(--theme-700); }
+.filter-btn.active { color: var(--theme-600); background: var(--theme-200); }
+
+.filter-popup {
+  position: absolute; top: 100%; right: 0; background: #fff;
+  border: 1px solid var(--border); border-radius: 6px; box-shadow: var(--shadow-elevated);
+  padding: 8px; z-index: 100; display: none; flex-direction: column; gap: 4px;
+  min-width: 160px; color: var(--text); text-transform: none; letter-spacing: normal;
+  font-weight: 600; font-size: 11px;
+}
+.filter-popup.show { display: flex; }
+
+.filter-list { max-height: 150px; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; }
+.filter-list label { display: flex; align-items: center; gap: 6px; cursor: pointer; padding: 2px 4px; border-radius: 4px; }
+.filter-list label:hover { background: var(--theme-100); }
 
 .filter-actions {
-  display: flex;
-  gap: 12px;
-  align-items: center;
+  display: flex; justify-content: space-between; margin-top: 6px;
+  border-top: 1px solid var(--border-soft); padding-top: 6px;
 }
-
-/* Ensure the button doesn't look too bulky in the toolbar */
-#btnAddVendor.btn--primary {
-  padding: 8px 16px;
-  font-size: 0.85rem;
+.filter-actions button {
+  background: none; border: none; color: var(--theme-600); cursor: pointer;
+  font-size: 10px; font-weight: 700; padding: 4px;
 }
-
-input#planAmount {
-  text-align: right;
-}
+.filter-actions button:hover { text-decoration: underline; color: var(--theme-700); }

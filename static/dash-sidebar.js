@@ -4,57 +4,57 @@
    THEME ENGINE (7-Step Custom Properties)
    ========================================= */
    const THEME_PALETTES = {
-    // 1. Dusty Blue (From your uploaded scale)
-    "#7B95B7": {
-        s100: "#F7FBFF", s200: "#E4EAF1", s300: "#BDC9DB",
-        s400: "#93A8C4", s500: "#7B95B7", s600: "#6180A8", s700: "#506C91"
+    // 1. Dusty Blue (Richer, less gray)
+    "#668BC2": {
+        s100: "#F2F6FA", s200: "#E1ECF7", s300: "#BDD4EB",
+        s400: "#98BADD", s500: "#668BC2", s600: "#4A6C9E", s700: "#314D75"
     },
-    // 2. Sage Green (Matches the sweet pea leaves)
-    "#95A986": {
-        s100: "#F6F9F5", s200: "#E6EDE3", s300: "#C6D3C0",
-        s400: "#A9BAA0", s500: "#95A986", s600: "#778C67", s700: "#5B6E4C"
+    // 2. Sage Green (Clearer, more botanical green)
+    "#80A66C": {
+        s100: "#F4F9F1", s200: "#E5F2DF", s300: "#C6E0B8",
+        s400: "#A5C992", s500: "#80A66C", s600: "#5F824C", s700: "#415C32"
     },
-    // 3. Dusty Lavender
-    "#A597AD": {
-        s100: "#FAF8FB", s200: "#ECE8EE", s300: "#CFC5D6",
-        s400: "#B5A7BD", s500: "#A597AD", s600: "#86798F", s700: "#685B70"
+    // 3. Dusty Lavender (Deeper, true purple)
+    "#9C81BD": {
+        s100: "#F8F6FA", s200: "#EBE4F4", s300: "#D1BFE6",
+        s400: "#B69ED6", s500: "#9C81BD", s600: "#7A5C9C", s700: "#573D73"
     },
-    // 4. Blush Pink
-    "#D4A5A5": {
-        s100: "#FCF5F5", s200: "#F7E6E6", s300: "#EBC9C9",
-        s400: "#DFB6B6", s500: "#D4A5A5", s600: "#B88686", s700: "#9C6868"
+    // 4. True Pink (Cooler rose, absolutely NO coral/peach!)
+    "#D282A6": {
+        s100: "#FDF4F7", s200: "#FAE3EC", s300: "#F0BED3",
+        s400: "#E49BBA", s500: "#D282A6", s600: "#AA5C80", s700: "#7D3E5D"
     },
-    // 5. Seafoam Teal
-    "#8EB0AD": {
-        s100: "#F2F8F7", s200: "#E3EEED", s300: "#C1D8D6",
-        s400: "#A3C4C1", s500: "#8EB0AD", s600: "#6D918E", s700: "#517370"
+    // 5. Seafoam Teal (More saturated aqua)
+    "#6FB0AC": {
+        s100: "#F0F9F8", s200: "#DCF0EF", s300: "#B4DDD9",
+        s400: "#8EC8C3", s500: "#6FB0AC", s600: "#4C8A86", s700: "#326360"
     },
-    // 6. Slate Grey
-    "#A0A0A0": {
-        s100: "#F8F9FA", s200: "#E9ECEF", s300: "#DEE2E6",
-        s400: "#CED4DA", s500: "#A0A0A0", s600: "#7D7D7D", s700: "#5A5A5A"
+    // 6. Slate Grey (A true slate with a tiny hint of cool blue)
+    "#8D98A3": {
+        s100: "#F5F7F9", s200: "#E6EAEE", s300: "#C7CED6",
+        s400: "#A9B2BC", s500: "#8D98A3", s600: "#69737D", s700: "#485058"
     }
 };
 
 function applyGlobalTheme(hex) {
-    // Default to the Dusty Blue if they haven't picked a color yet
-    const theme = THEME_PALETTES[hex] || THEME_PALETTES["#7B95B7"];
+    // Default to the new Dusty Blue
+    const theme = THEME_PALETTES[hex] || THEME_PALETTES["#668BC2"];
     const root = document.documentElement; 
 
-    // Inject the 7-step scale into the browser!
+    // Inject the 7-step scale into the browser
     root.style.setProperty('--theme-100', theme.s100);
     root.style.setProperty('--theme-200', theme.s200);
     root.style.setProperty('--theme-300', theme.s300);
     root.style.setProperty('--theme-400', theme.s400);
-    root.style.setProperty('--theme-500', theme.s500); // Main Color
+    root.style.setProperty('--theme-500', theme.s500); 
     root.style.setProperty('--theme-600', theme.s600);
-    root.style.setProperty('--theme-700', theme.s700); // Darkest Text
+    root.style.setProperty('--theme-700', theme.s700); 
 
-    // Paint the Sidebar (Uses 500 fading into 700)
+    // Paint the Sidebar
     const sidebar = document.querySelector(".sidebar");
     if (sidebar) sidebar.style.background = `linear-gradient(180deg, var(--theme-500) 0%, var(--theme-500) 65%, var(--theme-700) 100%)`;
 
-    // Paint the Sidebar Avatars (Uses 100 for background, 700 for text)
+    // Paint the Sidebar Avatars
     const avatarDisplay = document.getElementById("userAvatarDisplay");
     if (avatarDisplay) {
         avatarDisplay.style.backgroundColor = "var(--theme-100)";
