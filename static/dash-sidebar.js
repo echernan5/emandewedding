@@ -11,56 +11,72 @@ async function waitForAuth() {
 /* =========================================
  ZONE 1: THE REAL PROFILE HANDSHAKE
  ========================================= */
+// Helper function to keep our code clean
+function updateSidebarUI(profile) {
+    document.getElementById("userNameDisplay").textContent = profile.full_name || "Guest";
+    document.getElementById("userRoleDisplay").textContent = profile.display_role || "Viewer";
+    const initials = (profile.full_name || "G").split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+    document.getElementById("userAvatarDisplay").textContent = initials;
+}
+
 async function loadRealProfile() {
-  try {
-      const token = await waitForAuth();
-      
-      // Ask the Python server exactly who this token belongs to
-      const res = await fetch("/api/me", {
-          headers: { "Authorization": `Bearer ${token}` }
-      });
+    // --- 1. INSTANT UI UPDATE (The Anti-Flash Trick) ---
+    // Look in the browser's backpack for saved profile data
+    const cachedProfile = localStorage.getItem("cached_user_profile");
+    if (cachedProfile) {
+        try {
+            updateSidebarUI(JSON.parse(cachedProfile));
+        } catch (e) {} // Ignore if the data got corrupted
+    }
 
-      if (!res.ok) {
-          handleLogout(); // If token is invalid/expired, kick them out
-          return;
-      }
+    // --- 2. BACKGROUND VERIFICATION ---
+    try {
+        const token = await waitForAuth();
+        
+        // Silently verify with the server
+        const res = await fetch("/api/me", {
+            headers: { "Authorization": `Bearer ${token}` }
+        });
 
-      const data = await res.json();
-      const profile = data.profile; // Gets {id, role, full_name, display_role}
+        if (!res.ok) {
+            handleLogout(); // If token expired while they were navigating, kick them out
+            return;
+        }
 
-      // Lock the true role into local storage for the timeline/vendors to use
-      localStorage.setItem("user_role_key", profile.role);
+        const data = await res.json();
+        const profile = data.profile; 
 
-      // Update the Sidebar UI visually
-      document.getElementById("userNameDisplay").textContent = profile.full_name || "Guest";
-      document.getElementById("userRoleDisplay").textContent = profile.display_role || "Viewer";
-      
-      const initials = (profile.full_name || "G").split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
-      document.getElementById("userAvatarDisplay").textContent = initials;
+        // Update the cache so it's ready for the next page click!
+        localStorage.setItem("cached_user_profile", JSON.stringify(profile));
+        localStorage.setItem("user_role_key", profile.role);
 
-      // Tell the rest of the page the real role is locked in
-      window.dispatchEvent(new Event("roleChanged")); 
+        // Update the UI just in case they changed their name/role since the cache was saved
+        updateSidebarUI(profile);
+        window.dispatchEvent(new Event("roleChanged")); 
 
-  } catch (e) {
-      console.error("Profile load failed:", e);
-  }
+    } catch (e) {
+        console.error("Profile load failed:", e);
+    }
 }
 
 /* =========================================
  ZONE 2: LOG OUT LOGIC
  ========================================= */
 async function handleLogout() {
-  // 1. Wipe local browser memory
-  localStorage.removeItem("user_role_key");
-  localStorage.removeItem("supabase.auth.token"); 
-  
-  // 2. Tell Supabase to kill the session
-  if (window.supabase) {
-      await window.supabase.auth.signOut();
-  }
-  
-  // 3. Redirect to login screen
-  window.location.href = "/login";
+    // 1. Wipe local browser memory (including our new cache)
+    localStorage.removeItem("user_role_key");
+    localStorage.removeItem("supabase.auth.token"); 
+    localStorage.removeItem("cached_user_profile"); 
+    
+    // 2. Tell Supabase to kill the session (THE FIX)
+    // We have to build the Supabase client using your keys before we can call auth functions!
+    if (window.supabase && window.SUPABASE_URL && window.SUPABASE_ANON_KEY) {
+        const supabaseClient = window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
+        await supabaseClient.auth.signOut();
+    }
+    
+    // 3. Redirect to login screen
+    window.location.href = "/login";
 }
 
 /* =========================================
