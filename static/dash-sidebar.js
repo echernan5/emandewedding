@@ -12,11 +12,27 @@ async function waitForAuth() {
  ZONE 1: THE REAL PROFILE HANDSHAKE
  ========================================= */
 // Helper function to keep our code clean
+// Helper function to keep our code clean
 function updateSidebarUI(profile) {
-    document.getElementById("userNameDisplay").textContent = profile.full_name || "Guest";
-    document.getElementById("userRoleDisplay").textContent = profile.display_role || "Viewer";
-    const initials = (profile.full_name || "G").split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
-    document.getElementById("userAvatarDisplay").textContent = initials;
+  document.getElementById("userNameDisplay").textContent = profile.full_name || "Guest";
+  document.getElementById("userRoleDisplay").textContent = profile.display_role || "Viewer";
+  
+  // Update the Sidebar Avatar
+  const initials = (profile.full_name || "G").split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+  const avatarDisplay = document.getElementById("userAvatarDisplay");
+  if (avatarDisplay) {
+      avatarDisplay.textContent = initials;
+      if (profile.theme_color) {
+          avatarDisplay.style.backgroundColor = profile.theme_color;
+      }
+  }
+
+  // Paint the Sidebar Background Gradient!
+  const sidebar = document.querySelector(".sidebar");
+  if (sidebar && profile.theme_color) {
+      // Fades from their chosen color into a premium Slate Blue
+      sidebar.style.background = `linear-gradient(180deg, ${profile.theme_color} 0%, #475569 100%)`;
+  }
 }
 
 async function loadRealProfile() {

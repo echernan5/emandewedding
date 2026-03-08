@@ -69,38 +69,52 @@
       
       <div style="margin-bottom: 32px;">
         <h1 class="title">Profile Settings</h1>
-        <p class="subtitle">Update your personal details and account security.</p>
+        <p class="subtitle">Update your preferences and account security.</p>
+      </div>
+  
+      <div class="settings-card" style="margin-bottom: 24px;">
+          <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 16px;">
+              <h2 class="settings-header" style="margin-bottom: 0; border: none; padding: 0;">Identity Details</h2>
+              <span style="font-size: 11px; color: #9ca3af; text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em;">Read Only</span>
+          </div>
+          
+          <div class="formRow">
+              <div class="formGroup" style="flex: 1;">
+                <label>Full Name</label>
+                <input type="text" id="settingName" disabled class="input" style="background: #f1f5f9; color: #9ca3af; cursor: not-allowed; border: 1px solid #e2e8f0;">
+              </div>
+              <div class="formGroup" style="flex: 1;">
+                <label>Display Role</label>
+                <input type="text" id="settingRole" disabled class="input" style="background: #f1f5f9; color: #9ca3af; cursor: not-allowed; border: 1px solid #e2e8f0;">
+              </div>
+          </div>
+          <div class="formGroup">
+              <label>Account Email</label>
+              <input type="email" id="settingEmail" disabled class="input" style="background: #f1f5f9; color: #9ca3af; cursor: not-allowed; border: 1px solid #e2e8f0;">
+          </div>
+          <p style="font-size: 12px; color: #64748b; margin-top: 8px;">To update your name, role, or login email, please contact Emma or Ethan.</p>
       </div>
   
       <div class="settings-card">
-        <h2 class="settings-header">Personal Information</h2>
+        <h2 class="settings-header">Display Preferences</h2>
         
-        <div class="avatar-preview-section">
-          <div class="avatar-large" id="avatarPreview">EH</div>
-          <div class="color-picker-group">
-            <label style="display: block; font-size: 12px; font-weight: 600; color: #64748b; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em;">Choose Avatar Color</label>
-            <div class="color-options" id="colorPicker">
-              <label class="color-swatch" style="--swatch-color: #0CB2AF;"><input type="radio" name="theme_color" value="#0CB2AF" checked></label>
-              <label class="color-swatch" style="--swatch-color: #A1C65D;"><input type="radio" name="theme_color" value="#A1C65D"></label>
-              <label class="color-swatch" style="--swatch-color: #FAC723;"><input type="radio" name="theme_color" value="#FAC723"></label>
-              <label class="color-swatch" style="--swatch-color: #F29222;"><input type="radio" name="theme_color" value="#F29222"></label>
-              <label class="color-swatch" style="--swatch-color: #E95E50;"><input type="radio" name="theme_color" value="#E95E50"></label>
-              <label class="color-swatch" style="--swatch-color: #936FAC;"><input type="radio" name="theme_color" value="#936FAC"></label>
-              <label class="color-swatch" style="--swatch-color: #ababab;"><input type="radio" name="theme_color" value="#ababab"></label>
-            </div>
+        <form id="formColor">
+          <div class="avatar-preview-section">
+              <div class="avatar-large" id="avatarPreview">--</div>
+              <div class="color-picker-group">
+              <label style="display: block; font-size: 12px; font-weight: 600; color: #64748b; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em;">Choose Your Theme</label>
+              <div class="color-options" id="colorPicker">
+                  <label class="color-swatch" style="--swatch-color: #0CB2AF;"><input type="radio" name="theme_color" value="#0CB2AF"></label>
+                  <label class="color-swatch" style="--swatch-color: #A1C65D;"><input type="radio" name="theme_color" value="#A1C65D"></label>
+                  <label class="color-swatch" style="--swatch-color: #FAC723;"><input type="radio" name="theme_color" value="#FAC723"></label>
+                  <label class="color-swatch" style="--swatch-color: #F29222;"><input type="radio" name="theme_color" value="#F29222"></label>
+                  <label class="color-swatch" style="--swatch-color: #E95E50;"><input type="radio" name="theme_color" value="#E95E50"></label>
+                  <label class="color-swatch" style="--swatch-color: #936FAC;"><input type="radio" name="theme_color" value="#936FAC"></label>
+                  <label class="color-swatch" style="--swatch-color: #ababab;"><input type="radio" name="theme_color" value="#ababab"></label>
+              </div>
+              </div>
           </div>
-        </div>
-  
-        <form id="formProfile">
-          <div class="formGroup">
-            <label>Full Name</label>
-            <input type="text" id="settingName" required class="input">
-          </div>
-          <div class="formGroup">
-            <label>Account Email</label>
-            <input type="email" id="settingEmail" disabled class="input" style="background: #f8fafc; color: #9ca3af; cursor: not-allowed;" title="Contact Emma to change account emails.">
-          </div>
-          <button type="submit" class="btnPrimary" id="btnSaveProfile">Save Profile</button>
+          <button type="submit" class="btnPrimary" id="btnSaveColor">Save Preferences</button>
         </form>
       </div>
   

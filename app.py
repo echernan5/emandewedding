@@ -122,14 +122,16 @@ def get_profile(user_id: str):
         return None
     try:
         with conn.cursor() as cur:
+            # Added theme_color to the SELECT statement
             cur.execute(
-                "SELECT id, role, full_name, display_role FROM profiles WHERE id = %s",
+                "SELECT id, role, full_name, display_role, theme_color FROM profiles WHERE id = %s",
                 (user_id,),
             )
             row = cur.fetchone()
             if not row:
                 return None
-            return {"id": row[0], "role": row[1], "full_name": row[2], "display_role": row[3]}
+            # Added row[4] to the return dictionary
+            return {"id": row[0], "role": row[1], "full_name": row[2], "display_role": row[3], "theme_color": row[4]}
     finally:
         conn.close()
 
