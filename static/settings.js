@@ -81,29 +81,19 @@ document.addEventListener("DOMContentLoaded", async () => {
         console.error("Failed to load profile data", e);
     }
 
-    // 2. LIVE PAINTING (The magic gradient & avatar effect)
+    // 2. LIVE PAINTING (The magic theme effect)
     colorRadios.forEach(radio => {
         radio.addEventListener("change", (e) => {
-            const chosenColor = e.target.value;
-            const secondaryColor = getSecondaryColor(chosenColor);
-            const style = getAvatarStyle(chosenColor);
+            const chosenHex = e.target.value;
             
-            // Paint the large preview box
-            avatarPreview.style.backgroundColor = style.bg;
-            avatarPreview.style.color = style.text;
+            // 1. Tell the global engine to swap the CSS variables instantly
+            if (typeof applyGlobalTheme === "function") {
+                applyGlobalTheme(chosenHex);
+            }
             
-            // Paint the sidebar avatar
-            const sidebarAvatar = document.getElementById("userAvatarDisplay");
-            if (sidebarAvatar) {
-                sidebarAvatar.style.backgroundColor = style.bg;
-                sidebarAvatar.style.color = style.text;
-            }
-
-            // Paint the sidebar gradient smoothly
-            const sidebar = document.querySelector(".sidebar");
-            if (sidebar) {
-                sidebar.style.background = `linear-gradient(180deg, ${chosenColor} 0%, ${chosenColor} 65%, ${secondaryColor} 100%)`;
-            }
+            // 2. Paint the large preview box using the active CSS variables
+            avatarPreview.style.backgroundColor = "var(--theme-light)";
+            avatarPreview.style.color = "var(--theme-text)";
         });
     });
 

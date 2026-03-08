@@ -1,5 +1,47 @@
 // static/dash-sidebar.js
 
+/* =========================================
+   THEME ENGINE (Universal Color Palettes)
+   ========================================= */
+   const THEME_PALETTES = {
+    // 1. Baltic Blue (Your new default)
+    "#6180A8": { primary: "#6180A8", secondary: "#506C91", light: "#E4EAF1", text: "#26364a" },
+    // 2. Wisteria Purple
+    "#936FAC": { primary: "#936FAC", secondary: "#73528A", light: "#F4F0F7", text: "#4A3B58" },
+    // 3. Sage Green
+    "#A1C65D": { primary: "#A1C65D", secondary: "#7A9B42", light: "#F2F8E8", text: "#3E521C" },
+    // 4. Ocean Teal
+    "#0CB2AF": { primary: "#0CB2AF", secondary: "#098280", light: "#E0F6F5", text: "#065A59" },
+    // 5. Terracotta
+    "#F29222": { primary: "#F29222", secondary: "#C46F11", light: "#FDF2E8", text: "#7A4308" },
+    // 6. Blush Rose
+    "#E95E50": { primary: "#E95E50", secondary: "#BD3C30", light: "#FDECED", text: "#7A241B" },
+    // 7. Slate Grey
+    "#ABABAB": { primary: "#ABABAB", secondary: "#71717A", light: "#F4F4F4", text: "#4B4B4B" }
+};
+
+function applyGlobalTheme(hex) {
+    // Default to Baltic Blue if they haven't picked a color yet
+    const theme = THEME_PALETTES[hex] || THEME_PALETTES["#6180A8"];
+    const root = document.documentElement; // This targets the <html> tag
+
+    // 1. Inject the Universal CSS Variables!
+    root.style.setProperty('--theme-primary', theme.primary);
+    root.style.setProperty('--theme-secondary', theme.secondary);
+    root.style.setProperty('--theme-light', theme.light);
+    root.style.setProperty('--theme-text', theme.text);
+
+    // 2. Paint the Sidebar & Avatars using the new variables
+    const sidebar = document.querySelector(".sidebar");
+    if (sidebar) sidebar.style.background = `linear-gradient(180deg, var(--theme-primary) 0%, var(--theme-primary) 65%, var(--theme-secondary) 100%)`;
+
+    const avatarDisplay = document.getElementById("userAvatarDisplay");
+    if (avatarDisplay) {
+        avatarDisplay.style.backgroundColor = "var(--theme-light)";
+        avatarDisplay.style.color = "var(--theme-text)";
+    }
+}
+
 async function waitForAuth() {
   for (let i = 0; i < 50; i++) { 
       if (window.AppAuth?.token) return window.AppAuth.token;
@@ -46,29 +88,18 @@ function getAvatarStyle(primary) {
 }
 
 // Helper function to keep our code clean
+// Helper function to keep our code clean
 function updateSidebarUI(profile) {
   document.getElementById("userNameDisplay").textContent = profile.full_name || "Guest";
   document.getElementById("userRoleDisplay").textContent = profile.display_role || "Viewer";
   
-  // Update the Sidebar Avatar
+  // Update the Sidebar Avatar text
   const initials = (profile.full_name || "G").split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
   const avatarDisplay = document.getElementById("userAvatarDisplay");
-  
-  if (avatarDisplay) {
-      avatarDisplay.textContent = initials;
-      if (profile.theme_color) {
-          const style = getAvatarStyle(profile.theme_color);
-          avatarDisplay.style.backgroundColor = style.bg;
-          avatarDisplay.style.color = style.text;
-      }
-  }
+  if (avatarDisplay) avatarDisplay.textContent = initials;
 
-  // Paint the Sidebar Background Gradient
-  const sidebar = document.querySelector(".sidebar");
-  if (sidebar && profile.theme_color) {
-      const secondaryColor = getSecondaryColor(profile.theme_color);
-      sidebar.style.background = `linear-gradient(180deg, ${profile.theme_color} 0%, ${profile.theme_color} 65%, ${secondaryColor} 100%)`;
-  }
+  // Trigger the Theme Engine!
+  applyGlobalTheme(profile.theme_color);
 }
 
 async function loadRealProfile() {
