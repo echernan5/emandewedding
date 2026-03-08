@@ -1,1521 +1,914 @@
 /* ======================================================
-   RSVP DASHBOARD — CLEAN TABLE + SUBTLE COLOR
-   (full dashboard.css)
-   - Party cards + icon-only mini stats
-   - Drawer (wide) with party address at top
-   - Party members displayed as a clean, aligned table
+   RSVP DASHBOARD — THEMED EDITION
 ====================================================== */
 
-:root{
-    --bg:#f8f8f8;
-    --panel:#ffffff;
-    --panel-soft:#fafafa;
-  
-    --border:#e5e7eb;
-    --border-soft:#eef0f3;
-  
-    --text:#262626;
-    --muted:#828282;
-  
-    --accent:#1f9bd1;
-    --accent-soft: rgba(31,155,209,.12);
-    --accent-line: rgba(31,155,209,.28);
-  
-    --yes:#009d22;
-    --no:#c62929;
-    --pending:#dadada;
-  
-    --shadow: 0 10px 28px rgba(17,24,39,.10);
-    --radius:12px;
-  }
-  
-  *{ box-sizing:border-box }
-  html,body{ height:100% }
-  
-  body{
-    margin:0;
-    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-    background: var(--bg);
-    color: var(--text);
-  }
-  
-  .hidden{ display:none !important }
-  .muted{ color:var(--muted) }
-  
-  /* ---------- Header ---------- */
-  
-  .topbar{
-    display:flex;
-    justify-content:space-between;
-    align-items:flex-end;
-    gap:16px;
-    padding:18px 22px 14px;
-    background: var(--panel);
-    border-bottom:1px solid var(--border);
-  }
-  
-  .title{
-    margin: 0;
-    font-size: 28px;
-    font-weight: 500;
-  }
-  
-  .subtitle{
-    margin-top:4px;
-    font-size:12.5px;
-    color:var(--muted);
-    max-width:720px;
-  }
-  
-  /* ---------- Layout ---------- */
-  
-  .container{
-    max-width:1200px;
-    margin:0 auto;
-    padding:14px 18px 36px;
-  }
-  
-  /* ---------- View Toggle ---------- */
-  
-  .segmented{
-    display:inline-flex;
-    padding:3px;
-    border:1px solid var(--border);
-    border-radius:999px;
-    background:#f1f2f6;
-  }
-  
-  .segmented__btn{
-    border:0;
-    background:transparent;
-    padding:8px 14px;
-    border-radius:999px;
-    font-size:13px;
-    font-weight:700;
-    cursor:pointer;
-    color:var(--muted);
-  }
-  
-  .segmented__btn.is-active{
-    background: var(--panel);
-    color: var(--text);
-    box-shadow: 0 2px 6px rgba(0,0,0,.08);
-    border: 1px solid rgba(0,0,0,0);
-  }
-  
-  /* ---------- Summary ---------- */
-  /* ---------- RSVP visual bar ---------- */
-.rsvpViz{
-    margin-top: 14px;
-    background: var(--panel);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 12px 14px;
-    box-shadow: 0 6px 18px rgba(17,24,39,06);
-  }
-  
-  .rsvpViz__top{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:12px;
-    margin-bottom: 10px;
-  }
-  
-  .rsvpViz__title{
-    font-size: 20px;
-    font-weight: 500;
-    color: var(--text);
-  }
-  
-  .rsvpViz__legend{
-    display:flex;
-    gap:12px;
-    color: var(--muted);
-    font-size: 12px;
-    font-weight: 700;
-  }
-  
-  .legendItem{
-    display:inline-flex;
-    align-items:center;
-    gap:6px;
-  }
-  
-  .dot{
-    width:10px;
-    height:10px;
-    border-radius: 999px;
-    display:inline-block;
-  }
-  
-  .dot--yes{ background: var(--yes); }
-  .dot--no{ background: var(--no); }
-  .dot--pending{ background: var(--pending); }
-  
-  .rsvpViz__bar{
-    height: 12px;
-    border-radius: 999px;
-    overflow:hidden;
-    background: #eef0f3;
-    display:flex;
-  }
-  
-  .rsvpViz__seg{
-    height: 100%;
-  }
-  
-  .rsvpViz__seg--yes{ background: var(--yes); }
-  .rsvpViz__seg--no{ background: var(--no); }
-  .rsvpViz__seg--pending{ background: var(--pending); }
-  
-  .rsvpViz__nums{
-    margin-top: 10px;
-    display:flex;
-    gap:14px;
-    flex-wrap:wrap;
-    color: var(--muted);
-    font-size: 12.5px;
-    font-weight: 700;
-  }
-  
-  .rsvpViz__num{
-    display:flex;
-    gap:8px;
-    align-items:baseline;
-  }
-  
-  .rsvpViz__num .v{
-    color: var(--text);
-    font-weight: 800;
-  }
-  
-  /* ---------- Summary (shorter cards) ---------- */
-  .summary{
-    margin-top: 10px; /* was 14px; tighter since bar is above */
-  }
-  
-  .summary__card,
-  .summary__meta{
-    padding: 10px 12px; /* smaller */
-  }
-  
-  .summary__label{
-    font-size: 11.5px;
-  }
-  
-  .summary__value{
-    margin-top: 2px;
-    font-size: 22px;   /* was ~30 */
-    font-weight: 750;  /* feels more “designed” than 500 */
-    line-height: 1.1;
-  }
-  
-  /* smaller color strip */
-  .summary__card--yes::before,
-  .summary__card--no::before,
-  .summary__card--pending::before,
-  .summary__card--neutral::before{
-    height: 2px;       /* was 3px */
-    margin-bottom: 8px;
-  }
+:root {
+  /* 1. The magical faint background! */
+  --bg: var(--theme-100, #F7FBFF);
+  --panel: #ffffff;
+  --panel-soft: var(--theme-100, #F7FBFF);
 
-  
-  .summary{
-    display:grid;
-    grid-template-columns: repeat(3, 1fr) 260px;
-    gap:10px;
-    margin-top:14px;
-  }
-  
-  .summary__card,
-  .summary__meta{
-    background: var(--panel);
-    border:1px solid var(--border);
-    border-radius: var(--radius);
-    padding:14px;
-    box-shadow: 0 6px 18px rgba(17,24,39,.06);
-  }
-  
-  .summary__label{
-    font-size:12px;
-    color:var(--muted);
-  }
-  
-  .summary__value{
-    margin-top:4px;
-    font-size:30px;
-    font-weight:500;
-  }
-  
-  .summary__card--yes::before,
-  .summary__card--no::before,
-  .summary__card--pending::before{
-    content:"";
-    display:block;
-    height:3px;
-    border-radius:999px;
-    margin-bottom:10px;
-  }
-  .summary__card--yes::before{ background: var(--yes); }
-  .summary__card--no::before{ background: var(--no); }
-  .summary__card--pending::before{ background: var(--pending); }
-  
-  .metaRow{
-    display:flex;
-    justify-content:space-between;
-    font-size:13px;
-    font-weight: 500;
-  }
-  .metaValue{ font-weight:700 }
-  
-  /* ---------- Toolbar ---------- */
-  
-  .toolbar{
-    margin-top:14px;
-    display:flex;
-    justify-content:space-between;
-    gap:12px;
-    padding:12px;
-    background: var(--panel);
-    border:1px solid var(--border);
-    border-radius: var(--radius);
-    box-shadow: 0 6px 18px rgba(17,24,39,.06);
-  }
-  
-  .toolbar__left{
-    display:flex;
-    gap:12px;
-    flex-wrap:wrap;
-    align-items:flex-end; /* 👈 this is the key */
-  }  
-  
-  .toolbar__right{
-    display:flex;
-    align-items:flex-end;
-  }
-  
-  .field{
-    display:flex;
-    flex-direction:column;
-    gap:4px;
-  }
-  
-  .field__label{
-    font-size:12px;
-    color: #6e6e6e;
-  }
-  
-  .input,.select{
-    height:36px;
-    min-width:200px;
-    padding:0 12px;
-    border-radius:10px;
-    border:1px solid var(--border);
-    background: white;
-    font-size:14px;
-    color: var(--text);
-  }
+  --border: #e5e7eb;
+  --border-soft: #eef0f3;
 
-  #searchInput.input{
-    min-width:300px;
-    background-color: white;
-  }  
-  
-  .input:focus, .select:focus{
-    outline:none;
-    border-color: var(--accent-line);
-    box-shadow: 0 0 0 3px var(--accent-soft);
-    background:#fff;
-  }
-  
-  .btn{
-    height:36px;
-    padding:0 14px;
-    border-radius:10px;
-    border:1px solid var(--border);
-    background:#f3f4f6;
-    font-weight:700;
-    cursor:pointer;
-  }
+  --text: #262626;
+  --muted: #828282;
 
-  #btnClear{
-    height:36px;
-    margin-bottom:2px; /* optical alignment with inputs */
-    align-self:flex-end;
-  }  
-  
-  .btn:hover{ background:#e9eaee }
-  .btn--ghost{ background:transparent }
-  
-  #btnRefresh.btn{
-    background: linear-gradient(#f7fbff, #f1f6ff);
-    border-color: rgba(31,155,209,.25);
-  }
-  #btnRefresh.btn:hover{
-    background: linear-gradient(#f1f7ff, #eaf2ff);
-  }
-  
-  /* ---------- Views ---------- */
-  
-  .view{ display:none; margin-top:14px }
-  .view--active{ display:block }
-  
-  /* ---------- Party Cards ---------- */
-  
-  .partyList{
-    display:flex;
-    flex-direction:column;
-    gap:12px;
-  }
-  
-  .partyCard{
-    background: var(--panel);
-    border:1px solid var(--border);
-    border-radius: var(--radius);
-    box-shadow: 0 6px 18px rgba(17,24,39,.06);
-    overflow:hidden;
-  }
-  
-  .partyCard__header{
-    display:flex;
-    justify-content:space-between;
-    align-items:flex-start;
-    gap:12px;
-    padding:14px;
-    border-bottom:1px solid var(--border);
-    background:#fafafa;
-  }
-  
-  .partyCard__title{
-    margin:0;
-    font-size:18px;
-    font-weight:600;
-  }
-  
-  .partyCard__meta{
-    font-size:12px;
-    color:var(--muted);
-    margin-top:2px;
-  }
-  
-  .partyCard__footer{
-    padding:10px 14px;
-    font-size:12px;
-    color:var(--muted);
-    border-top:1px solid var(--border-soft);
-    background:#fff;
-  }
-  
-  /* Icon-only mini stats (✓ 0, ✕ 0, ? 2) */
-  .partyCard__badges{
-    display:flex;
-    align-items:center;
-    gap:12px;
-    flex-wrap:wrap;
-    margin-top:2px;
-  }
-  
-  .miniStat{
-    display:inline-flex;
-    align-items:center;
-    gap:8px;
-    line-height:1;
-  }
-  
-  .miniStat__icon{
-    width:16px;
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
-    font-size:16px;
-    font-weight:900;
-    line-height:1;
-  }
-  
-  .miniStat__value{
-    font-size:15px;
-    font-weight:800;
-    color: var(--text);
-  }
-  
-  .miniStat--yes .miniStat__icon{ color: var(--yes); }
-  .miniStat--no .miniStat__icon{ color: var(--no); }
-  .miniStat--pending .miniStat__icon{ color: rgb(156, 156, 156); }
-  
-  /* ---------- Tables ---------- */
-  
-  .tableWrap{ overflow:auto; }
-  
-  .table,
-  .partyTable{
-    width:100%;
-    border-collapse:collapse;
-    table-layout: fixed;
-    min-width:980px;
-  }
-  
-  .table th,
-  .table td,
-  .partyTable th,
-  .partyTable td{
-    padding:12px;
-    border-bottom:1px solid var(--border-soft);
-    font-size:13px;
-    text-align:left;
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
-  }
-  
-  .table th,
-  .partyTable th{
-    font-size:12px;
-    font-weight:600;
-    text-transform:uppercase;
-    letter-spacing:.02em;
-    color:#787878;
-    background:#fafafa;
-  }
-  
-  .table tr,
-  .partyTable tr{ position:relative; }
-  
-  .table tr:hover,
-  .partyTable tr:hover{
-    background:#f6f8fb;
-    cursor:pointer;
-  }
-  
-  .table tr:hover td:first-child,
-  .partyTable tr:hover td:first-child{
-    box-shadow: inset 3px 0 0 0 rgba(31,155,209,.35);
-  }
-  
-  /* Party view (6 columns) */
-  .partyTable th:nth-child(1),
-  .partyTable td:nth-child(1){ width:140px; }
-  .partyTable th:nth-child(2),
-  .partyTable td:nth-child(2){ width:180px; }
-  .partyTable th:nth-child(3),
-  .partyTable td:nth-child(3){ width:170px; }
-  .partyTable th:nth-child(4),
-  .partyTable td:nth-child(4){ width:170px; }
-  .partyTable th:nth-child(5),
-  .partyTable td:nth-child(5){ width:160px; }
-  .partyTable th:nth-child(6),
-  .partyTable td:nth-child(6){ width:auto; }
-  
-  /* Individual view (7 columns) */
-  .table th:nth-child(1),
-  .table td:nth-child(1){ width:130px; }
-  .table th:nth-child(2),
-  .table td:nth-child(2){ width:170px; }
-  .table th:nth-child(3),
-  .table td:nth-child(3){ width:220px; }
-  .table th:nth-child(4),
-  .table td:nth-child(4){ width:170px; }
-  .table th:nth-child(5),
-  .table td:nth-child(5){ width:170px; }
-  .table th:nth-child(6),
-  .table td:nth-child(6){ width:160px; }
-  .table th:nth-child(7),
-  .table td:nth-child(7){ width:auto; }
-  
+  /* 2. Universal Accent Colors */
+  --accent: var(--theme-500, #7B95B7);
+  --accent-soft: var(--theme-200, #E4EAF1);
+  --accent-line: var(--theme-300, #BDC9DB);
 
-  /* ---------- Lodging pills ---------- */
-.lodgePill{
-    display:inline-flex;
-    align-items:center;
-    height:26px;
-    padding:0 10px;
-    border-radius:999px;
-    font-size:12px;
-    font-weight:800;
-    border:1px solid var(--border);
-    background:#fff;
-    color:#434343;
-    white-space:nowrap;
-  }
-  
-  .lodgePill::before{
-    content:"";
-    width:8px;
-    height:8px;
-    border-radius:999px;
-    margin-right:8px;
-    background:#d0d0d0;
-  }
-  
-  /* Each lodging gets its own vibe */
-  .lodgePill--bay_pointe{
-    background: rgba(31,155,209,.10);
-    border-color: rgba(31,155,209,.25);
-  }
-  .lodgePill--bay_pointe::before{ background: var(--accent); }
-  
-  .lodgePill--best_western{
-    background: rgba(124,58,237,.10);
-    border-color: rgba(124,58,237,.25);
-  }
-  .lodgePill--best_western::before{ background: rgb(124,58,237); }
-  
-  .lodgePill--gun_lake{
-    background: rgba(16,185,129,.10);
-    border-color: rgba(16,185,129,.25);
-  }
-  .lodgePill--gun_lake::before{ background: rgb(16,185,129); }
-  
-  .lodgePill--other{
-    background: rgba(245,158,11,.12);
-    border-color: rgba(245,158,11,.25);
-  }
-  .lodgePill--other::before{ background: rgb(245,158,11); }
-  
-  /* None / empty */
-  .lodgePill--none,
-  .lodgePill--empty{
-    background:#f6f7fb;
-    border-color: var(--border);
-    color:#a1a1a1;
-  }
-  .lodgePill--none::before,
-  .lodgePill--empty::before{ background:#c7c9cf; }
+  /* 3. Monochromatic RSVP Statuses (Replacing Red/Green) */
+  --yes: var(--theme-600, #6180A8);
+  --no: var(--theme-400, #93A8C4);
+  --pending: var(--theme-300, #BDC9DB);
 
-  
-  /* RSVP status pill-less (dot + word) */
-  /* ---------- RSVP STATUS BADGE (filled circle + icon) ---------- */
-
-.status{
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
-  }
-  
-  /* The circular badge */
-  .statusBadge{
-    width:18px;
-    height:18px;
-    border-radius:50%;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-  
-    font-size:12px;
-    font-weight:900;
-    line-height:1;
-    color:#fff; /* icon color */
-  
-    user-select:none;
-  }
-  
-  /* Colors */
-  .status--accepted .statusBadge{
-    background: var(--yes);
-  }
-  
-  .status--declined .statusBadge{
-    background: var(--no);
-  }
-  
-  .status--pending .statusBadge{
-    background: var(--pending);
-  }
-  
-  
-  /* ======================================================
-     DRAWER (WIDE) + SPACING FIXES
-  ====================================================== */
-  
-  /* The drawer wrapper MUST be the element you toggle .is-open on */
-  .drawer{
-    position:fixed;
-    inset:0;
-    opacity:0;
-    pointer-events:none;
-    transition:opacity .18s ease;
-    z-index:999;
-  }
-  .drawer.is-open{
-    opacity:1;
-    pointer-events:auto;
-  }
-  
-  .drawer__overlay{
-    position:absolute;
-    inset:0;
-    background:rgba(0,0,0,.28);
-  }
-  
-  .drawer__panel{
-    position:absolute;
-    right:0;
-    top:0;
-    bottom:0;
-    width:min(980px, 92vw); /* BIGGER drawer */
-    background:var(--panel);
-    border-left:1px solid var(--border);
-    box-shadow: var(--shadow);
-    display:flex;
-    flex-direction:column;
-  }
-  
-  .drawer__header{
-    padding:18px 20px;
-    border-bottom:1px solid var(--border);
-    display:flex;
-    align-items:flex-start;
-    justify-content:space-between;
-    gap:14px;
-  }
-  
-  .drawer__title{
-    font-size:18px;
-    font-weight:900;
-    margin:0;
-  }
-  
-  .drawer__subtitle{
-    font-size:12px;
-    color:var(--muted);
-    margin-top:4px;
-  }
-  
-  .drawer__content{
-    padding:18px 20px 22px;
-    overflow:auto;
-  }
-  
-  /* close button */
-  .iconBtn{
-    width:36px;
-    height:36px;
-    border-radius:10px;
-    border:1px solid var(--border);
-    background:#f3f4f6;
-    cursor:pointer;
-    flex:0 0 auto;
-  }
-  .iconBtn:hover{ background:#e9eaee }
-  
-  /* Section titles */
-  .drawerSectionTitle{
-    margin:18px 0 10px;
-    font-size:12px;
-    font-weight:900;
-    color:#8a93a3;
-    letter-spacing:.02em;
-    text-transform:uppercase;
-  }
-  
-  .drawerDivider{
-    height:1px;
-    background: var(--border);
-    margin:16px 0;
-  }
-  
-  /* Address grid (fix the “State floating to the right” issue) */
-  .formGrid{
-    display:grid;
-    grid-template-columns: 1.4fr .6fr .6fr; /* City wider, State/Zip tighter */
-    gap:12px 14px;
-    margin-top:6px;
-    max-width: 760px;
-  }
-  
-  .formField{ min-width:0; }
-
-  .formField--street,
-  .formField--unit{
-    grid-column: 1 / -1;
-    }
-
-    /* City / State / Zip */
-    .formField--city{ grid-column: 1 / 2; }
-    .formField--state{ grid-column: 2 / 3; }
-    .formField--zip{ grid-column: 3 / 4; }
-
-  
-  .formLabel{
-    display:block;
-    font-size:12px;
-    color: var(--muted);
-    margin:0 0 6px;
-    font-weight:800;
-  }
-  
-  /* Make inputs consistent inside drawer */
-  .drawer__content .input,
-  .drawer__content .select{
-    height:36px;
-    border-radius:10px;
-    background:#fbfbfd;
-  }
-  
-  /* ======================================================
-     PARTY MEMBERS (TABLE) — fixes spacing / alignment
-     Assumes your JS renders a real table like:
-     <div class="membersTable">
-       <table class="membersTable__table">
-         <thead>...</thead>
-         <tbody>...</tbody>
-       </table>
-     </div>
-  
-     If you still have a div-grid version, see the fallback
-     styles further down.
-  ====================================================== */
-  
-  .membersTable{
-    margin-top:10px;
-    border:1px solid var(--border);
-    border-radius:12px;
-    overflow:hidden;
-    background:#fff;
-  }
-  
-  .membersTable__table{
-    width:100%;
-    border-collapse:collapse;
-    table-layout:fixed;
-    min-width:920px; /* ensures columns don’t smash */
-  }
-  
-  .membersTable__table thead th{
-    padding:10px 12px;
-    background:#fafafa;
-    border-bottom:1px solid var(--border);
-    font-size:12px;
-    font-weight:900;
-    color:#8a93a3;
-    text-transform:uppercase;
-    letter-spacing:.02em;
-    text-align:left;
-  }
-  
-  .membersTable__table tbody td{
-    padding:10px 12px;
-    border-bottom:1px solid var(--border-soft);
-    vertical-align:middle;
-    background-color: white;
-  }
-
-  #guestTbody {
-    background-color: white;
-  }
-  
-  .membersTable__table tbody tr:last-child td{
-    border-bottom:0;
-  }
-  
-  .membersTable__table .input,
-  .membersTable__table .select{
-    height:34px;
-    width:100%;
-    min-width:0;
-    padding:0 10px;
-    border-radius:10px;
-    background:#fbfbfd;
-  }
-  
-  /* Column sizing (tweak as needed) */
-  .membersTable__table th:nth-child(1),
-  .membersTable__table td:nth-child(1){ width:140px; } /* First */
-  .membersTable__table th:nth-child(2),
-  .membersTable__table td:nth-child(2){ width:170px; } /* Last */
-  .membersTable__table th:nth-child(3),
-  .membersTable__table td:nth-child(3){ width:130px; } /* Wedding */
-  .membersTable__table th:nth-child(4),
-  .membersTable__table td:nth-child(4){ width:130px; } /* Welcome */
-  .membersTable__table th:nth-child(5),
-  .membersTable__table td:nth-child(5){ width:160px; } /* Lodging */
-  .membersTable__table th:nth-child(6),
-  .membersTable__table td:nth-child(6){ width:180px; } /* Table */
-  .membersTable__table th:nth-child(7),
-  .membersTable__table td:nth-child(7){ width:160px; } /* Side */
-  .membersTable__table th:nth-child(8),
-  .membersTable__table td:nth-child(8){ width:auto; }  /* Dietary / Relationship */
-  
-  /* If you have 8+ columns, horizontal scroll is intentional */
-  .membersTable{
-    overflow:auto;
-  }
-  
-  /* ======================================================
-     FALLBACK: if your JS is still using DIV GRID rows like:
-     .membersHead, .membersRow, .membersBody, etc.
-     (kept clean + consistent)
-  ====================================================== */
-  
-  .membersHead,
-  .membersRow{
-    display:grid;
-    align-items:center;
-    gap:10px;
-    padding:10px 12px;
-  }
-  
-  .membersHead{
-    grid-template-columns: 140px 170px 130px 130px 160px 180px 160px 1fr;
-    background:#fafafa;
-    border-bottom:1px solid var(--border);
-    font-size:12px;
-    font-weight:900;
-    color:#8a93a3;
-    text-transform:uppercase;
-    letter-spacing:.02em;
-  }
-  
-  .membersBody .membersRow{
-    grid-template-columns: 140px 170px 130px 130px 160px 180px 160px 1fr;
-    border-bottom:1px solid var(--border-soft);
-  }
-  .membersBody .membersRow:last-child{ border-bottom:0; }
-  
-  .membersRow .input,
-  .membersRow .select{
-    height:34px;
-    width:100%;
-    min-width:0;
-    padding:0 10px;
-    border-radius:10px;
-    background:#fbfbfd;
-  }
-  
-  /* Prevent odd wrapping in grid cells */
-  .membersRow > div,
-  .membersHead > div{
-    min-width:0;
-  }
-  
-  /* ---------- Drawer actions ---------- */
-  
-  .drawerActions{
-    margin-top:14px;
-    padding-top:12px;
-    border-top:1px solid var(--border);
-    display:flex;
-    gap:10px;
-    align-items:center;
-  }
-  
-  .drawerMsg{
-    font-size:12px;
-    color: var(--muted);
-  }
-  
-  /* ---------- Empty ---------- */
-  
-  .emptyState{
-    padding:24px;
-    border:1px dashed var(--border);
-    border-radius: var(--radius);
-    background:#fafafa;
-  }
-  
-  .emptyState h3{
-    margin:0 0 6px;
-    font-size:16px;
-  }
-  
-  /* ---------- Responsive ---------- */
-  
-  @media (max-width: 980px){
-    .summary{ grid-template-columns:1fr }
-    .input,.select{ min-width:100% }
-    .toolbar{ align-items:stretch }
-    .toolbar__right{ align-items:stretch }
-  
-    .formGrid{
-      grid-template-columns: 1fr;
-      max-width: 100%;
-    }
-  }
-  
-  @media (max-width: 520px){
-    .drawer__panel{ width: 94vw; }
-  }
-  
-
-/* ======================================================
-   DRAWER POLISH — cards, hierarchy, sticky actions
-====================================================== */
-
-.drawer__panel{
-background: #fff;
+  --shadow: 0 10px 28px rgba(17,24,39,.06);
+  --radius: 12px;
 }
 
-/* Header layout */
-.drawerHead{
-display:flex;
-align-items:center;
-gap:14px;
-min-width:0;
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+
+body {
+  margin: 0;
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+  background: var(--bg);
+  color: var(--text);
 }
 
-.drawerAvatar{
-width:42px;
-height:42px;
-border-radius:14px;
-display:flex;
-align-items:center;
-justify-content:center;
-font-weight:900;
-background: linear-gradient(180deg, #f6f9ff, #eef4ff);
-border:1px solid rgba(31,155,209,.25);
-color:#1d4ed8;
-flex:0 0 auto;
-}
+.hidden { display: none !important; }
+.muted { color: var(--muted); }
 
-.drawerHeadText{ min-width:0; }
-
-.drawerHeadMeta{
-display:flex;
-align-items:center;
-gap:8px;
-margin-top:4px;
-font-size:12.5px;
-color: var(--muted);
-white-space:nowrap;
-overflow:hidden;
-text-overflow:ellipsis;
-}
-
-.dotSep{ opacity:.5; }
-
-.drawerChips{
-display:flex;
-gap:8px;
-flex-wrap:wrap;
-margin-top:10px;
-}
-
-.chip{
-display:inline-flex;
-align-items:center;
-gap:8px;
-padding:6px 10px;
-border-radius:999px;
-border:1px solid var(--border);
-background:#fafafa;
-font-size:12px;
-font-weight:800;
-color:#394150;
-}
-
-.chipDot{
-width:8px;
-height:8px;
-border-radius:99px;
-background:#c7c9cf;
-}
-
-.chip--yes .chipDot{ background: var(--yes); }
-.chip--no .chipDot{ background: var(--no); }
-.chip--pending .chipDot{ background: var(--pending); }
-
-/* Content spacing */
-.drawer__content{
-padding:18px 20px 90px; /* leave room for sticky actions */
-}
-
-/* Section titles feel lighter */
-.drawerSectionTitle{
-margin:18px 0 10px;
-font-size:11.5px;
-letter-spacing:.08em;
-color:#9098aa;
-}
-
-/* Soft cards */
-.drawerCard{
-border:1px solid var(--border);
-border-radius:14px;
-background:#fff;
-box-shadow: 0 10px 24px rgba(17,24,39,.06);
-overflow:hidden;
-}
-
-.drawerCard__head{
-padding:12px 14px;
-background:#fafafa;
-border-bottom:1px solid var(--border);
-display:flex;
-align-items:center;
-justify-content:space-between;
-gap:12px;
-}
-
-.drawerCard__title{
-font-weight:900;
-font-size:13px;
-}
-
-.drawerCard__body{
-padding:14px;
-}
-
-/* Address grid (you currently use .addressGrid in HTML — style it) */
-/* Compact address layout */
-.addressGrid{
-    display:grid;
-    grid-template-columns: 1fr;
-    gap:10px;
-    max-width: 680px;   /* prevents it from stretching too wide */
-  }
-  
-  /* Keep Address 1/2 full width */
-  .addressGrid .formField--full{
-    grid-column: 1 / -1;
-  }
-  
-  /* Row for City / State / Zip */
-  .addressGrid{
-    grid-auto-flow: row;
-  }
-  
-  /* Turn the last three fields into a single row */
-  .addressGrid .formField:nth-child(3),
-  .addressGrid .formField:nth-child(4),
-  .addressGrid .formField:nth-child(5){
-    display:block;
-  }
-  
-  /* Apply a sub-grid to just City/State/Zip by wrapping them (recommended) */
-  .addressRow{
-    display:grid;
-    grid-template-columns: 1fr 120px 140px; /* City, State, Zip */
-    gap:10px 12px;
-  }  
-
-/* More “designed” member list */
-.membersCards{
-display:flex;
-flex-direction:column;
-gap:10px;
-}
-
-.memberCard{
-border:1px solid var(--border);
-border-radius:14px;
-background:#fff;
-overflow:hidden;
-}
-
-.memberCard__top{
-padding:12px 14px;
-display:flex;
-justify-content:space-between;
-align-items:flex-start;
-gap:12px;
-background:#fff;
-}
-
-.memberName{
-font-weight:900;
-font-size:14px;
-}
-
-.memberSub{
-margin-top:2px;
-font-size:12.5px;
-color: var(--muted);
-}
-
-.memberCard__grid{
-padding:12px 14px 14px;
-background:#f9f9f9;
-border-top:1px solid var(--border-soft);
-display:grid;
-grid-template-columns: 1.2fr 1.2fr .9fr .9fr 1.2fr 1.2fr;
-gap:10px 12px;
-}
-
-.miniField{
-display:flex;
-flex-direction:column;
-gap:6px;
-min-width:0;
-}
-
-.miniLabel{
-font-size:11px;
-letter-spacing:.06em;
-text-transform:uppercase;
-color:#9098aa;
-font-weight:900;
-}
-
-.memberCard__grid .input,
-.memberCard__grid .select{
-width:100%;
-min-width:0;
-height:34px;
-border-radius:10px;
-background:#fff;
-}
-
-/* Sticky actions (feels premium + always available) */
-.drawerActions{
-position:sticky;
-bottom:0;
-margin-top:18px;
-padding:12px 14px;
-border-top:1px solid var(--border);
-background: rgba(255,255,255,.9);
-backdrop-filter: blur(10px);
-display:flex;
-align-items:center;
-gap:10px;
-}
-
-.drawerActions .btn{
-height:38px;
-border-radius:12px;
-}
-
-#btnDrawerSave.btn{
-background: linear-gradient(#f7fbff, #eff6ff);
-border-color: rgba(31,155,209,.35);
-}
-
-#btnDrawerSave.btn:hover{
-background: linear-gradient(#f1f7ff, #e8f1ff);
-}
-
-/* Responsive for member grid */
-@media (max-width: 980px){
-.addressGrid{ grid-template-columns: 1fr; }
-.memberCard__grid{
-    grid-template-columns: 1fr 1fr;
-}
-}
-  
-/* Summary now has 4 cards + meta */
-.summary{
-    grid-template-columns: repeat(4, 1fr) 300px;
-  }
-  
-  /* A neutral card (for Under 21) */
-  .summary__card--neutral::before{
-    content:"";
-    display:block;
-    height:3px;
-    border-radius:999px;
-    margin-bottom:10px;
-    background:#94a3b8; /* subtle slate */
-  }
-  
-  .metaDivider{
-    height:1px;
-    background: var(--border-soft);
-    margin:10px 0;
-  }
-  
-  .metaStack{
-    margin-top:8px;
-    display:flex;
-    flex-direction:column;
-    gap:6px;
-  }
-  
-  .metaRow--sub .metaLabel{
-    color:#808080;
-    font-size:12px;
-    font-weight: 500;
-  }
-  
-  /* Layout shell */
- .app{
-    display: grid;
-    grid-template-columns: 260px 1fr;
-    min-height: 100vh;
-  }
-  
-  /* Main column must be allowed to shrink or tables cause overflow weirdness */
-  .main{
-    min-width: 0;
-  }
-  
-  /* Sidebar should not be sticky inside a grid unless you really want it to be */
-  .sidebar{
-    position: sticky;
-    top: 0;
-    height: 100vh;
-  }
-  
-  /* ============================
-   SUMMARY LAYOUT FIX (override)
-   Paste at END of dashboard.css
-============================ */
-
-.content-container{
-    padding: 10px 25px;
-  }
-
-/* Fix a typo in your earlier rsvpViz shadow if it exists */
-.rsvpViz{
-    box-shadow: 0 6px 18px rgba(17,24,39,.06);
-  }
-  
-  /* Summary becomes: left (flex) + right (fixed) */
-  .summary{
-    display:grid;
-    grid-template-columns: minmax(520px, 1fr) 320px;
-    gap: 12px;
-    margin-top: 14px;
-  }
-  
-  /* Left column stack */
-  .summaryMetrics{
-    display:flex;
-    flex-direction:column;
-    gap: 10px;
-    min-width: 0;
-  }
-  
-  /* Bar */
-  .rsvpViz{
-    margin-top: 0;              /* stop extra top spacing */
-    padding: 12px 14px;
-  }
-  
-  /* Four compact cards */
-  .summaryGrid{
-    display:grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 10px;
-  }
-  
-  .summary__card{
-    padding: 12px 12px;
-  }
-  
-  .summary__label{
-    font-size: 11.5px;
-  }
-  
-  .summary__value{
-    margin-top: 2px;
-    font-size: 22px;
-    font-weight: 800;
-    line-height: 1.1;
-  }
-  
-  /* thin top strip */
-  .summary__card--yes::before,
-  .summary__card--no::before,
-  .summary__card--pending::before,
-  .summary__card--neutral::before{
-    content:"";
-    display:block;
-    height: 4px;
-    border-radius:999px;
-    margin-bottom: 8px;
-  }
-  
-  .summary__card--yes::before{ background: var(--yes); }
-  .summary__card--no::before{ background: var(--no); }
-  .summary__card--pending::before{ background: var(--pending); }
-  .summary__card--neutral::before{ background:#94a3b8; }
-  
-  /* Meta divider + spacing */
-  .metaDivider{
-    height: 1px;
-    background: var(--border-soft);
-    margin: 10px 0;
-  }
-  
-  .metaStack{
-    margin-top: 8px;
-    display:flex;
-    flex-direction:column;
-    gap: 6px;
-  }
-  
-  /* Responsive */
-  @media (max-width: 980px){
-    .summary{
-      grid-template-columns: 1fr;
-    }
-    .summaryGrid{
-      grid-template-columns: 1fr 1fr;
-    }
-  }
-
-/* ================================
-   SUMMARY LAYOUT FINAL POLISH
-   ================================ */
-
-/* 1) Constrain overall width + add side breathing room */
-.container{
-  max-width: 1160px;
-  padding-left: 28px;
-  padding-right: 28px;
-}
-
-/* 2) Summary layout: left stack + right meta */
-.summary{
+/* ---------- Layout ---------- */
+.app {
   display: grid;
-  grid-template-columns: 1fr 300px; /* left = flexible, right = meta */
-  align-items: stretch;             /* IMPORTANT: equal heights */
-  gap: 16px;
+  grid-template-columns: 260px 1fr;
+  min-height: 100vh;
 }
 
-/* 3) Left side becomes a vertical stack */
-.summaryMetrics{
+.main {
+  min-width: 0;
+}
+
+.sidebar {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+}
+
+.content-container {
+  padding: 10px 25px;
+  max-width: 1160px;
+  margin: 0 auto;
+}
+
+/* ---------- Header ---------- */
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 16px;
+  padding: 18px 25px 14px;
+  background: var(--panel);
+  border-bottom: 1px solid var(--border);
+}
+
+.title {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 500;
+}
+
+/* ---------- View Toggle ---------- */
+.segmented {
+  display: inline-flex;
+  padding: 3px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: #f1f2f6;
+}
+
+.segmented__btn {
+  border: 0;
+  background: transparent;
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  color: var(--muted);
+}
+
+.segmented__btn.is-active {
+  background: var(--panel);
+  color: var(--text);
+  box-shadow: 0 2px 6px rgba(0,0,0,.08);
+}
+
+/* ---------- Summary Layout ---------- */
+.summary {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  align-items: stretch;
+  gap: 16px;
+  margin-bottom: 18px;
+  margin-top: 14px;
+}
+
+.summaryMetrics {
   display: flex;
   flex-direction: column;
   height: 100%;
+  gap: 10px;
+  min-width: 0;
 }
 
-/* 4) RSVP bar stays compact */
-.summaryMetrics .rsvpViz{
-  margin-top: 0;
+/* ---------- RSVP visual bar ---------- */
+.rsvpViz {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
   padding: 12px 14px;
+  box-shadow: var(--shadow);
 }
 
-/* 5) Grid of 4 cards fills remaining height */
-.summaryGrid{
+.rsvpViz__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.rsvpViz__title {
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.rsvpViz__legend {
+  display: flex;
+  gap: 12px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.legendItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  display: inline-block;
+}
+
+.dot--yes { background: var(--yes); }
+.dot--no { background: var(--no); }
+.dot--pending { background: var(--pending); }
+
+.rsvpViz__bar {
+  height: 12px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: #eef0f3;
+  display: flex;
+}
+
+.rsvpViz__seg { height: 100%; }
+.rsvpViz__seg--yes { background: var(--yes); }
+.rsvpViz__seg--no { background: var(--no); }
+.rsvpViz__seg--pending { background: var(--pending); }
+
+.rsvpViz__nums {
+  margin-top: 10px;
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  color: var(--muted);
+  font-size: 12.5px;
+  font-weight: 700;
+}
+
+.rsvpViz__num {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+}
+
+.rsvpViz__num .v {
+  color: var(--text);
+  font-weight: 800;
+}
+
+/* ---------- Summary Cards ---------- */
+.summaryGrid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 10px;
-  flex: 1;                 /* THIS makes heights match */
+  flex: 1;
 }
 
-/* 6) Shorter cards */
-.summary__card{
+.summary__card,
+.summary__meta {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
   padding: 10px 12px;
+  box-shadow: var(--shadow);
 }
 
-.summary__label{
+.summary__label {
   font-size: 11.5px;
+  color: var(--muted);
 }
 
-.summary__value{
-  font-size: 28px;
+.summary__value {
+  margin-top: 2px;
+  font-size: 30px;
   font-weight: 600;
   line-height: 1.1;
 }
 
-/* 7) Right-side meta card fills full height */
-.summary__meta{
+.summary__card--yes::before,
+.summary__card--no::before,
+.summary__card--pending::before,
+.summary__card--neutral::before {
+  content: "";
+  display: block;
+  height: 4px;
+  border-radius: 999px;
+  margin-bottom: 8px;
+}
+
+.summary__card--yes::before { background: var(--yes); }
+.summary__card--no::before { background: var(--no); }
+.summary__card--pending::before { background: var(--pending); }
+.summary__card--neutral::before { background: var(--theme-200); }
+
+.summary__meta {
   height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
 }
 
-/* 8) Mobile fallback */
-@media (max-width: 980px){
-  .summary{
-    grid-template-columns: 1fr;
-  }
+.metaRow {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  font-weight: 500;
+}
+.metaValue { font-weight: 700; }
 
-  .summaryGrid{
-    grid-template-columns: 1fr 1fr;
-  }
+.metaDivider {
+  height: 1px;
+  background: var(--border-soft);
+  margin: 10px 0;
 }
 
-/* ================================
-   SUMMARY LAYOUT FINAL POLISH
-   ================================ */
+.metaStack {
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
 
-/* 1) Constrain overall width + add side breathing room */
-.container{
-    max-width: 1160px;
-    padding-left: 28px;
-    padding-right: 28px;
-  }
-  
-  /* 2) Summary layout: left stack + right meta */
-  .summary{
-    display: grid;
-    grid-template-columns: 1fr 300px; /* left = flexible, right = meta */
-    align-items: stretch;             /* IMPORTANT: equal heights */
-    gap: 16px;
-  }
-  
-  /* 3) Left side becomes a vertical stack */
-  .summaryMetrics{
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-  }
-  
-  /* 4) RSVP bar stays compact */
-  .summaryMetrics .rsvpViz{
-    margin-top: 0;
-    padding: 12px 14px;
-  }
-  
-  /* 5) Grid of 4 cards fills remaining height */
-  .summaryGrid{
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
-    flex: 1;                 /* THIS makes heights match */
-  }
-  
-  /* 6) Shorter cards */
-  .summary__card{
-    padding: 10px 12px;
-  }
-  
-  .summary__label{
-    font-size: 11.5px;
-  }
-  
-  .summary__value{
-    font-size: 30px;
-    font-weight: 600;
-    line-height: 1.1;
-  }
-  
-  /* 7) Right-side meta card fills full height */
-  .summary__meta{
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-  }
-  
-  /* 8) Mobile fallback */
-  @media (max-width: 980px){
-    .summary{
-      grid-template-columns: 1fr;
-    }
-  
-    .summaryGrid{
-      grid-template-columns: 1fr 1fr;
-    }
-  }
-  
+.metaRow--sub .metaLabel {
+  color: #808080;
+  font-size: 12px;
+  font-weight: 500;
+}
 
-  /* ================================
-   Separate Summary from Work Area
-   ================================ */
+/* ---------- Toolbar ---------- */
+.toolbar {
+  margin-top: 22px;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
 
-/* Give the summary a bit more breathing room */
-.summary{
-    margin-bottom: 18px;
-  }
-  
-  /* Add a divider line + spacing before the toolbar */
-  .toolbar{
-    margin-top: 22px;              /* increases gap from summary */
-    border-top: 1px solid var(--border);
-    padding-top: 16px;
-  }
-  
-  /* Optional: soften the toolbar so it reads more “controls” than “card” */
-  .toolbar{
-    box-shadow: none;               /* remove heavy elevation */
-    background: transparent;        /* lets the section divider do the work */
-    border-left: 0;
-    border-right: 0;
-    border-bottom: 0;
-    border-radius: 0;
-  }
-  
-  
+.toolbar__left {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: flex-end;
+}
+
+.toolbar__right {
+  display: flex;
+  align-items: flex-end;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.field__label {
+  font-size: 12px;
+  color: #6e6e6e;
+}
+
+.input, .select {
+  height: 36px;
+  min-width: 200px;
+  padding: 0 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: white;
+  font-size: 14px;
+  color: var(--text);
+}
+
+#searchInput.input {
+  min-width: 300px;
+}
+
+.input:focus, .select:focus {
+  outline: none;
+  border-color: var(--accent-line);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+.btn {
+  height: 36px;
+  padding: 0 14px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: #f3f4f6;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+#btnClear {
+  height: 36px;
+  margin-bottom: 2px;
+  align-self: flex-end;
+}
+
+.btn:hover { background: #e9eaee; }
+.btn--ghost { background: transparent; }
+
+/* Themed Refresh Button */
+#btnRefresh.btn {
+  background: var(--theme-100);
+  border-color: var(--theme-300);
+  color: var(--theme-700);
+}
+#btnRefresh.btn:hover {
+  background: var(--theme-200);
+}
+
+/* ---------- Views ---------- */
+.view { display: none; margin-top: 14px; }
+.view--active { display: block; }
+
+/* ---------- Party Cards ---------- */
+.partyList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.partyCard {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.partyCard__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px;
+  border-bottom: 1px solid var(--border);
+  background: #fafafa;
+}
+
+.partyCard__title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.partyCard__meta {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.partyCard__footer {
+  padding: 10px 14px;
+  font-size: 12px;
+  color: var(--muted);
+  border-top: 1px solid var(--border-soft);
+  background: #fff;
+}
+
+.partyCard__badges {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 2px;
+}
+
+.miniStat {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  line-height: 1;
+}
+
+.miniStat__icon {
+  width: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.miniStat__value {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--text);
+}
+
+.miniStat--yes .miniStat__icon { color: var(--yes); }
+.miniStat--no .miniStat__icon { color: var(--no); }
+.miniStat--pending .miniStat__icon { color: var(--pending); }
+
+/* ---------- Tables ---------- */
+.tableWrap { overflow: auto; }
+
+.table, .partyTable {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  min-width: 980px;
+}
+
+.table th, .table td,
+.partyTable th, .partyTable td {
+  padding: 12px;
+  border-bottom: 1px solid var(--border-soft);
+  font-size: 13px;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.table th, .partyTable th {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .02em;
+  color: #787878;
+  background: #fafafa;
+}
+
+.table tr, .partyTable tr { position: relative; }
+
+/* Themed Table Hover */
+.table tr:hover, .partyTable tr:hover {
+  background: var(--theme-100);
+  cursor: pointer;
+}
+
+.table tr:hover td:first-child,
+.partyTable tr:hover td:first-child {
+  box-shadow: inset 3px 0 0 0 var(--theme-400);
+}
+
+/* Party view (6 columns) */
+.partyTable th:nth-child(1), .partyTable td:nth-child(1) { width: 140px; }
+.partyTable th:nth-child(2), .partyTable td:nth-child(2) { width: 180px; }
+.partyTable th:nth-child(3), .partyTable td:nth-child(3) { width: 170px; }
+.partyTable th:nth-child(4), .partyTable td:nth-child(4) { width: 170px; }
+.partyTable th:nth-child(5), .partyTable td:nth-child(5) { width: 160px; }
+.partyTable th:nth-child(6), .partyTable td:nth-child(6) { width: auto; }
+
+/* Individual view (7 columns) */
+.table th:nth-child(1), .table td:nth-child(1) { width: 130px; }
+.table th:nth-child(2), .table td:nth-child(2) { width: 170px; }
+.table th:nth-child(3), .table td:nth-child(3) { width: 220px; }
+.table th:nth-child(4), .table td:nth-child(4) { width: 170px; }
+.table th:nth-child(5), .table td:nth-child(5) { width: 170px; }
+.table th:nth-child(6), .table td:nth-child(6) { width: 160px; }
+.table th:nth-child(7), .table td:nth-child(7) { width: auto; }
+
+/* ---------- Lodging pills (Themed!) ---------- */
+.lodgePill {
+  display: inline-flex;
+  align-items: center;
+  height: 26px;
+  padding: 0 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 800;
+  background: var(--theme-100);
+  color: var(--theme-700);
+  border: 1px solid var(--theme-200);
+  white-space: nowrap;
+}
+
+.lodgePill::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  margin-right: 8px;
+}
+
+.lodgePill--bay_pointe::before { background: var(--theme-600); }
+.lodgePill--best_western::before { background: var(--theme-500); }
+.lodgePill--gun_lake::before { background: var(--theme-400); }
+.lodgePill--other::before { background: var(--theme-300); }
+
+.lodgePill--none, .lodgePill--empty {
+  background: #f6f7fb;
+  border-color: var(--border);
+  color: #a1a1a1;
+}
+.lodgePill--none::before, .lodgePill--empty::before { background: #c7c9cf; }
+
+/* ---------- RSVP STATUS BADGE (Themed!) ---------- */
+.status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.statusBadge {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 900;
+  line-height: 1;
+  user-select: none;
+}
+
+.status--accepted .statusBadge {
+  background: var(--theme-100);
+  color: var(--theme-700);
+  border: 1px solid var(--theme-300);
+}
+
+.status--declined .statusBadge {
+  background: #ffffff;
+  color: var(--theme-500);
+  border: 1px dashed var(--theme-400);
+}
+
+.status--pending .statusBadge {
+  background: #fafafa;
+  color: var(--theme-400);
+  border: 1px solid var(--border);
+}
+
+/* ---------- DRAWER ---------- */
+.drawer {
+  position: fixed;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .18s ease;
+  z-index: 999;
+}
+.drawer.is-open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.drawer__overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,.28);
+}
+
+.drawer__panel {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: min(980px, 92vw);
+  background: #fff;
+  border-left: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+}
+
+.drawer__header {
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.drawerHead {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+
+/* Themed Drawer Avatar */
+.drawerAvatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  background: var(--theme-100);
+  border: 1px solid var(--theme-300);
+  color: var(--theme-700);
+  flex: 0 0 auto;
+}
+
+.drawerHeadText { min-width: 0; }
+
+.drawer__title {
+  font-size: 18px;
+  font-weight: 900;
+  margin: 0;
+}
+
+.drawerHeadMeta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+  font-size: 12.5px;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dotSep { opacity: .5; }
+
+.drawerChips {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: #fafafa;
+  font-size: 12px;
+  font-weight: 800;
+  color: #394150;
+}
+
+.chipDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 99px;
+}
+
+.chip--yes .chipDot { background: var(--yes); }
+.chip--no .chipDot { background: var(--no); }
+.chip--pending .chipDot { background: var(--pending); }
+
+.iconBtn {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: #f3f4f6;
+  cursor: pointer;
+  flex: 0 0 auto;
+}
+.iconBtn:hover { background: #e9eaee; }
+
+.drawer__content {
+  padding: 18px 20px 90px;
+  overflow: auto;
+}
+
+.drawerSectionTitle {
+  margin: 18px 0 10px;
+  font-size: 11.5px;
+  letter-spacing: .08em;
+  color: #9098aa;
+  text-transform: uppercase;
+  font-weight: 900;
+}
+
+.drawerCard {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 10px 24px rgba(17,24,39,.06);
+  overflow: hidden;
+}
+
+.drawerCard__head {
+  padding: 12px 14px;
+  background: #fafafa;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.drawerCard__title {
+  font-weight: 900;
+  font-size: 13px;
+}
+
+.drawerCard__body {
+  padding: 14px;
+}
+
+.addressGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  max-width: 680px;
+}
+
+.addressGrid .formField--full {
+  grid-column: 1 / -1;
+}
+
+.addressRow {
+  display: grid;
+  grid-template-columns: 1fr 120px 140px;
+  gap: 10px 12px;
+}
+
+.formLabel {
+  display: block;
+  font-size: 12px;
+  color: var(--muted);
+  margin: 0 0 6px;
+  font-weight: 800;
+}
+
+.drawer__content .input,
+.drawer__content .select {
+  height: 36px;
+  border-radius: 10px;
+  background: #fbfbfd;
+  width: 100%;
+}
+
+.membersCards {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.memberCard {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: #fff;
+  overflow: hidden;
+}
+
+.memberCard__top {
+  padding: 12px 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  background: #fff;
+}
+
+.memberName {
+  font-weight: 900;
+  font-size: 14px;
+}
+
+.memberSub {
+  margin-top: 2px;
+  font-size: 12.5px;
+  color: var(--muted);
+}
+
+.memberCard__grid {
+  padding: 12px 14px 14px;
+  background: #f9f9f9;
+  border-top: 1px solid var(--border-soft);
+  display: grid;
+  grid-template-columns: 1.2fr 1.2fr .9fr .9fr 1.2fr 1.2fr;
+  gap: 10px 12px;
+}
+
+.miniField {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.miniLabel {
+  font-size: 11px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: #9098aa;
+  font-weight: 900;
+}
+
+.memberCard__grid .input,
+.memberCard__grid .select {
+  width: 100%;
+  min-width: 0;
+  height: 34px;
+  border-radius: 10px;
+  background: #fff;
+}
+
+.drawerActions {
+  position: sticky;
+  bottom: 0;
+  margin-top: 18px;
+  padding: 12px 14px;
+  border-top: 1px solid var(--border);
+  background: rgba(255,255,255,.9);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.drawerActions .btn {
+  height: 38px;
+  border-radius: 12px;
+}
+
+/* Themed Save Button */
+#btnDrawerSave.btn {
+  background: var(--theme-500);
+  color: #fff;
+  border: none;
+}
+#btnDrawerSave.btn:hover {
+  background: var(--theme-600);
+}
+
+.drawerMsg {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.emptyState {
+  padding: 24px;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+  background: #fafafa;
+}
+
+.emptyState h3 {
+  margin: 0 0 6px;
+  font-size: 16px;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 980px) {
+  .summary { grid-template-columns: 1fr; }
+  .summaryGrid { grid-template-columns: 1fr 1fr; }
+  .input, .select { min-width: 100%; }
+  .toolbar { align-items: stretch; }
+  .toolbar__right { align-items: stretch; }
+  .addressGrid { grid-template-columns: 1fr; }
+  .memberCard__grid { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 520px) {
+  .drawer__panel { width: 94vw; }
+}
