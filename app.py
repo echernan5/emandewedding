@@ -1396,6 +1396,71 @@ def exports():
         supabase_anon_key=os.environ.get("SUPABASE_ANON_KEY"),
     )
 
+@app.route("/settings")
+def settings_page():
+    return render_template(
+        "settings.html",
+        supabase_url=os.environ.get("SUPABASE_URL"),
+        supabase_anon_key=os.environ.get("SUPABASE_ANON_KEY"),
+    )
+
+@app.route('/api/profile/update', methods=['POST'])
+def update_profile():
+    # 1. Verify who is making the request (using your exact tuple unpacking)
+    ctx, err = require_user()
+    if err: 
+        return err
+        
+    user_id = ctx["user"]["id"]
+
+    data = request.json or {}
+    full_name = data.get('full_name')
+    theme_color = data.get('theme_color')
+
+    # 2. Package up the changes
+    updates = {}
+    if full_name:
+        updates['full_name'] = full_name
+    if theme_color:
+        updates['theme_color'] = theme_color
+
+    if not updates:
+        return jsonify({"error": "No data to update"}), 400
+
+    # 3. Connect to the DB using your exact psycopg2 setup
+    conn = get_db_connection()
+    if not conn:
+        return jsonify({"error": "Database unavailable"}), 500
+        
+    try:
+        # Safely build the SQL query to prevent SQL injection
+        set_parts = []
+        values = []
+        for k, v in updates.items():
+            set_parts.append(sql.SQL("{} = %s").format(sql.Identifier(k)))
+            values.append(v)
+            
+        values.append(user_id)
+
+        query = sql.SQL(
+            "UPDATE profiles SET {sets} WHERE id = %s"
+        ).format(sets=sql.SQL(", ").join(set_parts))
+
+        with conn.cursor() as cur:
+            cur.execute(query, values)
+            conn.commit()
+
+        return jsonify({"success": True, "message": "Profile updated successfully"}), 200
+    
+    except Exception as e:
+        if conn:
+            conn.rollback()
+        print(f"Profile update error: {e}")
+        return jsonify({"error": "Failed to update profile"}), 500
+    finally:
+        if conn:
+            conn.close()
+
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
