@@ -68,7 +68,7 @@ async function handleLogout() {
     localStorage.removeItem("supabase.auth.token"); 
     localStorage.removeItem("cached_user_profile"); 
     
-    // 2. Tell Supabase to kill the session (THE FIX)
+    // 2. Tell Supabase to kill the session
     // We have to build the Supabase client using your keys before we can call auth functions!
     if (window.supabase && window.SUPABASE_URL && window.SUPABASE_ANON_KEY) {
         const supabaseClient = window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
@@ -80,7 +80,7 @@ async function handleLogout() {
 }
 
 /* =========================================
- ZONE 3: SIDEBAR UI (Mobile Toggle & Active Links)
+ ZONE 3: SIDEBAR UI (Mobile Toggle, Active Links, & Menus)
  ========================================= */
 (() => {
   // Highlight active link
@@ -141,8 +141,34 @@ async function handleLogout() {
 
   document.addEventListener("DOMContentLoaded", () => {
       updateGlobalMissingBadge();
+      
+      // Wire up the logout button
       document.getElementById("btnLogOut")?.addEventListener("click", handleLogout);
-      loadRealProfile(); // Trigger the handshake!
+      
+      // Trigger the profile handshake!
+      loadRealProfile(); 
+
+      // --- NEW: POPUP MENU LOGIC ---
+      const userMenuTrigger = document.getElementById("userMenuTrigger");
+      const userSettingsMenu = document.getElementById("userSettingsMenu");
+
+      if (userMenuTrigger && userSettingsMenu) {
+          // 1. Toggle the menu when clicking your profile
+          userMenuTrigger.addEventListener("click", (e) => {
+              e.stopPropagation(); // Stops the click from immediately triggering the document listener below
+              const isShowing = userSettingsMenu.style.display === "block";
+              userSettingsMenu.style.display = isShowing ? "none" : "block";
+              userMenuTrigger.style.background = isShowing ? "transparent" : "rgba(0,0,0,0.05)";
+          });
+
+          // 2. Close the menu if you click anywhere else on the screen
+          document.addEventListener("click", (e) => {
+              if (!userSettingsMenu.contains(e.target) && !userMenuTrigger.contains(e.target)) {
+                  userSettingsMenu.style.display = "none";
+                  userMenuTrigger.style.background = "transparent";
+              }
+          });
+      }
   });
 
   window.addEventListener("addressBookUpdated", updateGlobalMissingBadge);
