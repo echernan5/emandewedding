@@ -122,16 +122,19 @@ def get_profile(user_id: str):
         return None
     try:
         with conn.cursor() as cur:
-            # Added theme_color to the SELECT statement
+            # Added household_id to the SELECT
             cur.execute(
-                "SELECT id, role, full_name, display_role, theme_color FROM profiles WHERE id = %s",
+                "SELECT id, role, full_name, display_role, theme_color, household_id FROM profiles WHERE id = %s",
                 (user_id,),
             )
             row = cur.fetchone()
             if not row:
                 return None
-            # Added row[4] to the return dictionary
-            return {"id": row[0], "role": row[1], "full_name": row[2], "display_role": row[3], "theme_color": row[4]}
+            return {
+                "id": row[0], "role": row[1], "full_name": row[2], 
+                "display_role": row[3], "theme_color": row[4], 
+                "household_id": row[5] # <-- Added this!
+            }
     finally:
         conn.close()
 
@@ -605,6 +608,7 @@ def get_vendor_details(company_id):
                                 'id', r.id,
                                 'payment_id', r.payment_id,
                                 'responsible_party', r.responsible_party,
+                                'responsible_household_id', r.responsible_household_id,
                                 'paid_by_party', r.paid_by_party,
                                 'reimbursed_by_party', r.reimbursed_by_party,
                                 'reimbursement_status', r.reimbursement_status,

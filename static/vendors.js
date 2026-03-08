@@ -16,85 +16,43 @@ async function waitForAuth() {
     throw new Error("Auth not ready (AppAuth.token missing)");
   }
 
-// --- ROLE / PERMISSIONS SHIM (self-healing) ---
-// Put this right after waitForAuth(), before `const els = { ... }`
-
-// --- ROLE / PERMISSIONS SHIM (self-healing, creates AppUser early) ---
-// Put this right after waitForAuth(), before `const els = { ... }`
-
 // --- ROLE / PERMISSIONS SHIM (pulls role from /api/me, not display_role) ---
+// --- ROLE / PERMISSIONS SHIM (Clean & Synchronous) ---
 (function ensureAppUserRoleHelpers() {
     window.AppUser = window.AppUser || {};
-  
+
     function safeLower(v) {
       return String(v || "").toLowerCase().trim();
     }
-  
-    function attachHelpers() {
-        const getRole = () => safeLower(window.AppUser?.roleFromProfile);
-      
-        window.AppUser.isAdmin = () => getRole() === "admin";
-        window.AppUser.isContributor = () => getRole() === "editor";
-        window.AppUser.isViewer = () => getRole() === "viewer";
-      
-        if (typeof window.AppUser.getFilterName !== "function") {
-          window.AppUser.getFilterName = () => {
-            // if you don’t have getName, fall back to profile name
-            if (typeof window.AppUser.getName === "function") {
-              return String(window.AppUser.getName() || "").trim();
-            }
-            return String(window.AppUser.fullName || "").trim();
-          };
+
+    // Instantly read the cache saved by dash-sidebar.js!
+    function syncFromCache() {
+        try {
+            const cached = JSON.parse(localStorage.getItem("cached_user_profile") || "{}");
+            window.AppUser.roleFromProfile = cached.role || "viewer";
+            window.AppUser.householdId = cached.household_id || "";
+            window.AppUser.fullName = cached.full_name || "";
+        } catch (e) {
+            window.AppUser.roleFromProfile = "viewer";
         }
     }
-  
-    async function ensureProfileLoaded() {
-      // If we already have it, great
-      if (window.AppUser.roleFromProfile) return;
-  
-      try {
-        const token = await waitForAuth();
-        const res = await fetch("/api/me", {
-          headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
-        });
-        const data = await res.json().catch(() => ({}));
-        if (!res.ok) throw new Error(data.error || "Failed to load /api/me");
-  
-        // ✅ THIS is the only thing permissions should use
-        window.AppUser.roleFromProfile = data?.profile?.role || "viewer";
-  
-        // (Optional) keep display_role for UI label elsewhere if you want it:
-        window.AppUser.displayRole = data?.profile?.display_role || "";
-  
-        // (Optional) set name too, if you want consistent "mine" filters:
-        window.AppUser.fullName = data?.profile?.full_name || "";
-      } catch (e) {
-        console.warn("Could not load profile role; defaulting to viewer.", e);
-        window.AppUser.roleFromProfile = "viewer";
-      }
-    }
-  
-    // Run now + self-heal briefly
-    (async () => {
-      await ensureProfileLoaded();
-      attachHelpers();
-    })();
-  
-    let tries = 0;
-    const timer = setInterval(async () => {
-      tries++;
-      if (!window.AppUser.roleFromProfile) await ensureProfileLoaded();
-      attachHelpers();
-      if (window.AppUser.roleFromProfile || tries > 200) clearInterval(timer);
-    }, 50);
-  
-    // If your app dispatches roleChanged, re-pull profile role
-    window.addEventListener("roleChanged", async () => {
-      window.AppUser.roleFromProfile = null;
-      await ensureProfileLoaded();
-      attachHelpers();
+
+    // Attach the helper functions
+    window.AppUser.isAdmin = () => safeLower(window.AppUser.roleFromProfile) === "admin";
+    window.AppUser.isContributor = () => safeLower(window.AppUser.roleFromProfile) === "editor";
+    window.AppUser.isViewer = () => safeLower(window.AppUser.roleFromProfile) === "viewer";
+    
+    window.AppUser.getFilterName = () => String(window.AppUser.fullName || "").trim();
+
+    // 1. Run immediately on load (Zero delay!)
+    syncFromCache();
+
+    // 2. Update silently when dash-sidebar verifies the token in the background
+    window.addEventListener("roleChanged", () => {
+        syncFromCache();
+        // Note: loadVendors() will automatically be called by the other roleChanged listener at the bottom!
     });
-  })();
+})();
 
 const els = {
     // Summary Stats
@@ -286,66 +244,48 @@ function sanitizeVendorForUser(vendorData) {
     }
   
     // Contributor/editor: show only their responsibilities
+    // Contributor/editor: show only their responsibilities
     if (isContributor) {
-      const myNameRaw =
-        typeof AU.getFilterName === "function"
-          ? AU.getFilterName()
-          : typeof AU.getName === "function"
-          ? AU.getName()
-          : "";
-  
-      const myName = String(myNameRaw || "").trim().toLowerCase();
-      if (!myName) {
-        // If we can't identify them, safest is: no financial visibility
-        v.payments = [];
-        v.financials = { scheduled: 0, paid: 0, remaining: 0 };
+        const myHouseholdId = String(AU.householdId || "");
+    
+        if (!myHouseholdId) {
+          v.payments = [];
+          v.financials = { scheduled: 0, paid: 0, remaining: 0 };
+          return v;
+        }
+    
+        // Keep only payments assigned to their specific household ID
+        v.payments = v.payments.filter((p) => {
+          const resps = Array.isArray(p?.responsibilities) ? p.responsibilities : [];
+          return resps.some((r) => String(r?.responsible_household_id || "") === myHouseholdId);
+        });
+    
+        let myScheduled = 0;
+        let myPaid = 0;
+    
+        v.payments.forEach((p) => {
+          const resps = Array.isArray(p?.responsibilities) ? p.responsibilities : [];
+          resps.forEach((r) => {
+            // If this slice of the payment isn't their household, ignore it
+            if (String(r?.responsible_household_id || "") !== myHouseholdId) return;
+    
+            const amt = Number(r?.amount) || 0;
+            myScheduled += amt;
+    
+            const reimbStatus = String(r?.reimbursement_status || "").toLowerCase().trim();
+            const respStatus = String(r?.status || "").toLowerCase().trim();
+            const paymentStatus = String(p?.status || "").toLowerCase().trim();
+    
+            const isReimbursed = reimbStatus === "received";
+            const isDirectPay = (reimbStatus === "none" || !reimbStatus) && (respStatus === "paid" || paymentStatus === "paid");
+    
+            if (isReimbursed || isDirectPay) myPaid += amt;
+          });
+        });
+    
+        v.financials = { scheduled: myScheduled, paid: myPaid, remaining: myScheduled - myPaid };
         return v;
       }
-  
-      // Keep only payments where they appear in responsibilities
-      v.payments = v.payments.filter((p) => {
-        const resps = Array.isArray(p?.responsibilities) ? p.responsibilities : [];
-        return resps.some((r) =>
-          String(r?.responsible_party || "").trim().toLowerCase().includes(myName)
-        );
-      });
-  
-      // Recompute totals based ONLY on their responsibilities
-      let myScheduled = 0;
-      let myPaid = 0;
-  
-      v.payments.forEach((p) => {
-        const resps = Array.isArray(p?.responsibilities) ? p.responsibilities : [];
-  
-        resps.forEach((r) => {
-          const party = String(r?.responsible_party || "").trim().toLowerCase();
-          if (!party.includes(myName)) return;
-  
-          const amt = Number(r?.amount) || 0;
-          myScheduled += amt;
-  
-          const reimbStatus = String(r?.reimbursement_status || "").toLowerCase().trim();
-          const respStatus = String(r?.status || "").toLowerCase().trim();
-          const paymentStatus = String(p?.status || "").toLowerCase().trim();
-  
-          // Paid if reimbursed OR direct pay with status paid
-          const isReimbursed = reimbStatus === "received";
-          const isDirectPay =
-            (reimbStatus === "none" || !reimbStatus) &&
-            (respStatus === "paid" || paymentStatus === "paid");
-  
-          if (isReimbursed || isDirectPay) myPaid += amt;
-        });
-      });
-  
-      v.financials = {
-        scheduled: myScheduled,
-        paid: myPaid,
-        remaining: myScheduled - myPaid,
-      };
-  
-      return v;
-    }
   
     // Unknown role: safest is pass-through (or you could clamp financials here if you prefer)
     return v;
@@ -480,15 +420,15 @@ function companyRollup(detail) {
             });
             relevantPaid = paidSum;
         } else {
-            // "MINE" OR "CONTRIBUTOR" VIEW: Sum only the responsibilities for specific names
-            const filterName = isMineScope ? "emma" : String((AU.getFilterName?.() || "")).toLowerCase();
-            const filterPartner = isMineScope ? "ethan" : "";
+            // "MINE" OR "CONTRIBUTOR" VIEW: Sum only the responsibilities for this Household ID
+            const myHouseholdId = String(AU.householdId || "");
+            
+            // If Emma toggles "Mine", hardcode to the couple's household ID. 
+            // Otherwise, use the logged-in contributor's household ID!
+            const targetHousehold = isMineScope ? "hernandez-wlodarczyk" : myHouseholdId;
 
             (p.responsibilities || []).forEach(r => {
-                const party = (r.responsible_party || "").toLowerCase();
-                const isMatch = party.includes(filterName) || (filterPartner && party.includes(filterPartner));
-                
-                if (isMatch) {
+                if (String(r.responsible_household_id || "") === targetHousehold) {
                     const amt = Number(r.amount) || 0;
                     relevantAmount += amt;
                     
@@ -1296,9 +1236,11 @@ function renderPaymentsLedger(payments, allFiles) {
 
                 // If Contributor, calculate MY share only
                 if (AppUser.isContributor()) {
-                    const myName = (AppUser.getFilterName() || "").trim().toLowerCase();
+                    const myHouseholdId = String(AppUser.householdId || "");
+                    
+                    // Find the responsibility row assigned to their household
                     const myResp = p.responsibilities?.find(r => 
-                        (r.responsible_party || "").trim().toLowerCase() === myName
+                        String(r.responsible_household_id || "") === myHouseholdId
                     );
                     
                     displayBase = myResp ? (Number(myResp.amount) || 0) : 0;
@@ -1311,7 +1253,7 @@ function renderPaymentsLedger(payments, allFiles) {
                     }
                     displayRemaining = displayBase - displayPaid;
                 }
-
+                
                 let statusChip;
                 // Simplified status logic for Contributors
                 if (AppUser.isContributor()) {
