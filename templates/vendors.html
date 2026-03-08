@@ -42,40 +42,19 @@
       <a href="/export">Exports</a>
     </nav>
 
-    <div class="sideBottom" style="position: relative;">
-        <div class="userChip" id="userMenuTrigger" style="cursor: pointer;">
-          <div class="userAvatar" id="userAvatarDisplay">EH</div>
-          <div class="userText">
-            <div class="userName" id="userNameDisplay">Emma Hernandez</div>
-            <div class="userRole" id="userRoleDisplay">Bride</div>
-          </div>
-        </div>
-      
-        <div id="userRoleMenu" class="roleMenu" style="display: none;">
-            <div class="roleMenuHeader">Switch View</div>
-            <button type="button" class="roleMenuItem" data-role="admin">
-                <span class="roleIcon">EH</span>
-                <div class="roleDetails">
-                    <span class="roleName">Emma Hernandez</span>
-                    <span class="roleLabel">Bride (Admin)</span>
-                </div>
-            </button>
-            <button type="button" class="roleMenuItem" data-role="family">
-                <span class="roleIcon" style="background:#e0f2fe; color:#0369a1;">AE</span>
-                <div class="roleDetails">
-                    <span class="roleName">Amy Eiduke</span>
-                    <span class="roleLabel">Family (Restricted)</span>
-                </div>
-            </button>
-            <button type="button" class="roleMenuItem" data-role="viewer">
-                <span class="roleIcon" style="background:#f3fdf0; color:#338015;">IS</span>
-                <div class="roleDetails">
-                    <span class="roleName">Isabel Hernandez</span>
-                    <span class="roleLabel">Bridesmaid (View)</span>
-                </div>
-            </button>
+    <div class="sideBottom">
+      <div class="userChip">
+        <div class="userAvatar" id="userAvatarDisplay">--</div>
+        <div class="userText">
+          <div class="userName" id="userNameDisplay">Loading...</div>
+          <div class="userRole" id="userRoleDisplay">...</div>
         </div>
       </div>
+      
+      <button id="btnLogOut" style="margin-top: 12px; width: 100%; text-align: left; padding: 8px 12px; background: transparent; border: none; color: #ef4444; cursor: pointer; font-weight: 600; font-size: 13px; border-radius: 6px;">
+          Log Out
+      </button>
+    </div>
   </aside>
 
   <!-- MAIN -->
