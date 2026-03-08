@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Wedding Timeline</title>
+  
+  <link rel="stylesheet" href="{{ url_for('static', filename='vendors.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='dash-sidebar.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='settings.css') }}">
+  
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    window.SUPABASE_URL = "{{ supabase_url }}";
+    window.SUPABASE_ANON_KEY = "{{ supabase_anon_key }}";
+  </script>
+  <script src="{{ url_for('static', filename='auth-guard.js') }}"></script>
+</head>
+<body>
+<div class="mobileOverlay" data-close-sidebar></div>
+
+<div class="app">
+  <aside class="sidebar">
+    <div class="sideTop">
+      <div class="appTitle">Wedding Manager</div>
+      <div class="eventLine">Emma &amp; Ethan • Jun 18, 2027</div>
+    </div>
+
+    <nav class="sideNav">
+      <a href="/dashboard">Guest List</a>
+
+      <a href="/address" class="withBadge">
+        Address Book
+        <span class="badge" id="missingAddrBadge" style="display:none;">Missing</span>
+      </a>
+
+      <a href="/vendors" data-route="/vendors">Vendors</a>
+      <a href="/timeline" class="active" data-route="/timeline">Timeline</a>
+      <a href="/export">Exports</a>
+    </nav>
+
+    <div class="sideBottom" style="position: relative;">
+        <div class="userChip" id="userMenuTrigger" style="cursor: pointer; padding: 8px; border-radius: 6px; transition: background 0.2s;">
+            <div class="userAvatar" id="userAvatarDisplay">--</div>
+            <div class="userText">
+                <div class="userName" id="userNameDisplay">Loading...</div>
+                <div class="userRole" id="userRoleDisplay">...</div>
+            </div>
+        </div>
+        
+        <div id="userSettingsMenu" class="roleMenu" style="display: none; position: absolute; bottom: 100%; left: 0; width: 100%; background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; box-shadow: 0 -4px 12px rgba(0,0,0,0.08); margin-bottom: 8px; z-index: 100; overflow: hidden;">
+            
+            <a href="/settings" class="roleMenuItem" style="display: flex; align-items: center; gap: 10px; padding: 12px; text-decoration: none; color: #374151; border-bottom: 1px solid #f3f4f6; transition: background 0.2s;">
+                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                <span style="font-weight: 500; font-size: 13px;">Profile Settings</span>
+            </a>
+            
+            <button id="btnLogOut" style="width: 100%; display: flex; align-items: center; gap: 10px; padding: 12px; background: transparent; border: none; color: #ef4444; cursor: pointer; transition: background 0.2s;">
+                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                <span style="font-weight: 600; font-size: 13px;">Log Out</span>
+            </button>
+            
+        </div>
+    </div>
+  </aside>
+
+  <main class="container">
+    <div class="settings-wrapper" style="max-width: 600px; margin: 0 auto; padding: 20px 0;">
+      
+      <div style="margin-bottom: 32px;">
+        <h1 class="title">Profile Settings</h1>
+        <p class="subtitle">Update your personal details and account security.</p>
+      </div>
+  
+      <div class="settings-card">
+        <h2 class="settings-header">Personal Information</h2>
+        
+        <div class="avatar-preview-section">
+          <div class="avatar-large" id="avatarPreview">EH</div>
+          <div class="color-picker-group">
+            <label style="display: block; font-size: 12px; font-weight: 600; color: #64748b; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em;">Choose Avatar Color</label>
+            <div class="color-options" id="colorPicker">
+              <label class="color-swatch" style="--swatch-color: #0CB2AF;"><input type="radio" name="theme_color" value="#0CB2AF" checked></label>
+              <label class="color-swatch" style="--swatch-color: #A1C65D;"><input type="radio" name="theme_color" value="#A1C65D"></label>
+              <label class="color-swatch" style="--swatch-color: #FAC723;"><input type="radio" name="theme_color" value="#FAC723"></label>
+              <label class="color-swatch" style="--swatch-color: #F29222;"><input type="radio" name="theme_color" value="#F29222"></label>
+              <label class="color-swatch" style="--swatch-color: #E95E50;"><input type="radio" name="theme_color" value="#E95E50"></label>
+              <label class="color-swatch" style="--swatch-color: #936FAC;"><input type="radio" name="theme_color" value="#936FAC"></label>
+              <label class="color-swatch" style="--swatch-color: #ababab;"><input type="radio" name="theme_color" value="#ababab"></label>
+            </div>
+          </div>
+        </div>
+  
+        <form id="formProfile">
+          <div class="formGroup">
+            <label>Full Name</label>
+            <input type="text" id="settingName" required class="input">
+          </div>
+          <div class="formGroup">
+            <label>Account Email</label>
+            <input type="email" id="settingEmail" disabled class="input" style="background: #f8fafc; color: #9ca3af; cursor: not-allowed;" title="Contact Emma to change account emails.">
+          </div>
+          <button type="submit" class="btnPrimary" id="btnSaveProfile">Save Profile</button>
+        </form>
+      </div>
+  
+      <div class="settings-card" style="margin-top: 24px;">
+        <h2 class="settings-header">Account Security</h2>
+        <p style="font-size: 13px; color: #64748b; margin-bottom: 16px;">Set a password so you can log in without waiting for a Magic Link.</p>
+        
+        <form id="formPassword">
+          <div class="formGroup">
+            <label>New Password</label>
+            <input type="password" id="settingPassword" required minlength="6" class="input" placeholder="Must be at least 6 characters">
+          </div>
+          <button type="submit" class="btnSecondary" id="btnSavePassword">Update Password</button>
+        </form>
+      </div>
+  
+    </div>
+  </main>
+
+<script src="{{ url_for('static', filename='settings.js') }}" defer></script>
+<script src="{{ url_for('static', filename='dash-sidebar.js') }}" defer></script>
+</body>
+</html>
