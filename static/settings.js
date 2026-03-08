@@ -47,9 +47,26 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     // 2. LIVE PAINTING (The magic gradient effect)
+    
+    // Exact same mapping function for the live preview
+    function getSecondaryColor(primary) {
+        const color = (primary || "").toUpperCase();
+        const colorMap = {
+            "#0CB2AF": "#A1C65D",
+            "#A1C65D": "#FAC723",
+            "#FAC723": "#F29222",
+            "#F29222": "#E95E50",
+            "#E95E50": "#936FAC", 
+            "#936FAC": "#0CB2AF", 
+            "#ABABAB": "#71717A"  
+        };
+        return colorMap[color] || "#475569";
+    }
+
     colorRadios.forEach(radio => {
         radio.addEventListener("change", (e) => {
             const chosenColor = e.target.value;
+            const secondaryColor = getSecondaryColor(chosenColor);
             
             // Paint the large preview box
             avatarPreview.style.backgroundColor = chosenColor;
@@ -61,7 +78,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             // Paint the sidebar gradient smoothly
             const sidebar = document.querySelector(".sidebar");
             if (sidebar) {
-                sidebar.style.background = `linear-gradient(180deg, ${chosenColor} 0%, #475569 100%)`;
+                sidebar.style.background = `linear-gradient(180deg, ${chosenColor} 0%, ${chosenColor} 65%, ${secondaryColor} 100%)`;
             }
         });
     });

@@ -13,6 +13,23 @@ async function waitForAuth() {
  ========================================= */
 // Helper function to keep our code clean
 // Helper function to keep our code clean
+// Helper function to map primary colors to their gradient pairs
+function getSecondaryColor(primary) {
+  // Standardize case just to be safe
+  const color = (primary || "").toUpperCase();
+  const colorMap = {
+      "#0CB2AF": "#A1C65D", // Teal -> Green
+      "#A1C65D": "#FAC723", // Green -> Yellow
+      "#FAC723": "#F29222", // Yellow -> Orange
+      "#F29222": "#E95E50", // Orange -> Red
+      "#E95E50": "#936FAC", // Red -> Purple
+      "#936FAC": "#0CB2AF", // Purple -> Teal
+      "#ABABAB": "#71717A"  // Grey -> Darker Grey
+  };
+  return colorMap[color] || "#475569";
+}
+
+// Helper function to keep our code clean
 function updateSidebarUI(profile) {
   document.getElementById("userNameDisplay").textContent = profile.full_name || "Guest";
   document.getElementById("userRoleDisplay").textContent = profile.display_role || "Viewer";
@@ -30,8 +47,10 @@ function updateSidebarUI(profile) {
   // Paint the Sidebar Background Gradient!
   const sidebar = document.querySelector(".sidebar");
   if (sidebar && profile.theme_color) {
-      // Fades from their chosen color into a premium Slate Blue
-      sidebar.style.background = `linear-gradient(180deg, ${profile.theme_color} 0%, #475569 100%)`;
+      const secondaryColor = getSecondaryColor(profile.theme_color);
+      // By setting the primary color to 65%, it dominates the sidebar
+      // and only fades near the bottom where the profile menu is!
+      sidebar.style.background = `linear-gradient(180deg, ${profile.theme_color} 0%, ${profile.theme_color} 65%, ${secondaryColor} 100%)`;
   }
 }
 
