@@ -189,13 +189,14 @@ function render() {
   const data = getFilteredRows();
 
   // --- EMPTY STATES ---
+  // --- EMPTY STATES ---
   if (!data.length) {
     let html = "";
     
     if (state.search) {
-        // Search Active... (Logic mostly same as before)
+        // Search Active
         if (state.scope === 'assigned') {
-             html = `<div class="emptyState"><div class="emptyIcon">🤔</div><h3>"${esc(state.search)}" isn't assigned to you</h3><p>They might be in the main list.</p><div style="display:flex; gap:10px; justify-content:center;"><button class="emptyActionBtn" data-action="clearSearch">Clear Search</button><button class="emptyActionBtn" style="background:#1f2937; color:white; border-color:#1f2937;" data-action="viewAllScope">Search All Guests</button></div></div>`;
+             html = `<div class="emptyState"><div class="emptyIcon">🤔</div><h3>"${esc(state.search)}" isn't assigned to you</h3><p>They might be in the main list.</p><div style="display:flex; gap:10px; justify-content:center;"><button class="emptyActionBtn" data-action="clearSearch">Clear Search</button><button class="emptyActionBtn primaryAction" data-action="viewAllScope">Search All Guests</button></div></div>`;
         } else {
              html = `<div class="emptyState"><div class="emptyIcon">🔍</div><h3>No results for "${esc(state.search)}"</h3><p>Check spelling or try a different keyword.</p><button class="emptyActionBtn" data-action="clearSearch">Clear Search</button></div>`;
         }
@@ -203,16 +204,16 @@ function render() {
     else if (state.scope === 'assigned') {
         // Your Guests Empty
         if (state.filter === 'missing') {
-            html = `<div class="emptyState"><div class="emptyIcon">🎉</div><h3>You're all set!</h3><p>No missing addresses currently assigned to ${esc(state.currentUser.name)}.</p><button class="emptyActionBtn" data-action="viewAllScope">View All Guests</button></div>`;
+            html = `<div class="emptyState"><div class="emptyIcon">🎉</div><h3>You're all set!</h3><p>No missing addresses currently assigned to ${esc(state.currentUser.name)}.</p><button class="emptyActionBtn primaryAction" data-action="viewAllScope">View All Guests</button></div>`;
         } else {
-            html = `<div class="emptyState"><div class="emptyIcon">📇</div><h3>No guests found</h3><p>No guests match the current filters.</p><button class="emptyActionBtn" data-action="viewAllScope">View All Guests</button></div>`;
+            html = `<div class="emptyState"><div class="emptyIcon">📇</div><h3>No guests found</h3><p>No guests match the current filters.</p><button class="emptyActionBtn primaryAction" data-action="viewAllScope">View All Guests</button></div>`;
         }
     } 
     else if (state.scope !== 'all') {
-        // Specific Group Empty (e.g. "Amy has 0 guests")
+        // Specific Group Empty
         const group = ASSIGNMENT_GROUPS.find(g => g.id === state.scope);
         const name = group ? group.label : "this group";
-        html = `<div class="emptyState"><div class="emptyIcon">👤</div><h3>No guests assigned to ${esc(name)}</h3><p>This list is currently empty for the selected status.</p><button class="emptyActionBtn" data-action="viewAllScope">View All Guests</button></div>`;
+        html = `<div class="emptyState"><div class="emptyIcon">👤</div><h3>No guests assigned to ${esc(name)}</h3><p>This list is currently empty for the selected status.</p><button class="emptyActionBtn primaryAction" data-action="viewAllScope">View All Guests</button></div>`;
     }
     else {
         // Global Empty
