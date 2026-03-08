@@ -1,44 +1,64 @@
 // static/dash-sidebar.js
 
 /* =========================================
-   THEME ENGINE (Universal Color Palettes)
+   THEME ENGINE (7-Step Custom Properties)
    ========================================= */
    const THEME_PALETTES = {
-    // 1. Baltic Blue (Your new default)
-    "#6180A8": { primary: "#6180A8", secondary: "#506C91", light: "#E4EAF1", text: "#26364a" },
-    // 2. Wisteria Purple
-    "#936FAC": { primary: "#936FAC", secondary: "#73528A", light: "#F4F0F7", text: "#4A3B58" },
-    // 3. Sage Green
-    "#A1C65D": { primary: "#A1C65D", secondary: "#7A9B42", light: "#F2F8E8", text: "#3E521C" },
-    // 4. Ocean Teal
-    "#0CB2AF": { primary: "#0CB2AF", secondary: "#098280", light: "#E0F6F5", text: "#065A59" },
-    // 5. Terracotta
-    "#F29222": { primary: "#F29222", secondary: "#C46F11", light: "#FDF2E8", text: "#7A4308" },
-    // 6. Blush Rose
-    "#E95E50": { primary: "#E95E50", secondary: "#BD3C30", light: "#FDECED", text: "#7A241B" },
-    // 7. Slate Grey
-    "#ABABAB": { primary: "#ABABAB", secondary: "#71717A", light: "#F4F4F4", text: "#4B4B4B" }
+    // 1. Dusty Blue (From your uploaded scale)
+    "#7B95B7": {
+        s100: "#F7FBFF", s200: "#E4EAF1", s300: "#BDC9DB",
+        s400: "#93A8C4", s500: "#7B95B7", s600: "#6180A8", s700: "#506C91"
+    },
+    // 2. Sage Green (Matches the sweet pea leaves)
+    "#95A986": {
+        s100: "#F6F9F5", s200: "#E6EDE3", s300: "#C6D3C0",
+        s400: "#A9BAA0", s500: "#95A986", s600: "#778C67", s700: "#5B6E4C"
+    },
+    // 3. Dusty Lavender
+    "#A597AD": {
+        s100: "#FAF8FB", s200: "#ECE8EE", s300: "#CFC5D6",
+        s400: "#B5A7BD", s500: "#A597AD", s600: "#86798F", s700: "#685B70"
+    },
+    // 4. Blush Pink
+    "#D4A5A5": {
+        s100: "#FCF5F5", s200: "#F7E6E6", s300: "#EBC9C9",
+        s400: "#DFB6B6", s500: "#D4A5A5", s600: "#B88686", s700: "#9C6868"
+    },
+    // 5. Seafoam Teal
+    "#8EB0AD": {
+        s100: "#F2F8F7", s200: "#E3EEED", s300: "#C1D8D6",
+        s400: "#A3C4C1", s500: "#8EB0AD", s600: "#6D918E", s700: "#517370"
+    },
+    // 6. Slate Grey
+    "#A0A0A0": {
+        s100: "#F8F9FA", s200: "#E9ECEF", s300: "#DEE2E6",
+        s400: "#CED4DA", s500: "#A0A0A0", s600: "#7D7D7D", s700: "#5A5A5A"
+    }
 };
 
 function applyGlobalTheme(hex) {
-    // Default to Baltic Blue if they haven't picked a color yet
-    const theme = THEME_PALETTES[hex] || THEME_PALETTES["#6180A8"];
-    const root = document.documentElement; // This targets the <html> tag
+    // Default to the Dusty Blue if they haven't picked a color yet
+    const theme = THEME_PALETTES[hex] || THEME_PALETTES["#7B95B7"];
+    const root = document.documentElement; 
 
-    // 1. Inject the Universal CSS Variables!
-    root.style.setProperty('--theme-primary', theme.primary);
-    root.style.setProperty('--theme-secondary', theme.secondary);
-    root.style.setProperty('--theme-light', theme.light);
-    root.style.setProperty('--theme-text', theme.text);
+    // Inject the 7-step scale into the browser!
+    root.style.setProperty('--theme-100', theme.s100);
+    root.style.setProperty('--theme-200', theme.s200);
+    root.style.setProperty('--theme-300', theme.s300);
+    root.style.setProperty('--theme-400', theme.s400);
+    root.style.setProperty('--theme-500', theme.s500); // Main Color
+    root.style.setProperty('--theme-600', theme.s600);
+    root.style.setProperty('--theme-700', theme.s700); // Darkest Text
 
-    // 2. Paint the Sidebar & Avatars using the new variables
+    // Paint the Sidebar (Uses 500 fading into 700)
     const sidebar = document.querySelector(".sidebar");
-    if (sidebar) sidebar.style.background = `linear-gradient(180deg, var(--theme-primary) 0%, var(--theme-primary) 65%, var(--theme-secondary) 100%)`;
+    if (sidebar) sidebar.style.background = `linear-gradient(180deg, var(--theme-500) 0%, var(--theme-500) 65%, var(--theme-700) 100%)`;
 
+    // Paint the Sidebar Avatars (Uses 100 for background, 700 for text)
     const avatarDisplay = document.getElementById("userAvatarDisplay");
     if (avatarDisplay) {
-        avatarDisplay.style.backgroundColor = "var(--theme-light)";
-        avatarDisplay.style.color = "var(--theme-text)";
+        avatarDisplay.style.backgroundColor = "var(--theme-100)";
+        avatarDisplay.style.color = "var(--theme-700)";
     }
 }
 

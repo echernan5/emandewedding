@@ -86,17 +86,17 @@ document.addEventListener("DOMContentLoaded", async () => {
         radio.addEventListener("change", (e) => {
             const chosenHex = e.target.value;
             
-            // 1. Tell the global engine to swap the CSS variables instantly
+            // 1. Tell the global engine to swap the 7 CSS variables instantly
             if (typeof applyGlobalTheme === "function") {
                 applyGlobalTheme(chosenHex);
             }
             
-            // 2. Paint the large preview box using the active CSS variables
-            avatarPreview.style.backgroundColor = "var(--theme-light)";
-            avatarPreview.style.color = "var(--theme-text)";
+            // 2. Paint the large preview box using the active CSS variables!
+            avatarPreview.style.backgroundColor = "var(--theme-100)";
+            avatarPreview.style.color = "var(--theme-700)";
         });
     });
-
+    
     // 3. SAVE COLOR TO DATABASE
     formColor.addEventListener("submit", async (e) => {
         e.preventDefault();
