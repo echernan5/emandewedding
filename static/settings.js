@@ -21,33 +21,34 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // 1. LOAD DATA
     // NEW: Helper function for the avatars
+    // NEW: Helper function for the avatars
     function getAvatarStyle(primary) {
         const color = (primary || "").toUpperCase();
         const styles = {
-            "#0CB2AF": { bg: "#e0f6f5", text: "#098280" }, 
-            "#A1C65D": { bg: "#f2f8e8", text: "#7a9b42" }, 
-            "#FAC723": { bg: "#fef9e4", text: "#b58d0b" }, 
-            "#F29222": { bg: "#fdf2e8", text: "#c46f11" }, 
-            "#E95E50": { bg: "#fdeced", text: "#bd3c30" }, 
-            "#936FAC": { bg: "#f4f0f7", text: "#73528a" }, 
-            "#ABABAB": { bg: "#f4f4f4", text: "#6b6b6b" }  
+            "#BDC9DB": { bg: "#F7FBFF", text: "#6180A8" }, 
+            "#A2B4CC": { bg: "#F7FBFF", text: "#506C91" }, 
+            "#93A8C4": { bg: "#F7FBFF", text: "#425a7a" }, 
+            "#7B95B7": { bg: "#E4EAF1", text: "#374b66" }, 
+            "#6E8AAF": { bg: "#E4EAF1", text: "#2e4158" }, 
+            "#6180A8": { bg: "#E4EAF1", text: "#26364a" }, 
+            "#506C91": { bg: "#BDC9DB", text: "#1d2a3a" }  
         };
-        return styles[color] || { bg: "#f1f5f9", text: "#475569" };
+        return styles[color] || { bg: "#F7FBFF", text: "#506C91" };
     }
 
     // Exact same mapping function for the live preview
     function getSecondaryColor(primary) {
         const color = (primary || "").toUpperCase();
         const colorMap = {
-            "#0CB2AF": "#A1C65D",
-            "#A1C65D": "#FAC723",
-            "#FAC723": "#F29222",
-            "#F29222": "#E95E50",
-            "#E95E50": "#936FAC", 
-            "#936FAC": "#0CB2AF", 
-            "#ABABAB": "#71717A"  
+            "#BDC9DB": "#A2B4CC", 
+            "#A2B4CC": "#93A8C4", 
+            "#93A8C4": "#7B95B7", 
+            "#7B95B7": "#6E8AAF", 
+            "#6E8AAF": "#6180A8", 
+            "#6180A8": "#506C91", 
+            "#506C91": "#BDC9DB"  
         };
-        return colorMap[color] || "#475569";
+        return colorMap[color] || "#6180A8";
     }
 
     // 1. LOAD DATA
