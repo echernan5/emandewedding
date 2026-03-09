@@ -20,6 +20,25 @@ document.addEventListener("DOMContentLoaded", async () => {
     const formPassword = document.getElementById("formPassword");
 
     // 1. LOAD DATA
+    // NEW: Helper function for the avatars
+    // NEW: Helper function for the avatars
+    
+    // Exact same mapping function for the live preview
+    function getSecondaryColor(primary) {
+        const color = (primary || "").toUpperCase();
+        const colorMap = {
+            "#BDC9DB": "#A2B4CC", 
+            "#A2B4CC": "#93A8C4", 
+            "#93A8C4": "#7B95B7", 
+            "#7B95B7": "#6E8AAF", 
+            "#6E8AAF": "#6180A8", 
+            "#6180A8": "#506C91", 
+            "#506C91": "#BDC9DB"  
+        };
+        return colorMap[color] || "#6180A8";
+    }
+
+    // 1. LOAD DATA
     try {
         const token = await waitForAuth();
         const res = await fetch("/api/me", { headers: { "Authorization": `Bearer ${token}` }});
@@ -27,36 +46,44 @@ document.addEventListener("DOMContentLoaded", async () => {
             const data = await res.json();
             const profile = data.profile;
             
+            // Populate read-only fields
             nameInput.value = profile.full_name || "Unknown";
             roleInput.value = profile.display_role || "Viewer";
             emailInput.value = data.user.email || ""; 
             
+            // Check the correct color radio button
             const savedColor = profile.theme_color || "#668BC2";
             const activeRadio = document.querySelector(`input[value="${savedColor}"]`);
             if (activeRadio) activeRadio.checked = true;
             
+            // Set initial avatar text & colors
             const initials = (profile.full_name || "G").split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
             avatarPreview.textContent = initials;
             
-            // Just force the variables!
-            avatarPreview.style.backgroundColor = "var(--theme-100)";
-            avatarPreview.style.color = "var(--theme-700)";
-            avatarPreview.style.border = "1px solid var(--theme-300)";
+            const style = getAvatarStyle(savedColor);
+            avatarPreview.style.backgroundColor = style.bg;
+            avatarPreview.style.color = style.text;
         }
-    } catch (e) { console.error("Failed to load profile data", e); }
+    } catch (e) {
+        console.error("Failed to load profile data", e);
+    }
 
-    // 2. LIVE PAINTING
+    // 2. LIVE PAINTING (The magic theme effect)
     colorRadios.forEach(radio => {
         radio.addEventListener("change", (e) => {
             const chosenHex = e.target.value;
-            if (typeof applyGlobalTheme === "function") applyGlobalTheme(chosenHex);
             
+            // 1. Tell the global engine to swap the 7 CSS variables instantly
+            if (typeof applyGlobalTheme === "function") {
+                applyGlobalTheme(chosenHex);
+            }
+            
+            // 2. Paint the large preview box using the active CSS variables!
             avatarPreview.style.backgroundColor = "var(--theme-100)";
             avatarPreview.style.color = "var(--theme-700)";
-            avatarPreview.style.border = "1px solid var(--theme-300)";
         });
     });
-    
+
     // 3. SAVE COLOR TO DATABASE
     formColor.addEventListener("submit", async (e) => {
         e.preventDefault();
