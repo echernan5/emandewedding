@@ -8,9 +8,13 @@ async function waitForAuth() {
     throw new Error("Auth not ready");
 }
 
-document.addEventListener("DOMContentLoaded", async () => {
-    // Elements
+// 1. Wrap everything in a named function for the DIY Router
+async function initSettingsPage() {
+    // 2. Check if we are actually on the Settings page before running!
     const avatarPreview = document.getElementById("avatarPreview");
+    if (!avatarPreview) return;
+
+    // Elements
     const nameInput = document.getElementById("settingName");
     const roleInput = document.getElementById("settingRole");
     const emailInput = document.getElementById("settingEmail");
@@ -19,26 +23,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const formColor = document.getElementById("formColor");
     const formPassword = document.getElementById("formPassword");
 
-    // 1. LOAD DATA
-    // NEW: Helper function for the avatars
-    // NEW: Helper function for the avatars
-    
-    // Exact same mapping function for the live preview
-    function getSecondaryColor(primary) {
-        const color = (primary || "").toUpperCase();
-        const colorMap = {
-            "#BDC9DB": "#A2B4CC", 
-            "#A2B4CC": "#93A8C4", 
-            "#93A8C4": "#7B95B7", 
-            "#7B95B7": "#6E8AAF", 
-            "#6E8AAF": "#6180A8", 
-            "#6180A8": "#506C91", 
-            "#506C91": "#BDC9DB"  
-        };
-        return colorMap[color] || "#6180A8";
-    }
-
-    // 1. LOAD DATA
+    // 3. LOAD DATA
     try {
         const token = await waitForAuth();
         const res = await fetch("/api/me", { headers: { "Authorization": `Bearer ${token}` }});
@@ -47,9 +32,9 @@ document.addEventListener("DOMContentLoaded", async () => {
             const profile = data.profile;
             
             // Populate read-only fields
-            nameInput.value = profile.full_name || "Unknown";
-            roleInput.value = profile.display_role || "Viewer";
-            emailInput.value = data.user.email || ""; 
+            if (nameInput) nameInput.value = profile.full_name || "Unknown";
+            if (roleInput) roleInput.value = profile.display_role || "Viewer";
+            if (emailInput) emailInput.value = data.user.email || ""; 
             
             // Check the correct color radio button
             const savedColor = profile.theme_color || "#668BC2";
@@ -60,15 +45,16 @@ document.addEventListener("DOMContentLoaded", async () => {
             const initials = (profile.full_name || "G").split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
             avatarPreview.textContent = initials;
             
-            const style = getAvatarStyle(savedColor);
-            avatarPreview.style.backgroundColor = style.bg;
-            avatarPreview.style.color = style.text;
+            // Use the global theme variables instead of the old getAvatarStyle function
+            avatarPreview.style.backgroundColor = "var(--theme-100)";
+            avatarPreview.style.color = "var(--theme-700)";
+            avatarPreview.style.border = "1px solid var(--theme-300)";
         }
     } catch (e) {
         console.error("Failed to load profile data", e);
     }
 
-    // 2. LIVE PAINTING (The magic theme effect)
+    // 4. LIVE PAINTING (The magic theme effect)
     colorRadios.forEach(radio => {
         radio.addEventListener("change", (e) => {
             const chosenHex = e.target.value;
@@ -81,59 +67,69 @@ document.addEventListener("DOMContentLoaded", async () => {
             // 2. Paint the large preview box using the active CSS variables!
             avatarPreview.style.backgroundColor = "var(--theme-100)";
             avatarPreview.style.color = "var(--theme-700)";
+            avatarPreview.style.border = "1px solid var(--theme-300)";
         });
     });
 
-    // 3. SAVE COLOR TO DATABASE
-    formColor.addEventListener("submit", async (e) => {
-        e.preventDefault();
-        const btn = document.getElementById("btnSaveColor");
-        btn.textContent = "Saving...";
-        
-        const newColor = document.querySelector("input[name='theme_color']:checked").value;
+    // 5. SAVE COLOR TO DATABASE
+    if (formColor) {
+        formColor.onsubmit = async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById("btnSaveColor");
+            btn.textContent = "Saving...";
+            
+            const newColor = document.querySelector("input[name='theme_color']:checked").value;
 
-        try {
-            const token = await waitForAuth();
-            const res = await fetch("/api/profile/update", {
-                method: "POST",
-                headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
-                // We are no longer sending the full_name here, just the color!
-                body: JSON.stringify({ theme_color: newColor })
-            });
-            
-            if (!res.ok) throw new Error("Failed to save profile");
-            
-            btn.textContent = "Saved!";
-            // Tell the sidebar cache to pull the fresh data in the background
-            if (typeof loadRealProfile === "function") loadRealProfile(); 
-            
-            setTimeout(() => btn.textContent = "Save Preferences", 2000);
-        } catch (err) {
-            alert(err.message);
-            btn.textContent = "Save Preferences";
-        }
-    });
+            try {
+                const token = await waitForAuth();
+                const res = await fetch("/api/profile/update", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+                    body: JSON.stringify({ theme_color: newColor })
+                });
+                
+                if (!res.ok) throw new Error("Failed to save profile");
+                
+                btn.textContent = "Saved!";
+                // Tell the sidebar cache to pull the fresh data in the background
+                if (typeof loadRealProfile === "function") loadRealProfile(); 
+                
+                setTimeout(() => btn.textContent = "Save Preferences", 2000);
+            } catch (err) {
+                alert(err.message);
+                btn.textContent = "Save Preferences";
+            }
+        };
+    }
 
-    // 4. RESET PASSWORD VIA SUPABASE
-    formPassword.addEventListener("submit", async (e) => {
-        e.preventDefault();
-        const btn = document.getElementById("btnSavePassword");
-        const password = document.getElementById("settingPassword").value;
-        
-        btn.textContent = "Updating...";
-        
-        try {
-            const supabaseClient = window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
-            const { error } = await supabaseClient.auth.updateUser({ password: password });
+    // 6. RESET PASSWORD VIA SUPABASE
+    if (formPassword) {
+        formPassword.onsubmit = async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById("btnSavePassword");
+            const password = document.getElementById("settingPassword").value;
             
-            if (error) throw error;
+            btn.textContent = "Updating...";
             
-            btn.textContent = "Password Updated!";
-            document.getElementById("settingPassword").value = ""; 
-            setTimeout(() => btn.textContent = "Update Password", 2000);
-        } catch (err) {
-            alert(err.message);
-            btn.textContent = "Update Password";
-        }
-    });
-});
+            try {
+                const supabaseClient = window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
+                const { error } = await supabaseClient.auth.updateUser({ password: password });
+                
+                if (error) throw error;
+                
+                btn.textContent = "Password Updated!";
+                document.getElementById("settingPassword").value = ""; 
+                setTimeout(() => btn.textContent = "Update Password", 2000);
+            } catch (err) {
+                alert(err.message);
+                btn.textContent = "Update Password";
+            }
+        };
+    }
+}
+
+// --- ROUTER HOOKS ---
+// Run on hard refresh
+document.addEventListener("DOMContentLoaded", initSettingsPage);
+// Run on soft SPA navigation (from our DIY router!)
+window.addEventListener("app:navigated", initSettingsPage);

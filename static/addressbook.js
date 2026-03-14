@@ -117,21 +117,17 @@ async function loadAddressBook() {
   }
 }
 
-// NEW: Populate the dropdown with specific people if Admin
 function initViewDropdown() {
     const sel = $("#addrScope");
     if (!sel) return;
 
-    // Preserve selection if just reloading data
     const currentVal = sel.value || 'assigned';
 
-    // Base Options
     let html = `
         <option value="assigned">Your Guests</option>
         <option value="all">All Guests</option>
     `;
 
-    // Admin Extras: Add specific groups
     if (state.currentUser.role === 'admin') {
         html += `<optgroup label="Filter by Assignee">`;
         ASSIGNMENT_GROUPS.forEach(g => {
@@ -142,8 +138,6 @@ function initViewDropdown() {
 
     sel.innerHTML = html;
     
-    // Restore value if it still exists (e.g. if we are Admin and selected Amy)
-    // If we switched to Non-Admin, "group_amy" won't exist, so default to 'assigned'
     if (sel.querySelector(`option[value="${currentVal}"]`)) {
         sel.value = currentVal;
     } else {
@@ -157,17 +151,14 @@ function getFilteredRows() {
   return state.rows.filter((r) => {
     // 1. SCOPE LOGIC
     if (state.scope === 'assigned') {
-        // "Your Guests" -> Filter by current user's groups
         const rowAssignments = r.assigned_users || [];
         const userGroups = state.currentUser.matchesGroups || [];
         if (!rowAssignments.some(groupId => userGroups.includes(groupId))) return false;
     } 
     else if (state.scope !== 'all') {
-        // Specific Group Filter (e.g. "group_amy_dave")
         const rowAssignments = r.assigned_users || [];
         if (!rowAssignments.includes(state.scope)) return false;
     }
-    // If scope is 'all', we skip filtering (show everything)
 
     // 2. STATUS
     const complete = addressComplete(r);
@@ -188,7 +179,6 @@ function render() {
 
   const data = getFilteredRows();
 
-  // --- EMPTY STATES ---
   // --- EMPTY STATES ---
   if (!data.length) {
     let html = "";
@@ -232,8 +222,6 @@ function render() {
     const addressLine = formatOneLine(r);
     const assignedIds = r.assigned_users || [];
     
-    // TAGS: Show if Admin AND (Viewing All OR Viewing Specific Group)
-    // We show tags even when filtering by specific person so you can see if *multiple* people are assigned (e.g. Amy + Emily)
     let chipsHtml = "";
     if (isAdmin && state.scope !== 'assigned' && assignedIds.length > 0) {
         chipsHtml = `<div class="assignmentChips" style="margin-bottom: 4px;">`;
@@ -258,7 +246,6 @@ function render() {
         chipsHtml += `</div>`;
     }
 
-    // ADMIN ASSIGNMENT UI (Tiles)
     let adminAssignUI = "";
     if (isAdmin) {
         const checkboxes = ASSIGNMENT_GROUPS.map(g => {
@@ -323,7 +310,6 @@ function render() {
   bindListEvents(list);
 }
 
-// --- EVENTS ---
 function bindListEvents(list) {
   list.onclick = (e) => {
       const emptyBtn = e.target.closest('[data-action]');
@@ -457,13 +443,36 @@ window.forceScopeAll = function() {
     render(); 
 };
 
-// --- INIT ---
-document.addEventListener("DOMContentLoaded", () => {
-  bindControls();
-  loadAddressBook();
-});
+// ==========================================
+// INIT & ROUTER HOOKS
+// ==========================================
 
-window.addEventListener("roleChanged", (e) => {
-    localStorage.setItem('user_role_key', e.detail.role);
-    loadAddressBook();
-});
+async function initAddressBookPage() {
+    const abList = document.getElementById("abList");
+    if (!abList) return; // Abort if we aren't on the Address Book page!
+
+    // Sync UI with existing state if they navigated away and back
+    const searchInput = document.getElementById("addrSearch");
+    if (searchInput && state.search) searchInput.value = state.search;
+
+    bindControls();
+    await loadAddressBook();
+}
+
+// Run on hard refresh
+document.addEventListener("DOMContentLoaded", initAddressBookPage);
+
+// Run on soft SPA navigation (from our DIY router!)
+window.addEventListener("app:navigated", initAddressBookPage);
+
+// Safely bind role changes globally so it doesn't stack up
+if (!window.addressBookRoleBound) {
+    window.addEventListener("roleChanged", (e) => {
+        localStorage.setItem('user_role_key', e.detail.role);
+        // Only reload the data if we are actually looking at the Address Book
+        if (document.getElementById("abList")) {
+            loadAddressBook();
+        }
+    });
+    window.addressBookRoleBound = true;
+}

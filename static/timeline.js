@@ -1,13 +1,18 @@
+// static/timeline.js
+
 const START_HOUR = 6;
 const END_HOUR = 24; 
 let currentEvents = []; 
 
-// --- NEW: Global Filter State & Functions ---
-window.activeFilters = { party: [], vendor: [] };
+// --- Global Filter State & Functions ---
+// Using window so they persist beautifully as the user navigates between pages!
+window.activeFilters = window.activeFilters || { party: [], vendor: [] };
 
 window.toggleFilterPopup = (type, event) => {
     event.stopPropagation();
     const popup = document.getElementById(`${type}FilterPopup`);
+    if (!popup) return;
+    
     document.querySelectorAll('.filter-popup').forEach(p => {
         if (p !== popup) p.classList.remove('show');
     });
@@ -16,6 +21,8 @@ window.toggleFilterPopup = (type, event) => {
 
 window.applyFilter = (type) => {
     const popup = document.getElementById(`${type}FilterPopup`);
+    if (!popup) return;
+    
     const checked = Array.from(popup.querySelectorAll('input:checked')).map(cb => cb.value);
     window.activeFilters[type] = checked;
     renderGantt(currentEvents); 
@@ -30,9 +37,13 @@ window.stopProp = (event) => {
     event.stopPropagation();
 };
 
-document.addEventListener('click', () => {
-    document.querySelectorAll('.filter-popup').forEach(p => p.classList.remove('show'));
-});
+// Safely bind document-level clicks so they don't stack up with the router
+if (!window.timelineGlobalClickBound) {
+    document.addEventListener('click', () => {
+        document.querySelectorAll('.filter-popup').forEach(p => p.classList.remove('show'));
+    });
+    window.timelineGlobalClickBound = true;
+}
 
 // --- CORE FUNCTIONS ---
 async function waitForAuth() {
@@ -56,73 +67,98 @@ function formatTimeDisplay(timeStr) {
     return `${displayHour}:${m} ${ampm}`;
 }
 
-document.addEventListener("DOMContentLoaded", async () => {
-    const addBtn = document.getElementById("btnAddEvent");
-    const updateButtonVisibility = () => {
-        const currentRole = localStorage.getItem("user_role_key") || "admin";
-        addBtn.style.display = (currentRole === "admin") ? "block" : "none";
-    };
+// ==========================================
+// 1. THE MAIN INITIALIZATION WRAPPER
+// ==========================================
+async function initTimelinePage() {
+    const gridEl = document.getElementById("ganttGrid");
     
-    updateButtonVisibility();
-    window.addEventListener("roleChanged", () => { updateButtonVisibility(); loadTimeline(); });
+    // SAFETY CHECK: If we aren't on the Timeline page, abort!
+    if (!gridEl) return;
+
+    const addBtn = document.getElementById("btnAddEvent");
+    const currentRole = localStorage.getItem("user_role_key") || "admin";
+    
+    if (addBtn) {
+        addBtn.style.display = (currentRole === "admin") ? "block" : "none";
+    }
 
     await loadTimeline();
 
     // --- GLOBAL TOOLTIP SETUP ---
-    const tooltip = document.createElement('div');
-    tooltip.id = 'global-tooltip';
-    document.body.appendChild(tooltip);
-
-    const gridEl = document.getElementById("ganttGrid");
+    let tooltip = document.getElementById('global-tooltip');
+    if (!tooltip) {
+        tooltip = document.createElement('div');
+        tooltip.id = 'global-tooltip';
+        document.body.appendChild(tooltip);
+    }
 
     gridEl.addEventListener('mouseover', (e) => {
+        const tt = document.getElementById('global-tooltip');
         const block = e.target.closest('.gantt-block');
-        if (block && block.dataset.tooltip) {
-            tooltip.textContent = block.dataset.tooltip;
-            tooltip.style.opacity = '1';
-            tooltip.style.visibility = 'visible';
+        if (block && block.dataset.tooltip && tt) {
+            tt.textContent = block.dataset.tooltip;
+            tt.style.opacity = '1';
+            tt.style.visibility = 'visible';
         }
     });
 
     gridEl.addEventListener('mousemove', (e) => {
+        const tt = document.getElementById('global-tooltip');
         const block = e.target.closest('.gantt-block');
-        if (block && block.dataset.tooltip) {
-            tooltip.style.left = (e.clientX + 15) + 'px';
-            tooltip.style.top = (e.clientY + 15) + 'px';
+        if (block && block.dataset.tooltip && tt) {
+            tt.style.left = (e.clientX + 15) + 'px';
+            tt.style.top = (e.clientY + 15) + 'px';
         }
     });
 
     gridEl.addEventListener('mouseout', (e) => {
+        const tt = document.getElementById('global-tooltip');
         const block = e.target.closest('.gantt-block');
-        if (block) {
-            tooltip.style.opacity = '0';
-            tooltip.style.visibility = 'hidden';
+        if (block && tt) {
+            tt.style.opacity = '0';
+            tt.style.visibility = 'hidden';
         }
     });
 
-    // Modal Events
-    addBtn.addEventListener("click", () => openModal(null));
-    document.getElementById("btnCloseEventModal").addEventListener("click", closeModal);
-    document.getElementById("btnCancelEvent").addEventListener("click", closeModal);
-    document.getElementById("formAddEvent").addEventListener("submit", handleAddEvent);
+    // --- MODAL & ACTION EVENTS ---
+    if (addBtn) addBtn.addEventListener("click", () => openModal(null));
+    
+    document.getElementById("btnCloseEventModal")?.addEventListener("click", closeModal);
+    document.getElementById("btnCancelEvent")?.addEventListener("click", closeModal);
+    document.getElementById("formAddEvent")?.addEventListener("submit", handleAddEvent);
+    document.getElementById("btnDeleteEvent")?.addEventListener("click", handleDeleteEvent);
 
     gridEl.addEventListener("change", async (e) => {
         if (e.target.classList.contains("inline-input")) {
             await handleInlineSave(e.target);
         }
     });
-});
+}
+
+// Safely bind role changes globally so it doesn't stack up
+if (!window.timelineRoleBound) {
+    window.addEventListener("roleChanged", () => {
+        // Only trigger the reload if we are actually viewing the timeline
+        if (document.getElementById("ganttGrid")) {
+            initTimelinePage();
+        }
+    });
+    window.timelineRoleBound = true;
+}
+
 
 async function loadTimeline() {
-    document.getElementById("statusLine").textContent = "Loading schedule...";
+    const statusLine = document.getElementById("statusLine");
+    if (statusLine) statusLine.textContent = "Loading schedule...";
     try {
         const token = await waitForAuth();
         const res = await fetch("/api/timeline", { headers: { Authorization: `Bearer ${token}` } });
         currentEvents = await res.json(); 
         renderGantt(currentEvents); 
-        document.getElementById("statusLine").textContent = "";
+        if (statusLine) statusLine.textContent = "";
     } catch (e) {
-        document.getElementById("statusLine").textContent = "Failed to load timeline.";
+        if (statusLine) statusLine.textContent = "Failed to load timeline.";
     }
 }
 
@@ -155,6 +191,8 @@ function getGanttPlacement(startStr, endStr) {
 
 function renderGantt(events) {
     const grid = document.getElementById("ganttGrid");
+    if (!grid) return;
+    
     grid.innerHTML = "";
     const isAdmin = (localStorage.getItem("user_role_key") || "admin") === "admin";
 
@@ -174,7 +212,6 @@ function renderGantt(events) {
         return tags.map(tag => `<span class="chip" style="padding: 1px 4px; font-size: 9px; margin: 1px 1px 0 0; display: inline-block;">${escapeHTML(tag)}</span>`).join("");
     };
 
-    // --- NEW: GENERATE FILTER POPUP HTML ---
     const allParties = [...new Set(events.flatMap(e => e.wedding_party || []))].filter(Boolean).sort();
     const allVendors = [...new Set(events.flatMap(e => e.vendor || []))].filter(Boolean).sort();
 
@@ -220,18 +257,14 @@ function renderGantt(events) {
         html += `<div class="gantt-time-header" style="grid-column: ${startCol} / ${startCol + 12};">${displayHour} ${ampm}</div>`;
     }
 
-    // --- NEW: FILTERING LOGIC ---
+    // --- FILTERING LOGIC ---
     let filteredEvents = events;
         
     if (window.activeFilters.party.length > 0) {
         filteredEvents = filteredEvents.filter(e => {
             if (!e.wedding_party) return false;
-            // 1. Does the event include any of the specifically checked people?
             const hasSelected = e.wedding_party.some(p => window.activeFilters.party.includes(p));
-            // 2. Is the event universally assigned to "All"?
             const hasAll = e.wedding_party.some(p => p.toLowerCase() === 'all');
-            
-            // Keep the event if either condition is true!
             return hasSelected || hasAll;
         });
     }
@@ -239,11 +272,11 @@ function renderGantt(events) {
     if (window.activeFilters.vendor.length > 0) {
         filteredEvents = filteredEvents.filter(e => e.vendor && e.vendor.some(v => window.activeFilters.vendor.includes(v)));
     }
+    
     // 2. ROWS
     let currentRow = 2;
     const groups = Object.keys(phaseNames);
     
-    // We only render phases that have surviving events after filtering
     const uncategorizedEvents = filteredEvents.filter(e => !groups.includes(e.phase));
     const allGroupsToRender = [...groups];
     if (uncategorizedEvents.length > 0) allGroupsToRender.push("uncategorized");
@@ -252,7 +285,6 @@ function renderGantt(events) {
         const isUncategorized = phaseKey === "uncategorized";
         const phaseEvents = isUncategorized ? uncategorizedEvents : filteredEvents.filter(e => e.phase === phaseKey);
         
-        // Skip empty phases automatically!
         if (phaseEvents.length === 0) return;
 
         const label = isUncategorized ? "Needs Phase Assignment" : phaseNames[phaseKey];
@@ -301,7 +333,6 @@ function renderGantt(events) {
             const placement = getGanttPlacement(ev.start_time, ev.end_time);
             const hoverText = `${escapeHTML(ev.description)} (${formatTimeDisplay(ev.start_time)} - ${formatTimeDisplay(ev.end_time)})`;
             
-            // --- NEW: Add the muted time right inside the Gantt block ---
             html += `
                 <div class="gantt-block-container phase-${phaseKey}" style="grid-column: ${placement.startCol}; grid-row: ${currentRow}; margin-left: ${placement.marginLeftPct}%; width: ${placement.widthPct}%;">
                     <div class="gantt-block" data-tooltip="${hoverText}">
@@ -386,10 +417,13 @@ async function handleInlineSave(inputEl) {
     }
 }
 
-const modal = document.getElementById("modalAddEvent");
-const form = document.getElementById("formAddEvent");
-
+// --- MODAL CONTROLS ---
 function openModal(eventData = null) {
+    // Re-query dynamically to ensure we always grab the fresh elements from the router
+    const modal = document.getElementById("modalAddEvent");
+    const form = document.getElementById("formAddEvent");
+    if (!modal || !form) return;
+    
     form.reset();
     const isEdit = eventData && eventData.id;
     document.getElementById("modalEventTitle").textContent = isEdit ? "Edit Event" : "Add Timeline Event";
@@ -405,6 +439,7 @@ function openModal(eventData = null) {
         
         const setMulti = (id, arr) => {
             const sel = document.getElementById(id);
+            if (!sel) return;
             const vals = Array.isArray(arr) ? arr : (arr ? [arr] : []);
             Array.from(sel.options).forEach(opt => opt.selected = vals.includes(opt.value));
         };
@@ -421,12 +456,17 @@ function openModal(eventData = null) {
 }
 
 function closeModal() {
+    const modal = document.getElementById("modalAddEvent");
+    if (!modal) return;
     modal.style.display = "none";
     modal.setAttribute("aria-hidden", "true");
 }
 
 async function handleAddEvent(e) {
     e.preventDefault();
+    const form = document.getElementById("formAddEvent");
+    if (!form) return;
+
     const btn = form.querySelector("button[type='submit']");
     btn.disabled = true;
     btn.textContent = "Saving...";
@@ -456,13 +496,24 @@ async function handleAddEvent(e) {
     finally { btn.disabled = false; btn.textContent = "Save Event"; }
 }
 
-document.getElementById("btnDeleteEvent")?.addEventListener("click", async () => {
-    const evId = document.getElementById("evId").value;
-    if (!evId || !confirm("Are you sure?")) return;
+async function handleDeleteEvent() {
+    const evId = document.getElementById("evId")?.value;
+    if (!evId || !confirm("Are you sure you want to delete this event?")) return;
+    
     try {
         const token = await waitForAuth();
         await fetch(`/api/timeline/${evId}`, { method: "DELETE", headers: { "Authorization": `Bearer ${token}` }});
         closeModal();
         await loadTimeline();
     } catch (err) { alert(err.message); }
-});
+}
+
+// ==========================================
+// 2. ROUTER HOOKS
+// ==========================================
+
+// Run on hard refresh
+document.addEventListener("DOMContentLoaded", initTimelinePage);
+
+// Run on soft SPA navigation (from our DIY router!)
+window.addEventListener("app:navigated", initTimelinePage);

@@ -16,8 +16,7 @@ async function waitForAuth() {
     throw new Error("Auth not ready (AppAuth.token missing)");
   }
 
-// --- ROLE / PERMISSIONS SHIM (pulls role from /api/me, not display_role) ---
-// --- ROLE / PERMISSIONS SHIM (Clean & Synchronous) ---
+// --- ROLE / PERMISSIONS SHIM ---
 (function ensureAppUserRoleHelpers() {
     window.AppUser = window.AppUser || {};
 
@@ -25,7 +24,6 @@ async function waitForAuth() {
       return String(v || "").toLowerCase().trim();
     }
 
-    // Instantly read the cache saved by dash-sidebar.js!
     function syncFromCache() {
         try {
             const cached = JSON.parse(localStorage.getItem("cached_user_profile") || "{}");
@@ -37,63 +35,128 @@ async function waitForAuth() {
         }
     }
 
-    // Attach the helper functions
     window.AppUser.isAdmin = () => safeLower(window.AppUser.roleFromProfile) === "admin";
     window.AppUser.isContributor = () => safeLower(window.AppUser.roleFromProfile) === "editor";
     window.AppUser.isViewer = () => safeLower(window.AppUser.roleFromProfile) === "viewer";
-    
     window.AppUser.getFilterName = () => String(window.AppUser.fullName || "").trim();
 
-    // 1. Run immediately on load (Zero delay!)
     syncFromCache();
 
-    // 2. Update silently when dash-sidebar verifies the token in the background
-    window.addEventListener("roleChanged", () => {
-        syncFromCache();
-        // Note: loadVendors() will automatically be called by the other roleChanged listener at the bottom!
-    });
+    if (!window.vendorRoleShimBound) {
+        window.addEventListener("roleChanged", () => { syncFromCache(); });
+        window.vendorRoleShimBound = true;
+    }
 })();
 
-const els = {
-    // Summary Stats
-    statusLine: document.getElementById("statusLine"),
-    sumBooked: document.getElementById("sumBooked"),
-    sumUpcoming: document.getElementById("sumUpcoming"),
-    sumOverdue: document.getElementById("sumOverdue"),
-    sumTotalScheduled: document.getElementById("sumTotalScheduled"),
-    sumPaid: document.getElementById("sumPaid"),
-    sumRemaining: document.getElementById("sumRemaining"),
+// --- DYNAMIC DOM ELEMENTS (SPA Fix) ---
+let els = {};
+let payEls = {};
+let planEls = {};
+let addVendorEls = {};
+let uploadEls = {};
 
-    scopeSeg: document.querySelector(".segmented"),
-    scopeBtns: document.querySelectorAll(".segBtn[data-scope]"),
+function refreshDOMReferences() {
+    els = {
+        statusLine: document.getElementById("statusLine"),
+        sumBooked: document.getElementById("sumBooked"),
+        sumUpcoming: document.getElementById("sumUpcoming"),
+        sumOverdue: document.getElementById("sumOverdue"),
+        sumTotalScheduled: document.getElementById("sumTotalScheduled"),
+        sumPaid: document.getElementById("sumPaid"),
+        sumRemaining: document.getElementById("sumRemaining"),
+        scopeSeg: document.querySelector(".segmented"),
+        scopeBtns: document.querySelectorAll(".segBtn[data-scope]"),
+        searchInput: document.getElementById("searchInput"),
+        filterCategory: document.getElementById("filterCategory"),
+        filterPay: document.getElementById("filterPay"),
+        btnClear: document.getElementById("btnClear"),
+        btnRefresh: document.getElementById("btnRefresh"),
+        btnAddVendor: document.getElementById("btnAddVendor"),
+        vendorList: document.getElementById("vendorList"),
+        emptyState: document.getElementById("emptyState"),
+        drawer: document.getElementById("drawer"),
+        drawerOverlay: document.getElementById("drawerOverlay"),
+        drawerClose: document.getElementById("drawerClose"),
+        btnDrawerClose2: document.getElementById("btnDrawerClose2"),
+        drawerAvatar: document.getElementById("drawerAvatar"),
+        drawerTitle: document.getElementById("drawerTitle"),
+        drawerMeta: document.getElementById("drawerMeta"),
+        drawerChips: document.getElementById("drawerChips"),
+        drawerPeople: document.getElementById("drawerPeople"),
+        drawerFiles: document.getElementById("drawerFiles"),
+        drawerPayments: document.getElementById("drawerPayments"),
+        drawerNotes: document.getElementById("drawerNotes"),
+        payTabs: document.getElementById("payTabs"),
+    };
 
-    // Filters & Controls
-    searchInput: document.getElementById("searchInput"),
-    filterCategory: document.getElementById("filterCategory"),
-    filterPay: document.getElementById("filterPay"),
-    btnClear: document.getElementById("btnClear"),
-    btnRefresh: document.getElementById("btnRefresh"),
-    btnAddVendor: document.getElementById("btnAddVendor"),
+    payEls = {
+        modal: document.getElementById("modalPay"),
+        form: document.getElementById("formPay"),
+        btnClose: document.getElementById("btnClosePay"),
+        btnCancel: document.getElementById("btnCancelPay"),
+        id: document.getElementById("payPaymentId"),
+        desc: document.getElementById("payDesc"),
+        amount: document.getElementById("payAmount"),
+        date: document.getElementById("payDate"),
+        method: document.getElementById("payMethod"),
+        notes: document.getElementById("payNotes"),
+        toggle: document.getElementById("toggleSplit"),
+        simpleMode: document.getElementById("paySimpleMode"),
+        splitMode: document.getElementById("paySplitMode"),
+        payerSimple: document.getElementById("payPayerSimple"),
+        splitContainer: document.getElementById("splitRowsContainer"),
+        btnAddSplit: document.getElementById("btnAddSplitRow"),
+        dropZone: document.getElementById("payDropZone"),
+        fileInput: document.getElementById("payFile"),
+        fileName: document.getElementById("payFileName")
+    };
 
-    // Main List
-    vendorList: document.getElementById("vendorList"),
-    emptyState: document.getElementById("emptyState"),
+    planEls = {
+        modal: document.getElementById("modalPlan"),
+        form: document.getElementById("formPlan"),
+        btnClose: document.getElementById("btnClosePlan"),
+        btnCancel: document.getElementById("btnCancelPlan"),
+        title: document.getElementById("planTitle"),
+        id: document.getElementById("planPaymentId"),
+        companyId: document.getElementById("planCompanyId"),
+        desc: document.getElementById("planDesc"),
+        amount: document.getElementById("planAmount"),
+        date: document.getElementById("planDate"),
+        notes: document.getElementById("planNotes"),
+        toggle: document.getElementById("togglePlanSplit"),
+        simpleMode: document.getElementById("planSimpleMode"),
+        splitMode: document.getElementById("planSplitMode"),
+        respSimple: document.getElementById("planRespSimple"),
+        splitRows: document.getElementById("planSplitRows"),
+        btnAddSplit: document.getElementById("btnAddPlanSplit")
+    };
 
-    // Drawer
-    drawer: document.getElementById("drawer"),
-    drawerOverlay: document.getElementById("drawerOverlay"),
-    drawerClose: document.getElementById("drawerClose"),
-    btnDrawerClose2: document.getElementById("btnDrawerClose2"),
-    drawerAvatar: document.getElementById("drawerAvatar"),
-    drawerTitle: document.getElementById("drawerTitle"),
-    drawerMeta: document.getElementById("drawerMeta"),
-    drawerChips: document.getElementById("drawerChips"),
-    drawerPeople: document.getElementById("drawerPeople"),
-    drawerFiles: document.getElementById("drawerFiles"),
-    drawerPayments: document.getElementById("drawerPayments"),
-    drawerNotes: document.getElementById("drawerNotes"),
-    payTabs: document.getElementById("payTabs"),
-};
+    addVendorEls = {
+        modal: document.getElementById("modalAddVendor"),
+        form: document.getElementById("formAddVendor"),
+        btnClose: document.getElementById("btnCloseAddVendor"),
+        btnCancel: document.getElementById("btnCancelAddVendor"),
+        name: document.getElementById("addVendorName"),
+        category: document.getElementById("addVendorCategory"),
+        status: document.getElementById("addVendorStatus"),
+        website: document.getElementById("addVendorWebsite"),
+        contactName: document.getElementById("addVendorContactName"),
+        email: document.getElementById("addVendorEmail"),
+        phone: document.getElementById("addVendorPhone"),
+        notes: document.getElementById("addVendorNotes")
+    };
+
+    uploadEls = {
+        modal: document.getElementById("modalUploadFile"),
+        form: document.getElementById("formUploadFile"),
+        btnClose: document.getElementById("btnCloseUpload"),
+        btnCancel: document.getElementById("btnCancelUpload"),
+        companyId: document.getElementById("uploadCompanyId"),
+        displayName: document.getElementById("uploadDisplayName"),
+        fileType: document.getElementById("uploadFileType"),
+        file: document.getElementById("uploadFile")
+    };
+}
 
 const CATEGORY_MAP = {
     'venue_catering': 'Venue/Catering',
@@ -118,10 +181,7 @@ let scopeFilter = "all";
 let selectedPayFile = null;
 
 // --- HELPERS ---
-
-function getCategoryDisplay(cat) {
-    return CATEGORY_MAP[cat] || cat;
-}
+function getCategoryDisplay(cat) { return CATEGORY_MAP[cat] || cat; }
 
 function escapeHTML(str) {
     return String(str ?? "")
@@ -146,7 +206,6 @@ function fmtMoney(n) {
     return num.toLocaleString(undefined, { style: "currency", currency: "USD" });
 }
 
-// static/vendors.js - Update these two functions
 function parseISODate(d) {
     if (!d) return null;
     const dt = new Date(d);
@@ -157,26 +216,16 @@ function parseISODate(d) {
 function fmtDate(d) {
     if (!d) return "—";
     const dt = new Date(d);
-    
-    // Safety check: if date is invalid, return dash
     if (Number.isNaN(dt.getTime())) return "—";
-
-    // THE FIX: Use getUTC... methods.
-    // Supabase stores "2026-06-18" as UTC Midnight.
-    // If we read it as Local Time, it subtracts 5 hours -> June 17th.
-    // If we read it as UTC Time, it stays June 18th.
-    
     const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     const m = months[dt.getUTCMonth()];
     const day = dt.getUTCDate();
     const y = dt.getUTCFullYear();
-    
     return `${m} ${day}, ${y}`;
 }
 
 async function fetchJSON(url, options = {}) {
     const token = await waitForAuth();
-  
     const res = await fetch(url, {
       ...options,
       headers: {
@@ -185,7 +234,6 @@ async function fetchJSON(url, options = {}) {
         ...(options.headers || {}),
       },
     });
-  
     const data = await res.json().catch(() => ({}));
     if (!res.ok) throw new Error(data.error || `${res.status} ${res.statusText}`);
     return data;
@@ -202,59 +250,42 @@ function chipHTML(kind, label) {
     return `<span class="${cls}"><span class="chipDot"></span>${escapeHTML(label)}</span>`;
 }
 
-// --- LOGIC: PERMISSIONS SANITIZER (NEW) ---
-
 // --- LOGIC: PERMISSIONS SANITIZER ---
-
-// static/vendors.js - Update this function
-
 function sanitizeVendorForUser(vendorData) {
-    // If details aren't loaded yet, don't blow up the whole render cycle
     if (!vendorData) return vendorData;
-  
-    // Safe deep-clone (don’t mutate cached object)
     let v;
     try {
       v = JSON.parse(JSON.stringify(vendorData));
     } catch (e) {
-      // Fallback if something weird/non-serializable sneaks in
       v = { ...vendorData };
     }
   
-    // Normalize shapes so downstream code never hits undefined.filter / undefined.some
     v.payments = Array.isArray(v.payments) ? v.payments : [];
     v.files = Array.isArray(v.files) ? v.files : [];
     v.company_files = Array.isArray(v.company_files) ? v.company_files : [];
     v.people = Array.isArray(v.people) ? v.people : [];
   
-    // Always use window.AppUser to avoid “AppUser is not defined” / overwritten globals
     const AU = window.AppUser || {};
     const isAdmin = typeof AU.isAdmin === "function" ? AU.isAdmin() : false;
     const isViewer = typeof AU.isViewer === "function" ? AU.isViewer() : false;
     const isContributor = typeof AU.isContributor === "function" ? AU.isContributor() : false;
   
-    // Admin sees everything
     if (isAdmin) return v;
   
-    // Viewer: hide all financials + payments
     if (isViewer) {
       v.payments = [];
       v.financials = { scheduled: null, paid: null, remaining: null };
       return v;
     }
   
-    // Contributor/editor: show only their responsibilities
-    // Contributor/editor: show only their responsibilities
     if (isContributor) {
         const myHouseholdId = String(AU.householdId || "");
-    
         if (!myHouseholdId) {
           v.payments = [];
           v.financials = { scheduled: 0, paid: 0, remaining: 0 };
           return v;
         }
     
-        // Keep only payments assigned to their specific household ID
         v.payments = v.payments.filter((p) => {
           const resps = Array.isArray(p?.responsibilities) ? p.responsibilities : [];
           return resps.some((r) => String(r?.responsible_household_id || "") === myHouseholdId);
@@ -266,9 +297,7 @@ function sanitizeVendorForUser(vendorData) {
         v.payments.forEach((p) => {
           const resps = Array.isArray(p?.responsibilities) ? p.responsibilities : [];
           resps.forEach((r) => {
-            // If this slice of the payment isn't their household, ignore it
             if (String(r?.responsible_household_id || "") !== myHouseholdId) return;
-    
             const amt = Number(r?.amount) || 0;
             myScheduled += amt;
     
@@ -286,16 +315,12 @@ function sanitizeVendorForUser(vendorData) {
         v.financials = { scheduled: myScheduled, paid: myPaid, remaining: myScheduled - myPaid };
         return v;
       }
-  
-    // Unknown role: safest is pass-through (or you could clamp financials here if you prefer)
     return v;
   }
 
 // --- LOGIC: ROLLUPS & STATUS ---
-
 function normRespStatus(r) {
     const s = (r?.status ?? "").toString().trim().toLowerCase();
-    // canonical: pending | paid | reimb_pending | reimbursed
     if (s === "paid") return "paid";
     if (s === "reimb_pending" || s === "paid_pending_reimbursement") return "reimb_pending";
     if (s === "reimbursed") return "reimbursed";
@@ -305,7 +330,6 @@ function normRespStatus(r) {
 function responsibilityNarrative(r) {
     const st = normRespStatus(r);
     const reimbStatus = (r?.reimbursement_status || "none").toLowerCase().trim();
-
     const responsible = (r?.responsible_party || "").trim();
     const paidBy = (r?.paid_by_party || "").trim();
     const paidDate = r?.paid_date ? fmtDate(r.paid_date) : null;
@@ -336,12 +360,9 @@ function responsibilityNarrative(r) {
 function paymentTotals(p) {
     const base = Number(p.amount ?? 0) || 0;
     const resps = Array.isArray(p.responsibilities) ? p.responsibilities : [];
-
     let paidVendor = 0;
 
-    if (!resps.length) {
-        return { base, paidVendor: 0, remainingVendor: base };
-    }
+    if (!resps.length) return { base, paidVendor: 0, remainingVendor: base };
 
     resps.forEach((r) => {
         const amt = Number(r.amount ?? 0) || 0;
@@ -364,11 +385,9 @@ function reimbursementRollup(p) {
         const amt = Number(r.amount ?? 0) || 0;
         const reimbStatus = (r.reimbursement_status || "").toLowerCase().trim();
 
-        if (reimbStatus === "pending") {
-            reimburseOutstanding += amt;
-        } else if (reimbStatus === "received") {
-            reimburseCompleted += amt;
-        } else {
+        if (reimbStatus === "pending") reimburseOutstanding += amt;
+        else if (reimbStatus === "received") reimburseCompleted += amt;
+        else {
             const st = normRespStatus(r);
             if (st === "reimb_pending") reimburseOutstanding += amt;
             if (st === "reimbursed") reimburseCompleted += amt;
@@ -384,11 +403,8 @@ function isOverduePayment(p) {
     const today = startOfToday();
     const due0 = new Date(due);
     due0.setHours(0, 0, 0, 0);
-
     return due0 < today && paymentTotals(p).remainingVendor > 0;
 }
-
-// static/vendors.js - Update companyRollup
 
 function companyRollup(detail) {
     const AU = window.AppUser || {};
@@ -409,7 +425,6 @@ function companyRollup(detail) {
         let relevantPaid = 0;
 
         if (isAdmin && !isMineScope) {
-            // ADMIN "ALL" VIEW: Sum the total contract installments
             relevantAmount = Number(p.amount) || 0;
             let paidSum = 0;
             (p.responsibilities || []).forEach(r => {
@@ -420,11 +435,7 @@ function companyRollup(detail) {
             });
             relevantPaid = paidSum;
         } else {
-            // "MINE" OR "CONTRIBUTOR" VIEW: Sum only the responsibilities for this Household ID
             const myHouseholdId = String(AU.householdId || "");
-            
-            // If Emma toggles "Mine", hardcode to the couple's household ID. 
-            // Otherwise, use the logged-in contributor's household ID!
             const targetHousehold = isMineScope ? "hernandez-wlodarczyk" : myHouseholdId;
 
             (p.responsibilities || []).forEach(r => {
@@ -443,7 +454,6 @@ function companyRollup(detail) {
         totalScheduled += relevantAmount;
         totalPaid += relevantPaid;
 
-        // Determine if this specific person has an upcoming or overdue payment
         const remaining = relevantAmount - relevantPaid;
         if (remaining > 0.01) {
             const due = parseISODate(p.due_date);
@@ -467,7 +477,6 @@ function companyRollup(detail) {
 }
 
 // --- FILE HELPERS ---
-
 function isPlaceholderFile(f) {
     return (f?.file_name || "").includes(".emptyFolderPlaceholder");
 }
@@ -524,7 +533,6 @@ async function openSigned(storagePath) {
 }
 
 // --- MAIN PAGE & LIST RENDER ---
-
 function setStatus(msg) {
     if (!els.statusLine) return;
     els.statusLine.textContent = msg || "";
@@ -532,17 +540,11 @@ function setStatus(msg) {
 
 async function loadVendors() {
     setStatus("Loading booked vendors…");
-
-    // Check if user is Admin (Emma/Ethan)
     const AU = window.AppUser || {};
     const isEmmaOrEthan = typeof AU.isAdmin === "function" ? AU.isAdmin() : false;
 
-    // Target the specific wrapper we just labeled in the HTML
-    const scopeToggle = document.querySelector(".scope-control-wrapper");
-    
-    if (scopeToggle) {
-        // If not admin, hide the entire "Showing" UI
-        scopeToggle.style.display = isEmmaOrEthan ? "flex" : "none";
+    if (els.scopeSeg) {
+        els.scopeSeg.parentElement.style.display = isEmmaOrEthan ? "flex" : "none";
     }
 
     try {
@@ -550,7 +552,7 @@ async function loadVendors() {
         detailsCache.clear();
         hydrateCategoryFilter(companies);
         await warmDetailsForSummary(companies);
-        render(); // This will use the new companyRollup logic
+        render(); 
         setStatus("");
     } catch (e) {
         console.error(e);
@@ -559,22 +561,20 @@ async function loadVendors() {
 }
 
 function hydrateCategoryFilter(rows) {
-    const sel = els.filterCategory;
-    if (!sel) return;
-
+    if (!els.filterCategory) return;
     const cats = new Set();
     rows.forEach((r) => {
         const c = (r.category || "").trim();
         if (c) cats.add(c);
     });
 
-    sel.innerHTML = `<option value="all">All</option>`;
+    els.filterCategory.innerHTML = `<option value="all">All</option>`;
     [...cats].sort((a, b) => a.localeCompare(b)).forEach((c) => {
         const display = getCategoryDisplay(c);
-        sel.insertAdjacentHTML("beforeend", `<option value="${escapeHTML(c)}">${escapeHTML(display)}</option>`);
+        els.filterCategory.insertAdjacentHTML("beforeend", `<option value="${escapeHTML(c)}">${escapeHTML(display)}</option>`);
     });
 
-    sel.value = categoryFilter;
+    els.filterCategory.value = categoryFilter;
 }
 
 async function warmDetailsForSummary(rows) {
@@ -597,25 +597,20 @@ function renderSummary() {
     const strip = document.querySelector(".summaryStrip");
     if (!strip) return;
   
-    // ✅ Always read role from window.AppUser safely
     const AU = window.AppUser || {};
     const isViewer = typeof AU.isViewer === "function" ? AU.isViewer() : false;
     const isContributor = typeof AU.isContributor === "function" ? AU.isContributor() : false;
   
-    // --- 1) VIEWER VIEW (no financials) ---
     if (isViewer) {
       let totalContacts = 0;
-      let missingInfoCount = 0; // kept in case you want to display later
+      let missingInfoCount = 0; 
       const categories = new Set();
   
       data.forEach((c) => {
         const d = detailsCache.get(c.id);
         if (!d) return;
-  
         if (c.category) categories.add(c.category);
-  
         if (Array.isArray(d.people)) totalContacts += d.people.length;
-  
         const primary = (d.people && d.people[0]) ? d.people[0] : {};
         if (!primary.email || !primary.phone) missingInfoCount++;
       });
@@ -637,7 +632,6 @@ function renderSummary() {
       return;
     }
   
-    // --- 2) ADMIN & CONTRIBUTOR VIEW (financials) ---
     let upcomingCount = 0;
     let overdueCount = 0;
     let totalScheduled = 0;
@@ -647,14 +641,11 @@ function renderSummary() {
     data.forEach((c) => {
       const d = detailsCache.get(c.id);
       if (!d) return;
-  
       const cleanD = sanitizeVendorForUser(d);
       const roll = companyRollup(cleanD);
       if (!roll) return;
-  
       if (roll.unpaidCount > 0) upcomingCount++;
       if (roll.overdueCount > 0) overdueCount++;
-  
       totalScheduled += Number(roll.totalScheduled || 0);
       totalPaid += Number(roll.totalPaid || 0);
       totalRemaining += Number(roll.remaining || 0);
@@ -686,9 +677,9 @@ function renderSummary() {
         </div>
         <div class="finStat">
           <div class="finLabel">Paid</div>
-          <div class="finValue" style="color:#15803d;">${fmtMoney(totalPaid)}</div>
+          <div class="finValue" style="color: var(--theme-600);">${fmtMoney(totalPaid)}</div>
         </div>
-        <div style="width:1px; height: 32px; background:#e5e7eb; margin:0 12px;"></div>
+        <div style="width:1px; height: 32px; background:var(--border-soft); margin:0 12px;"></div>
         <div class="finStat is-bold">
           <div class="finLabel">${labelRem}</div>
           <div class="finValue">${fmtMoney(totalRemaining)}</div>
@@ -697,7 +688,7 @@ function renderSummary() {
     `;
   
     strip.innerHTML = cardsHTML + finHTML;
-  }
+}
 
 function getFilteredCompanies() {
     const q = searchQuery.trim().toLowerCase();
@@ -716,7 +707,6 @@ function getFilteredCompanies() {
         const d = detailsCache.get(c.id);
         if (!d) return true;
 
-        // Use sanitized rollup for filtering
         const cleanD = sanitizeVendorForUser(d);
         const roll = companyRollup(cleanD);
         
@@ -730,12 +720,10 @@ function getFilteredCompanies() {
 function render() {
     if (!els.vendorList) return;
 
-    renderSummary(); // Updates the top cards based on scope
+    renderSummary(); 
 
-    // 1. FILTER DATA
-    const rawData = getFilteredCompanies(); // Applies Search & Category
+    const rawData = getFilteredCompanies(); 
     const data = rawData.filter(c => {
-        // Only hide the entire card if Admin has explicitly toggled "Mine" and has $0 share
         if (scopeFilter === 'mine' && AppUser.isAdmin()) {
             const d = detailsCache.get(c.id);
             if (!d) return false;
@@ -760,7 +748,6 @@ function render() {
         const displayCategory = getCategoryDisplay(c.category);
         const metaBits = [displayCategory].filter(Boolean).join(" • ");
 
-        // CHIPS
         let chips = "";
         if (roll) {
             if (roll.overdueCount > 0) chips += chipHTML("overdue", `${roll.overdueCount} overdue`);
@@ -770,7 +757,6 @@ function render() {
             chips = chipHTML("", "Loading…");
         }
 
-        // NUMBERS (vendorBottom)
         let numsHTML = "";
         
         const isViewer = AppUser.isViewer();
@@ -778,7 +764,6 @@ function render() {
         const isAdmin = AppUser.isAdmin();
         const hasFinancialStake = roll && roll.totalScheduled > 0.01;
 
-        // Logic: Show the bottom section ONLY if the user is Admin OR if they have a > $0 share
         if (!isViewer && roll) {
             if (isAdmin || hasFinancialStake) {
                 const pct = roll.totalScheduled > 0 ? Math.min(100, Math.max(0, (roll.totalPaid / roll.totalScheduled) * 100)) : 0;
@@ -816,7 +801,6 @@ function render() {
 }
 
 // --- DRAWER LOGIC ---
-
 function openDrawerShell() {
     els.drawer?.classList.add("is-open");
     els.drawer?.setAttribute("aria-hidden", "false");
@@ -829,13 +813,10 @@ function closeDrawer() {
 
 function bindPaymentTabs() {
     if (!els.payTabs) return;
-
     els.payTabs.addEventListener("click", (e) => {
         const btn = e.target.closest("button[data-tab]");
         if (!btn) return;
-
         paymentTab = btn.getAttribute("data-tab") || "all";
-
         els.payTabs.querySelectorAll("button[data-tab]").forEach((b) => {
             b.classList.toggle("is-active", b.getAttribute("data-tab") === paymentTab);
         });
@@ -843,7 +824,6 @@ function bindPaymentTabs() {
         const openId = els.drawer?.getAttribute("data-company-id");
         if (openId && detailsCache.has(openId)) {
             const d = detailsCache.get(openId);
-            // Sanitize payments for drawer too
             const cleanD = sanitizeVendorForUser(d);
             renderPaymentsLedger(cleanD.payments || [], cleanD.company_files || []);
         }
@@ -853,17 +833,14 @@ function bindPaymentTabs() {
 function bindDrawerTabs() {
     const tabs = document.getElementById("drawerTabs");
     if (!tabs) return;
-
     const setActive = (tabName) => {
         tabs.querySelectorAll(".tabBtn").forEach((b) => {
             b.classList.toggle("is-active", b.dataset.tab === tabName);
         });
-
         document.querySelectorAll(".drawerTabPanel").forEach((p) => {
             p.classList.toggle("is-active", p.id === `tab-${tabName}`);
         });
     };
-
     tabs.addEventListener("click", (e) => {
         const btn = e.target.closest(".tabBtn");
         if (!btn) return;
@@ -877,7 +854,6 @@ async function openDrawer(companyId) {
     openDrawerShell();
     els.drawer?.setAttribute("data-company-id", companyId);
 
-    // --- RESET UI ---
     if (els.payTabs) {
         els.payTabs.className = "minimalTabs"; 
         paymentTab = "all";
@@ -887,25 +863,21 @@ async function openDrawer(companyId) {
         });
     }
 
-    // Reset Elements
     els.drawerTitle.textContent = "Vendor";
     els.drawerMeta.textContent = "Loading…";
     if (els.drawerAvatar) els.drawerAvatar.textContent = "V";
     
-    // Clear our new containers
     const contactContainer = document.getElementById("drawerHeaderContact");
     const statsContainer = document.getElementById("paymentStatsLocation");
     if (contactContainer) contactContainer.innerHTML = "";
     if (statsContainer) statsContainer.innerHTML = "";
 
-    // Reset Lists
     if (els.drawerPeople) els.drawerPeople.innerHTML = `<div class="muted">Loading…</div>`;
     if (els.drawerFiles) els.drawerFiles.innerHTML = `<div class="muted">Loading…</div>`;
     if (els.drawerPayments) els.drawerPayments.innerHTML = `<div class="muted">Loading…</div>`;
     if (els.drawerNotes) els.drawerNotes.textContent = "—";
 
     try {
-        // 1. GET DATA
         let d = detailsCache.get(companyId);
         if (!d) {
             d = await fetchJSON(API.vendorDetails(companyId));
@@ -918,13 +890,11 @@ async function openDrawer(companyId) {
         const c = cleanD.company || {};
         const roll = companyRollup(cleanD);
 
-        // --- 2. HEADER (IDENTITY) ---
         const displayCategory = getCategoryDisplay(c.category);
         els.drawerTitle.textContent = c.name || "Vendor";
         els.drawerMeta.textContent = [displayCategory].filter(Boolean).join(" • ") || "—";
         if (els.drawerAvatar) els.drawerAvatar.textContent = initials(c.name || "");
 
-        // GENERATE CONTACT CHIPS
         let contactHTML = "";
         const primaryContact = (d.people && d.people.length > 0) ? d.people[0] : {};
         const email = c.email || primaryContact.email;
@@ -935,10 +905,9 @@ async function openDrawer(companyId) {
         if (email) contactHTML += `<a href="mailto:${email}" class="contactChip">✉️ Email</a>`;
         if (phone) contactHTML += `<a href="tel:${phone}" class="contactChip">📞 Call</a>`;
         
-        if (!contactHTML) contactHTML = `<span class="contactChip" style="background:transparent; border:1px dashed #e5e7eb; padding:4px 10px;">No quick contacts</span>`;
+        if (!contactHTML) contactHTML = `<span class="contactChip" style="background:transparent; border:1px dashed var(--border); padding:4px 10px;">No quick contacts</span>`;
         if (contactContainer) contactContainer.innerHTML = contactHTML;
 
-        // --- 3. PAYMENT TAB (FINANCIALS) ---
         let statsHTML = "";
         
         if (roll.next && roll.remaining > 0) {
@@ -950,9 +919,9 @@ async function openDrawer(companyId) {
             `;
         } else if (roll.totalScheduled > 0 && roll.remaining === 0) {
              statsHTML += `
-                <div class="drawerStatItem is-hero" style="background:#f0fdf4; border-color:#bbf7d0;">
-                    <span class="drawerStatLabel" style="color:#15803d;">Status</span>
-                    <span class="drawerStatValue" style="color:#166534;">Paid in Full</span>
+                <div class="drawerStatItem is-hero" style="background: var(--theme-100); border-color: var(--theme-300);">
+                    <span class="drawerStatLabel" style="color: var(--theme-600);">Status</span>
+                    <span class="drawerStatValue" style="color: var(--theme-700);">Paid in Full</span>
                 </div>
             `;
         }
@@ -979,7 +948,6 @@ async function openDrawer(companyId) {
             statsContainer.innerHTML = ""; 
         }
 
-        // --- 4. NOTES SECTION (MOVED HERE so 'c' and 'd' exist) ---
         const notesArea = els.drawerNotes;
         const currentNotes = (c.notes || "").trim();
         
@@ -1026,7 +994,6 @@ async function openDrawer(companyId) {
               
                 try {
                   const token = await waitForAuth();
-              
                   const res = await fetch(`/api/vendors/${cid}/notes`, {
                     method: "POST",
                     headers: {
@@ -1039,7 +1006,6 @@ async function openDrawer(companyId) {
                   const json = await res.json().catch(() => ({}));
                   if (!res.ok) throw new Error(json.error || "Failed");
               
-                  // update cache + re-open drawer
                   d.company = d.company || {};
                   d.company.notes = newText;
                   detailsCache.set(cid, d);
@@ -1057,15 +1023,12 @@ async function openDrawer(companyId) {
             notesArea.textContent = currentNotes || "—";
         }
 
-        // --- 5. RENDER LISTS ---
         renderPeople(d.people || []);
         renderPaymentsLedger(cleanD.payments || [], d.company_files || []);
         renderVendorDocs(d.files || []);
 
-        // --- 6. TAB LOGIC ---
         const tabPayments = document.querySelector("button[data-tab='payments']");
         const tabVendor = document.querySelector("button[data-tab='vendor']");
-
         const shouldHidePayments = AppUser.isViewer() || (AppUser.isContributor() && roll.totalScheduled === 0);
 
         if (shouldHidePayments) {
@@ -1078,12 +1041,10 @@ async function openDrawer(companyId) {
 
     } catch (e) {
         console.error(e);
-        els.drawerMeta.textContent = "Could not load vendor.";
+        if (els.drawerMeta) els.drawerMeta.textContent = "Could not load vendor.";
     }
 }
 
-// Helper to get initials (e.g., "Kathryn Puzevic" -> "KP")
-// Helper to get initials (Safety checked)
 function getInitials(name) {
     if (!name || name === "Unknown Contact") return "?";
     return name
@@ -1100,7 +1061,7 @@ function renderPeople(people) {
 
     if (!people || people.length === 0) {
         els.drawerPeople.innerHTML = `
-            <div style="text-align:center; padding: 32px; color:#9ca3af; background:#f9fafb; border-radius:12px; border:1px dashed #e5e7eb;">
+            <div style="text-align:center; padding: 32px; color:var(--muted); background:#f9fafb; border-radius:12px; border:1px dashed var(--border);">
                 <div style="font-size:24px; margin-bottom:8px;">📇</div>
                 <div>No contacts added yet.</div>
             </div>`;
@@ -1108,19 +1069,13 @@ function renderPeople(people) {
     }
 
     els.drawerPeople.innerHTML = people.map(p => {
-        // --- DATA MAPPING FIX ---
-        // We check multiple possibilities to ensure we find the right data
         const displayName = p.name || p.contact_name || p.full_name || "Unknown Contact";
         const displayRole = p.role || p.title || p.job_title || "";
-        
-        // Generate Initials from the found name
         const init = getInitials(displayName);
-        const isBlue = (init.charCodeAt(0) % 2 === 0); 
 
         return `
         <div class="contactCard">
-            <div class="contactAvatar ${isBlue ? 'is-blue' : 'is-green'}">${init}</div>
-            
+            <div class="contactAvatar">${init}</div>
             <div class="contactMain">
                 <div class="contactHeader">
                     <div>
@@ -1128,7 +1083,6 @@ function renderPeople(people) {
                         ${displayRole ? `<span class="contactRole">${escapeHTML(displayRole)}</span>` : ""}
                     </div>
                 </div>
-
                 <div class="contactMethods">
                     ${p.email ? `
                         <a href="mailto:${p.email}" class="contactMethodRow">
@@ -1136,7 +1090,6 @@ function renderPeople(people) {
                             <span>${escapeHTML(p.email)}</span>
                         </a>
                     ` : ""}
-                    
                     ${p.phone ? `
                         <a href="tel:${p.phone}" class="contactMethodRow">
                             <span class="contactIcon">📞</span>
@@ -1154,7 +1107,6 @@ function renderPaymentsLedger(payments, allFiles) {
     const list = Array.isArray(payments) ? payments : [];
     if (!els.drawerPayments) return;
 
-    // 1. ADD NEW BUTTON (ONLY FOR ADMIN)
     let addBtnHTML = "";
     if (AppUser.isAdmin()) {
         addBtnHTML = `
@@ -1172,7 +1124,6 @@ function renderPaymentsLedger(payments, allFiles) {
     }
 
     const { byPaymentId } = groupFilesByPayment(allFiles || []);
-
     const filtered = list.filter((p) => {
         const t = paymentTotals(p);
         if (paymentTab === "paid") return t.remainingVendor <= 0;
@@ -1186,7 +1137,6 @@ function renderPaymentsLedger(payments, allFiles) {
         return da - db;
     });
 
-    // Helper for Relative Time
     function getRelativeTimeHTML(isoDate, isPaid) {
         if (!isoDate || isPaid) return "";
         const today = new Date();
@@ -1229,22 +1179,14 @@ function renderPaymentsLedger(payments, allFiles) {
                 const reimb = reimbursementRollup(p);
                 const isPaid = t.remainingVendor <= 0;
 
-                // --- CALCULATE DISPLAY VALUES BASED ON ROLE ---
                 let displayBase = t.base;
                 let displayPaid = t.paidVendor;
                 let displayRemaining = t.remainingVendor;
 
-                // If Contributor, calculate MY share only
                 if (AppUser.isContributor()) {
                     const myHouseholdId = String(AppUser.householdId || "");
-                    
-                    // Find the responsibility row assigned to their household
-                    const myResp = p.responsibilities?.find(r => 
-                        String(r.responsible_household_id || "") === myHouseholdId
-                    );
-                    
+                    const myResp = p.responsibilities?.find(r => String(r.responsible_household_id || "") === myHouseholdId);
                     displayBase = myResp ? (Number(myResp.amount) || 0) : 0;
-                    
                     const st = normRespStatus(myResp || {});
                     if (st === 'paid' || st === 'reimbursed' || st === 'reimb_pending') {
                         displayPaid = displayBase;
@@ -1255,13 +1197,10 @@ function renderPaymentsLedger(payments, allFiles) {
                 }
                 
                 let statusChip;
-                // Simplified status logic for Contributors
                 if (AppUser.isContributor()) {
                     if (displayRemaining <= 0) statusChip = chipHTML("paid", "Paid");
-                    // CHANGE: Text is now "Upcoming", uses the "upcoming" (orange) style
                     else statusChip = chipHTML("upcoming", "Upcoming");
                 } else {
-                    // Standard Logic for Admin
                     if (isPaid) {
                         if (reimb.reimburseOutstanding > 0) statusChip = chipHTML("reimb-pending", "Paid (Pending Reimbursement)");
                         else statusChip = chipHTML("paid", "Paid");
@@ -1272,7 +1211,6 @@ function renderPaymentsLedger(payments, allFiles) {
                 }
 
                 const relativeTime = getRelativeTimeHTML(p.due_date, displayRemaining <= 0);
-
                 const resps = Array.isArray(p.responsibilities) ? p.responsibilities : [];
                 const filesForPayment = Array.isArray(p.files) ? p.files : [];
                 const invoices = filesForPayment.filter((f) => (f.file_type || "").toLowerCase() === "invoice");
@@ -1284,15 +1222,13 @@ function renderPaymentsLedger(payments, allFiles) {
             </svg>
           `;
 
-                // --- NEW: HIDE REDUNDANT SUBTEXT FOR CONTRIBUTORS ---
                 const metaLineHTML = AppUser.isContributor() 
-                    ? "" // HIDE for Amy (Clean look)
-                    : `<div class="paymentMetaLeft" style="margin-top: 4px; font-size: 0.85rem; color: #6b7280;">
+                    ? "" 
+                    : `<div class="paymentMetaLeft" style="margin-top: 4px; font-size: 0.85rem; color: var(--muted);">
                          <span>Paid ${fmtMoney(displayPaid)}</span> • 
                          <span>Remaining ${fmtMoney(displayRemaining)}</span>
                        </div>`;
 
-                // Button Logic (Hidden for contributors)
                 const markPaidBtn = (t.remainingVendor > 0 && AppUser.isAdmin())
                     ? `<button class="btnSmall btnMarkPaid" type="button" 
                 data-id="${escapeHTML(p.id)}" 
@@ -1408,7 +1344,6 @@ function renderPaymentsLedger(payments, allFiles) {
     </div>
   `;
 
-    // Re-attach Events
     els.drawerPayments.querySelectorAll(".paymentHeader").forEach((header) => {
         header.addEventListener("click", () => {
             const card = header.closest(".paymentCard");
@@ -1423,33 +1358,6 @@ function renderPaymentsLedger(payments, allFiles) {
         });
     });
 }
-
-// ... (renderVendorDocs, openSigned, etc. same as before) ...
-
-// --- PAY MODAL & PLAN MODAL (Admin Only logic handled by button hiding) ---
-// (We keep these functions as is, because users can't open them if buttons are hidden)
-
-const payEls = {
-    modal: document.getElementById("modalPay"),
-    form: document.getElementById("formPay"),
-    btnClose: document.getElementById("btnClosePay"),
-    btnCancel: document.getElementById("btnCancelPay"),
-    id: document.getElementById("payPaymentId"),
-    desc: document.getElementById("payDesc"),
-    amount: document.getElementById("payAmount"),
-    date: document.getElementById("payDate"),
-    method: document.getElementById("payMethod"),
-    notes: document.getElementById("payNotes"),
-    toggle: document.getElementById("toggleSplit"),
-    simpleMode: document.getElementById("paySimpleMode"),
-    splitMode: document.getElementById("paySplitMode"),
-    payerSimple: document.getElementById("payPayerSimple"),
-    splitContainer: document.getElementById("splitRowsContainer"),
-    btnAddSplit: document.getElementById("btnAddSplitRow"),
-    dropZone: document.getElementById("payDropZone"),
-    fileInput: document.getElementById("payFile"),
-    fileName: document.getElementById("payFileName")
-};
 
 function bindPayModalEvents() {
     if (els.drawerPayments) {
@@ -1474,7 +1382,7 @@ function bindPayModalEvents() {
     if (dz) {
         dz.addEventListener("click", () => payEls.fileInput.click());
         payEls.fileInput.addEventListener("change", (e) => handleFileSelect(e.target.files[0]));
-        dz.addEventListener("dragover", (e) => { e.preventDefault(); dz.style.background = "#ecfdf5"; });
+        dz.addEventListener("dragover", (e) => { e.preventDefault(); dz.style.background = "var(--theme-100)"; });
         dz.addEventListener("dragleave", (e) => { e.preventDefault(); dz.style.background = ""; });
         dz.addEventListener("drop", (e) => {
             e.preventDefault();
@@ -1489,7 +1397,6 @@ function renderVendorDocs(files) {
     const list = Array.isArray(files) ? files : [];
     if (!els.drawerFiles) return;
 
-    // 1. Add "Add File" Button for Admins
     let headerHTML = "";
     if (AppUser.isAdmin()) {
         headerHTML = `
@@ -1501,7 +1408,6 @@ function renderVendorDocs(files) {
         `;
     }
 
-    // Use existing helper to group/filter
     const { vendorDocs } = groupFilesByPayment(list);
     const filtered = vendorDocs.filter((f) => !isPlaceholderFile(f));
 
@@ -1535,12 +1441,10 @@ function renderVendorDocs(files) {
         els.drawerFiles.innerHTML = `${headerHTML}<div class="stack">${listHTML}</div>`;
     }
 
-    // Attach "Open File" Listeners
     els.drawerFiles.querySelectorAll("button[data-open]").forEach((b) => {
         b.addEventListener("click", () => openSigned(b.getAttribute("data-open")));
     });
 
-    // Attach "Add File" Listener
     const btnAdd = els.drawerFiles.querySelector("#btnAddVendorFile");
     if (btnAdd) {
         btnAdd.addEventListener("click", () => {
@@ -1553,16 +1457,16 @@ function openPayModal(data) {
     if (!payEls.modal) return;
     payEls.form.reset();
     selectedPayFile = null;
-    payEls.fileName.textContent = "Drag receipt here or click to browse";
-    payEls.splitContainer.innerHTML = "";
-    payEls.toggle.checked = false;
-    payEls.simpleMode.style.display = "block";
-    payEls.splitMode.style.display = "none";
-    payEls.notes.value = "";
-    payEls.id.value = data.id;
-    payEls.desc.value = data.desc;
-    payEls.amount.value = data.amt; 
-    payEls.date.valueAsDate = new Date(); 
+    if (payEls.fileName) payEls.fileName.textContent = "Drag receipt here or click to browse";
+    if (payEls.splitContainer) payEls.splitContainer.innerHTML = "";
+    if (payEls.toggle) payEls.toggle.checked = false;
+    if (payEls.simpleMode) payEls.simpleMode.style.display = "block";
+    if (payEls.splitMode) payEls.splitMode.style.display = "none";
+    if (payEls.notes) payEls.notes.value = "";
+    if (payEls.id) payEls.id.value = data.id;
+    if (payEls.desc) payEls.desc.value = data.desc;
+    if (payEls.amount) payEls.amount.value = data.amt; 
+    if (payEls.date) payEls.date.valueAsDate = new Date(); 
     payEls.modal.style.display = "flex";
     payEls.modal.setAttribute("aria-hidden", "false");
 }
@@ -1582,10 +1486,11 @@ function handleFileSelect(file) {
     }
     const cleanName = file.name.trim().replace(/\s+/g, "_");
     selectedPayFile = new File([file], cleanName, { type: file.type });
-    payEls.fileName.textContent = selectedPayFile.name;
+    if (payEls.fileName) payEls.fileName.textContent = selectedPayFile.name;
 }
 
 function addSplitRow(defaultData = {}) {
+    if (!payEls.splitContainer) return;
     const div = document.createElement("div");
     div.className = "splitRow";
     div.innerHTML = `
@@ -1685,26 +1590,6 @@ async function handlePaySubmit(e) {
         btn.disabled = false;
     }
 }
-
-const planEls = {
-    modal: document.getElementById("modalPlan"),
-    form: document.getElementById("formPlan"),
-    btnClose: document.getElementById("btnClosePlan"),
-    btnCancel: document.getElementById("btnCancelPlan"),
-    title: document.getElementById("planTitle"),
-    id: document.getElementById("planPaymentId"),
-    companyId: document.getElementById("planCompanyId"),
-    desc: document.getElementById("planDesc"),
-    amount: document.getElementById("planAmount"),
-    date: document.getElementById("planDate"),
-    notes: document.getElementById("planNotes"),
-    toggle: document.getElementById("togglePlanSplit"),
-    simpleMode: document.getElementById("planSimpleMode"),
-    splitMode: document.getElementById("planSplitMode"),
-    respSimple: document.getElementById("planRespSimple"),
-    splitRows: document.getElementById("planSplitRows"),
-    btnAddSplit: document.getElementById("btnAddPlanSplit")
-};
 
 function bindPlanModalEvents() {
     if (els.drawerPayments) {
@@ -1839,7 +1724,6 @@ async function handlePlanSubmit(e) {
         const d = await fetchJSON(API.vendorDetails(companyId));
         detailsCache.set(companyId, d);
         openDrawer(companyId);
-        const cid = companyId;
         loadVendors();
     } catch (err) {
         alert(err.message);
@@ -1849,25 +1733,6 @@ async function handlePlanSubmit(e) {
     }
 }
 
-// --- INIT ---
-
-// --- ADD VENDOR MODAL LOGIC ---
-
-const addVendorEls = {
-    modal: document.getElementById("modalAddVendor"),
-    form: document.getElementById("formAddVendor"),
-    btnClose: document.getElementById("btnCloseAddVendor"),
-    btnCancel: document.getElementById("btnCancelAddVendor"),
-    name: document.getElementById("addVendorName"),
-    category: document.getElementById("addVendorCategory"),
-    status: document.getElementById("addVendorStatus"),
-    website: document.getElementById("addVendorWebsite"),
-    contactName: document.getElementById("addVendorContactName"),
-    email: document.getElementById("addVendorEmail"),
-    phone: document.getElementById("addVendorPhone"),
-    notes: document.getElementById("addVendorNotes")
-};
-
 function bindAddVendorEvents() {
     addVendorEls.btnClose?.addEventListener("click", closeAddVendorModal);
     addVendorEls.btnCancel?.addEventListener("click", closeAddVendorModal);
@@ -1876,12 +1741,8 @@ function bindAddVendorEvents() {
 
 function openAddVendorModal() {
     if (!addVendorEls.modal) return;
-    
-    // 1. Reset Form
     addVendorEls.form.reset();
-    
-    // 2. Populate Categories
-    if (addVendorEls.category.children.length === 0) {
+    if (addVendorEls.category && addVendorEls.category.children.length === 0) {
         const sortedCats = Object.entries(CATEGORY_MAP).sort((a, b) => a[1].localeCompare(b[1]));
         addVendorEls.category.innerHTML = `<option value="" disabled selected>Select a category...</option>`;
         sortedCats.forEach(([val, label]) => {
@@ -1891,11 +1752,10 @@ function openAddVendorModal() {
             addVendorEls.category.appendChild(opt);
         });
     }
-
-    addVendorEls.status.value = "booked"; 
+    if (addVendorEls.status) addVendorEls.status.value = "booked"; 
     addVendorEls.modal.style.display = "flex";
     addVendorEls.modal.setAttribute("aria-hidden", "false");
-    addVendorEls.name.focus();
+    if (addVendorEls.name) addVendorEls.name.focus();
 }
 
 function closeAddVendorModal() {
@@ -1949,34 +1809,23 @@ async function handleAddVendorSubmit(e) {
     }
 }
 
-// --- UPLOAD MODAL LOGIC ---
-
-const uploadEls = {
-    modal: document.getElementById("modalUploadFile"),
-    form: document.getElementById("formUploadFile"),
-    btnClose: document.getElementById("btnCloseUpload"),
-    btnCancel: document.getElementById("btnCancelUpload"),
-    companyId: document.getElementById("uploadCompanyId"),
-    displayName: document.getElementById("uploadDisplayName"),
-    fileType: document.getElementById("uploadFileType"),
-    file: document.getElementById("uploadFile")
-};
-
 function bindUploadEvents() {
     if(!uploadEls.modal) return;
-    uploadEls.btnClose.addEventListener("click", closeUploadModal);
-    uploadEls.btnCancel.addEventListener("click", closeUploadModal);
-    uploadEls.form.addEventListener("submit", handleUploadSubmit);
+    uploadEls.btnClose?.addEventListener("click", closeUploadModal);
+    uploadEls.btnCancel?.addEventListener("click", closeUploadModal);
+    uploadEls.form?.addEventListener("submit", handleUploadSubmit);
 }
 
 function openUploadModal(companyId) {
+    if (!uploadEls.modal) return;
     uploadEls.form.reset();
-    uploadEls.companyId.value = companyId;
+    if (uploadEls.companyId) uploadEls.companyId.value = companyId;
     uploadEls.modal.style.display = "flex";
     uploadEls.modal.setAttribute("aria-hidden", "false");
 }
 
 function closeUploadModal() {
+    if (!uploadEls.modal) return;
     uploadEls.modal.style.display = "none";
     uploadEls.modal.setAttribute("aria-hidden", "true");
 }
@@ -2006,7 +1855,6 @@ async function handleUploadSubmit(e) {
 
         closeUploadModal();
         
-        // Refresh
         const cid = uploadEls.companyId.value;
         const d = await fetchJSON(API.vendorDetails(cid));
         detailsCache.set(cid, d);
@@ -2024,14 +1872,17 @@ function bindControls() {
     if (els.searchInput) els.searchInput.addEventListener("input", () => { searchQuery = els.searchInput.value || ""; render(); });
     if (els.filterCategory) els.filterCategory.addEventListener("change", () => { categoryFilter = els.filterCategory.value || "all"; render(); });
     if (els.filterPay) els.filterPay.addEventListener("change", () => { payFilter = els.filterPay.value || "all"; render(); });
-    if (els.btnClear) els.btnClear.addEventListener("click", () => {
-        searchQuery = ""; categoryFilter = "all"; payFilter = "all";
-        if (els.searchInput) els.searchInput.value = "";
-        if (els.filterCategory) els.filterCategory.value = "all";
-        if (els.filterPay) els.filterPay.value = "all";
-        render();
-    });
-    // Scope segmented toggle (All vendors / My responsibility)
+    
+    if (els.btnClear) {
+        els.btnClear.addEventListener("click", () => {
+            searchQuery = ""; categoryFilter = "all"; payFilter = "all";
+            if (els.searchInput) els.searchInput.value = "";
+            if (els.filterCategory) els.filterCategory.value = "all";
+            if (els.filterPay) els.filterPay.value = "all";
+            render();
+        });
+    }
+
     if (els.scopeSeg && els.scopeBtns?.length) {
         els.scopeSeg.addEventListener("click", (e) => {
             const btn = e.target.closest(".segBtn[data-scope]");
@@ -2039,7 +1890,6 @@ function bindControls() {
 
             scopeFilter = btn.dataset.scope || "all";
 
-            // Update UI state
             els.scopeBtns.forEach(b => {
                 const isActive = (b.dataset.scope === scopeFilter);
                 b.classList.toggle("is-active", isActive);
@@ -2054,10 +1904,38 @@ function bindControls() {
     if (els.drawerOverlay) els.drawerOverlay.addEventListener("click", closeDrawer);
     if (els.drawerClose) els.drawerClose.addEventListener("click", closeDrawer);
     if (els.btnDrawerClose2) els.btnDrawerClose2.addEventListener("click", closeDrawer);
-    document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeDrawer(); });
+    
+    // Safely add escape key listener once
+    if (!window.vendorsKeydownBound) {
+        document.addEventListener("keydown", (e) => { 
+            if (e.key === "Escape" && document.getElementById("vendorList")) closeDrawer(); 
+        });
+        window.vendorsKeydownBound = true;
+    }
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+// --- INIT & ROUTER HOOKS ---
+
+async function initVendorsPage() {
+    // 1. Refresh DOM references so they point to the newly swapped HTML
+    refreshDOMReferences();
+
+    // 2. Abort if we aren't on the Vendors page
+    if (!els.vendorList) return;
+
+    // 3. Reset internal state filters to match the UI 
+    searchQuery = els.searchInput ? els.searchInput.value : "";
+    categoryFilter = els.filterCategory ? els.filterCategory.value : "all";
+    payFilter = els.filterPay ? els.filterPay.value : "all";
+    
+    // Ensure scope buttons match state
+    if (els.scopeBtns) {
+        els.scopeBtns.forEach(b => {
+            if (b.classList.contains("is-active")) scopeFilter = b.dataset.scope;
+        });
+    }
+
+    // 4. Bind all event listeners to the fresh DOM nodes
     bindControls();
     bindPaymentTabs();
     bindDrawerTabs();
@@ -2065,13 +1943,23 @@ document.addEventListener("DOMContentLoaded", () => {
     bindPlanModalEvents();
     bindAddVendorEvents();
     bindUploadEvents();
+    
+    // 5. Fetch and render
     loadVendors();
-});
+}
 
-// LISTEN FOR ROLE CHANGES FROM SIDEBAR
-window.addEventListener("roleChanged", (e) => {
-    // Reload vendors with new role permissions applied
-    loadVendors();
-    closeDrawer();
-});
+// Run on hard refresh
+document.addEventListener("DOMContentLoaded", initVendorsPage);
+// Run on soft SPA navigation
+window.addEventListener("app:navigated", initVendorsPage);
 
+// Safely bind role changes globally so it doesn't stack up
+if (!window.vendorsRoleBound) {
+    window.addEventListener("roleChanged", () => {
+        if (document.getElementById("vendorList")) {
+            loadVendors();
+            closeDrawer();
+        }
+    });
+    window.vendorsRoleBound = true;
+}

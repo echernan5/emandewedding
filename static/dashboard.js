@@ -1,11 +1,5 @@
 // dashboard.js
 // RSVP Dashboard
-// Uses:
-//  - GET   /api/dashboard/metrics
-//  - GET   /api/guestlist
-//  - GET   /api/parties/<party_id>
-//  - PATCH /api/parties/<party_id>
-//  - PATCH /api/guests/<guest_id>
 
 const API = {
   metrics: "/api/dashboard/metrics",
@@ -15,79 +9,81 @@ const API = {
   patchGuest: (guestId) => `/api/guests/${guestId}`,
 };
 
-const els = {
-  // summary
-  sumYes: document.getElementById("sumYes"),
-  sumNo: document.getElementById("sumNo"),
-  sumPending: document.getElementById("sumPending"),
-  sumWelcomeYes: document.getElementById("sumWelcomeYes"),
-  sumMissingAddresses: document.getElementById("sumMissingAddresses"),
+// --- DYNAMIC DOM ELEMENTS (SPA Fix) ---
+let els = {};
 
-  // RSVP visual bar
-  rsvpBarYes: document.getElementById("rsvpBarYes"),
-  rsvpBarNo: document.getElementById("rsvpBarNo"),
-  rsvpBarPending: document.getElementById("rsvpBarPending"),
-  rsvpYesN: document.getElementById("rsvpYesN"),
-  rsvpNoN: document.getElementById("rsvpNoN"),
-  rsvpPendingN: document.getElementById("rsvpPendingN"),
+function refreshDOMReferences() {
+  els = {
+    // summary
+    sumYes: document.getElementById("sumYes"),
+    sumNo: document.getElementById("sumNo"),
+    sumPending: document.getElementById("sumPending"),
+    sumWelcomeYes: document.getElementById("sumWelcomeYes"),
+    sumMissingAddresses: document.getElementById("sumMissingAddresses"),
+    sumUnder21: document.getElementById("sumUnder21"),
+    sumLodgingAssigned: document.getElementById("sumLodgingAssigned"),
+    sumLodgeBayPointe: document.getElementById("sumLodgeBayPointe"),
+    sumLodgeBestWestern: document.getElementById("sumLodgeBestWestern"),
+    sumLodgeGunLake: document.getElementById("sumLodgeGunLake"),
+    sumLodgeOther: document.getElementById("sumLodgeOther"),
+    sumLodgeNone: document.getElementById("sumLodgeNone"),
 
-  // view toggle
-  btnPartyView: document.getElementById("btnPartyView"),
-  btnIndividualView: document.getElementById("btnIndividualView"),
-  partyView: document.getElementById("partyView"),
-  individualView: document.getElementById("individualView"),
+    // RSVP visual bar
+    rsvpBarYes: document.getElementById("rsvpBarYes"),
+    rsvpBarNo: document.getElementById("rsvpBarNo"),
+    rsvpBarPending: document.getElementById("rsvpBarPending"),
+    rsvpYesN: document.getElementById("rsvpYesN"),
+    rsvpNoN: document.getElementById("rsvpNoN"),
+    rsvpPendingN: document.getElementById("rsvpPendingN"),
 
-  // party view
-  partyList: document.getElementById("partyList"),
-  partyEmpty: document.getElementById("partyEmpty"),
+    // view toggle
+    btnPartyView: document.getElementById("btnPartyView"),
+    btnIndividualView: document.getElementById("btnIndividualView"),
+    partyView: document.getElementById("partyView"),
+    individualView: document.getElementById("individualView"),
 
-  // individual view
-  guestTbody: document.getElementById("guestTbody"),
-  individualEmpty: document.getElementById("individualEmpty"),
+    // party view
+    partyList: document.getElementById("partyList"),
+    partyEmpty: document.getElementById("partyEmpty"),
 
-  // filters
-  searchInput: document.getElementById("searchInput"),
-  filterWedding: document.getElementById("filterWedding"),
-  filterWelcome: document.getElementById("filterWelcome"),
-  btnClear: document.getElementById("btnClear"),
-  btnRefresh: document.getElementById("btnRefresh"),
+    // individual view
+    guestTbody: document.getElementById("guestTbody"),
+    individualEmpty: document.getElementById("individualEmpty"),
 
-  // drawer shell (party drawer)
-  drawer: document.getElementById("drawer"),
-  drawerOverlay: document.getElementById("drawerOverlay"),
-  drawerClose: document.getElementById("drawerClose"),
-  drawerTitle: document.getElementById("drawerTitle"),
-  drawerSubtitle: document.getElementById("drawerSubtitle"),
+    // filters
+    searchInput: document.getElementById("searchInput"),
+    filterWedding: document.getElementById("filterWedding"),
+    filterWelcome: document.getElementById("filterWelcome"),
+    btnClear: document.getElementById("btnClear"),
+    btnRefresh: document.getElementById("btnRefresh"),
 
-  // address inputs (party)
-  addrStreet: document.getElementById("addrStreet"),
-  addrStreet2: document.getElementById("addrStreet2"),
-  addrCity: document.getElementById("addrCity"),
-  addrState: document.getElementById("addrState"),
-  addrZip: document.getElementById("addrZip"),
+    // drawer shell (party drawer)
+    drawer: document.getElementById("drawer"),
+    drawerOverlay: document.getElementById("drawerOverlay"),
+    drawerClose: document.getElementById("drawerClose"),
+    drawerTitle: document.getElementById("drawerTitle"),
+    drawerSubtitle: document.getElementById("drawerSubtitle"),
 
-  // members list container
-  membersList: document.getElementById("membersList"),
+    // address inputs (party)
+    addrStreet: document.getElementById("addrStreet"),
+    addrStreet2: document.getElementById("addrStreet2"),
+    addrCity: document.getElementById("addrCity"),
+    addrState: document.getElementById("addrState"),
+    addrZip: document.getElementById("addrZip"),
 
-  // actions
-  btnDrawerSave: document.getElementById("btnDrawerSave"),
-  btnDrawerCancel: document.getElementById("btnDrawerCancel"),
-  drawerMsg: document.getElementById("drawerMsg"),
+    // members list container
+    membersList: document.getElementById("membersList"),
 
-  // NEW summary fields
-  sumUnder21: document.getElementById("sumUnder21"),
-  sumLodgingAssigned: document.getElementById("sumLodgingAssigned"),
-  sumLodgeBayPointe: document.getElementById("sumLodgeBayPointe"),
-  sumLodgeBestWestern: document.getElementById("sumLodgeBestWestern"),
-  sumLodgeGunLake: document.getElementById("sumLodgeGunLake"),
-  sumLodgeOther: document.getElementById("sumLodgeOther"),
-  sumLodgeNone: document.getElementById("sumLodgeNone"),
-};
+    // actions
+    btnDrawerSave: document.getElementById("btnDrawerSave"),
+    btnDrawerCancel: document.getElementById("btnDrawerCancel"),
+    drawerMsg: document.getElementById("drawerMsg"),
+  };
+}
 
 // -------------------- auth helpers --------------------
-// Expects something else to set window.AppAuth.token (Supabase access token)
 async function waitForAuth() {
-  for (let i = 0; i < 50; i++) { // up to ~5s
+  for (let i = 0; i < 50; i++) { 
     if (window.AppAuth?.token) return window.AppAuth.token;
     await new Promise((r) => setTimeout(r, 100));
   }
@@ -125,8 +121,7 @@ async function patchJSON(url, body) {
 
 let allGuests = [];
 let filteredGuests = [];
-
-let activeParty = null; // { party, members }
+let activeParty = null; 
 let activePartySnapshot = null;
 
 // -------------------- utils --------------------
@@ -154,16 +149,8 @@ function statusLabel(status) {
   return "Pending";
 }
 
-function statusClass(status) {
-  const s = normalizeStatus(status);
-  if (s === "accepted") return "status status--yes";
-  if (s === "declined") return "status status--no";
-  return "status status--pending";
-}
-
 function statusHTML(status) {
   const s = normalizeStatus(status);
-
   let icon = "?";
   if (s === "accepted") icon = "✓";
   if (s === "declined") icon = "✕";
@@ -178,24 +165,20 @@ function statusHTML(status) {
 function lodgingKey(raw) {
   const s = (raw ?? "").toString().toLowerCase().trim();
   if (!s) return "";
-  // Normalize display labels back to keys if needed
   if (s.includes("bay pointe")) return "bay_pointe";
   if (s.includes("best western")) return "best_western";
   if (s.includes("gun lake")) return "gun_lake";
   if (s === "other") return "other";
   if (s === "none" || s === "—") return "none";
-  return s; // already a key like bay_pointe
+  return s; 
 }
 
 function lodgingPillHTML(raw) {
   const key = lodgingKey(raw);
-
-  // Treat blank as empty
   if (!key || key === "none") {
     return `<span class="lodgePill lodgePill--none">None</span>`;
   }
-
-  const label = lodgingLabel(key); // uses your existing map
+  const label = lodgingLabel(key); 
   return `<span class="lodgePill lodgePill--${escapeHTML(key)}">${escapeHTML(label)}</span>`;
 }
 
@@ -216,14 +199,11 @@ function compactAddress(party) {
 }
 
 function parseAgeFromGuest(g) {
-  // If your API already sends age (best case)
   const age = g.age ?? g.guest_age ?? null;
   if (age !== null && age !== undefined && age !== "") {
     const n = Number(age);
     return Number.isFinite(n) ? n : null;
   }
-
-  // If your API sends dob/birthdate
   const dobRaw = g.dob ?? g.birthdate ?? g.date_of_birth ?? null;
   if (!dobRaw) return null;
 
@@ -239,47 +219,33 @@ function parseAgeFromGuest(g) {
 
 function computeUnder21Count(guests) {
   return guests.reduce((acc, g) => {
-    // If API gives a direct boolean/flag, honor it
     const flag = g.under21 ?? g.under_21 ?? g.is_under_21 ?? null;
     if (flag === true) return acc + 1;
     if (flag === false) return acc;
-
     const age = parseAgeFromGuest(g);
-    if (age === null) return acc; // unknown age -> don’t count
+    if (age === null) return acc; 
     return acc + (age < 21 ? 1 : 0);
   }, 0);
 }
 
 function lodgingKeyFromGuest(g) {
   const raw = (g.lodging_raw ?? g.lodging ?? "").toString().toLowerCase().trim();
-
   if (!raw) return "none";
   if (raw.includes("bay_pointe") || raw.includes("bay pointe")) return "bay_pointe";
   if (raw.includes("best_western") || raw.includes("best western")) return "best_western";
   if (raw.includes("gun_lake") || raw.includes("gun lake")) return "gun_lake";
   if (raw === "other") return "other";
   if (raw === "none" || raw === "—") return "none";
-
-  // fallback: if something unexpected comes in, treat as "other"
   return "other";
 }
 
 function computeLodgingCounts(guests) {
-  const counts = {
-    bay_pointe: 0,
-    best_western: 0,
-    gun_lake: 0,
-    other: 0,
-    none: 0,
-  };
-
+  const counts = { bay_pointe: 0, best_western: 0, gun_lake: 0, other: 0, none: 0 };
   guests.forEach((g) => {
     const key = lodgingKeyFromGuest(g);
     counts[key] = (counts[key] || 0) + 1;
   });
-
   const assigned = counts.bay_pointe + counts.best_western + counts.gun_lake + counts.other;
-
   return { counts, assigned };
 }
 
@@ -295,22 +261,12 @@ function lodgingLabel(raw) {
   return map[s] || (raw ? String(raw) : "—");
 }
 
-// Normalize “party details” member object no matter what your backend returns
 function normalizeMember(m) {
-  // guest id
   const guestId = m.guest_id ?? m.id ?? m.guestId ?? null;
-
-  // names
   const first = m.first_name ?? m.first ?? "";
   const last = m.last_name ?? m.last ?? "";
-
-  // statuses (support multiple keys)
   const wedding = normalizeStatus(m.rsvp_status ?? m.rsvp ?? m.wedding_rsvp ?? "");
-  const welcome = normalizeStatus(
-    m.welcome_dinner_rsvp ?? m.welcomeRSVP ?? m.welcome_rsvp ?? ""
-  );
-
-  // lodging + misc
+  const welcome = normalizeStatus(m.welcome_dinner_rsvp ?? m.welcomeRSVP ?? m.welcome_rsvp ?? "");
   const lodging = (m.lodging ?? "").toString().toLowerCase().trim();
   const dietary = m.dietary_restrictions ?? m.dietaryrequest ?? m.dietary ?? "";
   const table = m.table_number ?? m.tablenumber ?? m.table ?? "";
@@ -318,16 +274,10 @@ function normalizeMember(m) {
   const relationship = m.relationship ?? m.relation ?? "";
 
   return {
-    guest_id: guestId,
-    first_name: first,
-    last_name: last,
-    rsvp_status: wedding,
-    welcome_dinner_rsvp: welcome,
-    lodging: lodging,
-    dietary_restrictions: dietary,
-    table_number: table,
-    side,
-    relationship,
+    guest_id: guestId, first_name: first, last_name: last,
+    rsvp_status: wedding, welcome_dinner_rsvp: welcome,
+    lodging: lodging, dietary_restrictions: dietary,
+    table_number: table, side, relationship,
   };
 }
 
@@ -339,130 +289,86 @@ async function refreshDashboard() {
       fetchJSON(API.guestlist),
     ]);
 
-    // Save + normalize guest list (used for views + filters)
     allGuests = normalizeGuestlist(guestlist);
-
-    // Update summary + bar + meta counts
     renderSummary(metrics, allGuests);
-
-    // Apply filters and render both views
     applyFiltersAndRender();
   } catch (err) {
     console.error(err);
-
-    // Summary fallbacks
     if (els.sumYes) els.sumYes.textContent = "—";
     if (els.sumNo) els.sumNo.textContent = "—";
     if (els.sumPending) els.sumPending.textContent = "—";
     if (els.sumUnder21) els.sumUnder21.textContent = "—";
-
     if (els.sumWelcomeYes) els.sumWelcomeYes.textContent = "—";
     if (els.sumMissingAddresses) els.sumMissingAddresses.textContent = "—";
     if (els.sumLodgingAssigned) els.sumLodgingAssigned.textContent = "—";
-
     if (els.sumLodgeBayPointe) els.sumLodgeBayPointe.textContent = "—";
     if (els.sumLodgeBestWestern) els.sumLodgeBestWestern.textContent = "—";
     if (els.sumLodgeGunLake) els.sumLodgeGunLake.textContent = "—";
     if (els.sumLodgeOther) els.sumLodgeOther.textContent = "—";
     if (els.sumLodgeNone) els.sumLodgeNone.textContent = "—";
-
-    // Bar fallbacks
     if (els.rsvpYesN) els.rsvpYesN.textContent = "—";
     if (els.rsvpNoN) els.rsvpNoN.textContent = "—";
     if (els.rsvpPendingN) els.rsvpPendingN.textContent = "—";
-
     if (els.rsvpBarYes) els.rsvpBarYes.style.width = "0%";
     if (els.rsvpBarNo) els.rsvpBarNo.style.width = "0%";
     if (els.rsvpBarPending) els.rsvpBarPending.style.width = "0%";
-
-    // Clear lists
     if (els.partyList) els.partyList.innerHTML = "";
     if (els.guestTbody) els.guestTbody.innerHTML = "";
-
     if (els.partyEmpty) els.partyEmpty.classList.remove("hidden");
     if (els.individualEmpty) els.individualEmpty.classList.remove("hidden");
   }
 }
 
 function renderSummary(metrics, guestRows) {
-  // Wedding counts from metrics
   const yes = Number(metrics?.wedding_yes ?? 0);
   const no = Number(metrics?.wedding_no ?? 0);
   const pending = Number(metrics?.wedding_pending ?? 0);
   const total = yes + no + pending;
 
-  // Cards
   if (els.sumYes) els.sumYes.textContent = yes;
   if (els.sumNo) els.sumNo.textContent = no;
   if (els.sumPending) els.sumPending.textContent = pending;
-
-  // Right meta
   if (els.sumWelcomeYes) els.sumWelcomeYes.textContent = Number(metrics?.welcome_dinner_yes ?? 0);
   if (els.sumMissingAddresses) els.sumMissingAddresses.textContent = Number(metrics?.missing_addresses ?? 0);
 
-  // Under 21 (computed from guest rows if possible)
-  if (els.sumUnder21) {
-    const under21 = computeUnder21Count(guestRows);
-    els.sumUnder21.textContent = String(under21);
-  }
+  if (els.sumUnder21) els.sumUnder21.textContent = String(computeUnder21Count(guestRows));
 
-  // Lodging (computed from guest rows)
   const { counts, assigned } = computeLodgingCounts(guestRows);
   if (els.sumLodgingAssigned) els.sumLodgingAssigned.textContent = String(assigned);
-
   if (els.sumLodgeBayPointe) els.sumLodgeBayPointe.textContent = String(counts.bay_pointe || 0);
   if (els.sumLodgeBestWestern) els.sumLodgeBestWestern.textContent = String(counts.best_western || 0);
   if (els.sumLodgeGunLake) els.sumLodgeGunLake.textContent = String(counts.gun_lake || 0);
   if (els.sumLodgeOther) els.sumLodgeOther.textContent = String(counts.other || 0);
   if (els.sumLodgeNone) els.sumLodgeNone.textContent = String(counts.none || 0);
 
-  // Bar numbers
   if (els.rsvpYesN) els.rsvpYesN.textContent = yes;
   if (els.rsvpNoN) els.rsvpNoN.textContent = no;
   if (els.rsvpPendingN) els.rsvpPendingN.textContent = pending;
 
-  // Bar widths
   const pct = (n) => (total > 0 ? (n / total) * 100 : 0);
-
   if (els.rsvpBarYes) els.rsvpBarYes.style.width = `${pct(yes)}%`;
   if (els.rsvpBarNo) els.rsvpBarNo.style.width = `${pct(no)}%`;
   if (els.rsvpBarPending) els.rsvpBarPending.style.width = `${pct(pending)}%`;
 }
 
 function normalizeGuestlist(rows) {
-  // Expect: guest_id + party_id to enable drawer editing.
   return (rows || []).map((r, idx) => {
-    const first =
-      r.first_name ??
-      (r.name ? (r.name.split(" ")[0] || "") : "");
-
-    const last =
-      r.last_name ??
-      (r.name ? (r.name.split(" ").slice(1).join(" ") || "") : "");
-
+    const first = r.first_name ?? (r.name ? (r.name.split(" ")[0] || "") : "");
+    const last = r.last_name ?? (r.name ? (r.name.split(" ").slice(1).join(" ") || "") : "");
     const guestId = r.guest_id ?? r.id ?? `row_${idx}`;
     const partyId = r.party_id ?? r.partyId ?? null;
 
     return {
-      guest_id: guestId,
-      party_id: partyId,
-
-      first,
-      last,
-      name: (r.name || `${first} ${last}`).trim(),
-
+      guest_id: guestId, party_id: partyId,
+      first, last, name: (r.name || `${first} ${last}`).trim(),
       party: r.party ?? r.partyName ?? "—",
-
       rsvp: normalizeStatus(r.rsvp_status ?? r.rsvp ?? ""),
       welcomeRSVP: normalizeStatus(r.welcome_dinner_rsvp ?? r.welcomeRSVP ?? ""),
-
       lodging_raw: r.lodging || "",
       lodging: r.lodging ? lodgingLabel(r.lodging) : "—",
-
       dietary: r.dietary_restrictions ?? r.dietaryrequest ?? "",
       table: r.table_number ?? r.tablenumber ?? "",
-      side: r.side ?? "",
-      relation: r.relationship ?? r.relation ?? "",
+      side: r.side ?? "", relation: r.relationship ?? r.relation ?? "",
     };
   });
 }
@@ -474,17 +380,10 @@ function applyFiltersAndRender() {
   const fwel = els.filterWelcome.value;
 
   filteredGuests = allGuests.filter((g) => {
-    const matchesSearch =
-      !q ||
-      g.first.toLowerCase().includes(q) ||
-      g.last.toLowerCase().includes(q) ||
-      (g.party || "").toLowerCase().includes(q) ||
-      (g.lodging || "").toLowerCase().includes(q) ||
-      (g.dietary || "").toLowerCase().includes(q);
-
+    const matchesSearch = !q || g.first.toLowerCase().includes(q) || g.last.toLowerCase().includes(q) ||
+      (g.party || "").toLowerCase().includes(q) || (g.lodging || "").toLowerCase().includes(q) || (g.dietary || "").toLowerCase().includes(q);
     const matchesWedding = fw === "all" || g.rsvp === fw;
     const matchesWelcome = fwel === "all" || g.welcomeRSVP === fwel;
-
     return matchesSearch && matchesWedding && matchesWelcome;
   });
 
@@ -517,7 +416,6 @@ function renderPartyView(guests) {
     const yes = members.filter((m) => m.rsvp === "accepted").length;
     const no = members.filter((m) => m.rsvp === "declined").length;
     const pending = members.filter((m) => m.rsvp === "pending").length;
-
     const partyId = members.find((m) => m.party_id)?.party_id || null;
 
     const card = document.createElement("div");
@@ -525,23 +423,17 @@ function renderPartyView(guests) {
 
     const header = document.createElement("div");
     header.className = "partyCard__header";
-
-    const left = document.createElement("div");
-    left.innerHTML = `
-      <h3 class="partyCard__title">${escapeHTML(partyName)}</h3>
-      <div class="partyCard__meta">${members.length} guest${members.length === 1 ? "" : "s"}</div>
+    header.innerHTML = `
+      <div>
+          <h3 class="partyCard__title">${escapeHTML(partyName)}</h3>
+          <div class="partyCard__meta">${members.length} guest${members.length === 1 ? "" : "s"}</div>
+      </div>
+      <div class="partyCard__badges">
+          <span class="miniStat miniStat--yes" title="Yes"><span class="miniStat__icon">✓</span><span class="miniStat__value">${yes}</span></span>
+          <span class="miniStat miniStat--no" title="No"><span class="miniStat__icon">✕</span><span class="miniStat__value">${no}</span></span>
+          <span class="miniStat miniStat--pending" title="Pending"><span class="miniStat__icon">?</span><span class="miniStat__value">${pending}</span></span>
+      </div>
     `;
-
-    const right = document.createElement("div");
-    right.className = "partyCard__badges";
-    right.innerHTML = `
-      <span class="miniStat miniStat--yes" title="Yes"><span class="miniStat__icon">✓</span><span class="miniStat__value">${yes}</span></span>
-      <span class="miniStat miniStat--no" title="No"><span class="miniStat__icon">✕</span><span class="miniStat__value">${no}</span></span>
-      <span class="miniStat miniStat--pending" title="Pending"><span class="miniStat__icon">?</span><span class="miniStat__value">${pending}</span></span>
-    `;
-
-    header.appendChild(left);
-    header.appendChild(right);
 
     const body = document.createElement("div");
     body.className = "partyCard__body";
@@ -552,20 +444,12 @@ function renderPartyView(guests) {
     const table = document.createElement("table");
     table.className = "partyTable";
     table.innerHTML = `
-      <thead>
-        <tr>
-          <th>First</th><th>Last</th><th>Wedding</th><th>Welcome</th><th>Lodging</th><th>Dietary</th>
-        </tr>
-      </thead>
+      <thead><tr><th>First</th><th>Last</th><th>Wedding</th><th>Welcome</th><th>Lodging</th><th>Dietary</th></tr></thead>
       <tbody></tbody>
     `;
 
     const tbody = table.querySelector("tbody");
-
-    members
-      .slice()
-      .sort((a, b) => (a.last + a.first).localeCompare(b.last + b.first))
-      .forEach((m) => {
+    members.slice().sort((a, b) => (a.last + a.first).localeCompare(b.last + b.first)).forEach((m) => {
         const tr = document.createElement("tr");
         tr.innerHTML = `
           <td>${escapeHTML(m.first)}</td>
@@ -575,31 +459,23 @@ function renderPartyView(guests) {
           <td>${lodgingPillHTML(m.lodging_raw || m.lodging)}</td>
           <td>${escapeHTML(m.dietary ? m.dietary : "—")}</td>
         `;
-
         tr.addEventListener("click", () => {
-          if (!partyId) {
-            if (els.drawerMsg) els.drawerMsg.textContent = "This guest is missing party_id from the API.";
-            return;
-          }
+          if (!partyId) { if (els.drawerMsg) els.drawerMsg.textContent = "Missing party_id."; return; }
           openPartyDrawerByPartyId(partyId);
         });
-
         tbody.appendChild(tr);
-      });
+    });
 
     wrap.appendChild(table);
     body.appendChild(wrap);
 
     const footer = document.createElement("div");
     footer.className = "partyCard__footer";
-    footer.textContent = partyId
-      ? "Click a guest to edit this party."
-      : "Add party_id to your /api/guestlist to enable editing.";
+    footer.textContent = partyId ? "Click a guest to edit this party." : "Add party_id to enable editing.";
 
     card.appendChild(header);
     card.appendChild(body);
     card.appendChild(footer);
-
     els.partyList.appendChild(card);
   }
 }
@@ -607,7 +483,6 @@ function renderPartyView(guests) {
 // -------------------- render: individual view --------------------
 function renderIndividualView(guests) {
   els.guestTbody.innerHTML = "";
-
   if (!guests.length) {
     els.individualEmpty.classList.remove("hidden");
     return;
@@ -627,10 +502,7 @@ function renderIndividualView(guests) {
     `;
     tr.style.cursor = "pointer";
     tr.addEventListener("click", () => {
-      if (!g.party_id) {
-        if (els.drawerMsg) els.drawerMsg.textContent = "This guest is missing party_id from the API.";
-        return;
-      }
+      if (!g.party_id) { if (els.drawerMsg) els.drawerMsg.textContent = "Missing party_id."; return; }
       openPartyDrawerByPartyId(g.party_id);
     });
     els.guestTbody.appendChild(tr);
@@ -640,13 +512,8 @@ function renderIndividualView(guests) {
 // -------------------- party drawer --------------------
 async function openPartyDrawerByPartyId(partyId) {
   if (!partyId) return;
+  if (!els.drawer || !els.membersList) return;
 
-  if (!els.drawer || !els.membersList) {
-    console.error("Drawer markup missing. Ensure #drawer and #membersList exist in HTML.");
-    return;
-  }
-
-  // open drawer immediately
   if (els.drawerMsg) els.drawerMsg.textContent = "";
   if (els.drawerTitle) els.drawerTitle.textContent = "Party";
   if (els.drawerSubtitle) els.drawerSubtitle.textContent = "Loading…";
@@ -657,21 +524,16 @@ async function openPartyDrawerByPartyId(partyId) {
 
   try {
     const data = await fetchJSON(API.partyDetails(partyId));
-    // expect { party: {...}, members: [...] }
     activeParty = {
       party: data.party || {},
       members: (data.members || []).map(normalizeMember),
     };
     activePartySnapshot = JSON.parse(JSON.stringify(activeParty));
 
-    // header
     const displayName = activeParty.party.display_name || activeParty.party.name || "Party";
     if (els.drawerTitle) els.drawerTitle.textContent = displayName;
-    if (els.drawerSubtitle) {
-      els.drawerSubtitle.textContent = `${activeParty.members.length} guest${activeParty.members.length === 1 ? "" : "s"}`;
-    }
+    if (els.drawerSubtitle) els.drawerSubtitle.textContent = `${activeParty.members.length} guest${activeParty.members.length === 1 ? "" : "s"}`;
 
-    // address
     if (els.addrStreet) els.addrStreet.value = activeParty.party.address_street || "";
     if (els.addrStreet2) els.addrStreet2.value = activeParty.party.address_street2 || "";
     if (els.addrCity) els.addrCity.value = activeParty.party.address_city || "";
@@ -680,7 +542,6 @@ async function openPartyDrawerByPartyId(partyId) {
 
     renderMembersEditor(activeParty.members);
   } catch (e) {
-    console.error(e);
     els.membersList.innerHTML = "";
     if (els.drawerMsg) els.drawerMsg.textContent = `Error: ${e.message}`;
   }
@@ -704,9 +565,8 @@ function renderMembersEditor(members) {
 
   members.forEach((m) => {
     const card = document.createElement("div");
-    card.className = "memberCard membersRow"; // keep membersRow for save querySelector
+    card.className = "memberCard membersRow"; 
     card.dataset.guestId = m.guest_id || "";
-
     const name = `${m.first_name || ""} ${m.last_name || ""}`.trim() || "Guest";
 
     card.innerHTML = `
@@ -715,22 +575,11 @@ function renderMembersEditor(members) {
           <div class="memberName">${escapeHTML(name)}</div>
           <div class="memberSub">${escapeHTML(m.relationship || "—")}</div>
         </div>
-        <div class="muted" style="font-size:12px; white-space:nowrap;">
-          Guest ID: ${escapeHTML(m.guest_id || "—")}
-        </div>
+        <div class="muted" style="font-size:12px; white-space:nowrap;">Guest ID: ${escapeHTML(m.guest_id || "—")}</div>
       </div>
-
       <div class="memberCard__grid">
-        <div class="miniField">
-          <div class="miniLabel">First</div>
-          <input class="input" data-field="first_name" value="${escapeHTML(m.first_name)}">
-        </div>
-
-        <div class="miniField">
-          <div class="miniLabel">Last</div>
-          <input class="input" data-field="last_name" value="${escapeHTML(m.last_name)}">
-        </div>
-
+        <div class="miniField"><div class="miniLabel">First</div><input class="input" data-field="first_name" value="${escapeHTML(m.first_name)}"></div>
+        <div class="miniField"><div class="miniLabel">Last</div><input class="input" data-field="last_name" value="${escapeHTML(m.last_name)}"></div>
         <div class="miniField">
           <div class="miniLabel">Wedding</div>
           <select class="select" data-field="rsvp_status">
@@ -739,7 +588,6 @@ function renderMembersEditor(members) {
             <option value="declined" ${m.rsvp_status === "declined" ? "selected" : ""}>No</option>
           </select>
         </div>
-
         <div class="miniField">
           <div class="miniLabel">Welcome</div>
           <select class="select" data-field="welcome_dinner_rsvp">
@@ -748,7 +596,6 @@ function renderMembersEditor(members) {
             <option value="declined" ${m.welcome_dinner_rsvp === "declined" ? "selected" : ""}>No</option>
           </select>
         </div>
-
         <div class="miniField">
           <div class="miniLabel">Lodging</div>
           <select class="select" data-field="lodging">
@@ -760,29 +607,12 @@ function renderMembersEditor(members) {
             <option value="none" ${m.lodging === "none" ? "selected" : ""}>None</option>
           </select>
         </div>
-
-        <div class="miniField">
-          <div class="miniLabel">Dietary</div>
-          <input class="input" data-field="dietary_restrictions" value="${escapeHTML(m.dietary_restrictions)}">
-        </div>
-
-        <div class="miniField">
-          <div class="miniLabel">Table</div>
-          <input class="input" type="number" data-field="table_number" value="${escapeHTML(m.table_number)}">
-        </div>
-
-        <div class="miniField">
-          <div class="miniLabel">Side</div>
-          <input class="input" data-field="side" value="${escapeHTML(m.side)}">
-        </div>
-
-        <div class="miniField" style="grid-column: 1 / -1;">
-          <div class="miniLabel">Relationship</div>
-          <input class="input" data-field="relationship" value="${escapeHTML(m.relationship)}">
-        </div>
+        <div class="miniField"><div class="miniLabel">Dietary</div><input class="input" data-field="dietary_restrictions" value="${escapeHTML(m.dietary_restrictions)}"></div>
+        <div class="miniField"><div class="miniLabel">Table</div><input class="input" type="number" data-field="table_number" value="${escapeHTML(m.table_number)}"></div>
+        <div class="miniField"><div class="miniLabel">Side</div><input class="input" data-field="side" value="${escapeHTML(m.side)}"></div>
+        <div class="miniField" style="grid-column: 1 / -1;"><div class="miniLabel">Relationship</div><input class="input" data-field="relationship" value="${escapeHTML(m.relationship)}"></div>
       </div>
     `;
-
     wrap.appendChild(card);
   });
 }
@@ -806,161 +636,133 @@ function collectPartyAddressPayload() {
 
 function collectGuestPayloadFromRow(row) {
   const payload = {};
-  const fields = [...row.querySelectorAll("[data-field]")];
-
-  fields.forEach((el) => {
+  [...row.querySelectorAll("[data-field]")].forEach((el) => {
     const key = el.dataset.field;
     let val = el.value;
-
-    if (key === "table_number") {
-      val = val ? Number(val) : null;
-    } else {
-      val = (val ?? "").toString().trim();
-      if (val === "") val = null;
-    }
-
+    if (key === "table_number") val = val ? Number(val) : null;
+    else { val = (val ?? "").toString().trim(); if (val === "") val = null; }
     payload[key] = val;
   });
-
   return payload;
 }
 
-// -------------------- drawer actions --------------------
-if (els.btnDrawerCancel) {
-  els.btnDrawerCancel.addEventListener("click", () => {
-    if (!activePartySnapshot) return closeDrawer();
-
-    activeParty = JSON.parse(JSON.stringify(activePartySnapshot));
-
-    const displayName = activeParty.party.display_name || activeParty.party.name || "Party";
-    if (els.drawerTitle) els.drawerTitle.textContent = displayName;
-    if (els.drawerSubtitle) {
-      els.drawerSubtitle.textContent = `${activeParty.members.length} guest${activeParty.members.length === 1 ? "" : "s"}`;
-    }
-
-    // avatar + address hint + chips
-    const avatarEl = document.getElementById("drawerAvatar");
-    if (avatarEl) avatarEl.textContent = initialsFromName(displayName);
-
-    const hintEl = document.getElementById("drawerAddressHint");
-    if (hintEl) hintEl.textContent = compactAddress(activeParty.party);
-
-    // chips: quick party stats (wedding RSVP)
-    const chipWrap = document.getElementById("drawerChips");
-    if (chipWrap) {
-      const yes = activeParty.members.filter((m) => m.rsvp_status === "accepted").length;
-      const no = activeParty.members.filter((m) => m.rsvp_status === "declined").length;
-      const pending = activeParty.members.filter((m) => m.rsvp_status === "pending").length;
-
-      chipWrap.innerHTML = `
-        <span class="chip chip--yes"><span class="chipDot"></span>Yes ${yes}</span>
-        <span class="chip chip--no"><span class="chipDot"></span>No ${no}</span>
-        <span class="chip chip--pending"><span class="chipDot"></span>Pending ${pending}</span>
-      `;
-    }
-
-    if (els.addrStreet) els.addrStreet.value = activeParty.party.address_street || "";
-    if (els.addrStreet2) els.addrStreet2.value = activeParty.party.address_street2 || "";
-    if (els.addrCity) els.addrCity.value = activeParty.party.address_city || "";
-    if (els.addrState) els.addrState.value = activeParty.party.address_state || "";
-    if (els.addrZip) els.addrZip.value = activeParty.party.address_zip || "";
-
-    renderMembersEditor(activeParty.members);
-    if (els.drawerMsg) els.drawerMsg.textContent = "";
-  });
-}
-
-if (els.btnDrawerSave) {
-  els.btnDrawerSave.addEventListener("click", async () => {
-    const partyId = activeParty?.party?.id;
-    if (!partyId) {
-      if (els.drawerMsg) els.drawerMsg.textContent = "Missing party id.";
-      return;
-    }
-
-    els.btnDrawerSave.disabled = true;
-    if (els.drawerMsg) els.drawerMsg.textContent = "Saving…";
-
-    try {
-      // party address update
-      const partyPayload = collectPartyAddressPayload();
-
-      // guest updates
-      const memberRows = [...els.membersList.querySelectorAll(".membersRow")];
-      if (!memberRows.length) throw new Error("No party members found to save.");
-
-      const bad = memberRows.find((r) => !r.dataset.guestId);
-      if (bad) throw new Error("Missing guest_id for at least one member.");
-
-      const guestRequests = memberRows.map((row) => {
-        const guestId = row.dataset.guestId;
-        const payload = collectGuestPayloadFromRow(row);
-        return patchJSON(API.patchGuest(guestId), payload);
-      });
-
-      await Promise.all([
-        patchJSON(API.patchParty(partyId), partyPayload),
-        ...guestRequests,
-      ]);
-
-      if (els.drawerMsg) els.drawerMsg.textContent = "Saved";
-      await refreshDashboard();
-    } catch (e) {
-      console.error(e);
-      if (els.drawerMsg) els.drawerMsg.textContent = `Error: ${e.message}`;
-    } finally {
-      els.btnDrawerSave.disabled = false;
-    }
-  });
-}
-
-// -------------------- view toggle --------------------
 function setView(which) {
   const party = which === "party";
   els.partyView.classList.toggle("view--active", party);
   els.individualView.classList.toggle("view--active", !party);
-
   els.btnPartyView.classList.toggle("is-active", party);
   els.btnIndividualView.classList.toggle("is-active", !party);
-
   els.btnPartyView.setAttribute("aria-selected", party ? "true" : "false");
   els.btnIndividualView.setAttribute("aria-selected", party ? "false" : "true");
 }
 
-if (els.btnPartyView) els.btnPartyView.addEventListener("click", () => setView("party"));
-if (els.btnIndividualView) els.btnIndividualView.addEventListener("click", () => setView("individual"));
+// -------------------- EVENT BINDING --------------------
+function bindControls() {
+    if (els.btnDrawerCancel) {
+        els.btnDrawerCancel.addEventListener("click", () => {
+            if (!activePartySnapshot) return closeDrawer();
+            activeParty = JSON.parse(JSON.stringify(activePartySnapshot));
+            const displayName = activeParty.party.display_name || activeParty.party.name || "Party";
+            if (els.drawerTitle) els.drawerTitle.textContent = displayName;
+            if (els.drawerSubtitle) els.drawerSubtitle.textContent = `${activeParty.members.length} guest${activeParty.members.length === 1 ? "" : "s"}`;
+            const avatarEl = document.getElementById("drawerAvatar");
+            if (avatarEl) avatarEl.textContent = initialsFromName(displayName);
+            const hintEl = document.getElementById("drawerAddressHint");
+            if (hintEl) hintEl.textContent = compactAddress(activeParty.party);
+            
+            const chipWrap = document.getElementById("drawerChips");
+            if (chipWrap) {
+                const yes = activeParty.members.filter((m) => m.rsvp_status === "accepted").length;
+                const no = activeParty.members.filter((m) => m.rsvp_status === "declined").length;
+                const pending = activeParty.members.filter((m) => m.rsvp_status === "pending").length;
+                chipWrap.innerHTML = `
+                    <span class="chip chip--yes"><span class="chipDot"></span>Yes ${yes}</span>
+                    <span class="chip chip--no"><span class="chipDot"></span>No ${no}</span>
+                    <span class="chip chip--pending"><span class="chipDot"></span>Pending ${pending}</span>
+                `;
+            }
+            if (els.addrStreet) els.addrStreet.value = activeParty.party.address_street || "";
+            if (els.addrStreet2) els.addrStreet2.value = activeParty.party.address_street2 || "";
+            if (els.addrCity) els.addrCity.value = activeParty.party.address_city || "";
+            if (els.addrState) els.addrState.value = activeParty.party.address_state || "";
+            if (els.addrZip) els.addrZip.value = activeParty.party.address_zip || "";
+            renderMembersEditor(activeParty.members);
+            if (els.drawerMsg) els.drawerMsg.textContent = "";
+        });
+    }
 
-// -------------------- filters --------------------
-["input", "change"].forEach((evt) => {
-  if (els.searchInput) els.searchInput.addEventListener(evt, applyFiltersAndRender);
-  if (els.filterWedding) els.filterWedding.addEventListener(evt, applyFiltersAndRender);
-  if (els.filterWelcome) els.filterWelcome.addEventListener(evt, applyFiltersAndRender);
-});
+    if (els.btnDrawerSave) {
+        els.btnDrawerSave.addEventListener("click", async () => {
+            const partyId = activeParty?.party?.id;
+            if (!partyId) { if (els.drawerMsg) els.drawerMsg.textContent = "Missing party id."; return; }
+            els.btnDrawerSave.disabled = true;
+            if (els.drawerMsg) els.drawerMsg.textContent = "Saving…";
 
-if (els.btnClear) {
-  els.btnClear.addEventListener("click", () => {
-    els.searchInput.value = "";
-    els.filterWedding.value = "all";
-    els.filterWelcome.value = "all";
-    applyFiltersAndRender();
-  });
+            try {
+                const partyPayload = collectPartyAddressPayload();
+                const memberRows = [...els.membersList.querySelectorAll(".membersRow")];
+                if (!memberRows.length) throw new Error("No party members found to save.");
+                const bad = memberRows.find((r) => !r.dataset.guestId);
+                if (bad) throw new Error("Missing guest_id for at least one member.");
+                
+                const guestRequests = memberRows.map((row) => patchJSON(API.patchGuest(row.dataset.guestId), collectGuestPayloadFromRow(row)));
+                await Promise.all([patchJSON(API.patchParty(partyId), partyPayload), ...guestRequests]);
+
+                if (els.drawerMsg) els.drawerMsg.textContent = "Saved";
+                await refreshDashboard();
+            } catch (e) {
+                if (els.drawerMsg) els.drawerMsg.textContent = `Error: ${e.message}`;
+            } finally {
+                els.btnDrawerSave.disabled = false;
+            }
+        });
+    }
+
+    if (els.btnPartyView) els.btnPartyView.addEventListener("click", () => setView("party"));
+    if (els.btnIndividualView) els.btnIndividualView.addEventListener("click", () => setView("individual"));
+
+    ["input", "change"].forEach((evt) => {
+        if (els.searchInput) els.searchInput.addEventListener(evt, applyFiltersAndRender);
+        if (els.filterWedding) els.filterWedding.addEventListener(evt, applyFiltersAndRender);
+        if (els.filterWelcome) els.filterWelcome.addEventListener(evt, applyFiltersAndRender);
+    });
+
+    if (els.btnClear) {
+        els.btnClear.addEventListener("click", () => {
+            els.searchInput.value = "";
+            els.filterWedding.value = "all";
+            els.filterWelcome.value = "all";
+            applyFiltersAndRender();
+        });
+    }
+
+    if (els.btnRefresh) els.btnRefresh.addEventListener("click", refreshDashboard);
+    if (els.drawerOverlay) els.drawerOverlay.addEventListener("click", closeDrawer);
+    if (els.drawerClose) els.drawerClose.addEventListener("click", closeDrawer);
 }
 
-if (els.btnRefresh) els.btnRefresh.addEventListener("click", refreshDashboard);
+// -------------------- INIT & ROUTER HOOKS --------------------
 
-// -------------------- drawer close events --------------------
-if (els.drawerOverlay) els.drawerOverlay.addEventListener("click", closeDrawer);
-if (els.drawerClose) els.drawerClose.addEventListener("click", closeDrawer);
-document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape") closeDrawer();
-});
+async function initDashboardPage() {
+    refreshDOMReferences();
+    if (!els.searchInput) return; // Abort if we aren't on the Dashboard
 
-// init (wait for auth first so we don’t race)
-(async () => {
-  try {
-    await waitForAuth();
-    await refreshDashboard();
-  } catch (e) {
-    console.error(e);
-  }
-})();
+    bindControls();
+
+    try {
+        await waitForAuth();
+        await refreshDashboard();
+    } catch (e) {
+        console.error("Dashboard Init Error", e);
+    }
+}
+
+document.addEventListener("DOMContentLoaded", initDashboardPage);
+window.addEventListener("app:navigated", initDashboardPage);
+
+if (!window.dashboardKeydownBound) {
+    document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && document.getElementById("partyView")) closeDrawer();
+    });
+    window.dashboardKeydownBound = true;
+}
