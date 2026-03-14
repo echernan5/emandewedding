@@ -744,9 +744,9 @@
   // -------------------- INIT & ROUTER HOOKS --------------------
 
   async function initDashboardPage() {
-      refreshDOMReferences();
-      if (!els.searchInput) return; // Abort if we aren't on the Dashboard
-
+    refreshDOMReferences();
+    if (!els.partyList) return; // Abort if we aren't on the Dashboard
+    
       bindControls();
 
       try {
