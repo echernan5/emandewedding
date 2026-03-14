@@ -3,7 +3,7 @@
 /* =========================================
    THEME ENGINE (7-Step Custom Properties)
    ========================================= */
-   const THEME_PALETTES = {
+const THEME_PALETTES = {
     // 1. Dusty Blue (Richer, less gray)
     "#668BC2": {
         s100: "#F2F6FA", s200: "#E1ECF7", s300: "#BDD4EB",
