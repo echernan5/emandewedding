@@ -123,6 +123,8 @@
   let filteredGuests = [];
   let activeParty = null; 
   let activePartySnapshot = null;
+  let cachedMetrics = null;
+  let cachedGuestlist = null;
 
   // -------------------- utils --------------------
   function escapeHTML(str) {

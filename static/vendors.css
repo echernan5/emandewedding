@@ -9,7 +9,7 @@
   --panel-soft: #fafafa;
 
   /* Themed borders to prevent the "washed out" look */
-  --border: var(--theme-200, #E1ECF7);
+  --border: var(--theme-300, #E1ECF7);
   --border-soft: var(--theme-100, #F2F6FA);
 
   --text: #262626;
@@ -521,7 +521,7 @@ body {
 }
 
 .skeleton {
-  background: #f6f7f8;
+  background: #ffffff;
   background-image: linear-gradient(to right, #f6f7f8 0%, #edeef1 20%, #f6f7f8 40%, #f6f7f8 100%);
   background-repeat: no-repeat;
   background-size: 1000px 100%;
