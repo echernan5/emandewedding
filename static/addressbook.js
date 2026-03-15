@@ -459,21 +459,19 @@
       await loadAddressBook();
   }
 
-  // Run on hard refresh
-  document.addEventListener("DOMContentLoaded", initAddressBookPage);
-
-  // Run on soft SPA navigation (from our DIY router!)
+  // --- SPA ROUTER HOOKS ---
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initAddressBookPage);
+  } else {
+    initAddressBookPage(); // Run instantly if injected by the router!
+  }
   window.addEventListener("app:navigated", initAddressBookPage);
 
-  // Safely bind role changes globally so it doesn't stack up
   if (!window.addressBookRoleBound) {
-      window.addEventListener("roleChanged", (e) => {
-          localStorage.setItem('user_role_key', e.detail.role);
-          // Only reload the data if we are actually looking at the Address Book
-          if (document.getElementById("abList")) {
-              loadAddressBook();
-          }
-      });
-      window.addressBookRoleBound = true;
+    window.addEventListener("roleChanged", (e) => {
+        localStorage.setItem('user_role_key', e.detail.role);
+        if (document.getElementById("abList")) loadAddressBook();
+    });
+    window.addressBookRoleBound = true;
   }
 })();

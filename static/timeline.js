@@ -512,9 +512,11 @@
     // 2. ROUTER HOOKS
     // ==========================================
 
-    // Run on hard refresh
-    document.addEventListener("DOMContentLoaded", initTimelinePage);
-
-    // Run on soft SPA navigation (from our DIY router!)
+    // --- SPA ROUTER HOOKS ---
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", initTimelinePage);
+    } else {
+        initTimelinePage(); // Run instantly if injected by the router!
+    }
     window.addEventListener("app:navigated", initTimelinePage);
 })();

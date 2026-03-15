@@ -1948,12 +1948,14 @@
         loadVendors();
     }
 
-    // Run on hard refresh
-    document.addEventListener("DOMContentLoaded", initVendorsPage);
-    // Run on soft SPA navigation
+    // --- SPA ROUTER HOOKS ---
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", initVendorsPage);
+    } else {
+        initVendorsPage(); // Run instantly if injected by the router!
+    }
     window.addEventListener("app:navigated", initVendorsPage);
 
-    // Safely bind role changes globally so it doesn't stack up
     if (!window.vendorsRoleBound) {
         window.addEventListener("roleChanged", () => {
             if (document.getElementById("vendorList")) {

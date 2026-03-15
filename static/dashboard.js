@@ -757,13 +757,18 @@
       }
   }
 
-  document.addEventListener("DOMContentLoaded", initDashboardPage);
+  // --- SPA ROUTER HOOKS ---
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initDashboardPage);
+  } else {
+    initDashboardPage(); // Run instantly if injected by the router!
+  }
   window.addEventListener("app:navigated", initDashboardPage);
 
   if (!window.dashboardKeydownBound) {
-      document.addEventListener("keydown", (e) => {
-          if (e.key === "Escape" && document.getElementById("partyView")) closeDrawer();
-      });
-      window.dashboardKeydownBound = true;
+    document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && document.getElementById("partyView")) closeDrawer();
+    });
+    window.dashboardKeydownBound = true;
   }
 })();
