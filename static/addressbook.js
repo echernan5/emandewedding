@@ -468,10 +468,9 @@
   window.addEventListener("app:navigated", initAddressBookPage);
 
   if (!window.addressBookRoleBound) {
-    window.addEventListener("roleChanged", (e) => {
-        localStorage.setItem('user_role_key', e.detail.role);
+    window.addEventListener("roleChanged", () => {
         if (document.getElementById("abList")) loadAddressBook();
     });
     window.addressBookRoleBound = true;
-  }
+}
 })();
