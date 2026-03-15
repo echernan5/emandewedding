@@ -283,39 +283,41 @@
 
   // -------------------- dashboard refresh --------------------
   async function refreshDashboard() {
+    if (cachedMetrics && cachedGuestlist) {
+        allGuests = normalizeGuestlist(cachedGuestlist);
+        renderSummary(cachedMetrics, allGuests);
+        applyFiltersAndRender();
+    } else {
+        // INJECT SKELETONS WHILE WAITING
+        if (els.partyList) {
+            els.partyList.innerHTML = `
+                <div class="skeleton skeleton-card"><div class="skeleton-card-inner"><div class="skeleton skeleton-text tall"></div><div class="skeleton-card-bottom"><div class="skeleton skeleton-text"></div></div></div></div>
+                <div class="skeleton skeleton-card"><div class="skeleton-card-inner"><div class="skeleton skeleton-text tall"></div><div class="skeleton-card-bottom"><div class="skeleton skeleton-text"></div></div></div></div>
+            `;
+        }
+    }
+
     try {
       const [metrics, guestlist] = await Promise.all([
         fetchJSON(API.metrics),
         fetchJSON(API.guestlist),
       ]);
-
+      
+      cachedMetrics = metrics;
+      cachedGuestlist = guestlist;
+      
       allGuests = normalizeGuestlist(guestlist);
       renderSummary(metrics, allGuests);
-      applyFiltersAndRender();
+      applyFiltersAndRender(); // Overwrites skeletons!
     } catch (err) {
       console.error(err);
-      if (els.sumYes) els.sumYes.textContent = "—";
-      if (els.sumNo) els.sumNo.textContent = "—";
-      if (els.sumPending) els.sumPending.textContent = "—";
-      if (els.sumUnder21) els.sumUnder21.textContent = "—";
-      if (els.sumWelcomeYes) els.sumWelcomeYes.textContent = "—";
-      if (els.sumMissingAddresses) els.sumMissingAddresses.textContent = "—";
-      if (els.sumLodgingAssigned) els.sumLodgingAssigned.textContent = "—";
-      if (els.sumLodgeBayPointe) els.sumLodgeBayPointe.textContent = "—";
-      if (els.sumLodgeBestWestern) els.sumLodgeBestWestern.textContent = "—";
-      if (els.sumLodgeGunLake) els.sumLodgeGunLake.textContent = "—";
-      if (els.sumLodgeOther) els.sumLodgeOther.textContent = "—";
-      if (els.sumLodgeNone) els.sumLodgeNone.textContent = "—";
-      if (els.rsvpYesN) els.rsvpYesN.textContent = "—";
-      if (els.rsvpNoN) els.rsvpNoN.textContent = "—";
-      if (els.rsvpPendingN) els.rsvpPendingN.textContent = "—";
-      if (els.rsvpBarYes) els.rsvpBarYes.style.width = "0%";
-      if (els.rsvpBarNo) els.rsvpBarNo.style.width = "0%";
-      if (els.rsvpBarPending) els.rsvpBarPending.style.width = "0%";
-      if (els.partyList) els.partyList.innerHTML = "";
-      if (els.guestTbody) els.guestTbody.innerHTML = "";
-      if (els.partyEmpty) els.partyEmpty.classList.remove("hidden");
-      if (els.individualEmpty) els.individualEmpty.classList.remove("hidden");
+      if (!cachedMetrics) {
+          if (els.sumYes) els.sumYes.textContent = "—";
+          if (els.partyList) els.partyList.innerHTML = "";
+          if (els.guestTbody) els.guestTbody.innerHTML = "";
+          if (els.partyEmpty) els.partyEmpty.classList.remove("hidden");
+          if (els.individualEmpty) els.individualEmpty.classList.remove("hidden");
+      }
     }
   }
 

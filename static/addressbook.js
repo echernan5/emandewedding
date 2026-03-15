@@ -96,24 +96,34 @@
 
   // --- DATA & SETUP ---
   async function loadAddressBook() {
-    setStatus("Loading…");
     state.currentUser = detectCurrentUser();
-    
-    // Initialize Dropdown based on Role
     initViewDropdown();
+
+    if (state.rows.length > 0) {
+        render();
+    } else {
+        setStatus("Loading…");
+        // INJECT SKELETONS WHILE WAITING
+        const list = $("#abList");
+        if (list) {
+            list.innerHTML = `
+                <div class="skeleton skeleton-card" style="height: 180px;"><div class="skeleton-card-inner"><div class="skeleton skeleton-text tall"></div><div class="skeleton skeleton-text short"></div><div class="skeleton-card-bottom"><div class="skeleton skeleton-text"></div></div></div></div>
+                <div class="skeleton skeleton-card" style="height: 180px;"><div class="skeleton-card-inner"><div class="skeleton skeleton-text tall"></div><div class="skeleton skeleton-text short"></div><div class="skeleton-card-bottom"><div class="skeleton skeleton-text"></div></div></div></div>
+                <div class="skeleton skeleton-card" style="height: 180px;"><div class="skeleton-card-inner"><div class="skeleton skeleton-text tall"></div><div class="skeleton skeleton-text short"></div><div class="skeleton-card-bottom"><div class="skeleton skeleton-text"></div></div></div></div>
+            `;
+        }
+    }
 
     try {
       const token = await waitForAuth();
-      const res = await fetch(`${API.addressBook}?scope=all`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const res = await fetch(`${API.addressBook}?scope=all`, { headers: { Authorization: `Bearer ${token}` } });
       if (!res.ok) throw new Error("Load failed");
       state.rows = await res.json();
       setStatus("");
-      render();
+      render(); // Overwrites the skeletons!
     } catch (err) {
       console.error(err);
-      setStatus("Error loading data.");
+      if (state.rows.length === 0) setStatus("Error loading data.");
     }
   }
 

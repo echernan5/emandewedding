@@ -511,3 +511,31 @@ body {
   .app { grid-template-columns: 1fr; }
   .sidebar { display: none; }
 }
+
+/* ======================================================
+   SKELETON LOADERS (The Shimmer Effect)
+====================================================== */
+@keyframes shimmer {
+  0% { background-position: -1000px 0; }
+  100% { background-position: 1000px 0; }
+}
+
+.skeleton {
+  background: #f6f7f8;
+  background-image: linear-gradient(to right, #f6f7f8 0%, #edeef1 20%, #f6f7f8 40%, #f6f7f8 100%);
+  background-repeat: no-repeat;
+  background-size: 1000px 100%;
+  animation: shimmer 2s infinite linear forwards;
+  border-radius: 8px;
+}
+
+/* Specific Placeholder Shapes */
+.skeleton-card { height: 140px; width: 100%; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 12px; }
+.skeleton-text { height: 16px; margin-bottom: 10px; width: 80%; }
+.skeleton-text.short { width: 40%; }
+.skeleton-text.tall { height: 24px; width: 30%; }
+.skeleton-avatar { width: 40px; height: 40px; border-radius: 50%; }
+
+/* A mini layout for inside the cards to make it look realistic */
+.skeleton-card-inner { padding: 16px; display: flex; flex-direction: column; gap: 8px; height: 100%; }
+.skeleton-card-bottom { margin-top: auto; display: flex; gap: 12px; }

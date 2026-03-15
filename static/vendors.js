@@ -539,24 +539,36 @@
     }
 
     async function loadVendors() {
-        setStatus("Loading booked vendors…");
-        const AU = window.AppUser || {};
-        const isEmmaOrEthan = typeof AU.isAdmin === "function" ? AU.isAdmin() : false;
-
-        if (els.scopeSeg) {
-            els.scopeSeg.parentElement.style.display = isEmmaOrEthan ? "flex" : "none";
+        if (companies.length > 0) {
+            hydrateCategoryFilter(companies);
+            renderSummary();
+            render();
+        } else {
+            setStatus("Loading booked vendors…");
+            // INJECT SKELETONS WHILE WAITING
+            if (els.vendorList) {
+                els.vendorList.innerHTML = `
+                    <div class="skeleton skeleton-card"><div class="skeleton-card-inner"><div class="skeleton skeleton-text tall"></div><div class="skeleton skeleton-text short"></div><div class="skeleton-card-bottom"><div class="skeleton skeleton-text"></div></div></div></div>
+                    <div class="skeleton skeleton-card"><div class="skeleton-card-inner"><div class="skeleton skeleton-text tall"></div><div class="skeleton skeleton-text short"></div><div class="skeleton-card-bottom"><div class="skeleton skeleton-text"></div></div></div></div>
+                    <div class="skeleton skeleton-card"><div class="skeleton-card-inner"><div class="skeleton skeleton-text tall"></div><div class="skeleton skeleton-text short"></div><div class="skeleton-card-bottom"><div class="skeleton skeleton-text"></div></div></div></div>
+                `;
+            }
         }
 
+        const AU = window.AppUser || {};
+        const isEmmaOrEthan = typeof AU.isAdmin === "function" ? AU.isAdmin() : false;
+        if (els.scopeSeg) els.scopeSeg.parentElement.style.display = isEmmaOrEthan ? "flex" : "none";
+
         try {
-            companies = await fetchJSON(API.vendors("booked"));
-            detailsCache.clear();
+            const freshCompanies = await fetchJSON(API.vendors("booked"));
+            companies = freshCompanies;
             hydrateCategoryFilter(companies);
             await warmDetailsForSummary(companies);
-            render(); 
+            render(); // This instantly overwrites the skeletons!
             setStatus("");
         } catch (e) {
             console.error(e);
-            setStatus("Could not load vendors.");
+            if (companies.length === 0) setStatus("Could not load vendors.");
         }
     }
 

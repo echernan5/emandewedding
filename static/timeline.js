@@ -150,15 +150,33 @@
 
     async function loadTimeline() {
         const statusLine = document.getElementById("statusLine");
-        if (statusLine) statusLine.textContent = "Loading schedule...";
+        const grid = document.getElementById("ganttGrid");
+        
+        if (currentEvents.length > 0) {
+            renderGantt(currentEvents);
+        } else {
+            if (statusLine) statusLine.textContent = "Loading schedule...";
+            // INJECT SKELETONS WHILE WAITING
+            if (grid) {
+                grid.innerHTML = `
+                    <div style="grid-column: 1 / -1; padding: 20px;">
+                        <div class="skeleton skeleton-text" style="height: 40px; margin-bottom: 16px; width: 100%;"></div>
+                        <div class="skeleton skeleton-text" style="height: 40px; margin-bottom: 16px; width: 100%;"></div>
+                        <div class="skeleton skeleton-text" style="height: 40px; margin-bottom: 16px; width: 100%;"></div>
+                        <div class="skeleton skeleton-text" style="height: 40px; margin-bottom: 16px; width: 100%;"></div>
+                    </div>
+                `;
+            }
+        }
+
         try {
             const token = await waitForAuth();
             const res = await fetch("/api/timeline", { headers: { Authorization: `Bearer ${token}` } });
             currentEvents = await res.json(); 
-            renderGantt(currentEvents); 
+            renderGantt(currentEvents); // Overwrites skeletons!
             if (statusLine) statusLine.textContent = "";
         } catch (e) {
-            if (statusLine) statusLine.textContent = "Failed to load timeline.";
+            if (currentEvents.length === 0 && statusLine) statusLine.textContent = "Failed to load timeline.";
         }
     }
 
