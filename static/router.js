@@ -67,24 +67,22 @@ async function navigateTo(url, pushToHistory = true) {
         });
 
         // 8. Load any missing CSS files from the new page
-        const existingLinks = Array.from(document.querySelectorAll("link[rel='stylesheet']")).map(l => l.getAttribute("href"));
+        const existingLinks = Array.from(document.querySelectorAll("link[rel='stylesheet']")).map(l => l.href).filter(Boolean);
         doc.querySelectorAll("link[rel='stylesheet']").forEach(link => {
-            const href = link.getAttribute("href");
-            if (!existingLinks.includes(href)) {
+            if (link.href && !existingLinks.includes(link.href)) {
                 const newLink = document.createElement("link");
                 newLink.rel = "stylesheet";
-                newLink.href = href;
+                newLink.href = link.href;
                 document.head.appendChild(newLink);
             }
         });
 
         // 9. Load any missing JS files from the new page
-        const existingScripts = Array.from(document.querySelectorAll("script")).map(s => s.getAttribute("src")).filter(Boolean);
+        const existingScripts = Array.from(document.querySelectorAll("script")).map(s => s.src).filter(Boolean);
         doc.querySelectorAll("script").forEach(script => {
-            const src = script.getAttribute("src");
-            if (src && !existingScripts.includes(src)) {
+            if (script.src && !existingScripts.includes(script.src)) {
                 const newScript = document.createElement("script");
-                newScript.src = src;
+                newScript.src = script.src;
                 newScript.defer = true;
                 document.body.appendChild(newScript);
             }
