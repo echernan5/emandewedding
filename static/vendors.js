@@ -735,7 +735,7 @@
         renderSummary(); 
 
         const rawData = getFilteredCompanies(); 
-        const data = rawData.filter(c => {
+        let data = rawData.filter(c => {
             if (scopeFilter === 'mine' && AppUser.isAdmin()) {
                 const d = detailsCache.get(c.id);
                 if (!d) return false;
@@ -744,6 +744,44 @@
             }
             return true;
         });
+
+        // --- NEW SORTING LOGIC ---
+        data.sort((a, b) => {
+            const dA = detailsCache.get(a.id);
+            const dB = detailsCache.get(b.id);
+
+            // Pass through the exact same permission sanitizer we use for the UI
+            const rollA = dA ? companyRollup(sanitizeVendorForUser(dA)) : null;
+            const rollB = dB ? companyRollup(sanitizeVendorForUser(dB)) : null;
+
+            // Define priority levels: 1 (Highest) to 4 (Lowest)
+            const getPriority = (roll) => {
+                // Priority 4: Viewers, or Contributors with $0 scheduled for this vendor
+                if (!roll || roll.totalScheduled <= 0.01) return { level: 4, date: Infinity }; 
+                
+                // Priority 1: Overdue payments
+                if (roll.overdueCount > 0) return { level: 1, date: roll.next ? roll.next.due_date.getTime() : 0 }; 
+                
+                // Priority 2: Upcoming payments
+                if (roll.remaining > 0.01) return { level: 2, date: roll.next ? roll.next.due_date.getTime() : Infinity }; 
+                
+                // Priority 3: Paid in full!
+                return { level: 3, date: Infinity }; 
+            };
+
+            const pA = getPriority(rollA);
+            const pB = getPriority(rollB);
+
+            // 1. Sort by Priority Level (Overdue -> Upcoming -> Paid -> No Stake)
+            if (pA.level !== pB.level) return pA.level - pB.level;
+
+            // 2. If they are in the same level (e.g., both are Upcoming), sort by which is due first
+            if (pA.date !== pB.date) return pA.date - pB.date;
+
+            // 3. Tie-breaker: Alphabetical by vendor name
+            return (a.name || "").localeCompare(b.name || "");
+        });
+        // --- END NEW SORTING LOGIC ---
 
         if (!data.length) {
             els.vendorList.innerHTML = "";

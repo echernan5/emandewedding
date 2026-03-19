@@ -149,9 +149,7 @@ body {
   gap: 12px;
   padding: 12px;
   background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  box-shadow: 0 4px 12px rgba(17,24,39,.04);
+  border-bottom:  solid var(--border);
 }
 
 .toolbar__left { display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end; }
