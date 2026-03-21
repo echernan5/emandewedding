@@ -24,10 +24,10 @@
   ];
 
   const SYSTEM_USERS = [
-    { id: '1', name: 'Emma Hernandez', role: 'admin', sidebarRole: 'admin', matchesGroups: ['group_emma_ethan'] },
-    { id: '2', name: 'Ethan Wlodarczyk', role: 'admin', sidebarRole: 'admin', matchesGroups: ['group_emma_ethan'] },
-    { id: '3', name: 'Amy Eiduke', role: 'contributor', sidebarRole: 'family', matchesGroups: ['group_amy_dave'] }, 
-    { id: '4', name: 'Isabel Hernandez', role: 'contributor', sidebarRole: 'viewer', matchesGroups: ['user_isabel'] }
+    { id: 'bef1309d-f0a7-4333-9def-0f3d04f048b8', name: 'Emma Hernandez', role: 'admin', matchesGroups: ['group_emma_ethan'] },
+    { id: '55db6a22-05c5-438e-a7a2-c560eb34712f', name: 'Ethan Wlodarczyk', role: 'admin', matchesGroups: ['group_emma_ethan'] },
+    { id: 'a0e21d16-2a00-4a0f-9934-a038bf8e523d', name: 'Amy Eiduke', role: 'editor', matchesGroups: ['group_amy_dave'] },
+    { id: '0910ce2b-54f4-4b33-b45b-2c9714ca804e', name: 'Isabel Astrahan', role: 'viewer', matchesGroups: ['user_isabel'] }
   ];
 
   // --- STATE ---
@@ -41,11 +41,19 @@
 
   // --- HELPERS ---
   function detectCurrentUser() {
-      const activeRole = localStorage.getItem('user_role_key') || 'admin';
-      if (activeRole === 'family') return SYSTEM_USERS.find(u => u.sidebarRole === 'family');
-      if (activeRole === 'viewer') return SYSTEM_USERS.find(u => u.sidebarRole === 'viewer');
-      return SYSTEM_USERS.find(u => u.sidebarRole === 'admin');
-  }
+    // Try to find by ID first for exact matching
+    const currentUserId = localStorage.getItem('user_id'); 
+    const userById = SYSTEM_USERS.find(u => u.id === currentUserId);
+    if (userById) return userById;
+
+    // Fallback to role-based detection if ID isn't set
+    const activeRole = localStorage.getItem('user_role_key');
+    if (activeRole === 'editor') return SYSTEM_USERS.find(u => u.role === 'editor'); // Amy/Dave/Parents
+    if (activeRole === 'viewer') return SYSTEM_USERS.find(u => u.role === 'viewer'); // Isabel/Zack
+    
+    // Default to Admin (Emma/Ethan)
+    return SYSTEM_USERS.find(u => u.role === 'admin');
+}
 
   function $(sel) { return document.querySelector(sel); }
   function esc(s) { return String(s ?? "").replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#039;"); }
