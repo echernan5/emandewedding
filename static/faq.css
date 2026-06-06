@@ -752,34 +752,6 @@
     display: block;          /* Removes tiny gap at bottom of images */
 }
 
-@media (max-width: 768px) {
-    .vertical-img {
-        height: 400px; /* Shorter height on mobile for better fit */
-        width: 100%;
-    }
-
-    .main-title {
-        font-size: 3rem; /* Adjust header size on mobile */
-    }
-
-    .faq-section {
-        padding: 0px 20px 80px 20px 
-    }
-
-    .faq-header {
-        padding: 60px 20px 40px !important;
-    }
-
-    .script-category {
-        font-size: 2.2rem;
-    }
-
-    .faq-section {
-        gap: 60px;
-        padding: 0px 20px 60px 20px;
-    }
-}
-
 /* 5. Typography */
 .serif-heading {
     font-family: var(--font-serif);
@@ -1117,4 +1089,32 @@
     object-position: center; /* 4. Center the crop */
     display: block;          /* Removes tiny gap at bottom of images */
     border-radius: 2px;
+}
+
+@media (max-width: 768px) {
+    .vertical-img {
+        height: 400px; /* Shorter height on mobile for better fit */
+        width: 100%;
+    }
+
+    .main-title {
+        font-size: 3rem; /* Adjust header size on mobile */
+    }
+
+    .faq-section {
+        padding: 0px 20px 80px 20px 
+    }
+
+    .faq-header {
+        padding: 60px 20px 40px !important;
+    }
+
+    .script-category {
+        font-size: 2.2rem;
+    }
+
+    .faq-section {
+        gap: 60px;
+        padding: 0px 20px 60px 20px;
+    }
 }
