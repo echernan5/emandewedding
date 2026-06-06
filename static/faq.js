@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
 
     // ==========================================================
-    // 1. ACCORDION LOGIC (Only One Open at a Time + Smooth Slide)
+    // 1. ACCORDION LOGIC & TRACKING
     // ==========================================================
     const triggers = document.querySelectorAll('.accordion-trigger');
   
@@ -13,10 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // A. Close ALL other panels first
         triggers.forEach(otherBtn => {
           if (otherBtn !== button) {
-            // Remove active class from other buttons
             otherBtn.classList.remove('active');
-            
-            // Close the panel associated with that button
             const otherPanel = otherBtn.nextElementSibling;
             otherPanel.classList.remove('open');
             otherPanel.style.maxHeight = null;
@@ -33,6 +30,19 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
           // If it was closed, open it to its full scroll height
           panel.style.maxHeight = panel.scrollHeight + "px";
+
+          // --- GA4 TRACKING: Fire only when opening ---
+          const questionText = button.querySelector('span').innerText.trim();
+          const categoryElement = button.closest('.faq-section').querySelector('.script-category');
+          const categoryText = categoryElement ? categoryElement.innerText.trim() : 'General';
+
+          if (typeof gtag === 'function') {
+            gtag('event', 'viewed_faq', {
+              'faq_category': categoryText,
+              'faq_question': questionText
+            });
+          }
+          // --------------------------------------------
         }
       });
     });
@@ -162,3 +172,5 @@ document.addEventListener('DOMContentLoaded', () => {
     if (closeBtn) closeBtn.addEventListener("click", closeModal);
     if (overlay) overlay.addEventListener("click", closeModal);
   });
+
+  
