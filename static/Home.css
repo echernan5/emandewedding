@@ -550,22 +550,20 @@ body.modal-active {
   color: white;
 }
 
-.line-1, .line-3 {
-  font-family: "DarlineSerif", serif;
-  text-transform: uppercase;
-  font-style: italic;
-  font-weight: normal;
-}
-
-.line-2, .line-4 {
-  font-family: "DarlineScript", cursive;
-  font-weight: normal;
-}
-
 .line-1 {
+  font-family: "DarlineScript", 'DarlineScript';
+  font-weight: normal;
   top: 35%;
   left: 5%;
   font-size: 7rem;
+}
+
+.line-2, .line-3 {
+  font-family: "Inria Serif", serif;
+  font-weight: normal;
+  text-transform: uppercase;
+  font-style: italic;
+  letter-spacing: 0.2rem;
 }
 
 .line-2 {
@@ -575,9 +573,9 @@ body.modal-active {
 }
 
 .line-3 {
-  top: 42%;
-  right: 5%;
-  font-size: 7rem;
+    top: 42%;
+    right: 5%;
+    font-size: 2rem;
 }
 
 .line-4 {
