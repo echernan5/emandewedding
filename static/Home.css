@@ -297,13 +297,13 @@ body.modal-active {
   display: flex;
   flex-direction: column;
   text-align: center;
-  gap: 2.5rem;
+  gap: 3rem;
 }
 
 .navbar .nav-link {
   /* Typography */
   font-family: var(--font-serif);
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   font-style: italic;
   text-transform: uppercase;
   letter-spacing: 0.2rem;
