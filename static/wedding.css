@@ -837,7 +837,7 @@
 /* Mobile Adjustment */
 @media (max-width: 600px) {
     .history-carousel {
-        height: 2.25px; /* Smaller on phone */
+        height: 225px; /* Smaller on phone */
     }
     .history-title {
         font-size: 2.8rem;

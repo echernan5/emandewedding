@@ -685,7 +685,7 @@
 
 .faq-header {
     text-align: center;
-    padding: 100px 20px 60px;
+    padding: 100px 20px 0px;
     background-image: url("{{ url_for('static', filename='Content/YourFloralImage.jpg') }}"); /* Optional: Add faint floral top if desired */
     background-size: cover;
     background-position: center top;
@@ -885,7 +885,7 @@
 /* 2. Header */
 .faq-header {
     text-align: center;
-    padding: 100px 20px 60px;
+    padding: 100px 20px 0px;
 }
 
 .faq-header .tiny-label {
@@ -1107,6 +1107,10 @@
 
     .faq-header {
         padding: 60px 20px 40px !important;
+    }
+
+    .faq-header .main-title {
+        font-size: 3rem;
     }
 
     .script-category {
