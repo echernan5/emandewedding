@@ -524,7 +524,7 @@ body.modal-active {
   background-size: cover;
   background-position: center;
   margin-top: -90px; /* Pulls up behind the transparent nav */
-  position: relative; /* For text positioning */
+  position: relative; 
   will-change: transform;
 }
 
@@ -538,23 +538,38 @@ body.modal-active {
   z-index: -1; /* Place it behind the text */
 }
 
+/* Updated to center everything perfectly */
 .hero-content {
   position: relative;
   z-index: 2;
   height: 100%;
   width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
+/* Container for the stacked text */
+.hero-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 1rem; /* Adjust space between lines globally here */
+  width: 100%;
+  padding: 0 20px;
+}
+
+/* Removed position: absolute so lines stack naturally */
 .hero-text span {
-  position: absolute;
   color: white;
+  position: relative; 
 }
 
 .line-1 {
   font-family: "DarlineScript", 'DarlineScript';
   font-weight: normal;
-  top: 35%;
-  left: 5%;
   font-size: 7rem;
 }
 
@@ -564,24 +579,7 @@ body.modal-active {
   text-transform: uppercase;
   font-style: italic;
   letter-spacing: 0.2rem;
-}
-
-.line-2 {
-  top: 50%;
-  left: 15%;
   font-size: 2rem;
-}
-
-.line-3 {
-    top: 42%;
-    right: 5%;
-    font-size: 2rem;
-}
-
-.line-4 {
-  bottom: 23%;
-  right: 10%;
-  font-size: 12rem;
 }
 
 /* =================================================================== */
@@ -1342,33 +1340,31 @@ body.modal-active {
 @media (max-width: 768px) {
 
   /* --- 1. FIX THE HERO TEXT --- */
-  /* The 12rem font is too big for phones. We shrink it and re-center the offsets. */
+  /* Cleared old absolute offsets. Text now stacks naturally using Flexbox. */
   
+  .hero-text {
+      gap: 0.75rem; /* Controls the vertical spacing between stacked lines on mobile */
+      padding: 0 30px;
+  }
+
   .hero-text span {
-      width: 100%; /* Ensures text doesn't flow off screen */
+      position: relative;
+      top: auto !important;
+      bottom: auto !important;
+      left: auto !important;
+      right: auto !important;
+      width: auto;
       text-align: center;
-      left: 0 !important; /* Reset left positioning */
-      right: 0 !important; /* Reset right positioning */
   }
 
   .line-1 {
-      top: 35%;
-      font-size: 4rem; /* Down from 7rem */
+      font-size: 4rem; /* Elegant sizing for script on mobile */
   }
 
-  .line-2 {
-      top: 43%;
-      font-size: 5rem; /* Down from 12rem */
-  }
-
-  .line-3 {
-      top: 55%;
-      font-size: 4rem;
-  }
-
+  .line-2, 
+  .line-3,
   .line-4 {
-      bottom: 25%;
-      font-size: 5rem;
+      font-size: 1.3rem; /* Clean, matching, readable sizing for serif sub-lines */
   }
 
   /* --- 2. FIX THE EVENT CIRCLE --- */
