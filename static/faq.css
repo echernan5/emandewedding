@@ -169,6 +169,7 @@
     border-radius: 10px;
   }
   
+  
   /* DESKTOP NAV BREAKPOINT */
   @media (min-width: 900px) {
     #navbar {
@@ -749,7 +750,25 @@
     object-fit: cover;       /* 3. Crop the image to fit (The Scissors) */
     object-position: center; /* 4. Center the crop */
     display: block;          /* Removes tiny gap at bottom of images */
-    border-radius: 2px;
+}
+
+@media (max-width: 768px) {
+    .vertical-img {
+        height: 400px; /* Shorter height on mobile for better fit */
+        width: 100%;
+    }
+
+    .main-title {
+        font-size: 3rem; /* Adjust header size on mobile */
+    }
+
+    .faq-section {
+        padding: 0px 20px 80px 20px 
+    }
+
+    .faq-header {
+        padding: 80px 20px 40px;
+    }
 }
 
 /* 5. Typography */
