@@ -767,7 +767,16 @@
     }
 
     .faq-header {
-        padding: 80px 20px 40px;
+        padding: 60px 20px 40px !important;
+    }
+
+    .script-category {
+        font-size: 2.2rem;
+    }
+
+    .faq-section {
+        gap: 60px;
+        padding: 0px 20px 60px 20px;
     }
 }
 
