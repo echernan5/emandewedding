@@ -123,7 +123,6 @@ body.modal-active {
   margin-right: auto;
   
   /* THE OVERLAP: Pulls the white box UP over the flowers by 350px */
-  margin-top: -400px; 
   padding: 80px 40px;
   
   /* Shadow & Layering */
@@ -414,6 +413,7 @@ margin-bottom: 2rem;
     position: relative;
     justify-content: space-around;
     padding-bottom: 2rem;
+    height: 70vh;
 }
 
 /* TEXT SIDE (The Boss) */
@@ -421,6 +421,7 @@ margin-bottom: 2rem;
     width: 100%;
     /* Height is auto, meaning it is defined ONLY by the text inside */
     height: auto; 
+    margin: auto;
 }
 
 /* IMAGE SIDE (The Wrapper) */
@@ -438,14 +439,13 @@ margin-bottom: 2rem;
     
     /* PINNING: Match bottom, extend top */
     bottom: 0 !important; 
-    top: -120px !important; 
     
     /* FILL: Fill the width of the column */
     left: 0 !important;
     width: 100% !important;
     
     /* CROP: Don't stretch */
-    height: calc(100% + 120px) !important;
+    height: 100% !important;
     object-fit: cover !important; 
 }
 }
@@ -499,7 +499,6 @@ margin-bottom: 2rem;
 
 .memory-lane {
     margin-top: 2rem;
-    padding-top: 4rem;
 }
 
 .timeline-title {
