@@ -731,6 +731,12 @@ body.modal-active {
     padding: 100px 0px;
   }
   
+  /* Target the pseudo-element holding the background on mobile */
+  .celebration-section::before {
+    transform: none; /* Removes the scale and translateY movement */
+    transition: none; /* Stops the browser from trying to animate it */
+  }
+  
   .event-column {
     padding: 30px; /* Reduce padding on smaller circles */
   }
@@ -1095,7 +1101,7 @@ body.modal-active {
 .footer-logo-container {
   width: 100%;        /* Takes up available space up to the max-width */
   max-width: 250px;   /* <--- CHANGE THIS VALUE to make it smaller (e.g. 80px) */
-  margin: 0 auto 20px; /* Centers it horizontally and keeps the bottom gap */
+  margin: 0 auto 0px; /* Centers it horizontally and keeps the bottom gap */
 }
 
 /* 2. Ensure the image fits inside the container */
@@ -1210,6 +1216,10 @@ body.modal-active {
     .footer-monogram {
         display: none; /* Hide monogram on mobile stack */
     }
+
+    .footer-content {
+    gap: 1rem;
+  }
 }
 
 /* =========================================
