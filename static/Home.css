@@ -358,6 +358,10 @@ body.modal-active {
     transition: background-color 0.8s ease, transform 0.8s ease, padding-top 0.8s ease;
   }
 
+  .mobile-only {
+      display: none !important;
+    }
+
   #navbar.scrolled {
     background-color: var(--color-dusty-blue);
     padding-top: 0px;

@@ -179,10 +179,10 @@
       background-color: transparent; 
     }
   
-    /* Since body is cream, we need the nav to be visible before scroll.
-       We force the background to be Blue on the FAQ page specifically 
-       so white text pops, OR we rely on .scrolled. 
-       Let's set a default background for desktop for readability on light pages. */
+    .mobile-only {
+      display: none !important;
+    }
+
     #navbar {
       background-color: var(--color-dusty-blue); 
       padding-top: 0; /* Reset the luxury floating padding for this specific page style */

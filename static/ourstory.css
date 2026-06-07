@@ -130,6 +130,16 @@ body.modal-active {
   z-index: 10;
 }
 
+@media (max-width: 899px) {
+  .story-container {
+    max-width: 100vw;
+  }
+
+  .memory-lane {
+    padding-top: 50px;
+  }
+}
+
 /* =================================================================== */
 /* 4. NAVBAR
 /* =================================================================== */
@@ -231,6 +241,11 @@ body.modal-active {
   .mobile-nav-toggle {
     display: none;
   }
+
+  .mobile-only {
+      display: none !important;
+    }
+    
   .nav-menu {
     position: static;
     display: flex;

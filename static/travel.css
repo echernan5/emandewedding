@@ -289,6 +289,10 @@ display: inline-flex; align-items: center; gap: 8px;
 }
 .view-room-link:hover { color: #8D9BA8; gap: 12px; }
 
+@media (max-width: 899px) {
+  .amenities-icons { gap: 12px}
+  .amenity-icon { font-size: 1.2rem; padding: 5px;}
+}
 
 /* ===================================================================
  6. TRANSPORTATION & ADVENTURE
@@ -326,6 +330,12 @@ display: inline-flex; align-items: center; gap: 8px;
 
   .editorial-content p {
   font-family: 'Inria Serif', serif; font-size: 1rem; line-height: 1.8; color: #444; margin-bottom: 1.25rem;
+  }
+
+  @media (max-width: 899px) {
+    .editorial-content p {
+      font-size: 0.8rem;
+    }
   }
 
   @media (min-width: 900px) {
@@ -431,7 +441,7 @@ display: inline-flex; align-items: center; gap: 8px;
   .modal-content {
     position: relative; z-index: 2001; 
     background-color: #ffffff;
-    width: 95%; max-width: 500px; max-height: 90vh; 
+    width: 95%; max-width: 500px; max-height: 80vh; 
     overflow-y: auto; border-radius: 2px;
     box-shadow: 0 40px 80px rgba(0, 0, 0, 0.4);
     padding: 0; /* Important: padding is handled by children */
@@ -455,6 +465,10 @@ display: inline-flex; align-items: center; gap: 8px;
     }
     #modal-accommodation-content {
         display: grid; grid-template-columns: 55% 45%; height: 100%; 
+    }
+    
+    .mobile-only {
+      display: none !important;
     }
   }
   
