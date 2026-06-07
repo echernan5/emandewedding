@@ -88,9 +88,6 @@ body.modal-active {
   overflow: hidden;
 }
 
-.mobile-only {
-  display: none;
-}
 
 /* =================================================================== */
 /* 3. HERO & CONTAINER LAYOUT (The "Card" Effect)

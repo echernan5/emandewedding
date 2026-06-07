@@ -125,11 +125,6 @@ body.modal-active {
   overflow: hidden;
 }
 
-/* Hide mobile-specific content on desktop */
-.mobile-only {
-  display: none;
-}
-
 /* Re-usable class for section labels */
 .section-label {
   font-family: "DarlineSerif", serif;
@@ -348,6 +343,10 @@ body.modal-active {
    DESKTOP NAV BREAKPOINT (min-width: 900px)
    =================================================================== */
 @media (min-width: 900px) {
+
+  .mobile-only {
+    display: none;
+  }
   
   /* 1. Reset Navbar Spacing */
   #navbar {
@@ -540,6 +539,12 @@ body.modal-active {
   height: 100%;
   object-fit: cover;
   z-index: 800; /* Place it behind the text */
+}
+
+@media (max-width: 899px) {
+  .hero-foreground {
+    display: none; /* Hide foreground on mobile for performance */
+  }
 }
 
 /* Updated to center everything perfectly */
