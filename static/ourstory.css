@@ -381,7 +381,7 @@ body.modal-active {
 .story-text p {
 font-family: "Inria Serif", serif;
 font-size: 0.9rem; 
-line-height: 1.8; 
+line-height: 1.2; 
 
 /* Justified text like a newspaper column */
 text-align: justify;
