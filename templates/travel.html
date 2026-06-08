@@ -394,6 +394,35 @@
 
   <script>
     window.__ACCOMMODATION_DATA__ = {
+        'bay-pointe': {
+            title: 'Bay Pointe Inn',
+            // Add these new fields
+            rating: 4.6,
+            reviews: 1417,
+            address: 'Shelbyville, MI',
+            mapLink: 'https://maps.app.goo.gl/YWrxSbowMeCZSTk99', // You can add real links later
+            website: 'https://www.reseze.net/servlet/SendPage?hotelid=1736&skipfirstpage&page=61790', 
+            phone: '(269) 672-8111',
+            
+            images: [
+                "{{ url_for('static', filename='Content/Accommodations/BayPointe1.jpg') }}",
+                "{{ url_for('static', filename='Content/Accommodations/BayPointe2.jpg') }}",
+                "{{ url_for('static', filename='Content/Accommodations/BayPointe3.jpg') }}",
+                "{{ url_for('static', filename='Content/Accommodations/BayPointe4.jpg') }}",
+            ],
+            amenities: [
+                { icon: 'bi-bus-front', text: 'On-Site Lodging' },
+                { icon: 'bi-cup-hot', text: 'Free Breakfast' },
+                { icon: 'bi-water', text: 'Indoor Pool' },
+                { icon: 'bi-wifi', text: 'Fast Wi-Fi' },
+                { icon: 'bi-p-circle', text: 'Free Parking' },
+                { icon: 'bi-anchor', text: 'Boat Docking' }
+            ],
+            // This replaces "At a Glance" and "Booking Info" with one concise block
+            bookingNote: `
+                <strong>Reservation Note:</strong> Rooms on-site are limited and expected to fill quickly. Book through the link below by April 18th, 2027 to secure your stay!
+            `
+        },
         'best-western': {
             title: 'Best Western Plus',
             // Add these new fields
