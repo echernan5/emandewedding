@@ -81,18 +81,69 @@
         <h2 class="section-title">Accommodations</h2>
 
         <div class="accommodation-grid centered-grid">
+            <!-- 1. BAY POINTE INN (NEW) --> 
+            <div class="accommodation-card hotel-style-card hide-card">
+                <div class="card-carousel-wrapper">
+                    <div class="card-carousel-images" id="carousel-baypointe">
+                        <img src="{{ url_for('static', filename='Content/Accommodations/BayPointe1.jpg') }}" class="active" alt="Bay Pointe Inn Exterior">
+                        <img src="{{ url_for('static', filename='Content/Accommodations/BayPointe2.jpg') }}" alt="Bay Pointe Inn Room">
+                        <img src="{{ url_for('static', filename='Content/Accommodations/BayPointe3.jpg') }}" alt="Bay Pointe Inn Lake View">
+                        <img src="{{ url_for('static', filename='Content/Accommodations/BayPointe4.jpg') }}" alt="Bay Pointe Inn Grounds">
+                    </div>
+                    <div class="card-carousel-nav">
+                        <button class="nav-arrow prev-arrow" onclick="moveCardSlide('carousel-baypointe', -1)"><i class="bi bi-arrow-left"></i></button>
+                        <button class="nav-arrow next-arrow" onclick="moveCardSlide('carousel-baypointe', 1)"><i class="bi bi-arrow-right"></i></button>
+                    </div>
+                </div>
+                
+                <div class="hotel-card-details">
+                    <p class="hotel-subtitle">On-Site, Lakeside Retreat</p>
+                    <h3 class="hotel-title">Bay Pointe Inn</h3>
+                    
+                    <div class="hotel-info-rows">
+                        <p class="info-row">On-Site Lodging</p>
+                        <p class="info-row">Limited Availability</p>
+                        
+                        <div class="amenities-row">
+                            <span class="amenities-label">Amenities:</span>
+                            <div class="amenities-icons">
+                                <div class="amenity-icon" data-tooltip="On-Site Lodging">
+                                    <i class="bi bi-house-heart-fill"></i>
+                                </div>
+                                <div class="amenity-icon" data-tooltip="Breakfast Included">
+                                    <i class="bi bi-egg-fried"></i>
+                                </div>
+                                <div class="amenity-icon" data-tooltip="Indoor Pool">
+                                    <i class="bi bi-water"></i>
+                                </div>
+                                <div class="amenity-icon" data-tooltip="Free Parking">
+                                    <i class="bi bi-p-circle-fill"></i>
+                                </div>
+                                <div class="amenity-icon" data-tooltip="Boat Docking Available">
+                                    <i class="bi bi-anchor"></i>
+                                </div>
+                            </div>
+                        </div>
+        
+                    </div>
+        
+                    <a href="#" class="view-room-link" data-modal-id="bay-pointe">
+                        More Info <i class="bi bi-arrow-right short-arrow"></i>
+                    </a>
+                </div>
+            </div>
     
             <div class="accommodation-card hotel-style-card">
                 <div class="card-carousel-wrapper">
-                    <div class="card-carousel-images" id="carousel-baypointe">
+                    <div class="card-carousel-images" id="carousel-bestwestern">
                         <img src="{{ url_for('static', filename='Content/Accommodations/BestWestern1.avif') }}" class="active" alt="Best Western Room">
                         <img src="{{ url_for('static', filename='Content/Accommodations/BestWestern5.jpg') }}" alt="Best Western Suite">
                         <img src="{{ url_for('static', filename='Content/Accommodations/BestWestern2.webp') }}" alt="Best Western Pool">
                         <img src="{{ url_for('static', filename='Content/Accommodations/BestWestern4.webp') }}" alt="Best Western Free Breakfast Bar">
                     </div>
                     <div class="card-carousel-nav">
-                        <button class="nav-arrow prev-arrow" onclick="moveCardSlide('carousel-baypointe', -1)"><i class="bi bi-arrow-left"></i></button>
-                        <button class="nav-arrow next-arrow" onclick="moveCardSlide('carousel-baypointe', 1)"><i class="bi bi-arrow-right"></i></button>
+                        <button class="nav-arrow prev-arrow" onclick="moveCardSlide('carousel-bestwestern', -1)"><i class="bi bi-arrow-left"></i></button>
+                        <button class="nav-arrow next-arrow" onclick="moveCardSlide('carousel-bestwestern', 1)"><i class="bi bi-arrow-right"></i></button>
                     </div>
                 </div>
                 

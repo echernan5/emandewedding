@@ -197,25 +197,36 @@ margin-bottom: 1.5rem;
 line-height: 1.2;
 }
 
+.hide-card {
+  display: none !important;
+}
+
 /* Grid Layout - LOCKED TO 1000px */
 .accommodation-grid.centered-grid {
-display: grid; 
-grid-template-columns: repeat(3, 1fr); 
-gap: 3rem;
-width: 100%;
-max-width: 1000px; /* Locked width */
-margin: 0 auto; 
-justify-content: center;
+  display: grid; 
+  grid-template-columns: repeat(3, 1fr); 
+  gap: 3rem;
+  width: 100%;
+  max-width: 1000px; /* Perfect width for 3 cards */
+  margin: 0 auto; 
+  justify-content: center;
 }
 
 /* Mobile Stack */
-@media (max-width: 850px) {
-.accommodation-grid.centered-grid { 
-    grid-template-columns: 1fr; 
-    max-width: 500px; 
-}
+@media (min-width: 900px) {
+  .accommodation-grid.centered-grid:not(:has(> .hide-card)) {
+    grid-template-columns: repeat(4, 1fr);
+    max-width: 1250px; /* Dynamically widens the container so 4 cards look spacious and beautiful */
+  }
 }
 
+/* Mobile Stack (Stays perfectly functional) */
+@media (max-width: 850px) {
+  .accommodation-grid.centered-grid { 
+    grid-template-columns: 1fr; 
+    max-width: 500px; 
+  }
+}
 /* Desktop Adjustments (Spacing only, no width change) */
 @media (min-width: 900px) {
 .accommodations-section { padding: 80px 2rem; }
