@@ -564,5 +564,54 @@
 
 <script src="{{ url_for('static', filename='travel.js') }}" defer></script>
 
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    
+    // 1. Track "More Info" Modal Opens
+    document.querySelectorAll('.view-room-link').forEach(function(element) {
+        element.addEventListener('click', function(e) {
+            var hotelId = this.getAttribute('data-modal-id');
+            gtag('event', 'view_accommodation_details', {
+                'accommodation_id': hotelId,
+                'method': 'more_info_click'
+            });
+        });
+    });
+
+    // 2. Track Photo Carousel Engagement
+    document.querySelectorAll('.nav-arrow').forEach(function(element) {
+        element.addEventListener('click', function() {
+            var carouselId = this.parentElement.previousElementSibling.id; // e.g., carousel-bestwestern
+            var hotelName = carouselId.replace('carousel-', '');
+            var direction = this.classList.contains('next-arrow') ? 'next' : 'prev';
+            
+            gtag('event', 'gallery_interaction', {
+                'accommodation_id': hotelName,
+                'slide_direction': direction
+            });
+        });
+    });
+
+    // 3. Track Modal Interaction Fallback (For dynamic elements)
+    // Because your modal content renders dynamically, we listen to the body for clicks inside it
+    document.body.addEventListener('click', function(e) {
+        var target = e.target.closest('a');
+        if (!target) return;
+        
+        // If they click an outbound link inside your accommodation modal
+        if (target.closest('#modal-accommodation-content')) {
+            var destinationUrl = target.href;
+            var linkText = target.innerText.trim();
+            
+            gtag('event', 'accommodation_outbound_click', {
+                'link_text': linkText,
+                'link_url': destinationUrl,
+                'outbound': true
+            });
+        }
+    });
+});
+</script>
+
 </body>
 </html>
