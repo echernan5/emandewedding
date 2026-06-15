@@ -12,7 +12,7 @@
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Emma & Ethan</title>
+    <title>Travel - Emma & Ethan</title>
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='Content/favicon.png') }}">
     
     <!-- This should be pointing to your main style.css, which now contains all the rules -->
@@ -392,7 +392,8 @@
                 <a href="/wedding" class="footer-link">Ceremony & Reception</a>
                 <!-- <a href="/welcome-party" class="footer-link">Welcome Party</a> -->
                 <a href="/faqs" class="footer-link">FAQs</a>
-                <a href="https://withjoy.com/wlodarczyk/registry" class="footer-link">Registry</a>
+                <a href="https://withjoy.com/wlodarczyk/registry" class="footer-link" target="_blank" rel="noopener noreferrer">WithJoy Registry</a>
+                <a href="https://www.crateandbarrel.com/" class="footer-link" target="_blank" rel="noopener noreferrer">Crate & Barrel Registry</a>
             </nav>
 
             <div class="footer-bottom">
@@ -592,23 +593,54 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // 3. Track Modal Interaction Fallback (For dynamic elements)
-    // Because your modal content renders dynamically, we listen to the body for clicks inside it
+    // 3. Centralized Outbound & Interaction Tracker
     document.body.addEventListener('click', function(e) {
         var target = e.target.closest('a');
         if (!target) return;
         
-        // If they click an outbound link inside your accommodation modal
-        if (target.closest('#modal-accommodation-content')) {
-            var destinationUrl = target.href;
-            var linkText = target.innerText.trim();
+        var destinationUrl = target.href;
+        var linkText = target.innerText.trim() || target.querySelector('img')?.alt || 'Image Link';
+
+        // Filter for outbound links only
+        if (target.hostname !== window.location.hostname) {
             
-            gtag('event', 'accommodation_outbound_click', {
-                'link_text': linkText,
-                'link_url': destinationUrl,
-                'outbound': true
-            });
+            // Track dynamic clicks inside the accommodation modals
+            if (target.closest('#modal-accommodation-content')) {
+                // Pulls the active hotel name from the modal DOM dynamically
+                var activeHotel = document.querySelector('#modal-accommodation-content h3')?.innerText || 'Unknown';
+                
+                gtag('event', 'accommodation_booking_click', {
+                    'accommodation_id': activeHotel,
+                    'link_text': linkText,
+                    'link_url': destinationUrl
+                });
+            }
+            
+            // Track Registry clicks (Navbar & Footer)
+            else if (destinationUrl.includes('withjoy.com') || destinationUrl.includes('crateandbarrel.com')) {
+                var platform = destinationUrl.includes('withjoy.com') ? 'WithJoy' : 'Crate & Barrel';
+                gtag('event', 'registry_click', {
+                    'registry_platform': platform,
+                    'click_location': target.closest('.navbar') ? 'navbar' : 'footer',
+                    'link_url': destinationUrl
+                });
+            }
+            
+            // Track "Explore the Area" clicks
+            else if (target.closest('.things-to-do-section')) {
+                var attractionName = target.querySelector('.editorial-heading, .editorial-subheading')?.innerText || linkText;
+                
+                gtag('event', 'explore_area_click', {
+                    'attraction_id': attractionName,
+                    'link_url': destinationUrl
+                });
+            }
         }
+    });
+
+    // 4. Track Privacy Policy views
+    document.getElementById('privacy-trigger')?.addEventListener('click', function() {
+        gtag('event', 'view_privacy_policy');
     });
 });
 </script>
