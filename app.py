@@ -6,15 +6,46 @@ import json
 import csv
 import io
 
+from supabase import create_client, Client
 from dotenv import load_dotenv
-from flask import Flask, jsonify, request, render_template, Response
+
+from dotenv import load_dotenv
+# Consolidated all Flask imports into one clean line at the top:
+from flask import Flask, jsonify, request, render_template, Response, redirect, url_for, flash, session
 from flask_cors import CORS
 from psycopg2 import sql
+# Import Supabase:
+from supabase import create_client, Client
 
 load_dotenv()
 
 app = Flask(__name__)
 app.config["MAX_CONTENT_LENGTH"] = 20 * 1024 * 1024  # 20MB
+
+# REQUIRED FOR FLASH MESSAGES:
+app.secret_key = os.environ.get("SECRET_KEY", "fallback-secret-key-for-development")
+
+# -----------------------------
+# Config & Supabase Init
+# -----------------------------
+DATABASE_URL = os.environ.get("DATABASE_URL")
+if not DATABASE_URL:
+    raise RuntimeError("DATABASE_URL environment variable is not set.")
+
+if "sslmode=" not in DATABASE_URL:
+    DATABASE_URL += ("&" if "?" in DATABASE_URL else "?") + "sslmode=require"
+
+SUPABASE_URL = os.environ.get("SUPABASE_URL")
+SUPABASE_PUBLISHABLE_KEY = os.environ.get("SUPABASE_PUBLISHABLE_KEY")
+SUPABASE_SECRET_KEY = os.environ.get("SUPABASE_SECRET_KEY")
+
+if not SUPABASE_URL or not SUPABASE_PUBLISHABLE_KEY:
+    raise RuntimeError("SUPABASE_URL and SUPABASE_PUBLISHABLE_KEY must be set.")
+
+supabase: Client = create_client(
+    os.environ.get("SUPABASE_URL"),
+    os.environ.get("SUPABASE_PUBLISHABLE_KEY")
+)
 
 # -----------------------------
 # Environment / CORS
@@ -45,14 +76,17 @@ if "sslmode=" not in DATABASE_URL:
     DATABASE_URL += ("&" if "?" in DATABASE_URL else "?") + "sslmode=require"
 
 SUPABASE_URL = os.environ.get("SUPABASE_URL")
-SUPABASE_ANON_KEY = os.environ.get("SUPABASE_ANON_KEY")
-SUPABASE_SERVICE_ROLE_KEY = os.environ.get("SUPABASE_SERVICE_ROLE_KEY")
+SUPABASE_PUBLISHABLE_KEY = os.environ.get("SUPABASE_PUBLISHABLE_KEY")
+SUPABASE_SECRET_KEY = os.environ.get("SUPABASE_SECRET_KEY")
 
-if not SUPABASE_URL or not SUPABASE_ANON_KEY:
-    raise RuntimeError("SUPABASE_URL and SUPABASE_ANON_KEY must be set.")
+if not SUPABASE_URL or not SUPABASE_PUBLISHABLE_KEY:
+    raise RuntimeError("SUPABASE_URL and SUPABASE_PUBLISHABLE_KEY must be set.")
 
 # Put this near the top of app.py (after SUPABASE_* are defined)
 ROLE_RANK = {"viewer": 1, "editor": 2, "admin": 3}
+
+import os
+print("DB:", os.getenv("DATABASE_URL"))
 
 def require_user(min_role="viewer"):
     """
@@ -76,7 +110,7 @@ def require_user(min_role="viewer"):
         resp = requests.get(
             f"{SUPABASE_URL.rstrip('/')}/auth/v1/user",
             headers={
-                "apikey": SUPABASE_ANON_KEY,
+                "apikey": SUPABASE_PUBLISHABLE_KEY,
                 "Authorization": f"Bearer {token}",
             },
             timeout=10,
@@ -112,9 +146,34 @@ def require_service_key():
     Service role key is required for server-side storage operations
     (uploads, signed URLs, listing private objects).
     """
-    if not SUPABASE_SERVICE_ROLE_KEY:
-        return None, (jsonify({"error": "Storage not configured (missing SUPABASE_SERVICE_ROLE_KEY)."}), 500)
-    return SUPABASE_SERVICE_ROLE_KEY, None
+    if not SUPABASE_SECRET_KEY:
+        return None, (jsonify({"error": "Storage not configured (missing SUPABASE_SECRET_KEY)."}), 500)
+    return SUPABASE_SECRET_KEY, None
+
+from datetime import datetime, date
+
+def format_last_updated(val):
+    if not val:
+        return '—'
+    
+    # Parse string to datetime if necessary
+    if isinstance(val, str):
+        try:
+            val = datetime.fromisoformat(val)
+        except ValueError:
+            return '—'
+            
+    # Extract the date part
+    val_date = val.date() if isinstance(val, datetime) else val
+    today = date.today()
+    delta_days = (today - val_date).days
+    
+    if delta_days == 0:
+        return 'Today'
+    elif delta_days == 1:
+        return 'Yesterday'
+    else:
+        return val_date.strftime('%b %d, %Y')
 
 def get_profile(user_id: str):
     conn = get_db_connection()
@@ -235,7 +294,8 @@ def get_guestlist():
             g.table_number AS tablenumber,
             g.side,
             g.relationship AS relation,
-            g.is_21_plus AS "is21Plus"
+            g.is_21_plus AS "is21Plus",
+            g.updated_at AS last_updated
         FROM guests g
         JOIN parties p ON g.party_id = p.id
         ORDER BY p.legacy_key, g.first_name;
@@ -341,7 +401,8 @@ def get_party_details(party_id):
                     table_number AS tablenumber,
                     side,
                     relationship AS relation,
-                    is_21_plus AS "is21Plus"
+                    is_21_plus AS "is21Plus",
+                    updated_at AS last_updated
                 FROM guests
                 WHERE party_id = %s
                 ORDER BY last_name, first_name;
@@ -1205,7 +1266,7 @@ def login():
     return render_template(
         "login.html",
         supabase_url=os.environ.get("SUPABASE_URL"),
-        supabase_anon_key=os.environ.get("SUPABASE_ANON_KEY"),
+        SUPABASE_PUBLISHABLE_KEY=os.environ.get("SUPABASE_PUBLISHABLE_KEY"),
     )
 
 
@@ -1228,18 +1289,546 @@ def wedding():
 def welcomeparty():
     return render_template("welcome-party.html")
 
+from datetime import datetime, date
+
+def format_last_updated(val):
+    if not val:
+        return '—'
+    
+    if isinstance(val, str):
+        try:
+            val = datetime.fromisoformat(val)
+        except ValueError:
+            return '—'
+            
+    val_date = val.date() if isinstance(val, datetime) else val
+    today = date.today()
+    delta_days = (today - val_date).days
+    
+    if delta_days == 0:
+        return 'Today'
+    elif delta_days == 1:
+        return 'Yesterday'
+    else:
+        return val_date.strftime('%b %d, %Y')
+
+
+@app.route('/admin')
+def admin():
+    conn = get_db_connection()
+    if not conn:
+        return "Database unavailable", 500
+
+    try:
+        with conn.cursor() as cur:
+            # Query guests joined with parties to fetch lodging, shuttle, and notes data
+            cur.execute("""
+                SELECT 
+                    g.id,
+                    g.first_name,
+                    g.last_name,
+                    g.rsvp_status,
+                    g.is_21_plus,
+                    g.dietary_restrictions,
+                    g.is_anonymous,
+                    p.display_name AS party_name,
+                    p.legacy_key,
+                    p.lodging_choice,
+                    p.shuttle_interest,
+                    p.guest_note,
+                    p.updated_at
+                FROM guests g
+                JOIN parties p ON g.party_id = p.id
+                ORDER BY p.legacy_key, g.first_name;
+            """)
+            rows = cur.fetchall()
+            cols = [d[0] for d in cur.description]
+            all_guests_records = [dict(zip(cols, row)) for row in rows]
+    except Exception as e:
+        return f"Database query error: {e}", 500
+    finally:
+        conn.close()
+
+    total_accepted = 0
+    total_pending = 0
+    total_21_plus = 0
+    
+    lodging_counts = {
+        'bay_pointe': 0,
+        'best_western': 0,
+        'gun_lake': 0,
+        'other': 0
+    }
+    
+    shuttle_counts = {
+        'best_western': 0,
+        'gun_lake': 0
+    }
+    
+    total_shuttle_requested = 0
+    dietary_list = []
+    guest_notes = []
+    formatted_guests = []
+    
+    # Group records by party to handle party-level lodging/shuttles and individual guest tallies
+    parties_dict = {}
+    for g in all_guests_records:
+        party_key = g.get('legacy_key') or g.get('party_name') or str(g.get('id'))
+        if party_key not in parties_dict:
+            parties_dict[party_key] = {
+                'party_name': g.get('party_name'),
+                'legacy_key': g.get('legacy_key'),
+                'lodging_choice': g.get('lodging_choice'),
+                'shuttle_interest': g.get('shuttle_interest'),
+                'guest_note': g.get('guest_note'),
+                'guests': []
+            }
+        parties_dict[party_key]['guests'].append(g)
+
+    unique_notes = {}
+
+    for party_key, p_data in parties_dict.items():
+        lodging = (p_data['lodging_choice'] or '').strip()
+        shuttle = (p_data['shuttle_interest'] or '').strip().lower()
+        note = p_data['guest_note']
+        
+        # Calculate accepted guests in this party first
+        accepted_in_party = sum(
+            1 for g in p_data['guests'] 
+            if (g.get('rsvp_status') or '').strip().lower() in ['accept', 'accepted']
+        )
+        
+        # Count Lodging for accepted guests
+        if accepted_in_party > 0:
+            if 'Bay Pointe' in lodging:
+                lodging_counts['bay_pointe'] += accepted_in_party
+            elif 'Best Western' in lodging:
+                lodging_counts['best_western'] += accepted_in_party
+            elif 'Gun Lake' in lodging:
+                lodging_counts['gun_lake'] += accepted_in_party
+            else:
+                lodging_counts['other'] += accepted_in_party
+
+        # Process individual guests in this party for the main table & statuses
+        for g in p_data['guests']:
+            status = (g.get('rsvp_status') or 'pending').lower()
+            is_21 = g.get('is_21_plus')
+            
+            # Count statuses & 21+ globally
+            if status in ['accept', 'accepted']:
+                total_accepted += 1
+                # Check for True, 1, or 'true' depending on how psycopg2 returns the boolean
+                if is_21 in [True, 1, 'true', 'True']:
+                    total_21_plus += 1
+            elif status not in ['decline', 'declined']:
+                total_pending += 1
+                
+            # Collect Dietary Restrictions
+            dietary = g.get('dietary_restrictions')
+            if dietary:
+                dietary_list.append({
+                    'name': f"{g.get('first_name', '')} {g.get('last_name', '')}".strip(),
+                    'restriction': dietary
+                })
+                
+            # Build table row data
+            formatted_guests.append({
+                'first_name': g.get('first_name'),
+                'last_name': g.get('last_name'),
+                'party_name': g.get('party_name') or g.get('legacy_key', ''),
+                'is_plus_one': g.get('is_anonymous', False),
+                'rsvp_status': g.get('rsvp_status'),
+                'lodging_choice': g.get('lodging_choice'),
+                'shuttle_interest': g.get('shuttle_interest'),
+                'updated_at': format_last_updated(g.get('updated_at'))
+            })
+
+        # Count Shuttles: If the party requested shuttle, add all accepted members of this party to the correct hotel block
+        if shuttle == 'yes' and accepted_in_party > 0:
+            total_shuttle_requested += accepted_in_party
+            if 'Best Western' in lodging:
+                shuttle_counts['best_western'] += accepted_in_party
+            elif 'Gun Lake' in lodging:
+                shuttle_counts['gun_lake'] += accepted_in_party
+
+        # Collect Unique Guest Notes per Party
+        if note and party_key not in unique_notes:
+            unique_notes[party_key] = note
+            first_guest_name = ""
+            if p_data['guests']:
+                first_guest_name = f"{p_data['guests'][0].get('first_name', '')} {p_data['guests'][0].get('last_name', '')}"
+            guest_notes.append({
+                'text': note,
+                'party_name': p_data['party_name'] or p_data['legacy_key'] or first_guest_name
+            })
+
+    # Calculate days until RSVP deadline (May 14, 2027)
+    rsvp_deadline = date(2027, 5, 14)
+    days_until_rsvp = (rsvp_deadline - date.today()).days
+
+    return render_template(
+        "family_dashboard.html",
+        total_accepted=total_accepted,
+        total_pending=total_pending,
+        total_21_plus=total_21_plus,
+        days_until_rsvp=days_until_rsvp,  # <-- Pass the countdown here
+        lodging_counts=lodging_counts,
+        shuttle_counts=shuttle_counts,
+        total_shuttle_requested=total_shuttle_requested,
+        dietary_list=dietary_list,
+        guest_notes=guest_notes,
+        all_guests=formatted_guests,
+        supabase_url=os.environ.get("SUPABASE_URL"),
+        SUPABASE_PUBLISHABLE_KEY=os.environ.get("SUPABASE_PUBLISHABLE_KEY")
+    )
 
 @app.route("/faqs")
 def faqs():
     return render_template("faq.html")
 
+@app.route("/rsvp")
+def rsvp():
+    return render_template("rsvp.html")
+
+@app.route("/rsvp/lookup")
+def rsvp_existing():
+    return render_template("find_rsvp.html")
+
+@app.route("/rsvp/form")
+def rsvp_form():
+    code = request.args.get("code")
+    
+    if not code:
+        flash("No reservation code found. Please search again.", "error")
+        return redirect(url_for("rsvp_existing"))
+
+    party_query = """
+        SELECT id, confirmation_code, lodging_choice, shuttle_interest, guest_note
+        FROM parties
+        WHERE confirmation_code = %s;
+    """
+    
+    guests_query = """
+        SELECT g.id, g.party_id, g.first_name, g.last_name, g.rsvp_status, 
+               g.dietary_restrictions, g.is_anonymous, g.guest_of, g.updated_at
+        FROM guests g
+        JOIN parties p ON g.party_id = p.id
+        WHERE p.confirmation_code = %s
+        ORDER BY g.id ASC;
+    """
+    
+    conn = get_db_connection()
+    if not conn:
+        flash("Database unavailable. Please try again later.", "error")
+        return redirect(url_for("rsvp_existing"))
+
+    try:
+        with conn.cursor() as cur:
+            # 1. Fetch party details
+            cur.execute(party_query, (code,))
+            party_row = cur.fetchone()
+            
+            if not party_row:
+                flash("We couldn't find an invitation tied to that code.", "error")
+                return redirect(url_for("rsvp_existing"))
+                
+            party = {
+                "id": party_row[0],
+                "confirmation_code": party_row[1] or "",
+                "lodging_choice": party_row[2] or "",
+                "shuttle_interest": party_row[3] or "",
+                "guest_note": party_row[4] or ""
+            }
+
+            # 2. Fetch all guests for this party
+            cur.execute(guests_query, (code,))
+            guest_rows = cur.fetchall()
+            guest_cols = [d[0] for d in cur.description]
+            guests = [dict(zip(guest_cols, r)) for r in guest_rows]
+
+        # 3. Build a string-safe ID-to-First-Name lookup dictionary
+        guest_name_map = {}
+        for g in guests:
+            g_id = str(g.get("id"))
+            fname = (g.get("first_name") or "").strip()
+            guest_name_map[g_id] = fname if fname else "Guest"
+
+        # 4. Resolve the guest_of UUID to the primary guest's first name
+        for guest in guests:
+            raw_guest_of = guest.get("guest_of")
+            if raw_guest_of:
+                lookup_key = str(raw_guest_of)
+                if lookup_key in guest_name_map:
+                    guest["resolved_guest_of"] = guest_name_map[lookup_key]
+                else:
+                    guest["resolved_guest_of"] = None
+            else:
+                guest["resolved_guest_of"] = None
+
+        return render_template("rsvp_form.html", guests=guests, party=party, code=code)
+            
+    except Exception as e:
+        print(f"!!! DB Error in rsvp_form: {e}")
+        flash("An error occurred loading your reservation. Please try again.", "error")
+        return redirect(url_for("rsvp_existing"))
+    finally:
+        conn.close()
+
+@app.route('/rsvp/<party_code>', methods=['GET'])
+def public_rsvp_form(party_code):
+    conn = get_db_connection()
+    if not conn:
+        return jsonify({"error": "Database unavailable"}), 500
+
+    try:
+        with conn.cursor() as cur:
+            # 1. Fetch party details using your confirmation code column
+            cur.execute(
+                """
+                SELECT id, confirmation_code, lodging_choice, shuttle_interest, guest_note
+                FROM parties
+                WHERE confirmation_code = %s;
+                """,
+                (party_code,)
+            )
+            party_row = cur.fetchone()
+            if not party_row:
+                return jsonify({"error": "Party not found"}), 404
+            
+            party_cols = [d[0] for d in cur.description]
+            party = dict(zip(party_cols, party_row))
+
+            # 2. Fetch guests associated with this party's ID
+            cur.execute(
+                """
+                SELECT id, party_id, first_name, last_name, rsvp_status, 
+                       dietary_restrictions, is_anonymous, guest_of, updated_at
+                FROM guests
+                WHERE party_id = %s;
+                """,
+                (party["id"],)
+            )
+            guest_rows = cur.fetchall()
+            guest_cols = [d[0] for d in cur.description]
+            guests = [dict(zip(guest_cols, r)) for r in guest_rows]
+
+        # 3. Build a UUID-to-Name lookup dictionary for all guests in this party
+        guest_name_map = {}
+        for g in guests:
+            g_id = str(g.get("id"))
+            fname = (g.get("first_name") or "").strip()
+            lname = (g.get("last_name") or "").strip()
+            if fname:
+                guest_name_map[g_id] = f"{fname} {lname}".strip()
+            else:
+                guest_name_map[g_id] = "Guest"
+
+        # 4. Resolve the guest_of UUID to the primary guest's full name
+        for guest in guests:
+            raw_guest_of = guest.get("guest_of")
+            if raw_guest_of and str(raw_guest_of) in guest_name_map:
+                guest["resolved_guest_of"] = guest_name_map[str(raw_guest_of)]
+            else:
+                guest["resolved_guest_of"] = None
+
+        return render_template('rsvp_form.html', party=party, guests=guests)
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    finally:
+        conn.close()
+
+@app.route("/rsvp/submit", methods=["POST"])
+def submit_rsvp():
+    form_data = request.form
+    confirmation_code = form_data.get("confirmation_code")
+    
+    if not confirmation_code:
+        flash("Confirmation code missing. Please try again.", "error")
+        return redirect(url_for("rsvp_existing"))
+
+    lodging_choice = form_data.get("lodging_choice")
+    shuttle_interest = form_data.get("shuttle_interest")
+    guest_note = form_data.get("guest_note")
+
+    # 1. Capture email and check if the user chose to skip
+    confirmation_email = form_data.get("confirmation_email", "").strip()
+    skip_email = form_data.get("skip_email") == "true"
+
+    conn = get_db_connection()
+    if not conn:
+        flash("Database unavailable. Please try again later.", "error")
+        return redirect(url_for("rsvp_existing"))
+
+    try:
+        with conn.cursor() as cur:
+            # Update Household Logistics & Note in 'parties' table
+            cur.execute(
+                """
+                UPDATE parties 
+                SET lodging_choice = %s, 
+                    shuttle_interest = %s, 
+                    guest_note = %s
+                WHERE confirmation_code = %s;
+                """,
+                (lodging_choice, shuttle_interest, guest_note, confirmation_code)
+            )
+            
+            # Track if anyone in the party is attending
+            party_attending = False
+
+            # Update Individual Guests (Status, Dietary Restrictions, and Plus-One Names)
+            for key, value in form_data.items():
+                if key.startswith("guest_") and key.endswith("_status"):
+                    
+                    # Check if this guest accepted
+                    if value.lower() in ["accept", "accepted", "yes"]:
+                        party_attending = True
+                        
+                    guest_id = key[6:-7]
+                    dietary_note = form_data.get(f"dietary_{guest_id}", "").strip()
+                    
+                    first_name = form_data.get(f"guest_{guest_id}_first")
+                    last_name = form_data.get(f"guest_{guest_id}_last")
+
+                    cur.execute(
+                        """
+                        UPDATE guests 
+                        SET rsvp_status = %s, 
+                            dietary_restrictions = %s,
+                            first_name = COALESCE(NULLIF(%s, ''), first_name),
+                            last_name = COALESCE(NULLIF(%s, ''), last_name)
+                        WHERE id = %s;
+                        """,
+                        (
+                            value, 
+                            dietary_note, 
+                            first_name.strip() if first_name else None, 
+                            last_name.strip() if last_name else None, 
+                            guest_id
+                        )
+                    )
+
+            conn.commit()
+
+            # 2. Fetch the updated guests for this confirmation code to include in the email
+            with conn.cursor() as cur:
+                cur.execute(
+                    """
+                    SELECT first_name, last_name, rsvp_status, dietary_restrictions 
+                    FROM guests 
+                    WHERE party_id = (SELECT id FROM parties WHERE confirmation_code = %s);
+                    """,
+                    (confirmation_code,)
+                )
+                rows = cur.fetchall()
+                
+                # Format into the guest list structure for MailerSend
+                guests_list = []
+                for row in rows:
+                    # Depending on your cursor type (dict vs tuple), adjust indexing or keys. 
+                    # Assuming standard tuple here: (first_name, last_name, rsvp_status, dietary_restrictions)
+                    full_name = f"{row[0]} {row[1]}" if row[0] and row[1] else (row[0] or "")
+                    guests_list.append({
+                        "name": full_name,
+                        "rsvp": row[2] or "Pending",
+                        "dietary": row[3] or "None"
+                    })
+
+            # 3. Trigger the confirmation email if provided and not skipped
+            if confirmation_email and not skip_email:
+                # Assign the dynamic preview text based on attendance
+                if party_attending:
+                    dynamic_preview = "We can't wait to celebrate with you at Bay Pointe Inn!"
+                else:
+                    dynamic_preview = "Thank you for letting us know. You'll be with us in spirit!"
+                
+                try:
+                    send_rpv_confirmation_email = send_rsvp_confirmation_email(
+                        recipient_email=confirmation_email,
+                        confirmation_code=confirmation_code,
+                        guests_list=guests_list, # <--- Passed here successfully!
+                        lodging_choice=lodging_choice,
+                        preview_text=dynamic_preview
+                    )
+                except Exception as mail_error:
+                    print(f"Non-fatal email error: {mail_error}")
+
+    except Exception as e:
+        conn.rollback()
+        print(f"!!! DB Error in submit_rsvp: {e}")
+        flash("An error occurred while saving your RSVP. Please try again.", "error")
+        return redirect(url_for("rsvp_existing"))
+    finally:
+        conn.close()
+
+    return redirect(url_for("rsvp_confirmation", code=confirmation_code))
+
+from flask import session, render_template, redirect, url_for
+# (make sure your Supabase query imports are set up as needed)
+
+# We allow both URL styles: /rsvp/confirmation?code=XYZ and /rsvp/confirmation/XYZ
+@app.route('/rsvp/confirmation', defaults={'code': None})
+@app.route('/rsvp/confirmation/<code>')
+def rsvp_confirmation(code):
+    # 1. Get the code from the URL path OR the query string (?code=)
+    if not code:
+        code = request.args.get("code", "").strip().upper()
+        
+    if not code:
+        flash("Please enter a confirmation code to view your itinerary.", "error")
+        return redirect(url_for("rsvp_existing"))
+
+    # 2. Query the real party details from Postgres
+    party_query = """
+        SELECT id, confirmation_code, lodging_choice, shuttle_interest, guest_note
+        FROM parties
+        WHERE confirmation_code ILIKE %s
+        LIMIT 1;
+    """
+    parties, err = get_data_from_query(party_query, (code,))
+    
+    if err or not parties:
+        flash("We couldn't find a confirmed reservation with that reference code.", "error")
+        return redirect(url_for("rsvp_existing"))
+        
+    real_party = parties[0]
+    party_id = real_party["id"]
+
+    # 3. Query ALL guests tied to this party_id
+    # We use SQL to cleanly combine first_name + last_name into 'name' for your HTML template!
+    # 3. Query ALL guests tied to this party_id and grab their individual rsvp_status
+    guests_query = """
+        SELECT id, 
+               TRIM(COALESCE(first_name, '') || ' ' || COALESCE(last_name, '')) AS name,
+               rsvp_status, 
+               dietary_restrictions
+        FROM guests
+        WHERE party_id = %s
+        ORDER BY id ASC;
+    """
+    real_party_members, g_err = get_data_from_query(guests_query, (party_id,))
+    
+    if g_err:
+        real_party_members = []
+
+    # 4. Render your HTML template using the REAL database rows!
+    return render_template(
+        "rsvp_confirmation.html", 
+        party=real_party, 
+        party_members=real_party_members
+    )
+
+@app.route("/rsvp/respond")
+def rsvp_respond():
+    return render_template("rsvp_form.html")
 
 @app.route("/vendors")
 def vendors():
     return render_template(
         "vendors.html",
         supabase_url=os.environ.get("SUPABASE_URL"),
-        supabase_anon_key=os.environ.get("SUPABASE_ANON_KEY"),
+        SUPABASE_PUBLISHABLE_KEY=os.environ.get("SUPABASE_PUBLISHABLE_KEY"),
     )
 
 
@@ -1248,7 +1837,7 @@ def hello():
     return render_template(
         "address-collection.html",
         supabase_url=os.environ.get("SUPABASE_URL"),
-        supabase_anon_key=os.environ.get("SUPABASE_ANON_KEY"),
+        SUPABASE_PUBLISHABLE_KEY=os.environ.get("SUPABASE_PUBLISHABLE_KEY"),
     )
 
 
@@ -1257,7 +1846,7 @@ def dashboard():
     return render_template(
         "dashboard.html",
         supabase_url=os.environ.get("SUPABASE_URL"),
-        supabase_anon_key=os.environ.get("SUPABASE_ANON_KEY"),
+        SUPABASE_PUBLISHABLE_KEY=os.environ.get("SUPABASE_PUBLISHABLE_KEY"),
     )
 
 
@@ -1266,7 +1855,7 @@ def address_book():
     return render_template(
         "address-book.html",
         supabase_url=os.environ.get("SUPABASE_URL"),
-        supabase_anon_key=os.environ.get("SUPABASE_ANON_KEY"),
+        SUPABASE_PUBLISHABLE_KEY=os.environ.get("SUPABASE_PUBLISHABLE_KEY"),
     )
 
 # --- Page Route ---
@@ -1275,7 +1864,7 @@ def timeline_page():
     return render_template(
         "timeline.html",
         supabase_url=os.environ.get("SUPABASE_URL"),
-        supabase_anon_key=os.environ.get("SUPABASE_ANON_KEY"),
+        SUPABASE_PUBLISHABLE_KEY=os.environ.get("SUPABASE_PUBLISHABLE_KEY"),
     )
 
 # --- API Routes ---
@@ -1299,6 +1888,166 @@ def get_timeline():
     """
     data, error = get_data_from_query(query)
     return jsonify(data) if not error else (jsonify({"error": error}), 500)
+
+from flask import request, redirect, url_for, render_template, flash
+
+@app.route("/rsvp/modify/search-by-code", methods=["POST"])
+def search_by_code():
+    code = request.form.get("confirmation_code", "").strip().upper()
+    
+    # Query Supabase for the confirmation code
+    response = supabase.table("parties").select("*").eq("confirmation_code", code).execute()
+    
+    if not response.data:
+        # FIXED: Uses 'rsvp_existing' instead of 'find_rsvp_page'
+        flash("We couldn't find a reservation matching that reference code. Please check for typos or try searching by your name.", "error")
+        return redirect(url_for("rsvp_existing"))
+        
+    # FIXED: Uses 'rsvp_confirmation' instead of 'confirmation_page'
+    return redirect(url_for("rsvp_confirmation", code=code))
+
+
+# ADD THIS MISSING ROUTE FOR SEARCHING BY NAME:
+from flask import current_app
+# (Ensure you import whatever database connection utility your project uses, 
+# e.g., psycopg2 or a get_db() context manager. Here is the standard psycopg2 approach:)
+
+
+
+@app.route("/rsvp/modify/search-by-name", methods=["POST"])
+def search_by_name():
+    raw_name = request.form.get("guest_name", "").strip()
+    clean_name = " ".join(raw_name.split())
+    
+    if not clean_name:
+        flash("Please enter a name to search.", "error")
+        return redirect(url_for("rsvp_existing"))
+
+    search_pattern = f"%{clean_name}%"
+
+    # Grab the confirmation code AND the rsvp_status of the matching guest (or party)
+    query = """
+        SELECT g.party_id, p.confirmation_code, g.rsvp_status 
+        FROM guests g
+        JOIN parties p ON g.party_id = p.id
+        WHERE TRIM(COALESCE(g.first_name, '') || ' ' || COALESCE(g.last_name, '')) ILIKE %s
+           OR EXISTS (
+               SELECT 1 
+               FROM unnest(COALESCE(g.alt_first_name, ARRAY[]::text[])) af(fn),
+                    unnest(COALESCE(g.alt_last_name, ARRAY[]::text[])) al(ln)
+               WHERE TRIM(fn || ' ' || ln) ILIKE %s
+           )
+           OR EXISTS (
+               SELECT 1 
+               FROM unnest(COALESCE(g.alt_first_name, ARRAY[]::text[])) af(fn)
+               WHERE TRIM(fn || ' ' || COALESCE(g.last_name, '')) ILIKE %s
+           )
+           OR EXISTS (
+               SELECT 1 
+               FROM unnest(COALESCE(g.alt_last_name, ARRAY[]::text[])) al(ln)
+               WHERE TRIM(COALESCE(g.first_name, '') || ' ' || ln) ILIKE %s
+           )
+        LIMIT 1;
+    """
+    
+    conn = get_db_connection()
+    if not conn:
+        flash("Database unavailable. Please try searching by your confirmation code.", "error")
+        return redirect(url_for("rsvp_existing"))
+
+    try:
+        with conn.cursor() as cur:
+            cur.execute(query, (search_pattern, search_pattern, search_pattern, search_pattern))
+            row = cur.fetchone()
+            
+            if not row:
+                flash("We couldn't find a reservation under that name. Please check your spelling or search by your reference code.", "error")
+                return redirect(url_for("rsvp_existing"))
+                
+            party_id = row[0]
+            confirmation_code = row[1]
+            rsvp_status = row[2]
+            
+            # If they haven't responded yet (status is pending or empty/None), send them to the RSVP form
+            if not rsvp_status or rsvp_status.lower() == 'pending':
+                return redirect(url_for("rsvp_form", code=confirmation_code))
+                
+            # Otherwise, they've already responded, so take them to the confirmation/summary page
+            return redirect(url_for("rsvp_confirmation", code=confirmation_code))
+            
+    except Exception as e:
+        print(f"!!! DB Error in search_by_name: {e}")
+        flash("An internal database error occurred. Please try searching by your confirmation code.", "error")
+        return redirect(url_for("rsvp_existing"))
+    finally:
+        conn.close()
+
+@app.route("/rsvp/search", methods=["POST"])
+def rsvp_search():
+    raw_name = request.form.get("guest_name", "").strip()
+    clean_name = " ".join(raw_name.split())
+    
+    if not clean_name:
+        flash("Please enter a name to search.", "error")
+        return redirect(url_for("rsvp_landing")) # Or whatever your landing route is called
+
+    search_pattern = f"%{clean_name}%"
+
+    query = """
+        SELECT g.party_id, p.confirmation_code, g.rsvp_status 
+        FROM guests g
+        JOIN parties p ON g.party_id = p.id
+        WHERE TRIM(COALESCE(g.first_name, '') || ' ' || COALESCE(g.last_name, '')) ILIKE %s
+           OR EXISTS (
+               SELECT 1 
+               FROM unnest(COALESCE(g.alt_first_name, ARRAY[]::text[])) af(fn),
+                    unnest(COALESCE(g.alt_last_name, ARRAY[]::text[])) al(ln)
+               WHERE TRIM(fn || ' ' || ln) ILIKE %s
+           )
+           OR EXISTS (
+               SELECT 1 
+               FROM unnest(COALESCE(g.alt_first_name, ARRAY[]::text[])) af(fn)
+               WHERE TRIM(fn || ' ' || COALESCE(g.last_name, '')) ILIKE %s
+           )
+           OR EXISTS (
+               SELECT 1 
+               FROM unnest(COALESCE(g.alt_last_name, ARRAY[]::text[])) al(ln)
+               WHERE TRIM(COALESCE(g.first_name, '') || ' ' || ln) ILIKE %s
+           )
+        LIMIT 1;
+    """
+    
+    conn = get_db_connection()
+    if not conn:
+        flash("Database unavailable. Please try searching by your confirmation code.", "error")
+        return redirect(url_for("rsvp_landing"))
+
+    try:
+        with conn.cursor() as cur:
+            cur.execute(query, (search_pattern, search_pattern, search_pattern, search_pattern))
+            row = cur.fetchone()
+            
+            if not row:
+                flash("We couldn't find a reservation under that name. Please check your spelling or search by your reference code.", "error")
+                return redirect(url_for("rsvp_landing"))
+                
+            party_id = row[0]
+            confirmation_code = row[1]
+            rsvp_status = row[2]
+            
+            # If pending (or empty), bounce them straight to the active RSVP form
+            if not rsvp_status or rsvp_status.lower() == 'pending':
+                return redirect(url_for("rsvp_form", code=confirmation_code))
+                
+            # Otherwise, they've already responded, so take them to the confirmation page
+            return redirect(url_for("rsvp_confirmation", code=confirmation_code))
+            
+    except Exception as e:
+        print(f"!!! DB Error in rsvp_search: {e}")
+        flash("An internal database error occurred. Please try searching by your confirmation code.", "error")
+        return redirect(url_for("rsvp_landing"))
+    finally:
+        conn.close()
 
 @app.route("/api/timeline", methods=["POST"])
 def add_timeline_event():
@@ -1399,7 +2148,7 @@ def exports():
     return render_template(
         "export.html",
         supabase_url=os.environ.get("SUPABASE_URL"),
-        supabase_anon_key=os.environ.get("SUPABASE_ANON_KEY"),
+        SUPABASE_PUBLISHABLE_KEY=os.environ.get("SUPABASE_PUBLISHABLE_KEY"),
     )
 
 @app.route("/settings")
@@ -1407,7 +2156,7 @@ def settings_page():
     return render_template(
         "settings.html",
         supabase_url=os.environ.get("SUPABASE_URL"),
-        supabase_anon_key=os.environ.get("SUPABASE_ANON_KEY"),
+        SUPABASE_PUBLISHABLE_KEY=os.environ.get("SUPABASE_PUBLISHABLE_KEY"),
     )
 
 @app.route('/api/profile/update', methods=['POST'])
@@ -1468,7 +2217,72 @@ def update_profile():
             conn.close()
 
 
+def send_rsvp_confirmation_email(recipient_email, confirmation_code, guests_list, lodging_choice=None, preview_text=""):
+    api_key = os.environ.get("MAILERSEND_API_KEY")
+    template_id = os.environ.get("MAILERSEND_TEMPLATE_ID")
+    from_email = os.environ.get("MAILERSEND_FROM_EMAIL", "rsvp@emmaandethan.com")
+    from_name = os.environ.get("MAILERSEND_FROM_NAME", "Emma & Ethan")
+    subject = "RSVP Confirmation: Emma & Ethan's Wedding"
+
+    if not api_key or not template_id:
+        print("!!! MailerSend credentials missing in environment variables.")
+        return False
+
+    # Format the list to match MailerSend's native 'item' array structure
+    formatted_items = []
+    for guest in guests_list:
+        formatted_items.append({
+            "name": guest.get('name', ''),
+            "status": guest.get('rsvp', ''),  # Maps to the 'status' column in your screenshot
+            "dietary": guest.get('dietary', 'None')
+        })
+
+    url = "https://api.mailersend.com/v1/email"
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "Content-Type": "application/json"
+    }
+
+    payload = {
+        "from": {
+            "email": from_email,
+            "name": from_name
+        },
+        "to": [
+            {
+                "email": recipient_email
+            }
+        ],
+        "subject": subject, 
+        "template_id": template_id,
+        "personalization": [
+            {
+                "email": recipient_email,
+                "data": {
+                    "confirmation_code": confirmation_code,
+                    "lodging": lodging_choice or "Not specified",
+                    "confirmation_url": f"https://www.emmaandethan.com/rsvp/confirmation/{confirmation_code}",
+                    "preview_text": preview_text,
+                    "item": formatted_items
+                }
+            }
+        ]
+    }
+
+    try:
+        response = requests.post(url, json=payload, headers=headers, timeout=10)
+        if response.status_code >= 400:
+            print(f"!!! MailerSend API Error: {response.status_code} - {response.text}")
+            return False
+        return True
+    except Exception as e:
+        print(f"!!! Error sending confirmation email: {e}")
+        return False
+
+
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     debug = os.environ.get("FLASK_DEBUG") == "1" or ENV == "development"
     app.run(host="0.0.0.0", port=port, debug=debug)
+
+

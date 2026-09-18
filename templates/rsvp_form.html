@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RSVP | Emma & Ethan</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='rsvp.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='rsvp_form.css') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inria+Serif:ital,wght@0,300;0,400;0,700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+    <style>
+        /* Subtle highlight animation for missing sections */
+        @keyframes subtlePulse {
+            0% { box-shadow: 0 0 0 0 rgba(180, 140, 100, 0.4); }
+            70% { box-shadow: 0 0 0 12px rgba(180, 140, 100, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(180, 140, 100, 0); }
+        }
+        .section-highlight {
+            animation: subtlePulse 1.5s ease-in-out;
+            border-radius: 12px;
+        }
+    </style>
+</head>
+<body class="snap-body">
+
+    <!-- Sticky Minimal Navbar -->
+    <nav class="navbar" id="navbar">
+        <a href="/" class="logo-link">
+            <img src="{{ url_for('static', filename='Long logo with rose.png') }}" alt="Emma & Ethan Logo" class="logo">
+        </a>
+    </nav>
+
+    <!-- The Master Form Container with Snap Scrolling -->
+    <form action="/rsvp/submit" method="POST" class="snap-form-container" autocomplete="off" id="masterRsvpForm">
+        <input type="hidden" name="confirmation_code" value="{{ party.confirmation_code }}">
+
+        <!-- ==========================================
+             SECTION 1: PARTY ATTENDANCE (Accept / Decline)
+             ========================================== -->
+        <section class="rsvp-snap-section" id="attendance-section">
+            <div class="snap-card">
+                <span class="snap-kicker">STEP 1</span>
+                <h1 class="snap-title">The Celebration</h1>
+                <p class="snap-instructions">Please let us know who from your household will be joining us.</p>
+                
+                <div class="party-list-container">
+                    {% for guest in guests %}
+                    <!-- Dynamic Guest Row -->
+                    <div class="party-row" data-guest-id="{{ guest.id }}" data-guest-of="{{ guest.guest_of or '' }}">
+                        
+                        <div class="guest-info-wrapper" style="width: 100%;">
+                            <div class="guest-main-display">
+                                
+                                <!-- Name Display Logic -->
+                                <div class="guest-name-wrapper" style="display: flex; align-items: center; gap: 10px;">
+                                    {% if guest.is_anonymous %}
+                                        <!-- Default Placeholder -->
+                                        <span id="name_placeholder_{{ guest.id }}" class="guest-name" style="{% if guest.first_name %}display: none;{% endif %}">
+                                            Guest of {{ guest.resolved_guest_of }}
+                                        </span>
+
+                                        <!-- Confirmed Name View -->
+                                        <div id="name_confirmed_view_{{ guest.id }}" style="display: {% if guest.first_name %}flex{% else %}none{% endif %}; align-items: center; gap: 8px;">
+                                            <span class="guest-name" id="confirmed_text_{{ guest.id }}">{{ guest.first_name }} {{ guest.last_name }}</span>
+                                            <button type="button" onclick="editPlusOne('{{ guest.id }}')" style="background: none; border: none; cursor: pointer; color: #888; font-size: 0.9rem; padding: 2px;" title="Edit Name">
+                                                <i class="bi bi-pencil"></i>
+                                            </button>
+                                        </div>
+                                    {% else %}
+                                        <span class="guest-name">{{ guest.first_name }} {{ guest.last_name }}</span>
+                                    {% endif %}
+                                </div>
+
+                                <!-- Attendance Toggle Group -->
+                                <div class="attendance-toggle-group">
+                                    <button type="button" class="attend-btn accept-btn {% if guest.rsvp_status in ['accept', 'accepted', 'attending'] %}btn-active-accept{% endif %}" onclick="setAttendance('{{ guest.id }}', 'accepted')">Accept</button>
+                                    <button type="button" class="attend-btn decline-btn {% if guest.rsvp_status in ['decline', 'declined'] %}btn-active-decline{% endif %}" onclick="setAttendance('{{ guest.id }}', 'declined')">Decline</button>
+                                    <input type="hidden" name="guest_{{ guest.id }}_status" id="status_{{ guest.id }}" value="{{ guest.rsvp_status or '' }}" required>
+                                </div>
+
+                            </div>
+
+                            <!-- Concierge Plus-One Name Drawer -->
+                            {% if guest.is_anonymous %}
+                            <div class="anonymous-name-drawer" id="name_drawer_{{ guest.id }}" style="display: {% if guest.rsvp_status in ['accept', 'accepted', 'attending'] and not guest.first_name %}block{% else %}none{% endif %}; margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(0,0,0,0.06);">
+                                <p style="font-size: 0.85rem; color: #666; margin-bottom: 8px; font-style: italic;">Please provide your plus-one's name for our seating arrangements:</p>
+                                <div style="display: flex; gap: 12px; align-items: center;">
+                                    <input type="text" name="guest_{{ guest.id }}_first" id="first_input_{{ guest.id }}" value="{{ guest.first_name or '' }}" placeholder="First Name" class="snap-input-minimal" style="flex: 1;" {% if guest.rsvp_status in ['accept', 'accepted', 'attending'] and not guest.first_name %}required{% endif %}>
+                                    <input type="text" name="guest_{{ guest.id }}_last" id="last_input_{{ guest.id }}" value="{{ guest.last_name or '' }}" placeholder="Last Name" class="snap-input-minimal" style="flex: 1;" {% if guest.rsvp_status in ['accept', 'accepted', 'attending'] and not guest.first_name %}required{% endif %}>
+                                    <button type="button" class="attend-btn accept-btn" style="padding: 10px 18px; font-size: 0.8rem;" onclick="savePlusOneName('{{ guest.id }}')">Save</button>
+                                </div>
+                            </div>
+                            {% endif %}
+
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ==========================================
+            SECTION 2: DIETARY RESTRICTIONS (Per Guest)
+            ========================================== -->
+        <section class="rsvp-snap-section" id="dietary-section">
+            <div class="snap-card">
+                <span class="snap-kicker" id="kicker-dietary">STEP 2</span>
+                <h1 class="snap-title">Dietary Notes</h1>
+                <p class="snap-instructions">Please let us know if anyone in your party has any allergies or dietary restrictions.</p>
+                
+                <!-- NEW: Placeholder message when no guests are accepted yet -->
+                <div id="dietary-placeholder" style="padding: 1.5rem; text-align: center; color: #888; font-style: italic; margin: 1rem 0; display: block;">
+                    Please accept attendance for at least one guest in Step 1 to enter dietary requirements.
+                </div>
+
+                <div class="party-list-container">
+                    {% for guest in guests %}
+                    <div class="guest-dietary-row" id="dietary_row_{{ guest.id }}" style="display: {% if guest.rsvp_status in ['accept', 'accepted', 'attending'] %}block{% else %}none{% endif %};">
+                        <label class="dietary-label">{{ guest.first_name }} {{ guest.last_name }}</label>
+                        <input 
+                            type="text" 
+                            name="dietary_{{ guest.id }}" 
+                            class="snap-input-minimal" 
+                            placeholder="e.g., Gluten-free, vegan, nut allergy..."
+                            value="{{ guest.dietary_restrictions or '' }}"
+                        >
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="snap-scroll-hint">
+                <span>Scroll down to continue</span>
+                <i class="bi bi-chevron-down"></i>
+            </div>
+        </section>
+
+
+        <!-- ==========================================
+             SECTION 3: ACCOMMODATIONS & SHUTTLE
+             ========================================== -->
+        <section class="rsvp-snap-section" id="accommodations-section">
+            <div class="snap-card">
+                <span class="snap-kicker" id="kicker-accommodations">STEP 3</span>
+                <h1 class="snap-title">Accommodations</h1>
+                <p class="snap-instructions">Where do you plan on lodging for the weekend?</p>
+                
+                <div class="lodging-options-grid">
+                    <label class="lodging-tile">
+                        <input type="radio" name="lodging_choice" value="Bay Pointe Inn" {% if party.lodging_choice == 'Bay Pointe Inn' %}checked{% endif %} onchange="handleLodgingChange()">
+                        <span class="tile-label">Bay Pointe Inn</span>
+                    </label>
+                    <label class="lodging-tile">
+                        <input type="radio" name="lodging_choice" value="Best Western" {% if party.lodging_choice == 'Best Western' %}checked{% endif %} onchange="handleLodgingChange()">
+                        <span class="tile-label">Best Western Plus</span>
+                    </label>
+                    <label class="lodging-tile">
+                        <input type="radio" name="lodging_choice" value="Gun Lake Casino" {% if party.lodging_choice == 'Gun Lake Casino' %}checked{% endif %} onchange="handleLodgingChange()">
+                        <span class="tile-label">Gun Lake Casino</span>
+                    </label>
+                    <label class="lodging-tile">
+                        <input type="radio" name="lodging_choice" value="Other" {% if party.lodging_choice == 'Other' %}checked{% endif %} onchange="handleLodgingChange()">
+                        <span class="tile-label">Other / Unsure</span>
+                    </label>
+                </div>
+
+                <!-- Conditional Shuttle Question -->
+                <div id="shuttle-container" class="shuttle-conditional-box" style="display: none;">
+                    <div class="rsvp-divider-short"></div>
+                    <p class="shuttle-question">Would you be interested in shuttle transportation to and from the venue?</p>
+                    <div class="shuttle-toggle-group">
+                        <label class="radio-pill">
+                            <input type="radio" name="shuttle_interest" value="yes" {% if party.shuttle_interest == 'yes' %}checked{% endif %}> Yes, please
+                        </label>
+                        <label class="radio-pill">
+                            <input type="radio" name="shuttle_interest" value="no" {% if party.shuttle_interest == 'no' %}checked{% endif %}> No, thank you
+                        </label>
+                    </div>
+                </div>
+
+                <div class="snap-scroll-hint">
+                    <span>Scroll down to continue</span>
+                    <i class="bi bi-chevron-down"></i>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ==========================================
+             SECTION 4: A NOTE FOR THE COUPLE
+             ========================================== -->
+        <section class="rsvp-snap-section">
+            <div class="snap-card">
+                <span class="snap-kicker" id="kicker-note">STEP 4</span>
+                <h1 class="snap-title">Leave a Note</h1>
+                <p class="snap-instructions">
+                    Share a favorite memory, piece of advice, or a message for Emma & Ethan. 
+                    <span style="font-style: italic; color: #888;">(Optional)</span>
+                </p>
+                
+                <div style="margin: 24px 0 28px 0; width: 100%;">
+                    <textarea 
+                        name="guest_note" 
+                        rows="4" 
+                        class="snap-input-minimal" 
+                        style="width: 100%; resize: vertical; min-height: 110px; font-family: 'Inria Serif', serif; line-height: 1.6;"
+                        placeholder="We can't wait to celebrate with you both..."
+                    >{{ party.guest_note or '' }}</textarea>
+                </div>
+
+                <div class="snap-scroll-hint">
+                    <span>Scroll down for final step</span>
+                    <i class="bi bi-chevron-down"></i>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ==========================================
+             SECTION 5: CONFIRMATION EMAIL & SUBMIT
+             ========================================== -->
+        <section class="rsvp-snap-section">
+            <div class="snap-card">
+                <span class="snap-kicker" id="kicker-confirmation">LAST STEP</span>
+                <h1 class="snap-title">Confirmation Email</h1>
+                <p class="snap-instructions">Would you like a copy of your response sent to your inbox?</p>
+                
+                <div class="rsvp-input-wrapper" style="margin-bottom: 24px;">
+                    <input 
+                        type="email" 
+                        name="confirmation_email" 
+                        class="rsvp-minimal-input" 
+                        placeholder="your.email@example.com"
+                    >
+                </div>
+
+                <button type="submit" class="snap-final-submit-btn">
+                    Submit Reservation &rarr;
+                </button>
+
+                <!-- Subtle Skip Option -->
+                <div class="skip-email-container">
+                    <button type="submit" name="skip_email" value="true" class="skip-email-link">
+                        Skip this step and submit without email
+                    </button>
+                </div>
+            </div>
+        </section>
+
+    </form>
+
+    <!-- Client-side interaction logic -->
+    <script>
+        console.log("=== SCRIPT EXECUTING ===");
+
+        // Handle Conditional Shuttle Display
+        function handleLodgingChange() {
+            const checkedLodging = document.querySelector('input[name="lodging_choice"]:checked');
+            const shuttleBox = document.getElementById('shuttle-container');
+
+            if (!checkedLodging) return;
+            const selectedLodging = checkedLodging.value;
+
+            if (selectedLodging === 'Best Western' || selectedLodging === 'Gun Lake Casino') {
+                shuttleBox.style.display = 'block';
+            } else {
+                shuttleBox.style.display = 'none';
+                document.querySelectorAll('input[name="shuttle_interest"]').forEach(input => input.checked = false);
+            }
+        }
+
+        // Check if every single guest in the party has declined & update dynamic steps
+        // Check if every single guest in the party has declined & update dynamic steps
+        function toggleRestOfForm() {
+            const statusInputs = document.querySelectorAll('input[id^="status_"]');
+            if (statusInputs.length === 0) return;
+
+            let allDeclined = true;
+            let hasAccepted = false; // <-- NEW: Track if anyone is accepted
+
+            statusInputs.forEach(input => {
+                const val = input.value ? input.value.trim().toLowerCase() : '';
+                if (val !== 'decline' && val !== 'declined') {
+                    allDeclined = false;
+                }
+                if (val === 'accept' || val === 'accepted' || val === 'attending') {
+                    hasAccepted = true;
+                }
+            });
+
+            const dietarySection = document.getElementById('dietary-section');
+            const accommodationsSection = document.getElementById('accommodations-section');
+            const noteKicker = document.getElementById('kicker-note');
+            const dietaryPlaceholder = document.getElementById('dietary-placeholder'); // <-- NEW: Grab placeholder
+
+            // NEW: Show placeholder if no one is accepted yet, hide it as soon as someone is!
+            if (dietaryPlaceholder) {
+                dietaryPlaceholder.style.display = hasAccepted ? 'none' : 'block';
+            }
+
+            if (allDeclined) {
+                if (dietarySection) dietarySection.style.display = 'none';
+                if (accommodationsSection) accommodationsSection.style.display = 'none';
+                if (noteKicker) noteKicker.innerText = 'STEP 2';
+            } else {
+                if (dietarySection) dietarySection.style.display = 'flex';
+                if (accommodationsSection) accommodationsSection.style.display = 'flex';
+                if (noteKicker) noteKicker.innerText = 'STEP 4';
+            }
+        }
+
+        // Run setup immediately since script is at the bottom of the body
+        handleLodgingChange();
+        toggleRestOfForm();
+
+        document.querySelectorAll('.party-row').forEach(row => {
+            const guestId = row.getAttribute('data-guest-id');
+            const statusInput = document.getElementById(`status_${guestId}`);
+            if (statusInput && (statusInput.value === 'decline' || statusInput.value === 'declined')) {
+                updateDependentPlusOnes(guestId, statusInput.value);
+            }
+        });
+
+        // Attach the submit validation listener immediately
+        const masterForm = document.getElementById('masterRsvpForm');
+        if (masterForm) {
+            console.log("SUCCESS: #masterRsvpForm found, attaching submit listener.");
+            masterForm.addEventListener('submit', validateFormOnSubmit);
+        } else {
+            console.error("ERROR: #masterRsvpForm not found!");
+        }
+
+        // Automatically cascade status to dependent plus-ones
+        function updateDependentPlusOnes(primaryGuestId, status) {
+            const dependentRows = document.querySelectorAll(`.party-row[data-guest-of="${primaryGuestId}"]`);
+            
+            dependentRows.forEach(row => {
+                const plusOneId = row.getAttribute('data-guest-id');
+                const acceptBtn = row.querySelector('.accept-btn');
+                const declineBtn = row.querySelector('.decline-btn');
+                const drawer = document.getElementById(`name_drawer_${plusOneId}`);
+
+                if (status === 'declined' || status === 'decline') {
+                    setAttendance(plusOneId, 'declined');
+                    row.style.opacity = '0.5';
+                    if (acceptBtn) acceptBtn.disabled = true;
+                    if (declineBtn) declineBtn.disabled = true;
+                    if (drawer) drawer.style.display = 'none';
+                } else if (status === 'accepted' || status === 'accept') {
+                    row.style.opacity = '1';
+                    if (acceptBtn) acceptBtn.disabled = false;
+                    if (declineBtn) declineBtn.disabled = false;
+                }
+            });
+        }
+
+        // Save the plus-one name
+        function savePlusOneName(guestId) {
+            const firstNameInput = document.getElementById(`first_input_${guestId}`);
+            const lastNameInput = document.getElementById(`last_input_${guestId}`);
+            const nameDrawer = document.getElementById(`name_drawer_${guestId}`);
+            const placeholder = document.getElementById(`name_placeholder_${guestId}`);
+            const confirmedView = document.getElementById(`name_confirmed_view_${guestId}`);
+            const confirmedText = document.getElementById(`confirmed_text_${guestId}`);
+
+            const firstName = firstNameInput.value.trim();
+            const lastName = lastNameInput.value.trim();
+
+            if (!firstName || !lastName) {
+                alert("Please enter both a first and last name for your plus-one.");
+                return;
+            }
+
+            const fullName = `${firstName} ${lastName}`;
+
+            confirmedText.innerText = fullName;
+            if (placeholder) placeholder.style.display = 'none';
+            if (confirmedView) confirmedView.style.display = 'flex';
+            if (nameDrawer) nameDrawer.style.display = 'none';
+
+            const dietaryRow = document.querySelector(`input[name="dietary_${guestId}"]`);
+            if (dietaryRow) {
+                const dietaryLabel = dietaryRow.closest('.guest-dietary-row').querySelector('.dietary-label');
+                if (dietaryLabel) {
+                    dietaryLabel.innerText = fullName;
+                }
+            }
+        }
+
+        // Re-open the drawer to edit the name
+        function editPlusOne(guestId) {
+            const nameDrawer = document.getElementById(`name_drawer_${guestId}`);
+            if (nameDrawer) nameDrawer.style.display = 'block';
+        }
+
+        // Handle Accept / Decline selection and drawer trigger
+        function setAttendance(guestId, status) {
+            const row = document.querySelector(`[data-guest-id="${guestId}"]`);
+            if (!row) return;
+
+            const acceptBtn = row.querySelector('.accept-btn');
+            const declineBtn = row.querySelector('.decline-btn');
+            const hiddenInput = document.getElementById(`status_${guestId}`);
+            
+            const nameDrawer = document.getElementById(`name_drawer_${guestId}`);
+            const confirmedView = document.getElementById(`name_confirmed_view_${guestId}`);
+            const placeholder = document.getElementById(`name_placeholder_${guestId}`);
+            const firstNameInput = document.getElementById(`first_input_${guestId}`);
+            const lastNameInput = document.getElementById(`last_input_${guestId}`);
+
+            const dietaryRow = document.getElementById(`dietary_row_${guestId}`);
+            const dietaryInput = dietaryRow ? dietaryRow.querySelector('input') : null;
+
+            if (hiddenInput) hiddenInput.value = status;
+
+            if (status === 'accept' || status === 'accepted') {
+                if (acceptBtn) acceptBtn.classList.add('btn-active-accept');
+                if (declineBtn) declineBtn.classList.remove('btn-active-decline');
+                
+                if (dietaryRow) dietaryRow.style.display = 'block';
+
+                const hasConfirmedName = confirmedView && confirmedView.style.display === 'flex';
+                if (nameDrawer && !hasConfirmedName) {
+                    nameDrawer.style.display = 'block';
+                    if (firstNameInput) firstNameInput.required = true;
+                    if (lastNameInput) lastNameInput.required = true;
+                }
+            } else {
+                if (declineBtn) declineBtn.classList.add('btn-active-decline');
+                if (acceptBtn) acceptBtn.classList.remove('btn-active-accept');
+                
+                if (dietaryRow) dietaryRow.style.display = 'none';
+                if (dietaryInput) dietaryInput.value = '';
+
+                if (nameDrawer) nameDrawer.style.display = 'none';
+                if (confirmedView) confirmedView.style.display = 'none';
+                if (placeholder) placeholder.style.display = 'block';
+                if (firstNameInput) firstNameInput.required = false;
+                if (lastNameInput) lastNameInput.required = false;
+            }
+
+            updateDependentPlusOnes(guestId, status);
+            toggleRestOfForm();
+        }
+
+        // Smart Form Submission Validation & Smooth Scroll
+        function validateFormOnSubmit(event) {
+            console.log(">>> SUBMIT EVENT INTERCEPTED BY VALIDATION <<<");
+
+            // 1. Check if all guest attendance statuses are valid (must be accept/accepted or decline/declined)
+            const statusInputs = document.querySelectorAll('input[id^="status_"]');
+            console.log(`Checking ${statusInputs.length} status inputs.`);
+            for (let input of statusInputs) {
+                const val = input.value ? input.value.trim().toLowerCase() : '';
+                console.log(`Input ${input.id} value: "${val}"`);
+                
+                if (val !== 'accept' && val !== 'accepted' && val !== 'decline' && val !== 'declined') {
+                    console.log(`BLOCKED: Invalid or missing status for ${input.id}`);
+                    event.preventDefault();
+                    alert("Please select Accept or Decline for all guests before submitting.");
+                    document.getElementById('attendance-section').scrollIntoView({ behavior: 'smooth' });
+                    triggerPulse(document.getElementById('attendance-section'));
+                    return false;
+                }
+            }
+
+            // 2. Check if any accepted anonymous guest is missing a saved name drawer completion
+            const nameDrawers = document.querySelectorAll('.anonymous-name-drawer');
+            for (let drawer of nameDrawers) {
+                if (drawer.style.display === 'block') {
+                    console.log("BLOCKED: Unsaved plus-one name drawer open.");
+                    event.preventDefault();
+                    alert("Please save your plus-one's name before submitting.");
+                    document.getElementById('attendance-section').scrollIntoView({ behavior: 'smooth' });
+                    triggerPulse(document.getElementById('attendance-section'));
+                    return false;
+                }
+            }
+
+            // 3. Check if accommodations & shuttle are required (i.e. at least one person is attending)
+            let someoneAccepted = false;
+            statusInputs.forEach(input => {
+                const val = input.value ? input.value.trim().toLowerCase() : '';
+                if (val === 'accept' || val === 'accepted') {
+                    someoneAccepted = true;
+                }
+            });
+
+            if (someoneAccepted) {
+                const accommodationsSection = document.getElementById('accommodations-section');
+                
+                // Check lodging selection
+                const lodgingSelected = document.querySelector('input[name="lodging_choice"]:checked');
+                if (!lodgingSelected && accommodationsSection && accommodationsSection.style.display !== 'none') {
+                    console.log("BLOCKED: Missing lodging selection.");
+                    event.preventDefault();
+                    alert("Please select your lodging accommodations before submitting.");
+                    accommodationsSection.scrollIntoView({ behavior: 'smooth' });
+                    triggerPulse(accommodationsSection);
+                    return false;
+                }
+
+                // Check shuttle interest selection if the shuttle box is visible
+                const shuttleBox = document.getElementById('shuttle-container');
+                if (shuttleBox && shuttleBox.style.display !== 'none') {
+                    const shuttleSelected = document.querySelector('input[name="shuttle_interest"]:checked');
+                    if (!shuttleSelected) {
+                        console.log("BLOCKED: Missing shuttle interest selection.");
+                        event.preventDefault();
+                        alert("Please let us know your shuttle transportation preference before submitting.");
+                        accommodationsSection.scrollIntoView({ behavior: 'smooth' });
+                        triggerPulse(accommodationsSection);
+                        return false;
+                    }
+                }
+            }
+
+            console.log("VALIDATION PASSED: Submitting form.");
+            return true;
+        }
+
+        // Helper to trigger the subtle highlight animation on missing sections
+        function triggerPulse(element) {
+            const card = element.querySelector('.snap-card');
+            if (card) {
+                card.classList.remove('section-highlight');
+                void card.offsetWidth; // Trigger reflow
+                card.classList.add('section-highlight');
+            }
+        }
+    </script>
+</body>
+</html>

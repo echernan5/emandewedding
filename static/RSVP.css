@@ -1,681 +1,512 @@
-@font-face {
-    font-family: 'Beverly';
-    src: url('Cordon/Cordon.woff') format('woff'),
-         url('Cordon/Cordon.woff2') format('woff2'),
-         url('Cordon/Cordon.ttf') format('truetype'),
-         url('Cordon/Cordon.otf') format('opentype');
-    font-weight: 400 !important;
-    line-height: 1.2;
-    padding-top: 0%;
-    padding-bottom: 0%;
-    font-style: normal;
+/* ==========================================
+   1. FONTS & GLOBAL RESET
+   ========================================== */
+
+
+.inter-300 {
+  font-family: "Inter", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 300;
+  font-style: normal;
+}
+
+
+:root {
+  --sage-green: rgb(154, 172, 196);
+  --sage-light: rgba(154, 172, 196, 0.1);
+  --gallery-black: #111111;
+  --gallery-gray: #666666;
+  --border-light: rgba(0, 0, 0, 0.12);
+  --bg-cream: #faf9f6;
+  --header-height: 70px;
 }
 
 body {
-    margin: 0;
-    color: rgb(255, 255, 255);
-    background-color: rgb(112, 127, 91);
-    font-family: Arial, Helvetica, sans-serif !important;
-    font-style: normal;
-    font-size: 1.2rem;
+  margin: 0;
+  color: var(--gallery-black);
+  background-color: var(--bg-cream);
+  font-family: 'Inria Serif', 'Beverly', Georgia, serif;
+  font-size: 1rem;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
 }
 
-h1 {
-    font-family: 'Beverly', serif !important;
-    font-weight: normal !important; /* Add !important to override any bolding */
-    line-height: 1.2;
-    margin: 0;
-    text-transform: uppercase;
-    letter-spacing: 0.1rem;
-  }
-
-h2 {
-    font-size: 2rem;
-    margin-top: 0.5rem;
-    margin-bottom: 0.5rem;
-    font-family: 'Beverly', serif !important;
-    font-weight: normal !important; /* Add !important to override any bolding */
-    line-height: 1.2;
-    margin: 0;
-    text-transform: uppercase;
-    letter-spacing: 0.1rem;
+/* Typography Hierarchy */
+h1, h2, h3 {
+  font-family: 'Inria Serif', 'Beverly', Georgia, serif;
+  font-weight: 400;
+  line-height: 1.2;
+  margin: 0;
+  color: var(--gallery-black);
+  letter-spacing: 0.05em;
 }
 
-/* Menu and Navbar*/
-.hero-header {
-    display: flex;
-    align-items: center;
-    justify-content: center; /* this doesn't matter as much with fixed column widths, but nice to have */
-    padding: 1rem 2rem;
-    width: 100%;
-    box-sizing: border-box;
+h1 { font-size: 2.75rem; }
+h2 { font-size: 2rem; }
+h3 { font-size: 1.35rem; }
+
+#navbar {
+  /* Floats the logo over the full-screen image without taking up vertical space */
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  display: flex;
+  justify-content: flex-start; /* Aligns logo to the left */
+  align-items: center;
+  width: 100%;
+  height: 90px;
+  padding: 0 50px;
+  padding-top: 50px; /* Adds a bit of breathing room from the top */
+  box-sizing: border-box; /* Prevents padding from causing horizontal scrollbars */
 }
 
-.hero-col {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-width: 0;
+.navbar .logo {
+  max-height: 60px; /* Slightly refined size for a minimalist escape hatch */
+  width: auto;
 }
 
-.hero-col.left {
-    justify-content: flex-start;
+/* ==========================================
+   2. ART MUSEUM RSVP PORTAL (STEP 0)
+   ========================================== */
+.rsvp-page-body {
+  background-color: #000; /* Fallback for full-screen image */
 }
 
-.hero-col.right {
-    justify-content: flex-end;
+.rsvp-app-section {
+  position: relative;
+  min-height: 100vh;
+  width: 100%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 120px 20px 80px;
+  box-sizing: border-box;
 }
 
-.hero-col.center {
-    flex-grow: 1 !important;     /* Let the center column take up the remaining space */
-    text-align: right !important; /* Title aligned right */
-    white-space: nowrap !important;  /* Prevent wrapping */
-    overflow: hidden !important;     /* Hide overflow text */
-    text-overflow: ellipsis !important; /* Optionally add ellipsis if text overflows */
+.rsvp-backdrop-overlay {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(18, 18, 18, 0.2);
+  z-index: 1;
 }
 
-  .menu-icon {
-    font-size: 3rem;
-    cursor: pointer;
-    color: rgb(255, 255, 255);
-  }
-  
-
-.hero-title {
-    font-size: 2rem;
-    font-family: 'Beverly', serif;
-    transform: translateY(8px);
-    text-transform: uppercase;
-    letter-spacing: 0.2rem;
-    line-height: 1;
-    text-align: center;
-    color: rgb(255, 255, 255); /* Or black, depending on background */
-    margin-right: 0px; /* Adjust margin as needed */
-    width: auto !important;        /* Allow title to take as much space as needed */
-    margin-block-start: 0px; /* Remove default margin */
-    margin-block-end: 0px; /* Remove default margin */
-  }
-
-  .hero-title a {
-    text-decoration: none;
-    color: inherit;
-  }
-
-  .rsvp-button {
-    padding: 15px 30px;
-    border: 2px solid rgb(255, 255, 255);
-    background: transparent;
-    color: rgb(255, 255, 255);
-    border-radius: 15px;
-    cursor: pointer;
-    font-size: 0.8rem;
-    transition: 1s ease-in-out;
-  }
-  
-  .rsvp-button:hover {
-    background: rgb(255, 255, 255);
-    color: rgb(112, 127, 91);
-  }
-
-  /* Content sliding effect */
-.content-slide {
-  transform: translateX(500px); /* Move the content to the left by 500px when sidebar is open */
-  transition: transform 0.3s ease-in-out;
+.rsvp-portal-card {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 540px;
+  background: rgba(255, 255, 255, 0.96);
+  padding: 60px 50px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.15);
+  text-align: center;
 }
 
-.content-wrapper {
-    width: 100vw;
-}
-/* Sidebar Styles */
-.sidebar {
-    position: fixed;
-    top: 0;
-    left: -500px; /* Hide off-screen initially */
-    width: 500px;
-    height: 100%;
-    background-color: white;
-    color: black;
-    transition: left 0.3s ease-in-out;
-    transform: translateX(0);
-    padding-top: 7%;
-    text-transform: uppercase;
+.rsvp-kicker {
+  font-family: 'Inter', Helvetica, sans-serif;
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gallery-gray);
+  display: block;
+  margin: 0px 0px 12px 0px;
+  font-weight: 400;
 }
 
-.sidebar.active {
-    left: 0; /* Slide in when active */
+.rsvp-title {
+  font-family: 'Inria Serif', 'Beverly', Georgia, serif;
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-style: italic;
 }
 
-.sidebar .close-icon {
-    position: absolute;
-    top: 5%;
-    right: 5%;
-    font-size: 3rem;
-    color: black;
-    cursor: pointer;
+.rsvp-instructions {
+  font-family: 'Inter', Helvetica, sans-serif;
+  font-size: 0.8rem;
+  color: #555;
+  margin: 12px 0px 30px 0px;
+  font-weight: 300;
 }
 
-.sidebar ul {
-    list-style-type: none;
-    padding: 3%;
-    margin: 0;
+.rsvp-or-divider {
+  margin-bottom: 20px;
 }
 
-.sidebar li {
-    padding: 15px 20px;
-    font-size: 1.2rem;
+/* Sleek Single-Line Input */
+.rsvp-form { margin-bottom: 20px; }
+
+.rsvp-input-wrapper {
+  display: flex;
+  position: relative;
+  transition: border-color 0.3s ease;
 }
 
-.sidebar a {
-    color: black;
-    text-decoration: none;
-    display: block;
-    padding-left: 10%;
-    size: 2rem;
+.rsvp-input-wrapper:focus-within {
+  border-bottom: 2px solid var(--sage-green);
 }
 
-.sidebar .dropdown-content {
-    display: none;
-    padding-left: 5%;
+.rsvp-minimal-input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  padding: 14px 40px 14px 8px;
+  font-family: 'Inria Serif', serif;
+  font-size: 1.25rem;
+  color: var(--gallery-black);
+  outline: none;
 }
 
-
-/* Style for the dropdown toggle */
-.sidebar .dropdown-toggle {
-    background: none;
-    border: none;
-    font-size: 1.2rem;
-    padding-left: 10%;
-    text-align: left;
-    width: 100%;
-    cursor: pointer;
-    color: black;
-  }
-  
-  .sidebar .arrow {
-    margin-left: 8px;
-    transition: transform 0.3s ease;
-  }
-  
-  /* When open, rotate the arrow */
-  .sidebar .dropdown.open .arrow {
-    transform: rotate(180deg);
-  }
-  
-  .dropdown-toggle {
-    text-transform: uppercase;
-  }  
-  
-/* Overlay (Darkens the Page when Menu is Active) */
-/* Overlay (background) for when sidebar is open */
-.overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    opacity: 0; /* Initially hidden */
-    pointer-events: none; /* Prevent interaction when hidden */
-    transition: opacity 0.3s ease-in-out; /* Smooth transition */
-    z-index: 999;
+.rsvp-minimal-input::placeholder {
+  color: #999;
+  font-style: italic;
 }
 
-/* When sidebar is open, overlay becomes visible */
-.overlay.active {
-    opacity: 1; /* Full opacity */
-    visibility: visible; /* Make it visible */
-    pointer-events: auto; /* Allow interaction when visible */
-    z-index: 999;   /* Ensure it's on top */
+.rsvp-submit-btn {
+  background: none;
+  border: none;
+  position: absolute;
+  right: 8px;
+  top: 67%;
+  transform: translateY(-70%);
+  font-size: 1.3rem;
+  color: var(--gallery-black);
+  cursor: pointer;
+  padding: 0;
+  transition: transform 0.2s ease, color 0.2s ease;
 }
 
-.page-wrapper {
-  height: 100vh;
+.rsvp-submit-btn:hover {
+  transform: translate(-5px, -70%);
+  color: var(--sage-green);
 }
 
-/* Content sliding effect */
-.content-slide {
-    transform: translateX(500px); /* Move the content to the left by 500px when sidebar is open */
-    transition: transform 0.3s ease-in-out;
+/* Modify Link Styling */
+.rsvp-card-footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.rsvp-divider {
+  width: 40px;
+  height: 1px;
+  background: var(--border-light);
+  margin: 10px 0px 24px 0px;
+}
+
+.rsvp-modify-link {
+  text-decoration: none;
+  font-size: 0.85rem;
+  color: #444;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.modify-label { 
+  color: #777; 
+  font-weight: 300;
+  font-family: 'Inter', Helvetica, sans-serif;
+}
+
+.modify-action {
+  font-family: 'Inter', Helvetica, sans-serif;
+  background: none;
+  border: none;
+  color: #777;
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.2s ease;
+}
+.rsvp-modify-link:hover .modify-action { color: var(--gallery-black); }
+
+/* ==========================================
+   3. MULTI-STEP FORM CONTAINER & STEPS
+   ========================================== */
+form#multi-step-form {
+  max-width: 640px;
+  margin: calc(var(--header-height) + 40px) auto 80px;
+  padding: 40px;
+  background: #ffffff;
+  border: 1px solid var(--border-light);
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.04);
+  box-sizing: border-box;
+  min-height: 400px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
 }
 
 .form-step {
   display: none;
   flex-direction: column;
-  gap: 1rem;
-  justify-content: flex-start;
   align-items: center;
   width: 100%;
-  padding-left: 1rem;
-  padding-right: 1rem;
-  padding-top: 2rem;
-  padding-bottom: 2rem;
-  box-sizing: border-box;
-  animation: fadeIn 0.3s ease-in-out;
-}
-  
-  .form-step.active {
-    display: block;
-    align-items: center;
-  }
-  
-  #dietaryNotes {
-    display: block; /* Make sure it's set to be visible */
-  }
-
-  /* Container styles */
-  form#multi-step-form {
-    max-width: 600px;
-    margin: 0 auto;
-    margin-top: calc(var(--header-height, 60px) + 0rem);
-    padding: 1rem 2rem; /* Adjust side padding as needed */
-    padding-bottom: 4rem; /* Add space at the very bottom */
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    gap: 2rem; /* Only relevant if multiple steps were somehow visible */
-    min-height: calc(75vh - var(--header-height, 60px));
-    justify-content: center;
-    transform: translateY(calc(var(--header-height, 0px) * -1.1)); /* Keep this */
-    transition: justify-content 0.3s ease-in-out; /* Optional: smooth transition */
-  }
-
-  form#multi-step-form.is-long-step {
-    justify-content: flex-start; /* Align Step 5 content to the top */
-    min-height: 0; /* Allow form height to be determined by content */
-    margin-top: calc(var(--header-height, 60px) + 1rem);;
-  }
-
-/* Step container */
-.form-step {
-  display: none; /* Hidden by default */
-  flex-direction: column; /* Content inside step stacks */
-  align-items: center; /* Center content inside step horizontally */
-  width: 100%; /* Take full width of form */
-  animation: fadeIn 0.3s ease-in-out;
-  padding: 1rem 0; /* Add some vertical padding *inside* the step */
-  /* REMOVE any height, min-height, or overflow properties here */
+  animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .form-step.active {
-  display: flex; /* Show active step */
-  flex-direction: column;
-  align-items: center;
+  display: flex;
 }
 
+.form-step h1 {
+  font-size: 2.2rem;
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
 
-/* Inputs & Textareas */
+/* ==========================================
+   4. PROGRESS INDICATOR (EDITORIAL STYLE)
+   ========================================== */
+.progress-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto 36px;
+  padding: 0;
+}
+
+.progress-line {
+  height: 1px;
+  background-color: #e0e0e0;
+  flex-grow: 1;
+  margin: 0 8px;
+  transition: background-color 0.4s ease;
+}
+
+.progress-step {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: transparent;
+  border: 1px solid #ccc;
+  flex-shrink: 0;
+  transition: all 0.4s ease;
+}
+
+.progress-step.active {
+  border-color: var(--sage-green);
+  background-color: var(--sage-green);
+  transform: scale(1.3);
+}
+
+.progress-step.completed {
+  background-color: var(--sage-green);
+  border-color: var(--sage-green);
+}
+
+.progress-step.completed + .progress-line {
+  background-color: var(--sage-green);
+}
+
+/* ==========================================
+   5. GUEST ROWS & TACTILE BUTTONS
+   ========================================== */
+.party-member {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 16px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.party-member span {
+  font-size: 1.1rem;
+  font-family: 'Inria Serif', serif;
+  color: var(--gallery-black);
+  flex-grow: 1;
+}
+
+.party-member button {
+  width: auto;
+  min-width: 90px;
+  margin-left: 10px;
+  padding: 8px 16px;
+  font-size: 0.85rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  background-color: transparent;
+  color: var(--gallery-gray);
+  border: 1px solid #ddd;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.party-member button:hover {
+  border-color: var(--gallery-black);
+  color: var(--gallery-black);
+}
+
+/* Add an active/selected class in your JS (e.g., .btn-selected) */
+.party-member button.btn-selected,
+.party-member button:active {
+  background-color: var(--sage-green);
+  border-color: var(--sage-green);
+  color: #ffffff;
+}
+
+/* Standard Form Inputs (Dietary notes, etc.) */
 input[type="text"],
 textarea {
+  font-family: 'Inter', Helvetica, sans-serif;
   width: 100%;
-  padding: 0.75rem 1rem;
+  padding: 12px 16px;
   border: 1px solid #ccc;
-  border-radius: 8px;
-  font-size: 1rem;
+  font-size: 0.8rem;
+  background: #fafafa;
   box-sizing: border-box;
-  transition: border-color 0.2s;
+  transition: all 0.2s;
 }
 
 input[type="text"]:focus,
 textarea:focus {
-  border-color: #ffffff;
+  background: #fff;
+  border-color: var(--sage-green);
   outline: none;
+  box-shadow: 0 0 0 3px var(--sage-light);
 }
 
-.form-step h1 {
-  font-size: 2.5rem;
-  text-align: center;
-  letter-spacing: 0.15rem;
+/* Navigation & Action Buttons */
+.step-actions {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 32px;
+  padding-top: 20px;
+  border-top: 1px solid #f0f0f0;
 }
 
-/* Buttons */
-button {
-  padding: 0.75rem 1.5rem;
-  font-size: 1.2rem;
-  background-color: rgb(112, 127, 91);
-  color: rgb(255, 255, 255);
-  border: white solid 2px;
-  border-radius: 15px;
-  cursor: pointer;
-  transition: 0.4s ease-in-out;
-}
-
-button:hover {
-  background-color: rgb(255, 255, 255);
-  color: rgb(112, 127, 91);
-  border: white solid 2px;
-}
-
-.back-button {
-  background-color: transparent ;
-  color: white;
-  border: white solid 2px;
-}
-
-.back-button:hover {
-  background-color: #ffffff;
-}
-
-/* Confirmation step */
-#step-5 {
-  /* No special width needed, should be centered by .form-step's align-items: center */
-   padding-top: 0rem; /* Add more space at the top if needed */
-}
-
-#step-5.form-step.active {
-  padding-top: 0px; /* Remove extra space at the top */
-}
-
-#step-1 {
-  align-items: left;
-}
-
-#step-1 button[type="submit"] {
-  transition: 1s ease-in-out
-}
-
-#step-1 button[type="submit"]:disabled {
-  opacity: 0.6; /* Make it look faded */
-  cursor: wait; /* Show a waiting cursor */
-  background-color: rgb(255, 255, 255, 0.7);
-  color: rgb(112, 127, 91);
-  border-color: rgba(255, 255, 255, 0.7);
-  pointer-events: none;
-}
-
-/* Error message */
-#error-message {
+button.next-btn, 
+button.submit-btn {
+  padding: 12px 28px;
   font-size: 0.9rem;
-  color: red;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  background-color: var(--gallery-black);
+  color: #ffffff;
+  border: 1px solid var(--gallery-black);
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
-/* Target the container for each party member */
-.party-member {
-  display: flex; /* 1. Treat this div as a flex container */
-  align-items: center; /* Vertically align items (name and buttons) in the middle */
-  margin-bottom: 10px; /* Optional: Add some space between member rows */
-  padding: 5px 0; /* Optional: Add some vertical padding */
-  border-bottom: 1px solid #eee; /* Optional: Visual separator */
+button.next-btn:hover, 
+button.submit-btn:hover {
+  background-color: var(--sage-green);
+  border-color: var(--sage-green);
 }
 
-/* Target the span containing the guest's name */
-.party-member span {
-  flex-grow: 1; /* 2. Allow the name span to take up all available horizontal space */
-  /* text-align: left; */ /* Default, but ensures names align left */
-  padding-right: 15px; /* Optional: Add space between the longest name and the first button */
+button.back-button {
+  background-color: transparent;
+  color: var(--gallery-gray);
+  border: 1px solid transparent;
+  padding: 12px 20px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 4px;
 }
 
-/* Target both buttons within the party member div */
-.party-member button {
-  flex-shrink: 0; /* Keep this */
-  width: 100px;    /* Keep this (or adjust as needed) */
-  margin-left: 8px; /* Keep this */
-  text-align: center; /* Keep this */
-  padding: 6px 10px; /* Adjusted padding slightly for better look, feel free to change */
-  box-sizing: border-box; /* Good practice */
-
-  /* --- NEW Default Styles (Unselected Look) --- */
-  background-color: transparent;   /* Use transparent */
-  color: #ffffff;                /* White text */
-  border: 1px solid #ffffff;     /* 1px white border */
-  border-radius: 8px;            /* Keep your border-radius */
-  cursor: pointer;               /* Keep cursor */
-  font-weight: normal;           /* Normal text weight */
-  font-size: 1.2rem;             /* Slightly smaller font for small buttons */
-
-  /* --- Transition --- */
-  /* Smooth transition for background and color changes */
-  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+button.back-button:hover {
+  color: var(--gallery-black);
 }
 
-/* Style the overall container for the new recap format */
-#confirmation-recap .recap-container {
-  text-align: left; /* Align text left within the container */
-  padding: 0 1rem; /* Add some padding if needed */
+/* ==========================================
+   6. CONFIRMATION & RECAP STEP
+   ========================================== */
+#confirmation-recap {
+  width: 100%;
+  margin: 20px 0;
 }
 
-/* Style each section (RSVP, Meals, Notes) */
 #confirmation-recap .recap-section {
-  margin-bottom: 2rem; /* Space between sections */
+  background: #fdfdfc;
+  border: 1px solid #eaeAEA;
+  padding: 20px;
+  margin-bottom: 16px;
 }
 
-#confirmation-recap .recap-section:last-child {
-  margin-bottom: 0; /* No margin after the last section */
-}
-
-#confirmation-sub-message {
-  margin: 0px;
-  margin-block-start: 0px;
-  margin-block-end: 0px;
-}
-
-/* Style the section headings */
 #confirmation-recap .recap-section h3 {
-  font-family: Arial, Helvetica, sans-serif !important;
-  font-size: 1.3rem; /* Adjust heading size */
-  text-align: center; /* Center section headings */
-  margin-bottom: 0.5rem;
-  padding-bottom: 0rem;
-  margin-block-start: 0px; /* Remove default margin */
-  border-bottom: 1px solid rgba(255, 255, 255, 0.3); /* Optional separator line */
-  color: #fff; /* Ensure heading color */
-  letter-spacing: 0.1rem;
-  font-weight: normal; /* Ensure normal weight */
+  font-size: 1.1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--sage-green);
+  margin-bottom: 12px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 8px;
 }
 
-/* Style the lists */
 #confirmation-recap ul {
-  list-style-type: none; /* Remove default bullets */
+  list-style-type: none;
   padding: 0;
-  margin: 0 auto; /* Center the list block if needed */
-  max-width: 400px; /* Constrain list width for readability */
+  margin: 0;
 }
 
 #confirmation-recap li {
-  margin-bottom: 0.6rem; /* Space between list items */
-  line-height: 1.4; /* Improve readability */
-}
-
-/* Style the icons */
-#confirmation-recap .recap-icon {
-  display: inline-block;
-  width: 20px; /* Ensure icons align */
-  text-align: center;
-  margin-right: 8px; /* Space after icon */
-}
-
-#confirmation-recap .recap-icon.accept {
-  color: #a2e8a2; /* Lighter green */
-}
-#confirmation-recap .recap-icon.decline {
-  color: #f1aaaa; /* Lighter red */
-}
-#confirmation-recap .recap-icon.pending {
-  color: #ccc; /* Grey */
-}
-/* You can add specific colors for meal/notes icons too if desired */
-/* #confirmation-recap .recap-icon.meal { color: #...; } */
-/* #confirmation-recap .recap-icon.notes { color: #...; } */
-
-
-/* Style the summary paragraph for notes */
-#confirmation-recap .notes-summary {
-  text-align: center;
-  font-style: italic;
-  color: rgba(255, 255, 255, 0.8);
-  margin-top: 1rem;
-  font-size: 0.9em;
-}
-
-/* Ensure the main confirmation message is centered */
-#confirmation-message {
-  text-align: center;
-  font-size: 1.4rem; /* Adjust as needed */
-  margin-bottom: 2rem; /* Space below the main title */
-  line-height: 1.4;
-}
-
-/* Keep centering rules for the step container */
-#step-5 {
-  /* text-align: center; */ /* No longer needed here, handled by children */
-  padding-top: 2rem; /* More space at the top */
-}
-#confirmation-recap {
-   /* No changes needed here from last step, parent centers it */
-   max-width: 500px;
-   margin: 1rem auto;
-   text-align: left; /* Keep this default */
-}
-
-/* Progress Bar */
-/* RSVP.css */
-
-/* Progress Bar Container */
-.progress-indicator {
-  display: flex;           /* Arrange steps and lines horizontally */
-  align-items: center;    /* Vertically align dots and lines */
-  justify-content: space-between; /* Distribute space */
-  width: 80%;             /* Width of the progress bar */
-  max-width: 500px;        /* Max width */
-  margin: 0.5rem auto;      /* Center the bar and add space above/below */
-  margin-top: calc(var(--header-height, 60px) + 0rem); /* Position below header */
-  padding: 0 10px;        /* Small padding on the sides */
-  box-sizing: border-box;
-}
-
-/* Styling for the connecting lines */
-.progress-line {
-  height: 3px;             /* Thickness of the line */
-  background-color: rgba(255, 255, 255, 0.3); /* Inactive line color */
-  flex-grow: 1;           /* Allow line to take up available space */
-  margin: 0 2px;          /* Tiny space around lines */
-  transition: background-color 0.4s ease; /* Smooth color change */
-}
-
-/* Styling for the step dots */
-.progress-step {
-  width: 25px;            /* Size of the dot */
-  height: 25px;           /* Size of the dot */
-  border-radius: 50%;     /* Make it a circle */
-  background-color: transparent; /* Inactive background */
-  border: 3px solid rgba(255, 255, 255, 0.3); /* Inactive border */
-  flex-shrink: 0;        /* Prevent dots from shrinking */
-  transition: background-color 0.4s ease, border-color 0.4s ease; /* Smooth transitions */
-  position: relative;     /* Needed if adding step numbers */
-  box-sizing: border-box;
-}
-
-/* --- Styling for States --- */
-
-/* Style for completed steps (dots) */
-.progress-step.completed {
-  background-color: #ffffff; /* White fill for completed */
-  border-color: #ffffff; /* White border */
-}
-/* Style for the line AFTER a completed step */
-.progress-step.completed + .progress-line {
-   background-color: #ffffff; /* White line for completed segment */
-}
-
-/* Style for the currently active step (dot) */
-.progress-step.active {
-  border-color: #ffffff; /* Highlight active step border */
-  background-color: rgba(255, 255, 255, 0.372); /* White color at 50% opacity */
-  /* Optional: make active slightly larger */
-  /* transform: scale(1.1); */
-}
-
-/* Override: Make the LAST step dot look 'completed' WHEN it is 'active' */
-.progress-indicator > .progress-step:last-child.active {
-  background-color: #ffffff; /* Apply solid white fill, same as .completed */
-  /* The border-color is already white from the general .active rule above */
-}
-
-/* Optional: Add Step Numbers inside dots */
-/*
-.progress-step::after {
-  content: attr(data-step);
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
   display: flex;
   align-items: center;
-  justify-content: center;
+  padding: 6px 0;
   font-size: 0.8rem;
-  color: rgba(255, 255, 255, 0.5); // Dim color for numbers
-}
-.progress-step.completed::after,
-.progress-step.active::after {
-  color: rgb(112, 127, 91); // Darker color on light background
-}
-*/
-
-/* Footer */
-.wedding-footer {
-  background-color: #f5f5f5;
-  padding: 2rem 1rem;
-  font-family: 'Georgia', serif;
-  color: #333;
-  text-align: center;
-  border-top: 1px solid #ddd;
 }
 
-.footer-inner {
-  max-width: 900px;
-  margin: 0 auto;
+#confirmation-recap .recap-icon {
+  margin-right: 12px;
+  font-size: 1.1rem;
 }
+.recap-icon.accept { color: #4a7c59; }
+.recap-icon.decline { color: #c94c4c; }
 
-.footer-names {
-  font-size: 1rem;
-  margin-bottom: 1rem;
-  font-style: italic;
-  color: #555;
-}
-
-.footer-nav {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 1rem;
-  margin-bottom: 1rem;
-}
-
-.footer-nav a {
-  text-decoration: none;
-  color: #444;
-  font-weight: 500;
-  transition: color 0.3s ease;
-}
-
-.footer-nav a:hover {
-  color: #000;
-}
-
-.footer-tagline {
-  font-size: 0.875rem;
-  color: #888;
-}
-
-
-/* Animation */
+/* ==========================================
+   7. ANIMATIONS & MEDIA QUERIES
+   ========================================== */
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(5%);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-/* Responsive adjustments */
-@media (min-width: 600px) {
+@media (max-width: 600px) {
+  .rsvp-portal-card,
   form#multi-step-form {
-    padding: 2rem 2rem;
+    padding: 30px 20px;
+    margin-top: calc(var(--header-height) + 16px);
+  }
+  
+  .party-member {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  
+  .party-member div {
+    display: flex;
+    width: 100%;
+    gap: 8px;
+  }
+  
+  .party-member button {
+    flex: 1;
+    margin: 0;
   }
 }
 
-   
+input {
+  font-family: 'Inter', sans-serif !important;
+  font-style: normal !important;
+}
+
+input::placeholder {
+  font-family: 'Inter', sans-serif !important;
+  font-style: normal !important;
+}

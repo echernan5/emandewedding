@@ -1,0 +1,399 @@
+/* ==========================================
+   9. FULL-PAGE SNAP SCROLL ARCHITECTURE
+   ========================================== */
+.snap-body {
+  margin: 0;
+  overflow-x: hidden;
+  background-color: #000;
+}
+
+/* Forces the container to act as a scroll-snap viewport */
+.snap-form-container {
+  height: 100vh;
+  overflow-y: scroll;
+  scroll-snap-type: y mandatory;
+  scroll-behavior: smooth;
+  /* Background painting across all pages */
+  background-image: url('rsvp/Verdot_FRAMETV_AppleTree_2482.jpg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+
+/* Each question takes up exactly 1 full viewport height and snaps */
+.rsvp-snap-section {
+  height: 100vh;
+  width: 100vw;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  box-sizing: border-box;
+  padding: 20px;
+}
+
+/* Subtle dark overlay so the white card pops off the painting */
+.rsvp-snap-section::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(18, 18, 18, 0.2);
+  z-index: 1;
+}
+
+/* The card itself */
+.snap-card {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 580px;
+  background: rgba(255, 255, 255, 0.97);
+  padding: 40px 30px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  box-sizing: border-box;
+  max-height: 85vh; 
+  overflow-y: auto;
+}
+
+.snap-kicker {
+  font-family: 'Inter', Helvetica, sans-serif;
+  font-size: 0.6rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gallery-gray);
+  display: block;
+  margin: 0px 0px 12px 0px;
+  font-weight: 400;
+}
+
+.snap-title {
+  font-size: 1.3rem;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.2rem;
+  font-style: italic;
+}
+
+.snap-instructions {
+  font-family: 'Inter', Helvetica, sans-serif;
+  font-size: 0.7rem;
+  color: #555;
+  margin: 12px 0px 30px 0px;
+  font-weight: 300;
+}
+
+/* Guest Row Toggles */
+.party-list-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.party-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 0px 18px 0px;
+  border-bottom: 1px solid #eee;
+}
+
+.guest-name {
+  font-family: 'Inria Serif', serif;
+  font-size: 1rem;
+}
+
+.attendance-toggle-group {
+  display: flex;
+  gap: 18px;
+}
+
+.attend-btn {
+  font-family: 'Inter', Helvetica, sans-serif;
+  background: transparent;
+  border: 1px solid #ccc;
+  padding: 8px 16px;
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.attend-btn:hover {
+  border-color: var(--gallery-black);
+}
+
+/* Active states managed by JS */
+.btn-active-accept {
+  background-color: var(--sage-green) !important;
+  border-color: var(--sage-green) !important;
+  color: #fff !important;
+}
+
+.btn-active-decline {
+  background-color: #333 !important;
+  border-color: #333 !important;
+  color: #fff !important;
+}
+
+/* Textarea style */
+.snap-textarea {
+  width: 100%;
+  padding: 14px;
+  border: 1px solid #ccc;
+  font-family: inherit;
+  font-size: 1rem;
+  resize: none;
+  box-sizing: border-box;
+}
+
+.snap-textarea:focus {
+  outline: none;
+  border-color: var(--sage-green);
+}
+
+/* Lodging Grid Selection Tiles */
+.lodging-options-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.tile-label {
+  font-size: 0.8rem;
+}
+
+.lodging-tile {
+  border: 1px solid #ddd;
+  padding: 16px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lodging-tile input {
+  display: none; /* Hide standard radio circle for a clean tile look */
+}
+
+.lodging-tile:has(input:checked) {
+  border-color: #829bbc;
+  background-color: var(--sage-light);
+  color: #829bbc;
+  font-weight: bold;
+}
+
+/* Conditional Shuttle Box */
+.shuttle-conditional-box {
+  animation: fadeIn 0.4s ease;
+  margin-top: 20px;
+}
+
+.rsvp-divider-short {
+  width: 30px;
+  height: 1px;
+  background: #ccc;
+  margin: 16px auto;
+}
+
+.rsvp-minimal-input {
+  font-size: 0.8rem;
+  font-family: 'Inter', Helvetica, sans-serif;
+  border: 1px solid #ccc;
+}
+
+input[type="text"],
+textarea {
+  margin-top: 0px;
+  font-family: 'Inter', Helvetica, sans-serif;
+}
+
+.shuttle-question {
+  font-size: 0.7rem;
+  color: #555;
+  margin-bottom: 12px;
+  font-weight: 300;
+  font-family: 'Inter', Helvetica, sans-serif;
+}
+
+.shuttle-toggle-group {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.radio-pill {
+  font-size: 0.8rem;
+  cursor: pointer;
+  color: #444;
+}
+
+/* Final Submit Button */
+.snap-final-submit-btn {
+  width: 100%;
+  background: var(--gallery-black);
+  color: #fff;
+  border: none;
+  padding: 16px;
+  font-size: 0.8rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.snap-final-submit-btn:hover {
+  background: var(--sage-green);
+}
+
+/* Scroll Hint Indicator */
+.snap-scroll-hint {
+  position: absolute;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.8);
+  animation: bounce 2s infinite;
+}
+
+/* ==========================================
+   10. PER-GUEST DIETARY & SKIP LINK STYLING
+   ========================================== */
+.guest-dietary-row {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.dietary-label {
+  font-family: 'Inria Serif', serif;
+  font-size: 1.2rem;
+  color: var(--gallery-black);
+  padding-bottom: 12px;
+}
+
+.snap-input-minimal {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid #ccc;
+  font-family: inherit;
+  font-size: 0.8rem;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease;
+  font-family: 'Inter', Helvetica, sans-serif !important;
+}
+
+.snap-input-minimal:focus {
+  outline: none;
+  border-color: var(--sage-green);
+}
+
+/* Subtle Skip Link Styling */
+.skip-email-container {
+  margin-top: 16px;
+  text-align: center;
+}
+
+.skip-email-link {
+  background: none;
+  border: none;
+  color: #777;
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.2s ease;
+}
+
+.skip-email-link:hover {
+  color: var(--gallery-black);
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% { transform: translate(-50%, 0); }
+  40% { transform: translate(-50%, -6px); }
+  60% { transform: translate(-50%, -3px); }
+}
+
+/* Mobile (Stacked by default) */
+.guest-main-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px; /* Adds space between the name and the buttons */
+  width: 100%;
+}
+
+.guest-name-wrapper {
+  text-align: center;
+}
+
+.snap-instructions {
+  margin: 12px 0px 20px 0px;
+}
+
+/* Desktop (Side-by-side) */
+@media (min-width: 600px) {
+  .guest-main-display {
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 0;
+  }
+  
+  .guest-name-wrapper {
+    text-align: left;
+  }
+
+  .snap-instructions {
+    margin: 12px 0px 20px 0px;
+    font-size: 0.8rem;
+  }
+
+  .snap-title {
+    font-size: 2rem;
+  }
+
+  .snap-kicker {
+    font-size: 0.65rem;
+  }
+
+  .guest-name {
+    font-size: 1.2rem;
+  }
+
+  .attend-btn {
+    font-size: 0.8rem;
+  }
+
+  .tile-label {
+  font-size: 1.2rem;
+  }
+
+  .snap-card {
+    padding: 60px 50px;
+  }
+
+  .radio-pill {
+    font-size: 1.2rem;
+  }
+
+  .shuttle-question {
+    font-size: 0.8rem;
+  }
+}

@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Family & Guest Registry — The Celebration Archive</title>
+    <!-- Google Fonts: Inria Serif & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inria+Serif:ital,wght@0,300;0,400;0,700;1,300;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+    <!-- Standalone Dashboard Stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='family_dashboard.css') }}">
+</head>
+<body class="dashboard-body">
+
+    <!-- Top Navigation Bar -->
+    <header class="dashboard-header">
+        <div class="dashboard-header-inner">
+            <div>
+                <span class="dashboard-eyebrow">Emma & Ethan's</span>
+                <h1 class="dashboard-title">Guest List & RSVP Responses</h1>
+            </div>
+            <div> 
+                <a href="/" class="dashboard-nav-btn">Back to Website</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="dashboard-main">
+        <!-- Metric Summary Cards (Exhibits) -->
+        <section class="dashboard-metrics-grid">
+            <div class="dashboard-metric-card">
+                <span class="dashboard-metric-label">Confirmed Guests</span>
+                <div class="dashboard-metric-value">{{ total_accepted }}</div>
+            </div>
+            <div class="dashboard-metric-card">
+                <span class="dashboard-metric-label">Pending Response</span>
+                <div class="dashboard-metric-value accent">{{ total_pending }}</div>
+            </div>
+            <div class="dashboard-metric-card">
+                <span class="dashboard-metric-label">21+ Guests</span>
+                <div class="dashboard-metric-value">{{ total_21_plus }}</div>
+            </div>
+            <div class="dashboard-metric-card">
+                <span class="dashboard-metric-label">Days Until RSVP Due</span>
+                <div class="dashboard-metric-value">{{ days_until_rsvp }}</div>
+            </div>
+        </section>
+
+        <!-- Secondary Section: Lodging & Transit Breakdown -->
+        <section class="dashboard-section">
+            <h2 class="dashboard-section-title">Accommodations &amp; Transit</h2>
+            
+            <!-- Lodging Distribution (4-Column Grid) -->
+            <div class="dashboard-block-group">
+                <span class="dashboard-group-label">Lodging Distribution</span>
+                <div class="dashboard-lodging-grid">
+                    <div class="dashboard-lodging-item" style="display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 1.25rem 1rem;">
+                        <span class="dashboard-lodging-name" style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: #666; margin-bottom: 0.5rem;">Bay Pointe Inn</span>
+                        <span class="dashboard-lodging-count" style="font-size: 1.5rem; font-weight: 400;">{{ lodging_counts.bay_pointe }} <small class="text-xs font-sans text-muted" style="font-size: 0.85rem;">guests</small></span>
+                    </div>
+                    <div class="dashboard-lodging-item" style="display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 1.25rem 1rem;">
+                        <span class="dashboard-lodging-name" style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: #666; margin-bottom: 0.5rem;">Best Western Plus</span>
+                        <span class="dashboard-lodging-count" style="font-size: 1.5rem; font-weight: 400;">{{ lodging_counts.best_western }} <small class="text-xs font-sans text-muted" style="font-size: 0.85rem;">guests</small></span>
+                    </div>
+                    <div class="dashboard-lodging-item" style="display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 1.25rem 1rem;">
+                        <span class="dashboard-lodging-name" style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: #666; margin-bottom: 0.5rem;">Gun Lake Casino</span>
+                        <span class="dashboard-lodging-count" style="font-size: 1.5rem; font-weight: 400;">{{ lodging_counts.gun_lake }} <small class="text-xs font-sans text-muted" style="font-size: 0.85rem;">guests</small></span>
+                    </div>
+                    <div class="dashboard-lodging-item" style="display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 1.25rem 1rem;">
+                        <span class="dashboard-lodging-name" style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: #666; margin-bottom: 0.5rem;">Other / Unsure</span>
+                        <span class="dashboard-lodging-count" style="font-size: 1.5rem; font-weight: 400;">{{ lodging_counts.other }} <small class="text-xs font-sans text-muted" style="font-size: 0.85rem;">guests</small></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Shuttle Allocation (3-Column Grid with Total) -->
+            <div class="dashboard-block-group mt-8">
+                <span class="dashboard-group-label">Shuttle Allocation</span>
+                <div class="dashboard-lodging-grid" style="grid-template-columns: repeat(3, minmax(0, 1fr));">
+                    <div class="dashboard-lodging-item" style="display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 1.25rem 1rem;">
+                        <span class="dashboard-lodging-name" style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: #666; margin-bottom: 0.5rem;">Total Requested</span>
+                        <span class="dashboard-lodging-count" style="font-size: 1.5rem; font-weight: 400;">{{ total_shuttle_requested }} <small class="text-xs font-sans text-muted" style="font-size: 0.85rem;">guests</small></span>
+                    </div>
+                    <div class="dashboard-lodging-item" style="display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 1.25rem 1rem;">
+                        <span class="dashboard-lodging-name" style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: #666; margin-bottom: 0.5rem;">Best Western Block</span>
+                        <span class="dashboard-lodging-count" style="font-size: 1.5rem; font-weight: 400;">{{ shuttle_counts.best_western }} <small class="text-xs font-sans text-muted" style="font-size: 0.85rem;">guests</small></span>
+                    </div>
+                    <div class="dashboard-lodging-item" style="display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 1.25rem 1rem;">
+                        <span class="dashboard-lodging-name" style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: #666; margin-bottom: 0.5rem;">Gun Lake Casino Block</span>
+                        <span class="dashboard-lodging-count" style="font-size: 1.5rem; font-weight: 400;">{{ shuttle_counts.gun_lake }} <small class="text-xs font-sans text-muted" style="font-size: 0.85rem;">guests</small></span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Two-Column Insights Layout: Catering & Notes -->
+        <div class="dashboard-insights-grid">
+            <!-- Catering & Dietary -->
+            <div class="dashboard-section">
+                <h2 class="dashboard-section-title">Catering & Dietary</h2>
+                {% if dietary_list %}
+                    <div class="dashboard-list-container">
+                        {% for item in dietary_list %}
+                        <div class="dashboard-list-item">
+                            <span class="dashboard-list-name">{{ item.name }}</span>
+                            <span class="dashboard-list-meta">{{ item.restriction }}</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="dashboard-empty-text">No dietary restrictions recorded.</p>
+                {% endif %}
+            </div>
+
+            <!-- Guest Notes -->
+            <div class="dashboard-section">
+                <h2 class="dashboard-section-title">Messages from Guests</h2>
+                {% if guest_notes %}
+                    <div class="dashboard-list-container">
+                        {% for note in guest_notes %}
+                        <div class="dashboard-note-item">
+                            <span class="dashboard-note-party">{{ note.party_name }}</span>
+                            <p class="dashboard-note-text">“{{ note.text }}”</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="dashboard-empty-text">No notes submitted yet.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Full Guest Directory Table -->
+        <section class="dashboard-table-wrapper">
+            <div class="dashboard-table-header">
+                <h2 class="dashboard-section-title" style="margin-bottom: 0; border-bottom: none; padding-bottom: 0;">Guest Registry</h2>
+                <p class="dashboard-table-subtitle">Live attendee roster and preferences</p>
+            </div>
+            
+            <div class="dashboard-filter-bar">
+                <input type="text" id="guest-search" placeholder="Filter by guest name..." class="dashboard-search-input">
+            </div>
+
+            <div class="dashboard-table-container">
+                <table class="dashboard-table">
+                    <thead>
+                        <tr>
+                            <th>Guest Name</th>
+                            <th>Party / Household</th>
+                            <th>Status</th>
+                            <th>Lodging</th>
+                            <th>Shuttle</th>
+                            <th>Last Updated</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for guest in all_guests %}
+                        <tr>
+                            <td class="font-medium text-charcoal">
+                                <div class="dashboard-name-cell">
+                                    <span>
+                                        {% if guest.first_name or guest.last_name %}
+                                            {{ guest.first_name }} {{ guest.last_name }}
+                                        {% else %}
+                                            <em class="dashboard-tbd">TBD</em>
+                                        {% endif %}
+                                    </span>
+                                    {% if guest.is_plus_one %}
+                                        <span class="dashboard-plus-one-tag">Plus One</span>
+                                    {% endif %}
+                                </div>
+                            </td>
+                            <td class="dashboard-muted-text">{{ guest.party_name }}</td>
+                            <td>
+                                {% set status = (guest.rsvp_status or 'pending')|lower %}
+                                {% if status in ['accept', 'accepted'] %}
+                                    <span class="dashboard-badge accepted">Accepted</span>
+                                {% elif status in ['decline', 'declined'] %}
+                                    <span class="dashboard-badge declined">Declined</span>
+                                {% else %}
+                                    <span class="dashboard-badge pending">Pending</span>
+                                {% endif %}
+                            </td>
+                            <td class="dashboard-muted-text">{{ guest.lodging_choice or '—' }}</td>
+                            <td class="dashboard-muted-text">{{ guest.shuttle_interest or '—' }}</td>
+                            <td class="dashboard-muted-text text-xs">{{ guest.updated_at or '—' }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        document.getElementById('guest-search').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase().trim();
+            const rows = document.querySelectorAll('.dashboard-table tbody tr');
+
+            rows.forEach(row => {
+                const nameCell = row.querySelector('td:nth-child(1)').textContent.toLowerCase();
+                const partyCell = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+                
+                if (nameCell.includes(searchTerm) || partyCell.includes(searchTerm)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
