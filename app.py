@@ -1852,7 +1852,7 @@ def rsvp_form():
         JOIN parties p ON g.party_id = p.id
         WHERE p.confirmation_code = %s
             AND (g.record_status IS NULL OR LOWER(TRIM(g.record_status)) != 'inactive')
-        ORDER BY g.id ASC;
+        ORDER BY CASE WHEN g.is_anonymous = true OR g.first_name IS NULL OR TRIM(g.first_name) = '' THEN 1 ELSE 0 END ASC, g.id ASC;
     """
     
     conn = get_db_connection()
@@ -1944,6 +1944,7 @@ def public_rsvp_form(party_code):
                        dietary_restrictions, is_anonymous, guest_of, updated_at
                 FROM guests
                 WHERE party_id = %s AND (record_status IS NULL OR record_status != 'inactive')
+                ORDER BY CASE WHEN g.is_anonymous = true OR g.first_name IS NULL OR TRIM(g.first_name) = '' THEN 1 ELSE 0 END ASC, g.id ASC;
                 """,
                 (party["id"],)
             )
@@ -2025,27 +2026,42 @@ def submit_rsvp():
 
             # 2. Update Individual Guests (Attendance, Dietary, & Welcome Gathering)
             for key, value in form_data.items():
-                # Handle main wedding attendance & dietary notes
+                val_str = value.strip() if value else ""
+                
+                # Handle main wedding attendance, welcome dinner, & dietary notes together
                 if key.startswith("guest_") and key.endswith("_status"):
-                    if value.lower() in ["accept", "accepted", "yes"]:
+                    if val_str.lower() in ["accept", "accepted", "yes"]:
                         party_attending = True
                         
                     guest_id = key[6:-7]
-                    dietary_note = form_data.get(f"dietary_{guest_id}", "").strip()
+                    dietary_note = form_data.get(f"dietary_{guest_id}", "").strip() or None
                     first_name = form_data.get(f"guest_{guest_id}_first")
                     last_name = form_data.get(f"guest_{guest_id}_last")
+                    
+                    rsvp_val = val_str if val_str else None
+
+                    # If they declined the wedding, automatically set welcome dinner to 'declined'
+                    welcome_val = None
+                    if rsvp_val in ["decline", "declined"]:
+                        welcome_val = "declined"
+                    else:
+                        raw_welcome = form_data.get(f"welcome_guest_{guest_id}_status")
+                        raw_welcome_str = raw_welcome.strip() if raw_welcome else ""
+                        welcome_val = raw_welcome_str if raw_welcome_str else None
 
                     cur.execute(
                         """
                         UPDATE guests 
                         SET rsvp_status = %s, 
+                            welcome_dinner_rsvp = %s,
                             dietary_restrictions = %s,
                             first_name = COALESCE(NULLIF(%s, ''), first_name),
                             last_name = COALESCE(NULLIF(%s, ''), last_name)
                         WHERE id = %s;
                         """,
                         (
-                            value, 
+                            rsvp_val, 
+                            welcome_val,
                             dietary_note, 
                             first_name.strip() if first_name else None, 
                             last_name.strip() if last_name else None, 
@@ -2053,27 +2069,17 @@ def submit_rsvp():
                         )
                     )
 
-                # Handle individual Thursday Welcome Gathering responses
-                elif key.startswith("welcome_guest_") and key.endswith("_status"):
-                    guest_id = key[14:-7]
-                    cur.execute(
-                        """
-                        UPDATE guests 
-                        SET welcome_dinner_rsvp = %s
-                        WHERE id = %s;
-                        """,
-                        (value, guest_id)
-                    )
-
             conn.commit()
 
-            # 3. Fetch the updated guests for this confirmation code to include in the email
+            # 3. Fetch the updated party and guest details for emails
             with conn.cursor() as cur:
                 cur.execute(
                     """
-                    SELECT first_name, last_name, rsvp_status, dietary_restrictions 
-                    FROM guests 
-                    WHERE party_id = (SELECT id FROM parties WHERE confirmation_code = %s);
+                    SELECT p.legacy_key AS party_name, p.lodging_choice, p.shuttle_interest, p.guest_note,
+                           g.first_name, g.last_name, g.rsvp_status, g.dietary_restrictions 
+                    FROM guests g
+                    JOIN parties p ON g.party_id = p.id
+                    WHERE p.confirmation_code = %s;
                     """,
                     (confirmation_code,)
                 )
@@ -2081,8 +2087,18 @@ def submit_rsvp():
                 cols = [d[0] for d in cur.description] if cur.description else []
                 
                 guests_list = []
+                party_name = ""
+                db_lodging = ""
+                db_shuttle = ""
+                db_note = ""
+
                 for r in rows:
                     guest_dict = dict(zip(cols, r))
+                    party_name = guest_dict.get('party_name') or ''
+                    db_lodging = guest_dict.get('lodging_choice') or lodging_choice
+                    db_shuttle = guest_dict.get('shuttle_interest') or shuttle_interest
+                    db_note = guest_dict.get('guest_note') or guest_note
+
                     fname = (guest_dict.get('first_name') or '').strip()
                     lname = (guest_dict.get('last_name') or '').strip()
                     full_name = f"{fname} {lname}".strip()
@@ -2095,7 +2111,19 @@ def submit_rsvp():
                         "dietary": guest_dict.get('dietary_restrictions') or "None"
                     })
 
-            # 4. Trigger the confirmation email if provided and not skipped
+            # 4. Trigger internal notification email to you & Ethan
+            try:
+                send_internal_rsvp_notification(
+                    party_name=party_name,
+                    guests_list=guests_list,
+                    lodging_choice=db_lodging,
+                    shuttle_interest=db_shuttle,
+                    guest_note=db_note
+                )
+            except Exception as notify_err:
+                print(f"Non-fatal internal notification error: {notify_err}")
+
+            # 5. Trigger the guest confirmation email if provided and not skipped
             if confirmation_email and not skip_email:
                 if party_attending:
                     dynamic_preview = "We can't wait to celebrate with you at Bay Pointe Inn!"
@@ -2107,7 +2135,7 @@ def submit_rsvp():
                         recipient_email=confirmation_email,
                         confirmation_code=confirmation_code,
                         guests_list=guests_list,
-                        lodging_choice=lodging_choice,
+                        lodging_choice=db_lodging,
                         preview_text=dynamic_preview
                     )
                 except Exception as mail_error:
@@ -2797,6 +2825,73 @@ def send_rsvp_confirmation_email(recipient_email, confirmation_code, guests_list
         return True
     except Exception as e:
         print(f"!!! Error sending confirmation email: {e}")
+        return False
+
+def send_internal_rsvp_notification(party_name, guests_list, lodging_choice, shuttle_interest, guest_note):
+    api_key = os.environ.get("MAILERSEND_API_KEY")
+    if not api_key:
+        print("!!! MailerSend API key missing for internal notification.")
+        return False
+
+    from_email = os.environ.get("MAILERSEND_FROM_EMAIL", "rsvp@emmaandethan.com")
+    from_name = os.environ.get("MAILERSEND_FROM_NAME", "Wedding Website Bot")
+    
+    # Set your notification email addresses here (or load from environment variables)
+    # You can separate multiple emails with commas
+    notification_emails = os.environ.get("NOTIFICATION_EMAILS", "emandewedding@gmail.com").split(",")
+    to_recipients = [{"email": email.strip()} for email in notification_emails if email.strip()]
+
+    if not to_recipients:
+        return False
+
+    # Build summary of guests
+    guest_summary_lines = []
+    for g in guests_list:
+        guest_summary_lines.append(f"• {g['name']} — RSVP: {g['rsvp'].capitalize()} (Dietary: {g['dietary']})")
+    
+    guest_text = "\n".join(guest_summary_lines)
+
+    subject = f"🎉 New RSVP Received: {party_name or 'A Guest Party'}"
+    
+    text_content = f"""
+    New RSVP submission received on your wedding website!
+
+    Party / Household: {party_name or 'N/A'}
+    Lodging Choice: {lodging_choice or 'None specified'}
+    Shuttle Interest: {shuttle_interest or 'None specified'}
+    Guest Note: {guest_note or 'None'}
+
+    Guest Details:
+    {guest_text}
+
+    ---
+    View your admin dashboard: https://www.emmaandethan.com/admin
+        """.strip()
+
+    url = "https://api.mailersend.com/v1/email"
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "Content-Type": "application/json"
+    }
+
+    payload = {
+        "from": {
+            "email": from_email,
+            "name": from_name
+        },
+        "to": to_recipients,
+        "subject": subject,
+        "text": text_content
+    }
+
+    try:
+        response = requests.post(url, json=payload, headers=headers, timeout=10)
+        if response.status_code >= 400:
+            print(f"!!! MailerSend Internal Notification Error: {response.status_code} - {response.text}")
+            return False
+        return True
+    except Exception as e:
+        print(f"!!! Error sending internal notification email: {e}")
         return False
 
 @app.route("/admin/log")
