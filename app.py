@@ -2900,6 +2900,8 @@ def send_internal_rsvp_notification(party_name, guests_list, lodging_choice, shu
         print(f"!!! Error sending internal notification email: {e}")
         return False
 
+from zoneinfo import ZoneInfo
+
 @app.route("/admin/log")
 def audit_logs_page():
     conn = get_db_connection()
@@ -2933,14 +2935,59 @@ def audit_logs_page():
             )
             rows = cur.fetchall()
             cols = [d[0] for d in cur.description]
-            logs = [dict(zip(cols, row)) for row in rows]
+            raw_logs = [dict(zip(cols, row)) for row in rows]
     except Exception as e:
         return f"Database query error: {e}", 500
     finally:
         conn.close()
 
-    return render_template("audit-log.html", logs=logs)
+    eastern_tz = ZoneInfo("US/Eastern")
+    grouped_logs_map = {}
+    
+    for log in raw_logs:
+        # Convert created_at to Eastern Time right away
+        if log.get('created_at'):
+            # If naive, assume UTC; then convert to Eastern
+            dt = log['created_at']
+            if dt.tzinfo is None:
+                dt = dt.replace(tzinfo=ZoneInfo("UTC"))
+            log['created_at'] = dt.astimezone(eastern_tz)
 
+        batch_id = log.get('batch_id')
+        record_id = str(log.get('record_id'))
+        changed_by = log.get('changed_by') or 'Unknown'
+        
+        time_key = log['created_at'].strftime('%Y-%m-%d %H:%M') if log.get('created_at') else ''
+
+        if batch_id:
+            group_key = (batch_id, record_id)
+        else:
+            group_key = (record_id, changed_by, time_key)
+
+        if group_key not in grouped_logs_map:
+            grouped_logs_map[group_key] = {
+                'id': log['id'],
+                'table_name': log['table_name'],
+                'record_id': log['record_id'],
+                'action': log['action'],
+                'batch_id': batch_id,
+                'changed_by': log['changed_by'],
+                'created_at': log['created_at'],
+                'entity_name': log.get('entity_name') or 'Unknown',
+                'old_data': dict(log['old_data'] or {}),
+                'new_data': dict(log['new_data'] or {})
+            }
+        else:
+            existing = grouped_logs_map[group_key]
+            if log.get('old_data'):
+                for k, v in log['old_data'].items():
+                    if k not in existing['old_data']:
+                        existing['old_data'][k] = v
+
+    logs = list(grouped_logs_map.values())
+    logs.sort(key=lambda x: x['created_at'], reverse=True)
+
+    return render_template("audit-log.html", logs=logs)
 
 
 if __name__ == "__main__":
