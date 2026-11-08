@@ -42,13 +42,12 @@ if "sslmode=" not in DATABASE_URL:
 print("DB:", os.getenv("DATABASE_URL"))
 
 SUPABASE_URL = os.environ.get("SUPABASE_URL")
-SUPABASE_PUBLISHABLE_KEY = os.environ.get("SUPABASE_PUBLISHABLE_KEY")
-SUPABASE_SECRET_KEY = os.environ.get("SUPABASE_SECRET_KEY")
+SUPABASE_SECRET_KEY = os.environ.get("SUPABASE_SECRET_KEY") # Use secret key for server-side
 
-if not SUPABASE_URL or not SUPABASE_PUBLISHABLE_KEY:
-    raise RuntimeError("SUPABASE_URL and SUPABASE_PUBLISHABLE_KEY must be set.")
+if not SUPABASE_URL or not SUPABASE_SECRET_KEY:
+    raise RuntimeError("SUPABASE_URL and SUPABASE_SECRET_KEY must be set.")
 
-supabase: Client = create_client(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY)
+supabase: Client = create_client(SUPABASE_URL, SUPABASE_SECRET_KEY)
 
 print("--- ENVIRONMENT DEBUG ---")
 print("SUPABASE_URL loaded:", bool(os.environ.get("SUPABASE_URL")))
