@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expense Dashboard — Emma & Ethan</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inria+Serif:ital,wght@0,300;0,400;0,700;1,300;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='expense_dashboard.css') }}">
+    <style>
+        /* Proportional Progress Bars */
+        .progress-bar-container {
+            width: 100%;
+            height: 8px;
+            background: var(--bg-subtle);
+            border: 1px solid var(--border-light);
+            margin-top: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+        .progress-bar-fill {
+            height: 100%;
+            background: var(--text-primary);
+            transition: width 0.3s ease;
+        }
+        .progress-bar-fill.over-budget {
+            background: var(--danger-color);
+        }
+        .progress-bar-fill.success {
+            background: var(--success-color);
+        }
+
+        /* Collapsible Simulator Drawer */
+        .simulator-drawer {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 24px;
+            margin-bottom: 24px;
+            display: none; /* Hidden by default */
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        .simulator-drawer.active {
+            display: block;
+        }
+        .tier-slider-row {
+            display: grid;
+            grid-template-columns: 180px 1fr 60px;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 12px;
+        }
+        @media (max-width: 768px) {
+            .tier-slider-row {
+                grid-template-columns: 1fr;
+                gap: 4px;
+            }
+        }
+    </style>
+</head>
+<body class="dashboard-body">
+
+    <!-- Top Navigation Bar -->
+    <header class="dashboard-header">
+        <div class="dashboard-header-inner">
+            <div>
+                <span class="dashboard-eyebrow">Emma & Ethan's</span>
+                <h1 class="dashboard-title">Venue & Catering Expense Dashboard</h1>
+            </div>
+            <div style="display: flex; gap: 10px; align-items: center;"> 
+                <button type="button" id="toggle-simulator-btn" class="dashboard-nav-btn" style="background: var(--accent-bg); color: var(--accent-color); border-color: var(--accent-color);">
+                    <i class="bi bi-sliders" style="margin-right: 6px;"></i>Toggle Budget Simulator
+                </button>
+                <a href="/dashboard" class="dashboard-nav-btn">Back to main Dashboard</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="dashboard-main">
+
+        <!-- COLLAPSIBLE "WHAT-IF" BUDGET SIMULATOR DRAWER -->
+        <section id="simulator-drawer" class="simulator-drawer">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid var(--border-light); padding-bottom: 12px;">
+                <h2 class="dashboard-section-title" style="margin: 0; border: none; padding: 0;">
+                    <i class="bi bi-calculator" style="margin-right: 8px;"></i>Interactive "What-If" Budget Simulator
+                </h2>
+                <button type="button" id="reset-simulator" class="dashboard-nav-btn" style="padding: 4px 10px; font-size: var(--font-xs);">Reset Defaults</button>
+            </div>
+            
+            <p class="dashboard-table-subtitle" style="margin-bottom: 20px;">
+                Adjust the headcount sliders below to test lowering guest counts across tiers. Factoring in 6% MI sales tax and 22% service fee.
+            </p>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 20px; background: var(--bg-subtle); padding: 16px; border: 1px solid var(--border-light);">
+                <div>
+                    <span class="dashboard-metric-label">Simulated Grand Total</span>
+                    <div id="sim-grand-total" style="font-family: 'Inria Serif', serif; font-size: 1.75rem; font-weight: 700;">${{ grand_total_projected }}</div>
+                </div>
+                <div>
+                    <span class="dashboard-metric-label">Simulated Variance vs Budget</span>
+                    <div id="sim-variance" style="font-family: 'Inria Serif', serif; font-size: 1.75rem; font-weight: 700; color: var(--danger-color);">+${{ budget_variance }}</div>
+                </div>
+                <div style="display: flex; align-items: center;">
+                    <span id="sim-status-badge" class="dashboard-badge declined" style="font-size: 0.8rem; padding: 8px 12px; width: 100%; text-align: center;">
+                        Still Over Budget
+                    </span>
+                </div>
+            </div>
+
+            <!-- Individual Tier Sliders -->
+            <div class="tier-slider-row">
+                <label style="font-weight: 600; font-size: var(--font-sm);">21+ Adults ($147.53)</label>
+                <input type="range" id="slider-21" class="simulator-slider" min="0" max="{{ tier_21_count }}" value="{{ tier_21_count }}" step="1" style="accent-color: var(--text-primary);">
+                <span style="font-weight: 600; text-align: right;"><span id="val-21">{{ tier_21_count }}</span></span>
+            </div>
+
+            <div class="tier-slider-row">
+                <label style="font-weight: 600; font-size: var(--font-sm);">Under 21 Tier ($96.00)</label>
+                <input type="range" id="slider-under21" class="simulator-slider" min="0" max="{{ tier_under_21_count }}" value="{{ tier_under_21_count }}" step="1" style="accent-color: var(--text-primary);">
+                <span style="font-weight: 600; text-align: right;"><span id="val-under21">{{ tier_under_21_count }}</span></span>
+            </div>
+
+            <div class="tier-slider-row">
+                <label style="font-weight: 600; font-size: var(--font-sm);">Under 12 Tier ($57.60)</label>
+                <input type="range" id="slider-under12" class="simulator-slider" min="0" max="{{ tier_under_12_count }}" value="{{ tier_under_12_count }}" step="1" style="accent-color: var(--text-primary);">
+                <span style="font-weight: 600; text-align: right;"><span id="val-under12">{{ tier_under_12_count }}</span></span>
+            </div>
+        </section>
+
+        <!-- Metric Summary Cards -->
+        <section class="dashboard-metrics-grid">
+            <div class="dashboard-metric-card expense-total">
+                <span class="dashboard-metric-label">Projected Grand Total</span>
+                <div class="dashboard-metric-value accent">${{ grand_total_projected }}</div>
+                <p class="dashboard-table-subtitle">Includes F&B + Taxes + Flat Fees</p>
+            </div>
+            <div class="dashboard-metric-card">
+                <span class="dashboard-metric-label">Budgeted Amount</span>
+                <div class="dashboard-metric-value">${{ budgeted_amount }}</div>
+                <p class="dashboard-table-subtitle">Your initial budget for this category</p>
+            </div>
+            
+            {% if under_budget %}
+            <div class="dashboard-metric-card expense-breakdown accepted">
+                <span class="dashboard-metric-label">Budget Status: UNDER</span>
+                <div class="dashboard-metric-value accepted">-${{ budget_variance }}</div>
+                <div class="progress-bar-container"><div class="progress-bar-fill success" style="width: 100%;"></div></div>
+            </div>
+            {% else %}
+            <div class="dashboard-metric-card expense-breakdown declined muted">
+                <span class="dashboard-metric-label">Budget Status: OVER</span>
+                <div class="dashboard-metric-value declined">+${{ budget_variance }}</div>
+                <!-- Dynamic width percentage for visual progress bar -->
+                <div class="progress-bar-container"><div class="progress-bar-fill over-budget" style="width: 113%;"></div></div>
+            </div>
+            {% endif %}
+        </section>
+
+        <!-- COST COMMITMENT DISTRIBUTION VISUAL BAR -->
+        <section class="dashboard-section" style="padding: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 8px;">
+                <h2 class="dashboard-section-title" style="margin: 0; border: none; padding: 0;">
+                    <i class="bi bi-pie-chart" style="margin-right: 6px;"></i>Cost Commitment Distribution
+                </h2>
+                <span style="font-size: var(--font-xs); color: var(--text-muted);">
+                    Hover over segments for detailed breakdowns
+                </span>
+            </div>
+
+            <!-- Clean Stacked Bar Container -->
+            <div class="cost-bar-track-wrapper" style="position: relative; margin: 12px 0 20px 0;">
+                <div class="cost-bar-track" style="position: relative; overflow: visible;">
+                    <!-- Confirmed / Locked Segment (Green) -->
+                    <div class="cost-bar-segment segment-confirmed" style="width: {{ pct_confirmed }}%;">
+                        <div class="cost-tooltip">
+                            <strong><i class="bi bi-lock-fill"></i> Locked-In / Confirmed Cost</strong>
+                            <div class="tooltip-price">${{ cost_confirmed }}</div>
+                            <ul>
+                                <li>Accepted Guests + Vendors ($974.72)</li>
+                                <li>Fixed Pavilion + Ceremony Fees</li>
+                                <li>Includes Tax &amp; Service Fee</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Pending Segment (Blue) -->
+                    <div class="cost-bar-segment segment-pending" style="width: {{ pct_pending }}%;">
+                        <div class="cost-tooltip">
+                            <strong><i class="bi bi-hourglass-split"></i> Pending RSVP Cost</strong>
+                            <div class="tooltip-price">${{ cost_pending }}</div>
+                            <ul>
+                                <li>Unconfirmed Guest F&amp;B projections</li>
+                                <li>Includes Tax &amp; Service Fee</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Declined Segment (Grey) -->
+                    <div class="cost-bar-segment segment-declined" style="width: {{ pct_declined }}%;">
+                        <div class="cost-tooltip">
+                            <strong><i class="bi bi-x-circle-fill"></i> Declined Savings</strong>
+                            <div class="tooltip-price">${{ cost_declined_saved }}</div>
+                            <ul>
+                                <li>Potential spend avoided from declined RSVPs</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Subtle Minimalist Budget Marker Line -->
+                    <div class="budget-threshold-line" style="left: {{ pct_budget_line }}%;" data-tooltip="Budget Target: ${{ budgeted_amount }}"></div>
+                </div>
+            </div>
+
+            <!-- Legend Below Bar -->
+            <div class="cost-bar-legend">
+                <div class="legend-item">
+                    <span class="legend-color-box segment-confirmed"></span>
+                    <div>
+                        <span class="legend-label">Confirmed / Locked-In</span>
+                        <span class="legend-value">${{ cost_confirmed }} ({{ pct_confirmed }}%)</span>
+                    </div>
+                </div>
+
+                <div class="legend-item">
+                    <span class="legend-color-box segment-pending"></span>
+                    <div>
+                        <span class="legend-label">Pending Confirmation</span>
+                        <span class="legend-value">${{ cost_pending }} ({{ pct_pending }}%)</span>
+                    </div>
+                </div>
+
+                <div class="legend-item">
+                    <span class="legend-color-box segment-declined"></span>
+                    <div>
+                        <span class="legend-label">Declined (Money Saved)</span>
+                        <span class="legend-value">${{ cost_declined_saved }} ({{ pct_declined }}%)</span>
+                    </div>
+                </div>
+
+                <div class="legend-item" style="border-left: 1px solid var(--border-light); padding-left: 16px;">
+                    <span class="legend-color-box" style="background: var(--text-primary); width: 2px; height: 16px; border: none;"></span>
+                    <div>
+                        <span class="legend-label">Target Budget</span>
+                        <span class="legend-value">${{ budgeted_amount }}</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contractual Minimums with Milestone Markers -->
+        <div class="dashboard-insights-grid">
+            
+            <!-- F&B Minimum Tracker with Threshold Line -->
+            <div class="dashboard-section">
+                <h2 class="dashboard-section-title">Contractual F&B Minimum</h2>
+                <div style="text-align: center; padding: 10px 0;">
+                    <span class="dashboard-metric-label">Raw F&B Subtotal (vs. ${{ fb_min_required }} min)</span>
+                    <!-- Clean neutral typography without random coloring -->
+                    <span class="dashboard-metric-value" style="font-size: 2rem;">${{ fb_subtotal_raw }}</span>
+                    
+                    <!-- Progress bar with $9k milestone marker -->
+                    <div class="progress-bar-container" style="margin-top: 16px; position: relative;">
+                        <div class="progress-bar-fill success" style="width: 100%;"></div>
+                        <!-- Threshold marker at $9,000 -->
+                        <div title="Contractual Minimum: $9,000" style="position: absolute; left: 74%; top: 0; bottom: 0; width: 2px; background: var(--text-primary); z-index: 2;"></div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--text-muted); margin-top: 4px;">
+                        <span>$0</span>
+                        <span style="font-weight: 600; color: var(--text-primary);">Minimum Floor: $9,000</span>
+                        <span>Current</span>
+                    </div>
+
+                    {% if fb_min_met %}
+                        <span class="dashboard-badge accepted mt-2" style="margin-top: 12px; display: inline-block;"><i class="bi bi-check-circle-fill" style="margin-right: 4px;"></i>Minimum Met ($9,000 req)</span>
+                    {% else %}
+                        <span class="dashboard-badge declined mt-2" style="margin-top: 12px; display: inline-block;"><i class="bi bi-x-circle-fill" style="margin-right: 4px;"></i>Minimum NOT Met</span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Adult Headcount Minimum Tracker -->
+            <div class="dashboard-section">
+                <h2 class="dashboard-section-title">Contractual Adult Headcount (21+)</h2>
+                <div style="text-align: center; padding: 10px 0;">
+                    <span class="dashboard-metric-label">Accepted Adult Guests (vs. {{ adult_min_required }} min)</span>
+                    <span class="dashboard-lodging-count" style="font-size: 2.5rem; font-family: 'Inria Serif', serif;">{{ adult_headcount }} <small class="text-xs font-sans text-muted" style="font-size: 1rem;">adults</small></span>
+                    
+                    <div class="progress-bar-container" style="margin-top: 16px; position: relative;">
+                        <div class="progress-bar-fill success" style="width: 100%;"></div>
+                        <div title="Adult Minimum: 75" style="position: absolute; left: 78%; top: 0; bottom: 0; width: 2px; background: var(--text-primary); z-index: 2;"></div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--text-muted); margin-top: 4px;">
+                        <span>0</span>
+                        <span style="font-weight: 600; color: var(--text-primary);">Minimum Floor: 75</span>
+                        <span>Current</span>
+                    </div>
+
+                    {% if adult_min_met %}
+                        <span class="dashboard-badge accepted mt-2" style="margin-top: 12px; display: inline-block;"><i class="bi bi-check-circle-fill" style="margin-right: 4px;"></i>Minimum Met (75 req)</span>
+                    {% else %}
+                        <span class="dashboard-badge declined mt-2" style="margin-top: 12px; display: inline-block;"><i class="bi bi-x-circle-fill" style="margin-right: 4px;"></i>Minimum NOT Met</span>
+                    {% endif %}
+                </div>
+            </div>
+            
+        </div>
+
+        <!-- Detailed Expense Breakdown Section -->
+        <section class="dashboard-section">
+            <h2 class="dashboard-section-title">Detailed Expense Breakdown (Projected)</h2>
+            
+            <div class="dashboard-block-group">
+                <span class="dashboard-group-label">Total Projected Food &amp; Beverage</span>
+                <div class="dashboard-lodging-grid" style="grid-template-columns: 1fr; gap: 1rem;">
+                    <div class="dashboard-lodging-item" style="display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 1.5rem 1rem;">
+                        <span class="dashboard-lodging-name" style="font-size: 0.75rem; text-transform: uppercase; color: #666; margin-bottom: 0.5rem;">Projected F&B (Taxed &amp; Serviced)</span>
+                        <span class="dashboard-metric-value" style="font-size: 2.5rem; color: #2e7d32;">${{ fb_total_final }}</span>
+                        <p class="dashboard-table-subtitle mt-2">Subtotal: ${{ fb_subtotal_raw }} + MI 6% Tax + Bay Pointe 22% Service Fee</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Headcount Tiers -->
+            <div class="dashboard-block-group mt-8">
+                <span class="dashboard-group-label">Food &amp; Beverage Subtotal Headcount (Guests + Vendors)</span>
+                <div class="dashboard-lodging-grid">
+                    <div class="dashboard-lodging-item" style="display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 1.25rem 1rem;">
+                        <span class="dashboard-lodging-name" style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: #666; margin-bottom: 0.5rem;">21+ TIER ($115.25/pp)</span>
+                        <span class="dashboard-lodging-count" style="font-size: 1.5rem; font-weight: 400;">{{ tier_21_count }} <small class="text-xs font-sans text-muted" style="font-size: 0.85rem;">guests</small></span>
+                    </div>
+                    <div class="dashboard-lodging-item" style="display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 1.25rem 1rem;">
+                        <span class="dashboard-lodging-name" style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: #666; margin-bottom: 0.5rem;">UNDER 21 TIER ($75/pp)</span>
+                        <span class="dashboard-lodging-count" style="font-size: 1.5rem; font-weight: 400;">{{ tier_under_21_count }} <small class="text-xs font-sans text-muted" style="font-size: 0.85rem;">guests</small></span>
+                    </div>
+                    <div class="dashboard-lodging-item" style="display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 1.25rem 1rem;">
+                        <span class="dashboard-lodging-name" style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: #666; margin-bottom: 0.5rem;">UNDER 12 TIER ($45/pp)</span>
+                        <span class="dashboard-lodging-count" style="font-size: 1.5rem; font-weight: 400;">{{ tier_under_12_count }} <small class="text-xs font-sans text-muted" style="font-size: 0.85rem;">guests</small></span>
+                    </div>
+                    <div class="dashboard-lodging-item" style="display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 1.25rem 1rem;">
+                        <span class="dashboard-lodging-name" style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: #666; margin-bottom: 0.5rem;">VENDOR TIER ($58/pp)</span>
+                        <span class="dashboard-lodging-count" style="font-size: 1.5rem; font-weight: 400;">{{ vendor_count }} <small class="text-xs font-sans text-muted" style="font-size: 0.85rem;">vendors</small></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fixed Fees -->
+            <div class="dashboard-block-group mt-8">
+                <span class="dashboard-group-label">Fixed Fees (Taxable 6%, No Service Fee)</span>
+                <div class="dashboard-lodging-grid" style="grid-template-columns: repeat(3, minmax(0, 1fr));">
+                    <div class="dashboard-lodging-item" style="display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 1.25rem 1rem;">
+                        <span class="dashboard-lodging-name" style="font-size: 0.75rem; text-transform: uppercase; color: #666; margin-bottom: 0.5rem;">Fixed Fees Total</span>
+                        <span class="dashboard-lodging-count" style="font-size: 1.5rem; font-weight: 400;">${{ fixed_fees_total }}</span>
+                    </div>
+                    <div class="dashboard-lodging-item" style="display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 1.25rem 1rem;">
+                        <span class="dashboard-lodging-name" style="font-size: 0.75rem; text-transform: uppercase; color: #666; margin-bottom: 0.5rem;">Pavillion Fee</span>
+                        <span class="dashboard-lodging-count" style="font-size: 1.5rem; font-weight: 400;">${{ pavilion_fee }}</span>
+                    </div>
+                    <div class="dashboard-lodging-item" style="display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 1.25rem 1rem;">
+                        <span class="dashboard-lodging-name" style="font-size: 0.75rem; text-transform: uppercase; color: #666; margin-bottom: 0.5rem;">Ceremony Fee</span>
+                        <span class="dashboard-lodging-count" style="font-size: 1.5rem; font-weight: 400;">${{ ceremony_fee }}</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Guest List Table -->
+        <section class="dashboard-table-wrapper">
+            <div class="dashboard-table-header">
+                <h2 class="dashboard-section-title" style="margin-bottom: 0; border-bottom: none; padding-bottom: 0;">Detailed Guest List + Cost Breakdown</h2>
+                <p class="dashboard-table-subtitle">Live attendee roster and F&B cost per person (Subtotal only)</p>
+            </div>
+            
+            <div class="dashboard-filter-bar" style="display: flex; align-items: center; gap: 12px; flex-wrap: nowrap;">
+                <button id="open-filter-btn" class="dashboard-filter-btn" style="flex-shrink: 0;">Filters</button>
+                <input type="text" id="guest-search" placeholder="Filter by guest name..." class="dashboard-search-input" style="flex: 1; min-width: 0;">
+                <span id="search-count-indicator" class="dashboard-muted-text text-xs" style="white-space: nowrap; flex-shrink: 0; font-size: 0.85rem; color: #888;"></span>
+            </div>
+
+            <div class="dashboard-table-container">
+                <table class="dashboard-table expense-table">
+                    <thead>
+                        <tr>
+                            <th>Guest Name</th>
+                            <th>Status</th>
+                            <th>Age Tier</th>
+                            <th>F&B Cost (Subtotal)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for guest in all_guests %}
+                        <tr data-rsvp="{{ guest.rsvp_status | lower }}"
+                            data-tier="{{ guest.price_tier | default('') | lower }}">
+                            <td class="font-medium text-charcoal">
+                                <div class="dashboard-name-cell">
+                                    <span>
+                                        {% if guest.first_name or guest.last_name %}
+                                            {{ guest.first_name }} {{ guest.last_name }}
+                                        {% else %}
+                                            <em class="dashboard-tbd">TBD</em>
+                                        {% endif %}
+                                    </span>
+                                    {% if guest.is_plus_one %}
+                                        <span class="dashboard-plus-one-tag">Plus One</span>
+                                    {% endif %}
+                                </div>
+                            </td>
+                            <td>
+                                {% set status = (guest.rsvp_status or 'pending')|lower %}
+                                {% if status in ['accept', 'accepted'] %}
+                                    <span class="dashboard-badge accepted">Accepted</span>
+                                {% elif status in ['decline', 'declined'] %}
+                                    <span class="dashboard-badge declined">Declined</span>
+                                {% else %}
+                                    <span class="dashboard-badge pending">Pending</span>
+                                {% endif %}
+                            </td>
+                            <td class="dashboard-muted-text tier-cell">{{ guest.price_tier | replace('_', ' ') | capitalize or '—' }}</td>
+                            <td class="cost-cell">
+                                {% if guest.rsvp_status | lower in ['decline', 'declined'] %}
+                                    $0.00
+                                {% else %}
+                                    ${{ guest.cost_pp }}
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- JavaScript for Simulator Drawer & Multi-Tier Calculation -->
+    <script>
+        // Toggle Drawer Visibility
+        const toggleBtn = document.getElementById('toggle-simulator-btn');
+        const drawer = document.getElementById('simulator-drawer');
+        toggleBtn.addEventListener('click', function() {
+            drawer.classList.toggle('active');
+            if (drawer.classList.contains('active')) {
+                toggleBtn.style.background = 'var(--text-primary)';
+                toggleBtn.style.color = 'var(--bg-card)';
+            } else {
+                toggleBtn.style.background = 'var(--accent-bg)';
+                toggleBtn.style.color = 'var(--accent-color)';
+            }
+        });
+
+        // Multi-Tier Simulator Logic
+        const originalGrandTotal = parseFloat("{{ grand_total_projected | replace(',', '') }}");
+        const budgetedAmount = parseFloat("{{ budgeted_amount | replace(',', '') }}");
+        const fixedFeesTotalWithTax = parseFloat("{{ fixed_fees_total | replace(',', '') }}");
+
+        // Tax & Service Fee Multipliers per tier (Subtotal * 1.06 tax * 1.22 service fee)
+        const cost21 = 115.25 * 1.28;  // ~$147.52
+        const costUnder21 = 75.00 * 1.28; // ~$96.00
+        const costUnder12 = 45.00 * 1.28; // ~$57.60
+
+        // Vendors and Fixed fees remain constant in simulation
+        const vendorConstantTotal = 13 * 58.00 * 1.28; 
+
+        const slider21 = document.getElementById('slider-21');
+        const sliderUnder21 = document.getElementById('slider-under21');
+        const sliderUnder12 = document.getElementById('slider-under12');
+
+        const val21 = document.getElementById('val-21');
+        const valUnder21 = document.getElementById('val-under21');
+        const valUnder12 = document.getElementById('val-under12');
+
+        const simGrandTotalEl = document.getElementById('sim-grand-total');
+        const simVarianceEl = document.getElementById('sim-variance');
+        const simStatusBadge = document.getElementById('sim-status-badge');
+
+        function updateSimulation() {
+            const count21 = parseInt(slider21.value);
+            const countUnder21 = parseInt(sliderUnder21.value);
+            const countUnder12 = parseInt(sliderUnder12.value);
+
+            val21.textContent = count21;
+            valUnder21.textContent = countUnder21;
+            valUnder12.textContent = countUnder12;
+
+            // Calculate new subtotal for guests + vendors + fixed fees
+            const subtotalGuests = (count21 * 115.25) + (countUnder21 * 75.00) + (countUnder12 * 45.00);
+            const vendorsSubtotal = 13 * 58.00;
+            const totalFBSubtotal = subtotalGuests + vendorsSubtotal;
+
+            const taxedAndServicedFB = totalFBSubtotal * 1.06 + (totalFBSubtotal * 0.22);
+            const newGrandTotal = taxedAndServicedFB + fixedFeesTotalWithTax;
+
+            const newVariance = newGrandTotal - budgetedAmount;
+
+            simGrandTotalEl.textContent = '$' + newGrandTotal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+
+            if (newVariance <= 0) {
+                simVarianceEl.textContent = '-$' + Math.abs(newVariance).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                simVarianceEl.style.color = 'var(--success-color)';
+                simStatusBadge.className = 'dashboard-badge accepted';
+                simStatusBadge.textContent = 'Success! Budget Target Reached!';
+            } else {
+                simVarianceEl.textContent = '+$' + newVariance.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                simVarianceEl.style.color = 'var(--danger-color)';
+                simStatusBadge.className = 'dashboard-badge declined';
+                simStatusBadge.textContent = `Still Over Budget by $${newVariance.toFixed(2)}`;
+            }
+        }
+
+        slider21.addEventListener('input', updateSimulation);
+        sliderUnder21.addEventListener('input', updateSimulation);
+        sliderUnder12.addEventListener('input', updateSimulation);
+
+        document.getElementById('reset-simulator').addEventListener('click', function() {
+            slider21.value = slider21.max;
+            sliderUnder21.value = sliderUnder21.max;
+            sliderUnder12.value = sliderUnder12.max;
+            updateSimulation();
+        });
+    </script>
+</body>
+</html>

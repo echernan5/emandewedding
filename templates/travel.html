@@ -12,11 +12,12 @@
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Travel - Emma & Ethan</title>
+    <title>Travel | Emma & Ethan</title>
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='Content/favicon.png') }}">
     
     <!-- This should be pointing to your main style.css, which now contains all the rules -->
     <link rel="stylesheet" href="{{ url_for('static', filename='travel.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='navbar.css') }}">
     
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
     
@@ -30,44 +31,50 @@
     <link href="https://fonts.googleapis.com/css2?family=Inria+Serif:ital,wght@0,300;0,400;0,700;1,300;0,400;0,700&family=Kapakana:wght@300..400&display=swap" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inria+Serif:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Monsieur+La+Doulaise&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
 </head>
 <body>
     
     <nav class="navbar" id="navbar">
-        <a href="/" class="logo-link">
-            <img src="{{ url_for('static', filename='Long logo with rose.png') }}" alt="Emma & Ethan Logo" class="logo">
-        </a>
-    
-        <button class="mobile-nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
-            <span class="hamburger-line"></span>
-            <span class="hamburger-line"></span>
-            <span class="hamburger-line"></span>
-        </button>
-    
-        <div class="nav-menu" id="nav-menu">
-            <div class="nav-links">
-              <a href="/" class="nav-link mobile-only">Home</a>
-              <a href="/travel" class="nav-link">Travel & Stay</a>
-              <a href="/wedding" class="nav-link">Ceremony & Reception</a>
-              <a href="/faqs" class="nav-link">FAQs</a>
-              <a href="/our-story" class="nav-link">Our Story</a>
-              <!-- <div class="nav-item-dropdown">
-                  <span class="nav-link dropdown-trigger">Weekend Events</span>
-                  <div class="dropdown-menu">
-                      <a href="/wedding" class="dropdown-item">Ceremony & Reception</a>
-                      <a href="/welcome-party" class="dropdown-item">Welcome Party</a>
-                  </div>
-              </div> -->
-              <div class="nav-item-dropdown">
-                <span class="nav-link dropdown-trigger">Registry</span>
+    <a href="/" class="logo-link">
+        <img src="{{ url_for('static', filename='Long logo with rose.png') }}" alt="Emma & Ethan Logo" class="logo">
+    </a>
+
+    <button class="mobile-nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+    </button>
+
+    <div class="nav-menu" id="nav-menu">
+        <div class="nav-links">
+            <a href="/" class="nav-link mobile-only">Home</a>
+            
+            <div class="nav-item-dropdown">
+                <span class="nav-link dropdown-trigger">Wedding Weekend <i class="bi bi-chevron-down" style="font-size: 0.7rem; margin-left: 4px;"></i></span>
+                <div class="dropdown-menu">
+                    <a href="/wedding" class="dropdown-item">Wedding Day</a>
+                    <a href="/travel" class="dropdown-item">Travel & Stay</a>
+                    <a href="/welcome-gathering" class="dropdown-item">Welcome Gathering</a>
+                </div>
+            </div>
+
+            <a href="/faqs" class="nav-link">FAQs</a>
+            <a href="/our-story" class="nav-link">Our Story</a>
+        
+            <div class="nav-item-dropdown">
+                <span class="nav-link dropdown-trigger">Registry<i class="bi bi-chevron-down" style="font-size: 0.7rem; margin-left: 4px;"></i></span>
                 <div class="dropdown-menu">
                     <a href="https://www.crateandbarrel.com/gift-registry/emma-hernandez-and-ethan-wlodarczyk/r7575332" class="dropdown-item" target="_blank" rel="noopener noreferrer">Crate & Barrel</a>
                     <a href="https://withjoy.com/wlodarczyk/registry" class="dropdown-item" target="_blank" rel="noopener noreferrer">WithJoy Registry</a>
-              </div>
+                </div>
             </div>
-          </div>
+            
+            <!-- Modified RSVP Button Link -->
+            <a href="/rsvp" class="nav-link rsvp-btn">RSVP</a>
         </div>
-      </nav>
+    </div>
+  </nav>
 
   <section class="travel-hero">
     <!-- Background image -->
@@ -84,7 +91,7 @@
   
   <section class="accommodations-section">
     <div class="accommodations-content">
-        <h2 class="section-title">Accommodations</h2>
+        <h2 class="section-title">Recommended Stays</h2>
 
         <div class="accommodation-grid centered-grid">
             <!-- 1. BAY POINTE INN (NEW) --> 
@@ -111,7 +118,7 @@
                         <p class="info-row">Limited Availability</p>
                         
                         <div class="amenities-row">
-                            <span class="amenities-label">Amenities:</span>
+
                             <div class="amenities-icons">
                                 <div class="amenity-icon" data-tooltip="On-Site Lodging">
                                     <i class="bi bi-house-heart-fill"></i>
@@ -162,7 +169,6 @@
                         <p class="info-row">20 Mins from the Venue</p>
                         
                         <div class="amenities-row">
-                            <span class="amenities-label">Amenities:</span>
                             <div class="amenities-icons">
                                 <div class="amenity-icon" data-tooltip="Wedding Shuttle Provided">
                                     <i class="bi bi-bus-front-fill"></i>
@@ -212,7 +218,6 @@
                         <p class="info-row">15 Mins from the Venue</p>
                         
                         <div class="amenities-row">
-                            <span class="amenities-label">Amenities:</span>
                             <div class="amenities-icons">
                                 <div class="amenity-icon" data-tooltip="Wedding Shuttle Provided">
                                     <i class="bi bi-bus-front-fill"></i>
@@ -243,8 +248,8 @@
             <div class="accommodation-card hotel-style-card">
                 <div class="card-carousel-wrapper">
                     <div class="card-carousel-images" id="carousel-airbnb">
-                        <img src="{{ url_for('static', filename='Content/Accommodations/vrbo2.avif') }}" class="active" alt="Vacation Rental Bedroom">
-                        <img src="{{ url_for('static', filename='Content/Accommodations/vrbo3.avif') }}" alt="Vacation Rental Interior">
+                        <img src="{{ url_for('static', filename='Content/Accommodations/vrbo3.avif') }}" class="active" alt="Vacation Rental Interior">
+                        <img src="{{ url_for('static', filename='Content/Accommodations/vrbo2.avif') }}" alt="Vacation Rental Bedroom">
                         <img src="{{ url_for('static', filename='Content/Accommodations/vrbo1.avif') }}" alt="Vacation Rental Hot Tub">
                         <img src="{{ url_for('static', filename='Content/Accommodations/vrbo4.webp') }}" alt="Vacation Rental Lake View">
                     </div>
@@ -263,7 +268,7 @@
                         <p class="info-row">Distance Varies by Property</p>
                         
                         <div class="amenities-row">
-                            <span class="amenities-label">Amenities:</span>
+
                             <div class="amenities-icons">
                                 <div class="amenity-icon" data-tooltip="Entire Home">
                                     <i class="bi bi-house-door-fill"></i>
@@ -353,7 +358,7 @@
                     <div class="list-text">
                         <span class="list-category">Recreation</span>
                         <h4 class="editorial-subheading">Yankee Springs Golf Course</h4>
-                        <span class="read-more-small">View Details</span>
+                        <span class="read-more-small">View Details →</span>
                     </div>
                 </a>
 
@@ -364,7 +369,7 @@
                     <div class="list-text">
                         <span class="list-category">Dining & Drinks</span>
                         <h4 class="editorial-subheading">Grand Rapids Downtown Market</h4>
-                        <span class="read-more-small">View Details</span>
+                        <span class="read-more-small">View Details →</span>
                     </div>
                 </a>
 
@@ -375,7 +380,7 @@
                     <div class="list-text">
                         <span class="list-category">Outdoors</span>
                         <h4 class="editorial-subheading">Hiking the Devils Soup Bowl</h4>
-                        <span class="read-more-small">View Details</span>
+                        <span class="read-more-small">View Details →</span>
                     </div>
                 </a>
 
@@ -535,7 +540,7 @@
                 { icon: 'bi-ev-station', text: 'EV Charging' }
             ],
             bookingNote: `
-                <strong>Reservation Note:</strong> Reservations for June 2027 are expected to open around January or February 2027. Please check back then to book directly through the hotel. Our wedding shuttle will pick up and drop off here.
+                <strong>Transportation:</strong> Reservations for June 2027 are expected to open early 2027. Please check back then to book directly through the hotel. Our wedding shuttle will pick up and drop off here.
             `
         },
 
@@ -550,7 +555,7 @@
 
             // NEW: Add these two specific links
             vrboLink: 'https://www.airbnb.com/s/Gun-Lake--MI/homes?refinement_paths%5B%5D=%2Fhomes&place_id=ChIJJdlv3-EtGIgRs3G-aQtPUTQ&acp_id=817bd6f1-72e0-48e4-a33b-f3944cfe4099&date_picker_type=calendar&search_type=unknown&query=Gun%20Lake%2C%20MI&flexible_trip_lengths%5B%5D=one_week&monthly_start_date=2027-18-06&monthly_length=3&monthly_end_date=2027-19-06&search_mode=regular_search&price_filter_input_type=2&channel=EXPLORE&checkin=2027-06-17&checkout=2027-06-19&source=structured_search_input_header',
-            airbnbLink: 'https://www.vrbo.com/search?destination=Gun+Lake%2C+Michigan%2C+United+States+of+America&regionId=553248635056397962&latLong=42.608322%2C-85.527748&flexibility=0_DAY&d1=2027-06-17&startDate=2027-06-17&d2=2027-06-19&endDate=2027-06-19&adults=2',
+            airbnbLink: 'https://www.vrbo.com/search?destination=Gun+Lake%2C+Michigan%2C+United+States+of+America&regionId=553248635056397962&latLong=42.608322%2C-85.527748&flexibility=0_DAY&d1=2027-06-17&startDate=2027-06-1&d2=2027-06-19&endDate=2027-06-19&adults=2',
             
             images: [
                 "{{ url_for('static', filename='Content/Accommodations/vrbo2.avif') }}",
@@ -650,6 +655,8 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
+
+<script src="/static/event.js"></script>
 
 </body>
 </html>

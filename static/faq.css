@@ -62,7 +62,7 @@
     color: var(--color-charcoal);
     /* FIX 1: Changed background to Cream. 
        Text is much easier to read on light paper than dark blue. */
-    background-color: var(--color-cream);
+    background-color: var(--color-dusty-blue);
     line-height: 1.6;
   }
   
@@ -73,222 +73,7 @@
       padding: 0 20px; /* Prevents text from touching mobile screen edges */
       min-height: 75vh; /* Ensures page has substance even if FAQs are closed */
   }
-  
-  /* ===================================================================
-     3. NAVIGATION
-     =================================================================== */
-  /* (Kept mostly the same, just ensured background matches logic) */
-  
-  #navbar {
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    height: 90px;
-    padding: 0 1.5rem;
-    background-color: var(--color-dusty-blue);
-    transition: background-color 0.8s ease, transform 0.8s ease, padding-top 0.8s ease;
-  }
-  
-  #navbar.scrolled {
-    background-color: var(--color-dusty-blue);
-  }
-  
-  #navbar.hide-on-scroll-down {
-    transform: translateY(-100%);
-  }
-  
-  .navbar .logo {
-    max-height: 70px;
-    width: auto;
-  }
-  
-  /* --- MOBILE MENU --- */
-  .nav-menu {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 1000;
-    width: 100%;
-    height: 100vh;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background-color: var(--color-dusty-blue);
-  }
-  
-  .nav-menu.is-active {
-    display: flex;
-  }
-  
-  .nav-links {
-    display: flex;
-    flex-direction: column;
-    text-align: center;
-    gap: 2.5rem;
-  }
-  
-  .navbar .nav-link {
-    font-family: var(--font-serif);
-    font-size: 1.5rem;
-    font-style: italic;
-    text-transform: uppercase;
-    letter-spacing: 0.2rem;
-    text-decoration: none;
-    color: white;
-    transition: color 0.3s ease;
-  }
-  
-  .navbar .nav-link:hover,
-  .navbar .nav-link.active {
-    color: #f0f0f0;
-    text-underline-offset: 5px;
-  }
-  
-  .mobile-nav-toggle {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-    z-index: 1002;
-    width: 30px;
-    height: 24px;
-    padding: 0;
-    border: none;
-    background: transparent;
-    cursor: pointer;
-  }
-  
-  .hamburger-line {
-    width: 30px;
-    height: 3px;
-    background-color: white;
-    border-radius: 10px;
-  }
-  
-  
-  /* DESKTOP NAV BREAKPOINT */
-  @media (min-width: 900px) {
-    #navbar {
-      justify-content: space-around;
-      padding: 0;
-      padding-top: 50px;
-      background-color: transparent; 
-    }
-  
-    .mobile-only {
-      display: none !important;
-    }
 
-    #navbar {
-      background-color: var(--color-dusty-blue); 
-      padding-top: 0; /* Reset the luxury floating padding for this specific page style */
-    }
-  
-    .mobile-nav-toggle { display: none; }
-    
-    .nav-menu {
-      position: static;
-      display: flex;
-      width: auto;
-      height: auto;
-      flex-direction: row;
-      background-color: transparent;
-      padding-top: 0;
-      z-index: auto;
-      transition: none;
-    }
-  
-    .nav-links {
-      flex-direction: row;
-      gap: 60px;
-    }
-  
-    .navbar .nav-link {
-      font-size: 0.9rem;
-    }
-  }
-  
-  /* DROPDOWNS */
-  .nav-item-dropdown {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-  }
-  
-  .dropdown-trigger { cursor: default; padding-bottom: 0; }
-  
-  .dropdown-menu {
-    display: none;
-    position: absolute;
-    top: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: #f5f5f5;
-    min-width: 240px;
-    padding: 15px 0;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
-    border-top: 3px solid var(--color-deep-blue);
-    border-radius: 0 0 4px 4px;
-    z-index: 1100;
-  }
-  
-  .dropdown-item {
-    display: block;
-    padding: 12px 25px;
-    text-align: center;
-    text-decoration: none;
-    font-style: italic;
-    font-family: var(--font-serif);
-    font-size: 0.85rem;
-    text-transform: uppercase;
-    letter-spacing: 0.1rem;
-    color: var(--color-charcoal);
-    transition: all 0.2s ease;
-  }
-  
-  .dropdown-item:hover {
-    background-color: #f7f9fb;
-    color: var(--color-deep-blue);
-  }
-  
-  @media (min-width: 900px) {
-    .nav-item-dropdown:hover .dropdown-menu {
-        display: block;
-        animation: fadeUp 0.3s ease;
-    }
-    @keyframes fadeUp {
-        from { opacity: 0; transform: translate(-50%, 10px); }
-        to { opacity: 1; transform: translate(-50%, 0); }
-    }
-  }
-  
-  @media (max-width: 899px) {
-    .nav-item-dropdown { flex-direction: column; height: auto; }
-    .dropdown-trigger { margin-bottom: 1.5rem; }
-    .dropdown-menu {
-        position: static;
-        display: flex;
-        flex-direction: column;
-        transform: none;
-        background-color: transparent;
-        box-shadow: none;
-        border: none;
-        padding: 0;
-        gap: 1.5rem;
-    }
-    .dropdown-item {
-        color: rgba(255, 255, 255, 0.8);
-        font-size: 1.1rem;
-        padding: 0;
-    }
-  }
-  
   /* =========================================
      FAQ ACCORDION STYLES (FIXED)
      ========================================= */
@@ -314,9 +99,8 @@
   }
   
   .accordion-trigger .topic-col h3 {
-      font-family: var(--font-serif);
+      font-family: 'Inter', sans-serif;
       font-size: 1.5rem;
-      color: var(--color-charcoal); /* FIX: Ensure headers are dark */
       font-weight: normal;
       margin: 0;
   }
@@ -383,7 +167,7 @@
   .qa .a {
     margin: 0;
     /* FIX 5: Changed text from White to Charcoal */
-    color: #555555; 
+    color: #ffffff; 
   }
   
   /* Desktop Split Layout */
@@ -679,7 +463,6 @@
 
 /* 1. Page Wrapper & Header */
 .faq-page-wrapper {
-    background-color: #fdfbf9; /* Warm off-white, slightly different from cream */
     padding-bottom: 80px;
 }
 
@@ -699,13 +482,6 @@
     letter-spacing: 0.2em;
     color: #888;
     margin-bottom: 1rem;
-}
-
-.faq-header .main-title {
-    font-family: 'DarlineScript', cursive;
-    font-size: 4rem;
-    color: var(--color-charcoal);
-    font-weight: normal;
 }
 
 /* 2. Zig-Zag Section Layout */
@@ -771,7 +547,7 @@
 .script-category {
     font-family: 'DarlineScript', cursive;
     font-size: 2.5rem;
-    color: #999;
+    color: #ffffff;
     margin: 0 0 0.5rem 0;
 }
 
@@ -786,15 +562,16 @@
 
 /* 6. Minimal Accordion (The Florence Look) */
 .clean-accordion {
-    border-top: 1px solid #e0e0e0; /* Top line to start the list */
+    border-top: 1px solid #ffffff; /* Top line to start the list */
 }
 
 .accordion-item {
-    border-bottom: 1px solid #e0e0e0; /* Separator lines */
+    border-bottom: 1px solid #ffffff; /* Separator lines */
 }
 
 .accordion-trigger {
     width: 100%;
+    color: #ffffff;
     display: flex;
     justify-content: space-between; /* Pushes arrow to right */
     align-items: center;
@@ -807,28 +584,20 @@
 }
 
 .accordion-trigger span {
-    font-family: var(--font-serif);
-    font-size: 0.8rem;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: #555;
-    font-weight: bold;
+    font-family: 'Inter', sans-serif;
+    font-size: 1rem;
+    letter-spacing: 0.08rem;
+    color: #ffffff;
 }
 
 .accordion-trigger i {
     font-size: 0.8rem;
-    color: #999;
+    color: #ffffff;
     transition: transform 0.3s ease;
-}
-
-/* Active State */
-.accordion-trigger.active span {
-    color: var(--color-deep-blue);
 }
 
 .accordion-trigger.active i {
     transform: rotate(180deg);
-    color: var(--color-deep-blue);
 }
 
 /* Panel Animation */
@@ -836,15 +605,6 @@
     max-height: 0;
     overflow: hidden;
     transition: max-height 0.4s ease-out;
-}
-
-.accordion-panel p {
-    font-family: var(--font-serif);
-    font-size: 0.95rem;
-    color: #666;
-    line-height: 1.7;
-    padding-bottom: 20px; /* Space inside the answer */
-    padding-right: 20px;
 }
 
 /* 7. Collage Style (Top Section) */
@@ -876,12 +636,6 @@
    FLORENCE LAYOUT STYLES
    =================================================================== */
 
-/* 1. Page Wrapper */
-.faq-page-wrapper {
-    background-color: #fdfbf9; /* Warm off-white paper tone */
-    padding-bottom: 80px;
-}
-
 /* 2. Header */
 .faq-header {
     text-align: center;
@@ -894,14 +648,15 @@
     font-size: 0.8rem;
     text-transform: uppercase;
     letter-spacing: 0.2em;
-    color: #888;
+    color: #ffffff;
     margin-bottom: 1rem;
 }
 
 .faq-header .main-title {
     font-family: 'DarlineScript', cursive;
+    padding: 80px 0px 0px 0px;
+    color: #ffffff;
     font-size: 4rem;
-    color: var(--color-charcoal);
     font-weight: normal;
 }
 
@@ -981,10 +736,14 @@
 
 .script-category {
     display: block;
-    font-family: 'DarlineScript', cursive;
-    font-size: 2.5rem;
-    color: #999; /* Light grey script */
-    margin-bottom: 0.5rem;
+    font-family: 'Inria Serif', serif;
+    font-style: italic;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.2rem;
+    font-size: 1.75rem;
+    color: #ffffff; /* Light grey script */
+    margin-bottom: 1.5rem;
 }
 
 .category-title {
@@ -1001,11 +760,11 @@
    =================================================================== */
 
 .clean-accordion {
-    border-top: 1px solid #e0e0e0;
+    border-top: 1px solid #ffffff;
 }
 
 .accordion-item {
-    border-bottom: 1px solid #e0e0e0;
+    border-bottom: 1px solid #ffffff;
 }
 
 .accordion-trigger {
@@ -1021,26 +780,15 @@
     transition: color 0.3s;
 }
 
-.accordion-trigger span {
-    font-family: var(--font-serif);
-    font-size: 0.85rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: #555;
-    font-weight: bold;
-}
-
 .accordion-trigger i {
     font-size: 0.8rem;
-    color: #999;
+    color: #ffffff;
     transition: transform 0.3s ease;
 }
 
 /* Active State */
-.accordion-trigger.active span { color: var(--color-deep-blue); }
 .accordion-trigger.active i {
     transform: rotate(180deg);
-    color: var(--color-deep-blue);
 }
 
 /* PANEL ANIMATION (THE FIX) */
@@ -1064,13 +812,14 @@
 
 /* Answer Text */
 .accordion-panel p {
-    font-family: var(--font-serif);
+    font-family: 'Inter', sans-serif;
     font-size: 0.95rem;
-    color: #666;
+    color: #ffffff;
     line-height: 1.7;
     /* Add padding here instead so it collapses correctly */
     padding: 10px 0 20px 0;
     margin: 0;
+    font-weight: 300;
 }
 
 .vertical-img {
