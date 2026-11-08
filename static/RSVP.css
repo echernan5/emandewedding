@@ -541,9 +541,10 @@ input::placeholder {
   height: 42px;
   color: #ffffff; /* White icon */
   font-size: 2rem;
+  transition: all 0.4s ease;
 }
 
 .rsvp-home-btn:hover {
   color: #ffffff;
-  transform: translateX(-3px); /* Subtle nudge left to echo going back */
+  transform: scale(1.07); /* Subtle nudge left to echo going back */
 }

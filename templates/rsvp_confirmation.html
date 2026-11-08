@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RSVP Confirmed | Emma & Ethan</title>
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='Content/favicon.png') }}">
-    
+
     <link rel="stylesheet" href="{{ url_for('static', filename='rsvp.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='rsvp_confirmation.css') }}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
@@ -130,8 +130,28 @@
             </div>
 
             <!-- Primary Action Hub -->
+            <!-- Primary Action Hub -->
             <div class="primary-actions" style="margin-top: 28px;">
-                <a href="/calendar/download" class="btn-primary">Add to Calendar</a>
+                
+                <!-- Add to Calendar Popover Container -->
+                <div class="calendar-popover-wrapper">
+                    <button type="button" class="btn-primary" id="calendarBtn" onclick="toggleCalendarPopover(event)">
+                        Add to Calendar
+                    </button>
+
+                    <!-- Fixed: Added missing wrapper div -->
+                    <div id="calendarPopover" class="calendar-popover-menu">
+                        <a href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=Hernandez-Wlodarczyk+Wedding&dates=20270618T163000/20270618T230000&details=Join+Emma+and+Ethan+as+they+celebrate+their+wedding%21+Ceremony+begins+at+4%3A30+PM+EST+%28Seating+opens+at+4%3A00+PM%29.+Visit+our+website+at+https%3A%2F%2Fwww.emmaandethan.com&location=Bay+Pointe+Inn%2C+11456+Marsh+Rd%2C+Shelbyville%2C+MI+49344&url=https%3A%2F%2Fwww.emmaandethan.com" 
+                        target="_blank" 
+                        rel="noopener noreferrer" 
+                        class="popover-option">
+                        <i class="bi bi-google"></i> Google Calendar
+                        </a>
+                        <a href="#" onclick="downloadIcsFile(event)" class="popover-option">
+                            <i class="bi bi-apple"></i> Apple / iCal / Outlook
+                        </a>
+                    </div>
+                </div>
 
                 <!-- Registry Popover Container -->
                 <div class="registry-popover-wrapper">
@@ -139,7 +159,6 @@
                         View Registry
                     </button>
 
-                    <!-- Popover Card (Pops Up Above Button) -->
                     <div id="registryPopover" class="registry-popover-menu">
                         <a href="https://www.crateandbarrel.com/gift-registry/emma-hernandez-and-ethan-wlodarczyk/r7575332" target="_blank" class="popover-option">
                             Crate & Barrel
@@ -149,6 +168,7 @@
                         </a>
                     </div>
                 </div>
+
             </div>
 
             <!-- Streamlined Single-Line Footer -->
@@ -206,6 +226,64 @@
                     if (popover && !popover.contains(e.target) && !btn.contains(e.target)) {
                         popover.classList.remove('active');
                         btn.classList.remove('popover-open');
+                    }
+                });
+
+                // Toggle Calendar Popover Menu
+                function toggleCalendarPopover(event) {
+                    event.stopPropagation();
+                    const calendarPopover = document.getElementById('calendarPopover');
+                    const registryPopover = document.getElementById('registryPopover');
+                    
+                    // Close registry popover if open
+                    if (registryPopover) registryPopover.classList.remove('active');
+
+                    calendarPopover.classList.toggle('active');
+                }
+
+                // Generate and trigger download for .ics file (Apple / iCal / Outlook)
+                function downloadIcsFile(event) {
+                    event.preventDefault();
+
+                    const icsContent = [
+                        'BEGIN:VCALENDAR',
+                        'VERSION:2.0',
+                        'PRODID:-//Emma and Ethan Wedding//EN',
+                        'CALSCALE:GREGORIAN',
+                        'METHOD:PUBLISH',
+                        'BEGIN:VEVENT',
+                        'SUMMARY:Hernandez-Wlodarczyk Wedding',
+                        'DESCRIPTION:Join Emma and Ethan as they celebrate their wedding! Ceremony begins at 4:30 PM EST (Seating opens at 4:00 PM).\\n\\nWebsite: https://www.emmaandethan.com',
+                        'LOCATION:Bay Pointe Inn, 11456 Marsh Rd, Shelbyville, MI 49344',
+                        'URL:https://www.emmaandethan.com',
+                        'DTSTART:20270618T163000',
+                        'DTEND:20270618T230000',
+                        'STATUS:CONFIRMED',
+                        'END:VEVENT',
+                        'END:VCALENDAR'
+                    ].join('\r\n');
+
+                    const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8;' });
+                    const link = document.createElement('a');
+                    link.href = window.URL.createObjectURL(blob);
+                    link.setAttribute('download', 'Hernandez_Wlodarczyk_Wedding.ics');
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                }
+
+                // Global click listener to close popovers when clicking outside
+                window.addEventListener('click', function(e) {
+                    const calPopover = document.getElementById('calendarPopover');
+                    const calBtn = document.getElementById('calendarBtn');
+                    const regPopover = document.getElementById('registryPopover');
+                    const regBtn = document.getElementById('registryBtn');
+                    
+                    if (calPopover && !calPopover.contains(e.target) && !calBtn.contains(e.target)) {
+                        calPopover.classList.remove('active');
+                    }
+                    if (regPopover && !regPopover.contains(e.target) && !regBtn.contains(e.target)) {
+                        regPopover.classList.remove('active');
                     }
                 });
             </script>

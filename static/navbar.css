@@ -102,6 +102,7 @@ NAVBAR STYLES
 
 .dropdown-item {
     font-family: 'Inria Serif', serif;
+    font-style: italic;
     font-size: 0.9rem;
     text-transform: uppercase;
     letter-spacing: 1px;

@@ -1303,9 +1303,9 @@ def wedding():
     return render_template("wedding.html")
 
 
-@app.route("/welcome-party")
+@app.route("/welcome-gathering")
 def welcomeparty():
-    return render_template("welcome-party.html")
+    return render_template("welcome_gathering.html")
 
 from datetime import datetime, date
 

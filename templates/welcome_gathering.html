@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-YGDNYBCK3Z"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-YGDNYBCK3Z');
+    </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome Gathering | Emma & Ethan</title>
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='Content/favicon.png') }}">
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='welcome_gathering.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='navbar.css') }}">
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+
+    <meta name="description" content="Join Emma Hernandez and Ethan Wlodarczyk for a casual welcome gathering on Thursday, June 17th, at Millennium Park.">
+    <meta name="keywords" content="Emma Hernandez, Ethan Wlodarczyk, Wedding, Welcome Gathering, Millennium Park">
+    <meta name="author" content="Emma Hernandez and Ethan Wlodarczyk">
+
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inria+Serif:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Monsieur+La+Doulaise&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+</head>
+<body>
+    
+  <nav class="navbar" id="navbar">
+    <a href="/" class="logo-link">
+        <img src="{{ url_for('static', filename='Long logo with rose.png') }}" alt="Emma & Ethan Logo" class="logo">
+    </a>
+
+    <button class="mobile-nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+    </button>
+
+    <div class="nav-menu" id="nav-menu">
+        <div class="nav-links">
+            <a href="/" class="nav-link mobile-only">Home</a>
+            
+            <div class="nav-item-dropdown">
+                <span class="nav-link dropdown-trigger">Wedding Weekend <i class="bi bi-chevron-down" style="font-size: 0.7rem; margin-left: 4px;"></i></span>
+                <div class="dropdown-menu">
+                    <a href="/wedding" class="dropdown-item">Wedding Day</a>
+                    <a href="/travel" class="dropdown-item">Travel & Stay</a>
+                    <a href="/welcome-gathering" class="dropdown-item">Welcome Gathering</a>
+                </div>
+            </div>
+
+            <a href="/faqs" class="nav-link">FAQs</a>
+            <a href="/our-story" class="nav-link">Our Story</a>
+        
+            <div class="nav-item-dropdown">
+                <span class="nav-link dropdown-trigger">Registry<i class="bi bi-chevron-down" style="font-size: 0.7rem; margin-left: 4px;"></i></span>
+                <div class="dropdown-menu">
+                    <a href="https://www.crateandbarrel.com/gift-registry/emma-hernandez-and-ethan-wlodarczyk/r7575332" class="dropdown-item" target="_blank" rel="noopener noreferrer">Crate & Barrel</a>
+                    <a href="https://withjoy.com/wlodarczyk/registry" class="dropdown-item" target="_blank" rel="noopener noreferrer">WithJoy Registry</a>
+                </div>
+            </div>
+            
+            <a href="/rsvp" class="nav-link rsvp-btn">RSVP</a>
+        </div>
+    </div>
+  </nav>
+
+  <header class="welcome-hero">
+    <div class="hero-bg" style="background-image: url('{{ url_for('static', filename='Content/pavilion_milennium_park_web.jpg') }}');"></div>
+    <div class="hero-overlay"></div>
+    
+    <div class="hero-content">
+        <p class="hero-kicker">Please Join Us for a</p>
+        <h1 class="script-font">Welcome Gathering</h1>
+        <p class="hero-sub">Thursday, June 17th</p>
+        
+        <div class="hero-details">
+            <p class="details-location">Millennium Park (Shelter B)</p>
+            <p class="details-address">1415 Maynard Ave SW, Walker, MI 49534</p>
+            <p class="details-time">Time TBA</p>
+            
+            <div class="details-divider"></div>
+            
+            <p class="details-description">
+                For anyone in town on Thursday evening, please feel free to stop by and join us for a casual gathering to kick off the weekend. We’ll have food, refreshments, and plenty of time to catch up.
+            </p>
+        </div>
+        </div>
+    </div>
+  </header>
+
+  <footer class="luxury-footer">
+    <div class="footer-content">
+        <div class="footer-logo-container">
+            <img src="{{ url_for('static', filename='Long logo with rose.png') }}" alt="Emma and Ethan logo with rose" class="footer-logo">
+        </div>
+
+        <nav class="footer-nav">
+            <a href="/" class="footer-link">Home</a>
+            <a href="/travel" class="footer-link">Travel</a>
+            <a href="/our-story" class="footer-link">Our Story</a>
+            <a href="/wedding" class="footer-link">Ceremony & Reception</a>
+            <a href="/welcome-gathering" class="footer-link">Welcome Gathering</a>
+            <a href="/faqs" class="footer-link">FAQs</a>
+            <a href="https://withjoy.com/wlodarczyk/registry" class="footer-link" target="_blank" rel="noopener noreferrer">Registry</a>
+        </nav>
+
+        <div class="footer-bottom">
+            <p>
+                &copy; 2026 Emma & Ethan 
+                <span class="divider">•</span> 
+                <button id="privacy-trigger" class="privacy-link-light">Privacy Policy</button>
+            </p>
+        </div>
+    </div>
+  </footer>
+
+  <div id="privacy-modal" class="modal modal-hidden">
+    <div class="modal-overlay" id="privacy-overlay"></div>
+    
+    <div class="modal-content privacy-content">
+        <button class="modal-close" id="privacy-close">&times;</button>
+        
+        <h2 class="script-font privacy-title">Privacy Policy</h2>
+        
+        <div class="privacy-body">
+            <p><strong>Last Updated: January 2026</strong></p>
+            <p>This website is a personal wedding website hosted for the purpose of sharing information with our guests. We respect your privacy and are committed to protecting it.</p>
+            
+            <h4>Data Collection</h4>
+            <p>We use Google Analytics to help us understand how our website is being used (e.g., to ensure our RSVP system is functioning correctly). This may collect non-personal information such as your device type, browser version, and general geographic location.</p>
+            
+            <h4>Cookies</h4>
+            <p>We do not use tracking cookies for advertising purposes. Any cookies used are strictly necessary for the functioning of the site or for anonymous analytics.</p>
+            
+            <h4>Personal Information</h4>
+            <p>Any personal information you voluntarily provide via our RSVP form (such as dietary restrictions or names) is used solely for the purpose of planning our wedding celebration and will not be shared with third parties.</p>
+        </div>
+    </div>
+  </div>
+
+  <script src="{{ url_for('static', filename='event.js') }}" defer></script>
+</body>
+</html>

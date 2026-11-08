@@ -99,9 +99,8 @@
   }
   
   .accordion-trigger .topic-col h3 {
-      font-family: var(--font-serif);
+      font-family: 'Inter', sans-serif;
       font-size: 1.5rem;
-      color: var(--color-charcoal); /* FIX: Ensure headers are dark */
       font-weight: normal;
       margin: 0;
   }
@@ -585,12 +584,10 @@
 }
 
 .accordion-trigger span {
-    font-family: var(--font-serif);
-    font-size: 0.8rem;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
+    font-family: 'Inter', sans-serif;
+    font-size: 1rem;
+    letter-spacing: 0.08rem;
     color: #ffffff;
-    font-weight: bold;
 }
 
 .accordion-trigger i {
@@ -739,10 +736,14 @@
 
 .script-category {
     display: block;
-    font-family: 'DarlineScript', cursive;
-    font-size: 2.5rem;
+    font-family: 'Inria Serif', serif;
+    font-style: italic;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.2rem;
+    font-size: 1.75rem;
     color: #ffffff; /* Light grey script */
-    margin-bottom: 0.5rem;
+    margin-bottom: 1.5rem;
 }
 
 .category-title {
@@ -811,13 +812,14 @@
 
 /* Answer Text */
 .accordion-panel p {
-    font-family: var(--font-serif);
+    font-family: 'Inter', sans-serif;
     font-size: 0.95rem;
     color: #ffffff;
     line-height: 1.7;
     /* Add padding here instead so it collapses correctly */
     padding: 10px 0 20px 0;
     margin: 0;
+    font-weight: 300;
 }
 
 .vertical-img {

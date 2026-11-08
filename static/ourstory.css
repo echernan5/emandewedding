@@ -156,6 +156,7 @@ body.modal-active {
   color: #ffffff;
   font-weight: normal;
   margin: 0 0 1rem 0;
+  font-style: italic;
 }
 
 .wl-style-subtitle {
@@ -170,7 +171,7 @@ body.modal-active {
 
 /* The Paragraphs */
 .story-text p {
-font-family: "Inria Serif", serif;
+font-family: 'Inter', sans-serif;
 font-size: 0.9rem; 
 line-height: 1.2; 
 

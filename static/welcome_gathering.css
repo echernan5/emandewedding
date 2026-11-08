@@ -1,0 +1,400 @@
+/* ===================================================================
+   1. FONTS & VARIABLES
+   =================================================================== */
+
+@font-face {
+  font-family: 'DarlineScript';
+  src: url('/static/Fonts/WOFF/DarlineScript-Regular.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Inria Serif';
+  src: url('/static/Fonts/WOFF/Inria Serif-Regular.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Inria Serif';
+  src: url('/static/Fonts/WOFF/Inria Serif-Bold.woff') format('woff');
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --font-serif: 'Inria Serif', serif;
+  --font-sans-serif: 'Inter', Helvetica, sans-serif;
+  --font-script: 'DarlineScript', cursive; 
+  --color-dusty-blue: #9aacc4;
+  --color-deep-blue: #6587ab;
+  --color-charcoal: #333333;
+  --color-cream: #fcfcfc;
+  --color-border: #e5e5e5;
+}
+
+/* ===================================================================
+   2. GLOBAL & UTILITY
+   =================================================================== */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+}
+
+body {
+  font-family: var(--font-sans-serif);
+  font-weight: 300;
+  color: var(--color-charcoal);
+  background-color: #111111;
+  line-height: 1.6;
+}
+
+.script-font {
+  font-family: var(--font-script);
+  font-weight: normal;
+}
+
+/* ===================================================================
+   3. LUXURY MINIMAL HERO & OVERLAY (CENTERED BELOW NAVBAR)
+   =================================================================== */
+
+.welcome-hero {
+position: relative;
+  height: 100vh; /* Fills full screen so background image covers top-to-bottom */
+  width: 100vw;
+  display: flex;
+  align-items: center;     /* Vertically centers text in that exact space */
+  justify-content: center; /* Horizontally centers text */
+  text-align: center;
+  color: #ffffff;
+  padding: 0 20px;
+  overflow: hidden;
+}
+
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  z-index: 1;
+}
+
+/* Dark Overlay */
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.45) 0%,
+    rgba(0, 0, 0, 0.40) 50%,
+    rgba(0, 0, 0, 0.65) 100%
+  );
+  z-index: 2;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 3;
+  max-width: 650px;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding-top: 80px;
+}
+
+.hero-kicker {
+  font-family: var(--font-serif);
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  font-size: 1.1rem;
+  font-style: italic;
+  font-weight: 400;
+  color: #ffffff;
+  margin-bottom: 2.5rem;
+}
+
+.welcome-hero .script-font {
+  font-size: 4rem;
+  margin: 0;
+  color: #ffffff;
+  line-height: 1.1;
+  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.hero-sub {
+  font-family: var(--font-serif);
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  font-size: 1.1rem;
+  margin-top: 1rem;
+  font-style: italic;
+  font-weight: 400;
+  color: #ffffff;
+}
+
+.hero-details {
+  margin-top: 2rem;
+  width: 100%;
+}
+
+.details-location {
+  font-family: var(--font-serif);
+  font-size: 1.3rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-style: italic;
+  font-weight: bold;
+  color: #ffffff;
+  margin-bottom: 0.4rem;
+}
+
+.details-address {
+  font-family: var(--font-sans-serif);
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.85);
+  margin-bottom: 0.5rem;
+  font-weight: 300;
+}
+
+.details-time {
+  font-family: var(--font-sans-serif);
+  font-size: 0.85rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #ffffff;
+  font-weight: 500;
+}
+
+.details-divider {
+  width: 40px;
+  height: 1px;
+  background-color: #ffffff;
+  margin: 1.5rem auto;
+}
+
+.details-description {
+  font-family: var(--font-sans-serif);
+  font-size: 0.9rem;
+  line-height: 1.8;
+  color: rgba(255, 255, 255, 0.9);
+  max-width: 480px;
+  margin: 0 auto;
+  font-weight: 300;
+}
+
+@media (min-width: 900px) {
+  .welcome-hero .script-font {
+    font-size: 5.5rem;
+  }
+
+  .details-description {
+    font-size: 0.95rem;
+  }
+}
+
+/* ===================================================================
+   4. LUXURY FOOTER STYLES
+   =================================================================== */
+
+.luxury-footer {
+  width: 100%;
+  background-color: var(--color-dusty-blue); 
+  color: #ffffff;
+  padding: 80px 20px 50px;
+  text-align: center;
+  position: relative;
+  z-index: 10;
+}
+
+.footer-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3rem;
+}
+
+.footer-logo-container {
+  width: 100%;
+  max-width: 250px;
+  margin: 0 auto;
+}
+
+.footer-logo {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.footer-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 2rem;
+  padding: 2rem 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  width: 100%;
+}
+
+.footer-link {
+  font-family: var(--font-serif);
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 0.15rem;
+  color: #ffffff;
+  text-decoration: none;
+  transition: opacity 0.3s ease;
+  opacity: 0.9;
+}
+
+.footer-link:hover {
+  opacity: 1;
+  text-decoration: underline;
+  text-underline-offset: 5px;
+}
+
+.footer-bottom {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  opacity: 0.7;
+}
+
+.footer-bottom p {
+  font-family: var(--font-serif);
+  font-size: 0.75rem;
+  letter-spacing: 0.05rem;
+  margin: 0;
+}
+
+.privacy-link-light {
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  text-decoration: underline;
+  transition: opacity 0.3s;
+}
+
+.privacy-link-light:hover {
+  opacity: 0.8;
+}
+
+@media (max-width: 768px) {
+  .luxury-footer {
+    padding: 60px 20px 40px;
+  }
+
+  .footer-nav {
+    flex-direction: column;
+    gap: 1.5rem;
+    border: none;
+  }
+}
+
+/* ===================================================================
+   5. MODAL STYLES
+   =================================================================== */
+
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+.modal-hidden {
+  display: none !important;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.modal-overlay {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+}
+
+.modal-content {
+  position: relative;
+  z-index: 2001;
+  background-color: #ffffff;
+  padding: 40px;
+  width: 90%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+}
+
+.modal-close {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  background: none;
+  border: none;
+  font-size: 2rem;
+  cursor: pointer;
+  color: #999;
+  line-height: 1;
+}
+
+.modal-close:hover {
+  color: #333;
+}
+
+.privacy-content {
+  max-width: 800px !important; 
+  text-align: left;
+}
+
+.privacy-title {
+  font-size: 2rem;
+  color: var(--color-dusty-blue);
+  text-align: center;
+  margin-bottom: 1.5rem;
+  font-weight: normal;
+}
+
+.privacy-body h4 {
+  font-family: var(--font-serif);
+  font-weight: bold;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  letter-spacing: 0.1rem;
+  color: var(--color-charcoal);
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.privacy-body p {
+  font-family: var(--font-serif);
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: #555;
+  margin-bottom: 1rem;
+}
