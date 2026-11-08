@@ -28,6 +28,7 @@ python-dotenv==1.0.1
 requests==2.32.4
 requests-oauthlib==2.0.0
 rsa==4.9.1
+supabase==2.13.0
 uritemplate==4.2.0
 urllib3==2.5.0
 Werkzeug==3.1.3
