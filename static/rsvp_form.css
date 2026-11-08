@@ -397,3 +397,66 @@ textarea {
     font-size: 0.8rem;
   }
 }
+
+/* Spa-inspired Floating Notification Toast */
+.rsvp-toast {
+    position: fixed !important;
+    top: 32px !important;
+    left: 50% !important;
+    transform: translateX(-50%) translateY(-10px) !important;
+    
+    background: #ffffff !important;
+    color: #4a423a !important; /* Soft warm charcoal text */
+    border: 1px solid rgba(180, 140, 100, 0.2) !important;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08), 0 4px 10px rgba(0, 0, 0, 0.03) !important;
+    
+    padding: 12px 24px !important;
+    font-family: 'Inria Serif', serif !important;
+    font-size: 0.9rem !important;
+    letter-spacing: 0.02em !important;
+    
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    z-index: 999999 !important; /* Always on top */
+    
+    /* Hidden by default */
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+    transition: opacity 0.8s ease, transform 0.8s ease, visibility 0.8s ease !important;
+}
+
+/* Visible state when triggered */
+.rsvp-toast.toast-visible {
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: translateX(-50%) translateY(0) !important;
+}
+
+.rsvp-toast.toast-visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
+}
+
+.rsvp-toast-icon {
+    font-size: 0.95rem;
+    opacity: 0.8;
+}
+
+/* Prevent all scrolling when a section is locked */
+.snap-form-container.scroll-locked {
+    overflow-y: hidden !important;
+    touch-action: none !important;
+}
+
+/* Normal scrolling mode when unlocked */
+.snap-form-container {
+    overflow-y: auto;
+}
+
+/* Dynamically disables CSS snapping on locked sections */
+.rsvp-snap-section.snap-disabled {
+    scroll-snap-align: none !important;
+}

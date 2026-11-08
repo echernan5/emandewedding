@@ -1,0 +1,610 @@
+/* ==========================================================================
+Design Tokens & Variables (Greyscale & Semantic Color Palette)
+========================================================================== */
+:root {
+/* Color Palette - Greyscale */
+--bg-main: #f8f9fa;         /* Light grey background */
+--bg-card: #ffffff;         /* White cards */
+--bg-subtle: #f1f3f5;       /* Subtle neutral grey */
+--border-color: #ced4da;    /* Structural border */
+--border-light: #dee2e6;    /* Soft divider */
+
+--text-primary: #212529;    /* Charcoal */
+--text-muted: #6c757d;      /* Grey text */
+--text-light: #adb5bd;      /* Light grey text */
+
+/* Dusty Blue Accent & Status Colors */
+--accent-bg: #e7eff6;       /* Soft blue tint */
+--accent-color: #4a6fa5;    /* Dusty blue accent */
+
+--success-bg: #e8f5e9;      /* Muted green background */
+--success-color: #2e7d32;   /* Confirmed / Locked-In Green */
+
+--warning-bg: #fff8e1;      /* Amber tint */
+--warning-color: #f57f17;
+
+--danger-bg: #ffebee;       /* Muted red */
+--danger-color: #c62828;
+
+/* Semantic Distribution Bar Segment Colors */
+--color-confirmed: #2e7d32; /* Meaningful Green for Confirmed/Locked-In */
+--color-pending: #4a6fa5;   /* Meaningful Blue for Pending Confirmation */
+--color-declined: #6c757d;  /* Meaningful Neutral Grey for Declined Savings */
+
+/* Sizing & Borders (Square / Sharp Corners) */
+--radius: 0px;
+--transition: 0.1s ease-in-out; /* Fast transitions */
+
+/* Font Sizes */
+--font-xs: 0.75rem;   /* 12px */
+--font-sm: 0.825rem;  /* ~13px */
+--font-base: 0.875rem;/* 14px */
+--font-lg: 1.125rem;  /* 18px */
+--font-xl: 1.5rem;    /* 24px */
+
+
+}
+
+/* ==========================================================================
+Base Layout & Typography
+========================================================================== */
+body.dashboard-body {
+background-color: var(--bg-main);
+font-family: 'Inter', sans-serif;
+color: var(--text-primary);
+margin: 0;
+padding: 0;
+-webkit-font-smoothing: antialiased;
+}
+
+.dashboard-header {
+background: var(--bg-card);
+border-bottom: 1px solid var(--border-light);
+padding: 20px;
+}
+
+.dashboard-header-inner {
+max-width: 1200px;
+margin: 0 auto;
+display: flex;
+justify-content: space-between;
+align-items: center;
+flex-wrap: wrap;
+gap: 16px;
+}
+
+.dashboard-eyebrow {
+font-size: var(--font-xs);
+text-transform: uppercase;
+letter-spacing: 0.08em;
+color: var(--text-muted);
+font-weight: 600;
+}
+
+.dashboard-title {
+font-family: 'Inria Serif', serif;
+font-size: var(--font-xl);
+font-weight: 700;
+color: var(--text-primary);
+margin: 2px 0 0 0;
+}
+
+.dashboard-nav-btn {
+text-decoration: none;
+color: var(--text-primary);
+background: var(--bg-card);
+border: 1px solid var(--border-color);
+border-radius: var(--radius);
+padding: 8px 16px;
+font-size: var(--font-sm);
+font-weight: 600;
+transition: all var(--transition);
+}
+
+.dashboard-nav-btn:hover {
+background: var(--bg-subtle);
+border-color: var(--text-primary);
+}
+
+.dashboard-main {
+max-width: 1200px;
+margin: 0 auto;
+padding: 24px 20px;
+}
+
+/* ==========================================================================
+Metric Summary Cards & Progress Bars
+========================================================================== */
+.dashboard-metrics-grid {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+gap: 16px;
+margin-bottom: 24px;
+}
+
+.dashboard-metric-card {
+background: var(--bg-card);
+border: 1px solid var(--border-light);
+border-radius: var(--radius);
+padding: 20px;
+text-align: center;
+}
+
+.dashboard-metric-label {
+display: block;
+font-size: var(--font-xs);
+text-transform: uppercase;
+letter-spacing: 0.04em;
+color: var(--text-muted);
+font-weight: 600;
+margin-bottom: 8px;
+}
+
+.dashboard-metric-value {
+font-size: 2rem;
+font-weight: 400;
+color: var(--text-primary);
+font-family: 'Inria Serif', serif;
+}
+
+.dashboard-metric-value.accent {
+color: var(--accent-color);
+}
+
+/* Proportional Progress Bars & Milestone Markers */
+.progress-bar-container {
+width: 100%;
+height: 8px;
+background: var(--bg-subtle);
+border: 1px solid var(--border-light);
+margin-top: 12px;
+position: relative;
+overflow: hidden;
+}
+
+.progress-bar-fill {
+height: 100%;
+background: var(--text-primary);
+transition: width 0.3s ease;
+}
+
+.progress-bar-fill.over-budget {
+background: var(--danger-color);
+}
+
+.progress-bar-fill.success {
+background: var(--success-color);
+}
+
+/* ==========================================================================
+Cost Commitment Distribution Bar (Meaningful Colors, Budget Line & Tooltips)
+========================================================================== */
+.cost-bar-track-wrapper {
+position: relative;
+margin-top: 24px;
+}
+
+.budget-marker-tag {
+position: absolute;
+top: -20px;
+transform: translateX(-50%);
+font-size: 0.65rem;
+font-weight: 700;
+text-transform: uppercase;
+letter-spacing: 0.05em;
+color: var(--text-primary);
+background: var(--bg-subtle);
+padding: 1px 6px;
+border: 1px solid var(--border-color);
+white-space: nowrap;
+z-index: 5;
+}
+
+.budget-marker-tag::after {
+content: "";
+position: absolute;
+top: 100%;
+left: 50%;
+margin-left: -3px;
+border-width: 3px;
+border-style: solid;
+border-color: var(--border-color) transparent transparent transparent;
+}
+
+.cost-bar-track {
+display: flex;
+height: 28px;
+width: 100%;
+background: var(--bg-subtle);
+border: 1px solid var(--border-color);
+overflow: visible;
+position: relative;
+}
+
+.cost-bar-segment {
+height: 100%;
+position: relative;
+cursor: pointer;
+transition: opacity var(--transition);
+}
+
+.cost-bar-segment:hover {
+opacity: 0.85;
+}
+
+/* Semantic Segment Colors */
+.segment-confirmed,
+.cost-bar-segment.segment-confirmed {
+background: var(--color-confirmed) !important;
+}
+
+.segment-pending,
+.cost-bar-segment.segment-pending {
+background: var(--color-pending) !important;
+}
+
+.segment-declined,
+.cost-bar-segment.segment-declined {
+background: var(--color-declined) !important;
+}
+
+/* Subtle Vertical Budget Marker Line */
+.budget-threshold-line {
+position: absolute;
+top: -4px;
+bottom: -4px;
+width: 2px;
+background: var(--text-primary);
+z-index: 10;
+box-shadow: 0 0 0 1px #ffffff;
+pointer-events: none;
+}
+
+/* Hover Tooltip Styling */
+.cost-tooltip {
+visibility: hidden;
+opacity: 0;
+position: absolute;
+bottom: 125%;
+left: 50%;
+transform: translateX(-50%);
+background: #1e293b;
+color: #ffffff;
+padding: 12px 16px;
+border-radius: 0px;
+font-size: var(--font-xs);
+white-space: nowrap;
+z-index: 100;
+box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+transition: opacity 0.2s ease, visibility 0.2s ease;
+pointer-events: none;
+}
+
+.cost-tooltip::after {
+content: "";
+position: absolute;
+top: 100%;
+left: 50%;
+margin-left: -6px;
+border-width: 6px;
+border-style: solid;
+border-color: #1e293b transparent transparent transparent;
+}
+
+.cost-bar-segment:hover .cost-tooltip {
+visibility: visible;
+opacity: 1;
+}
+
+.tooltip-price {
+font-size: 1.25rem;
+font-family: 'Inria Serif', serif;
+font-weight: 700;
+margin: 4px 0 8px 0;
+color: #60a5fa;
+}
+
+.cost-tooltip ul {
+margin: 0;
+padding-left: 16px;
+font-size: 0.75rem;
+color: #cbd5e1;
+}
+
+/* Legend Layout */
+.cost-bar-legend {
+display: flex;
+justify-content: space-between;
+align-items: center;
+margin-top: 16px;
+flex-wrap: wrap;
+gap: 16px;
+}
+
+.legend-item {
+display: flex;
+align-items: center;
+gap: 10px;
+}
+
+.legend-color-box {
+width: 14px;
+height: 14px;
+display: inline-block;
+border: 1px solid var(--border-color);
+}
+
+.legend-label {
+display: block;
+font-size: var(--font-xs);
+text-transform: uppercase;
+color: var(--text-muted);
+font-weight: 600;
+}
+
+.legend-value {
+font-size: var(--font-sm);
+font-weight: 600;
+color: var(--text-primary);
+}
+
+/* ==========================================================================
+Sections & Cards
+========================================================================== */
+.dashboard-section {
+background: var(--bg-card);
+border: 1px solid var(--border-light);
+border-radius: var(--radius);
+padding: 20px;
+margin-bottom: 24px;
+}
+
+.dashboard-section-title {
+font-family: 'Inria Serif', serif;
+font-size: var(--font-lg);
+font-weight: 700;
+color: var(--text-primary);
+margin: 0 0 16px 0;
+padding-bottom: 12px;
+border-bottom: 1px solid var(--border-light);
+}
+
+.dashboard-block-group {
+margin-bottom: 20px;
+}
+
+.dashboard-block-group:last-child {
+margin-bottom: 0;
+}
+
+.dashboard-group-label {
+display: block;
+font-size: var(--font-xs);
+text-transform: uppercase;
+letter-spacing: 0.04em;
+color: var(--text-muted);
+font-weight: 600;
+margin-bottom: 10px;
+}
+
+.dashboard-lodging-grid {
+display: grid;
+grid-template-columns: repeat(4, minmax(0, 1fr));
+gap: 12px;
+}
+
+.dashboard-lodging-item {
+border: 1px solid var(--border-light);
+border-radius: var(--radius);
+transition: background var(--transition);
+}
+
+.dashboard-lodging-item:hover {
+background: var(--border-light);
+}
+
+.dashboard-insights-grid {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+gap: 20px;
+margin-bottom: 24px;
+}
+
+.dashboard-insights-grid .dashboard-section {
+margin-bottom: 0;
+}
+
+.dashboard-list-container {
+display: flex;
+flex-direction: column;
+gap: 10px;
+max-height: 280px;
+overflow-y: auto;
+}
+
+.dashboard-list-item,
+.dashboard-note-item {
+background: var(--bg-subtle);
+border: 1px solid var(--border-light);
+border-radius: var(--radius);
+padding: 12px 16px;
+}
+
+.dashboard-list-item {
+display: flex;
+justify-content: space-between;
+align-items: center;
+gap: 12px;
+}
+
+.dashboard-list-name {
+font-weight: 600;
+font-size: var(--font-sm);
+color: var(--text-primary);
+}
+
+.dashboard-list-meta {
+font-size: var(--font-xs);
+color: var(--text-muted);
+background: var(--bg-card);
+padding: 2px 8px;
+border-radius: var(--radius);
+border: 1px solid var(--border-light);
+}
+
+/* ==========================================================================
+Guest Registry Table & Filter Bar
+========================================================================== */
+.dashboard-table-wrapper {
+background: var(--bg-card);
+border: 1px solid var(--border-light);
+border-radius: var(--radius);
+padding: 20px;
+}
+
+.dashboard-table-header {
+margin-bottom: 16px;
+}
+
+.dashboard-table-subtitle {
+font-size: var(--font-sm);
+color: var(--text-muted);
+margin: 4px 0 0 0;
+}
+
+.dashboard-filter-bar {
+margin-bottom: 16px;
+}
+
+.dashboard-filter-btn {
+background: var(--bg-card);
+border: 1px solid var(--border-color);
+border-radius: var(--radius);
+padding: 9px 16px;
+font-size: var(--font-sm);
+font-weight: 500;
+color: var(--text-primary);
+cursor: pointer;
+display: inline-flex;
+align-items: center;
+gap: 8px;
+transition: background var(--transition);
+}
+
+.dashboard-filter-btn:hover {
+background: var(--bg-subtle);
+}
+
+.dashboard-search-input {
+padding: 9px 12px;
+border: 1px solid var(--border-color);
+border-radius: var(--radius);
+font-size: var(--font-sm);
+background: var(--bg-card);
+color: var(--text-primary);
+outline: none;
+transition: border-color var(--transition);
+}
+
+.dashboard-search-input:focus {
+border-color: var(--text-primary);
+}
+
+.dashboard-table-container {
+width: 100%;
+overflow-x: auto;
+}
+
+.dashboard-table {
+width: 100%;
+border-collapse: collapse;
+text-align: left;
+font-size: var(--font-sm);
+white-space: nowrap;
+}
+
+.dashboard-table th {
+background: var(--bg-subtle);
+color: var(--text-muted);
+font-weight: 600;
+padding: 12px 16px;
+border-bottom: 1px solid var(--border-light);
+font-size: var(--font-xs);
+text-transform: uppercase;
+letter-spacing: 0.04em;
+}
+
+.dashboard-table td {
+padding: 12px 16px;
+border-bottom: 1px solid var(--border-light);
+color: var(--text-primary);
+}
+
+/* Status Badges */
+.dashboard-badge {
+padding: 3px 10px;
+border-radius: var(--radius);
+font-size: var(--font-xs);
+font-weight: 600;
+text-transform: uppercase;
+letter-spacing: 0.02em;
+display: inline-block;
+}
+
+.dashboard-badge.accepted { background: var(--success-bg); color: var(--success-color); }
+.dashboard-badge.declined { background: var(--danger-bg); color: var(--danger-color); }
+.dashboard-badge.pending  { background: var(--bg-subtle); color: var(--text-muted); }
+
+/* ==========================================================================
+Mobile Responsive Breakpoints (< 768px)
+========================================================================== */
+@media (max-width: 768px) {
+body.dashboard-body {
+padding: 0;
+}
+
+.dashboard-main {
+    padding: 16px 12px;
+}
+
+.dashboard-header {
+    padding: 16px 12px;
+}
+
+.dashboard-metrics-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+.dashboard-metric-card {
+    padding: 16px;
+}
+
+.dashboard-metric-value {
+    font-size: 1.5rem;
+}
+
+.dashboard-section,
+.dashboard-table-wrapper {
+    padding: 16px;
+    margin-bottom: 16px;
+}
+
+.dashboard-lodging-grid {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.dashboard-insights-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.cost-bar-legend {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+}

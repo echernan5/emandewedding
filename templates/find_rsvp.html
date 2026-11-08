@@ -12,7 +12,7 @@
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Modify RSVP | Emma & Ethan</title>
+    <title>{% if is_post_deadline %}Find RSVP{% else %}Modify RSVP{% endif %} | Emma & Ethan</title>
     
     <!-- Stylesheets -->
     <link rel="stylesheet" href="{{ url_for('static', filename='rsvp.css') }}">
@@ -44,8 +44,8 @@
     <div class="rsvp-portal-card">
       <header class="rsvp-card-header">
         <span class="rsvp-kicker">June 18, 2027 • Shelbyville, MI</span>
-        <h1 class="rsvp-title">Modify RSVP</h1>
-        <p class="rsvp-instructions">Locate your existing reservation using your full name or your private confirmation code.</p>
+        <h1 class="rsvp-title">{% if is_post_deadline %}Find RSVP{% else %}Modify RSVP{% endif %}</h1>
+        <p class="rsvp-instructions">Locate your existing reservation using your full name or confirmation code.</p>
       </header>
 
       <!-- Dynamic Flash Messages (Renders only if a search fails or throws an error) -->

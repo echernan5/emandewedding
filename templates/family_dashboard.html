@@ -8,8 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inria+Serif:ital,wght@0,300;0,400;0,700;1,300;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
     <!-- Standalone Dashboard Stylesheet -->
     <link rel="stylesheet" href="{{ url_for('static', filename='family_dashboard.css') }}">
 </head>
@@ -98,7 +97,6 @@
 
         <!-- Two-Column Insights Layout: Catering & Notes -->
         <div class="dashboard-insights-grid">
-            <!-- Catering & Dietary -->
             <div class="dashboard-section">
                 <h2 class="dashboard-section-title">Catering & Dietary</h2>
                 {% if dietary_list %}
@@ -115,7 +113,6 @@
                 {% endif %}
             </div>
 
-            <!-- Guest Notes -->
             <div class="dashboard-section">
                 <h2 class="dashboard-section-title">Messages from Guests</h2>
                 {% if guest_notes %}
@@ -140,8 +137,17 @@
                 <p class="dashboard-table-subtitle">Live attendee roster and preferences</p>
             </div>
             
-            <div class="dashboard-filter-bar">
-                <input type="text" id="guest-search" placeholder="Filter by guest name..." class="dashboard-search-input">
+            <div class="dashboard-filter-bar" style="display: flex; align-items: center; gap: 12px; flex-wrap: nowrap;">
+                <button id="open-filter-btn" class="dashboard-filter-btn" style="flex-shrink: 0;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+                    </svg>
+                    Filters
+                </button>
+                <!-- min-width: 0 allows the search bar to shrink instead of wrapping -->
+                <input type="text" id="guest-search" placeholder="Filter by guest name..." class="dashboard-search-input" style="flex: 1; min-width: 0;">
+                <!-- white-space: nowrap prevents text wrapping -->
+                <span id="search-count-indicator" class="dashboard-muted-text text-xs" style="white-space: nowrap; flex-shrink: 0; font-size: 0.85rem; color: #888;"></span>
             </div>
 
             <div class="dashboard-table-container">
@@ -158,7 +164,15 @@
                     </thead>
                     <tbody>
                         {% for guest in all_guests %}
-                        <tr>
+                        <tr data-rsvp="{{ (guest.rsvp_status or 'pending') | trim | lower }}"
+                            data-lodging="{{ (guest.lodging_choice or 'unknown') | trim | lower }}"
+                            data-shuttle="{{ (guest.shuttle_interest or 'no') | trim | lower }}"
+                            data-age="{{ guest.age_group }}"
+                            data-is-plus-one="{{ 'yes' if guest.is_anonymous else 'no' }}"
+                            data-side="{{ guest.side | default('') | trim | lower }}"
+                            data-relation="{{ guest.relation | default('') | trim | lower }}"
+                            data-has-plus-one="{{ guest.has_plus_one | default('no') | trim | lower }}">
+                            
                             <td class="font-medium text-charcoal">
                                 <div class="dashboard-name-cell">
                                     <span>
@@ -168,7 +182,7 @@
                                             <em class="dashboard-tbd">TBD</em>
                                         {% endif %}
                                     </span>
-                                    {% if guest.is_plus_one %}
+                                    {% if guest.is_plus_one == 'yes' %}
                                         <span class="dashboard-plus-one-tag">Plus One</span>
                                     {% endif %}
                                 </div>
@@ -186,7 +200,12 @@
                             </td>
                             <td class="dashboard-muted-text">{{ guest.lodging_choice or '—' }}</td>
                             <td class="dashboard-muted-text">{{ guest.shuttle_interest or '—' }}</td>
-                            <td class="dashboard-muted-text text-xs">{{ guest.updated_at or '—' }}</td>
+                            <td class="dashboard-muted-text text-xs" style="white-space: nowrap;">
+                                <span>{{ guest.updated_at or '—' }}</span>
+                                <button type="button" class="guest-history-btn" onclick="openGuestHistory('{{ guest.id }}', '{{ guest.first_name }} {{ guest.last_name }}')" title="View Edit History">
+                                    <i class="bi bi-clock-history"></i>
+                                </button>
+                            </td>
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -196,22 +215,409 @@
 
     </main>
 
+    <!-- Slide-in Filter Modal -->
+    <div id="filter-overlay" class="filter-overlay"></div>
+    <aside id="filter-panel" class="filter-panel">
+        <div class="filter-header">
+            <h3>Filter Guests</h3>
+            <button id="close-filter-btn" class="filter-close-btn">&times;</button>
+        </div>
+        <div class="filter-content">
+            
+            <div class="filter-group">
+                <h4>RSVP Status</h4>
+                <label class="filter-checkbox-label"><input type="checkbox" name="rsvp" value="Accepted"> Accepted</label>
+                <label class="filter-checkbox-label"><input type="checkbox" name="rsvp" value="Declined"> Declined</label>
+                <label class="filter-checkbox-label"><input type="checkbox" name="rsvp" value="Pending"> Pending</label>
+            </div>
+
+            <div class="filter-group">
+                <h4>Lodging</h4>
+                <label class="filter-checkbox-label"><input type="checkbox" name="lodging" value="Bay Pointe Inn"> Bay Pointe Inn</label>
+                <label class="filter-checkbox-label"><input type="checkbox" name="lodging" value="Gun Lake Casino"> Gun Lake Casino</label>
+                <label class="filter-checkbox-label"><input type="checkbox" name="lodging" value="Best Western"> Best Western</label>
+                <label class="filter-checkbox-label"><input type="checkbox" name="lodging" value="Other"> Other</label>
+                <label class="filter-checkbox-label"><input type="checkbox" name="lodging" value="Unknown"> Unknown</label>
+            </div>
+
+            <div class="filter-group">
+                <h4>Side</h4>
+                <label class="filter-checkbox-label"><input type="checkbox" name="side" value="bride"> Emma</label>
+                <label class="filter-checkbox-label"><input type="checkbox" name="side" value="groom"> Ethan</label>
+                <label class="filter-checkbox-label"><input type="checkbox" name="side" value="mutual"> Mutual</label>
+            </div>
+
+            <div class="filter-group">
+                <h4>Relation</h4>
+                <label class="filter-checkbox-label"><input type="checkbox" name="relation" value="family"> Family</label>
+                <label class="filter-checkbox-label"><input type="checkbox" name="relation" value="friend"> Friend</label>
+            </div>
+
+            <div class="filter-group">
+                <h4>Age Range</h4>
+                <label class="filter-checkbox-label"><input type="checkbox" name="age" value="under_12"> Under 12</label>
+                <label class="filter-checkbox-label"><input type="checkbox" name="age" value="12_to_20"> 12–20</label>
+                <label class="filter-checkbox-label"><input type="checkbox" name="age" value="21_plus"> 21+</label>
+            </div>
+
+            <div class="filter-group">
+                <h4>Interested in Shuttle</h4>
+                <label class="filter-checkbox-label"><input type="checkbox" name="shuttle" value="Yes"> Yes</label>
+                <label class="filter-checkbox-label"><input type="checkbox" name="shuttle" value="No"> No</label>
+            </div>
+
+            <div class="filter-group">
+                <h4>Has a Plus One</h4>
+                <label class="filter-checkbox-label"><input type="checkbox" name="has_plus_one" value="Yes"> Yes</label>
+                <label class="filter-checkbox-label"><input type="checkbox" name="has_plus_one" value="No"> No</label>
+            </div>
+
+            <div class="filter-group">
+                <h4>Is a Plus One</h4>
+                <label class="filter-checkbox-label"><input type="checkbox" name="is_plus_one" value="Yes"> Yes</label>
+                <label class="filter-checkbox-label"><input type="checkbox" name="is_plus_one" value="No"> No</label>
+            </div>
+
+        </div>
+        <div class="filter-footer">
+            <button id="clear-filters-btn" class="filter-clear-btn">Clear All</button>
+            <button id="apply-filters-btn" class="filter-apply-btn">Apply Filters</button>
+        </div>
+    </aside>
+
+    <!-- Guest History Modal -->
+    <div id="guestHistoryModal" class="history-modal-overlay" style="display: none;">
+        <div class="history-modal-card">
+            <div class="history-modal-header">
+                <h3 id="historyModalTitle">Edit History</h3>
+                <button type="button" class="history-close-btn" onclick="closeGuestHistory()">&times;</button>
+            </div>
+            <div class="history-modal-body" id="historyModalBody">
+                <p class="loading-text">Loading history...</p>
+            </div>
+        </div>
+    </div>
+
     <script>
-        document.getElementById('guest-search').addEventListener('input', function(e) {
-            const searchTerm = e.target.value.toLowerCase().trim();
+        // Modal Slide-in Logic for Filters
+        const openFilterBtn = document.getElementById('open-filter-btn');
+        const closeFilterBtn = document.getElementById('close-filter-btn');
+        const filterOverlay = document.getElementById('filter-overlay');
+        const filterPanel = document.getElementById('filter-panel');
+
+        function openFilters() {
+            filterOverlay.classList.add('active');
+            filterPanel.classList.add('active');
+            document.body.style.overflow = 'hidden'; 
+            applyAllFilters(); 
+        }
+
+        function closeFilters() {
+            filterOverlay.classList.remove('active');
+            filterPanel.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        if (openFilterBtn) openFilterBtn.addEventListener('click', openFilters);
+        if (closeFilterBtn) closeFilterBtn.addEventListener('click', closeFilters);
+        if (filterOverlay) filterOverlay.addEventListener('click', closeFilters);
+
+        // Filter Application Logic & Live Count
+        function applyAllFilters() {
+            const searchInput = document.getElementById('guest-search');
+            if (!searchInput) return;
+            
+            const searchTerm = searchInput.value.toLowerCase().trim();
             const rows = document.querySelectorAll('.dashboard-table tbody tr');
+
+            const getCheckedValues = (name) => {
+                return Array.from(document.querySelectorAll(`input[name="${name}"]:checked`))
+                            .map(cb => cb.value.toLowerCase());
+            };
+
+            const filters = {
+                rsvp: getCheckedValues('rsvp'),
+                lodging: getCheckedValues('lodging'),
+                side: getCheckedValues('side'),
+                relation: getCheckedValues('relation'),
+                age: getCheckedValues('age'),
+                shuttle: getCheckedValues('shuttle'),
+                has_plus_one: getCheckedValues('has_plus_one'),
+                is_plus_one: getCheckedValues('is_plus_one')
+            };
+
+            let visibleCount = 0;
 
             rows.forEach(row => {
                 const nameCell = row.querySelector('td:nth-child(1)').textContent.toLowerCase();
                 const partyCell = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+                const matchesSearch = nameCell.includes(searchTerm) || partyCell.includes(searchTerm);
+
+                const matchesRsvp = filters.rsvp.length === 0 || filters.rsvp.includes(row.dataset.rsvp);
+                const matchesLodging = filters.lodging.length === 0 || filters.lodging.includes(row.dataset.lodging);
+                const matchesSide = filters.side.length === 0 || filters.side.includes(row.dataset.side);
+                const matchesRelation = filters.relation.length === 0 || filters.relation.includes(row.dataset.relation);
                 
-                if (nameCell.includes(searchTerm) || partyCell.includes(searchTerm)) {
+                let rowAge = row.dataset.age; 
+                if (rowAge === 'true' || rowAge === '1') rowAge = '21+';
+                const matchesAge = filters.age.length === 0 || filters.age.includes(rowAge);
+                
+                const matchesShuttle = filters.shuttle.length === 0 || filters.shuttle.includes(row.dataset.shuttle);
+                const matchesHasPlusOne = filters.has_plus_one.length === 0 || filters.has_plus_one.includes(row.dataset.hasPlusOne);
+                const matchesIsPlusOne = filters.is_plus_one.length === 0 || filters.is_plus_one.includes(row.dataset.isPlusOne);
+
+                if (matchesSearch && matchesRsvp && matchesLodging && matchesSide && 
+                    matchesRelation && matchesAge && matchesShuttle && matchesHasPlusOne && matchesIsPlusOne) {
                     row.style.display = '';
+                    visibleCount++;
                 } else {
                     row.style.display = 'none';
                 }
             });
+
+            const countText = `${visibleCount} matching record${visibleCount === 1 ? '' : 's'}`;
+            const searchIndicator = document.getElementById('search-count-indicator');
+            if (searchIndicator) {
+                searchIndicator.textContent = countText;
+            }
+
+            const applyBtn = document.getElementById('apply-filters-btn');
+            if (applyBtn) {
+                applyBtn.textContent = `Apply Filters (${visibleCount})`;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', applyAllFilters);
+
+        const guestSearchInput = document.getElementById('guest-search');
+        if (guestSearchInput) {
+            guestSearchInput.addEventListener('input', applyAllFilters);
+        }
+
+        document.querySelectorAll('.filter-content input[type="checkbox"]').forEach(cb => {
+            cb.addEventListener('change', applyAllFilters);
+        });
+
+        const applyFiltersBtn = document.getElementById('apply-filters-btn');
+        if (applyFiltersBtn) {
+            applyFiltersBtn.addEventListener('click', function() {
+                applyAllFilters();
+                closeFilters();
+            });
+        }
+
+        const clearFiltersBtn = document.getElementById('clear-filters-btn');
+        if (clearFiltersBtn) {
+            clearFiltersBtn.addEventListener('click', function() {
+                const checkboxes = document.querySelectorAll('.filter-content input[type="checkbox"]');
+                checkboxes.forEach(cb => cb.checked = false);
+                applyAllFilters();
+            });
+        }
+
+        // --- Field Label & Value Helpers ---
+        function formatFieldName(key) {
+            const rawKey = String(key).trim();
+            const labels = {
+                'rsvp_status': 'RSVP Status',
+                'dietary_restrictions': 'Dietary Restrictions',
+                'lodging': 'Lodging Preference',
+                'shuttle_interested': 'Shuttle Requested',
+                'welcome_dinner_rsvp': 'Welcome Dinner RSVP',
+                'table_number': 'Seating Table',
+                'is_21_plus': 'Age 21+',
+                'is_plus_one': 'Is Plus One',
+                'is_anonymous': 'Unnamed Plus One',
+                'is_primary': 'Primary Guest',
+                'first_name': 'First Name',
+                'last_name': 'Last Name',
+                'alt_first_name': 'Alternate First Name',
+                'alt_last_name': 'Alternate Last Name',
+                'age_category': 'Age Group',
+                'relationship': 'Relation',
+                'side': 'Side of Family',
+                'record_status': 'Record Status',
+                'is_address_collected': 'Address Collected',
+                'lodging_choice': 'Household Lodging',
+                'shuttle_interest': 'Household Shuttle',
+                'guest_note': 'Household Note',
+                'address_street': 'Street Address',
+                'address_street2': 'Street Address 2',
+                'address_city': 'City',
+                'address_state': 'State',
+                'address_zip': 'ZIP Code',
+                'std_sent': 'Save the Date Sent',
+                'STD_Sent': 'Save the Date Sent',
+                'display_name': 'Party Display Name',
+                'legacy_key': 'Party Legacy Key',
+                'assigned_users': 'Assigned Host',
+                'gift_received': 'Gift Received',
+                'thank_you_sent': 'Thank You Sent',
+                'mailing_name': 'Mailing Envelope Line 1',
+                'mailing_name2': 'Mailing Envelope Line 2',
+                'confirmation_code': 'Confirmation Code'
+            };
+            if (labels[rawKey]) return labels[rawKey];
+            return rawKey.replace(/_/g, ' ').replace(/\b\w/g, char => char.toUpperCase());
+        }
+
+        function formatValue(val) {
+            if (val === true || val === 'true') return 'Yes';
+            if (val === false || val === 'false') return 'No';
+            if (val === null || val === undefined || val === '' || val === 'none') return '—';
+            
+            const strVal = String(val).trim();
+            if (strVal.toLowerCase() === 'accept' || strVal.toLowerCase() === 'accepted') return 'Accepted';
+            if (strVal.toLowerCase() === 'decline' || strVal.toLowerCase() === 'declined') return 'Declined';
+            if (strVal.toLowerCase() === 'pending') return 'Pending';
+            
+            return strVal;
+        }
+
+        function formatLocalDateTime(isoString) {
+            if (!isoString) return '—';
+            const date = new Date(isoString);
+            if (isNaN(date.getTime())) return isoString;
+
+            return date.toLocaleString('en-US', {
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric',
+                hour: 'numeric',
+                minute: '2-digit',
+                hour12: true
+            });
+        }
+
+        // --- Guest History Modal Logic ---
+        async function openGuestHistory(guestId, guestName) {
+            const modal = document.getElementById('guestHistoryModal');
+            const title = document.getElementById('historyModalTitle');
+            const body = document.getElementById('historyModalBody');
+
+            if (!modal) return;
+
+            title.innerText = `Edit History: ${guestName}`;
+            body.innerHTML = `<p class="loading-text" style="text-align: center; color: #64748b; padding: 24px;">Loading history...</p>`;
+            modal.style.display = 'flex';
+
+            try {
+                const response = await fetch(`/api/guests/${guestId}/history`);
+                const logs = await response.json();
+
+                if (!logs || logs.length === 0) {
+                    body.innerHTML = `<div class="empty-history" style="text-align: center; color: #64748b; padding: 32px 0;">No recorded edit history for ${guestName} yet.</div>`;
+                    return;
+                }
+
+                const groupedMap = {};
+                logs.forEach(log => {
+                    const batchKey = log.batch_id || `single_${log.id}`;
+                    if (!groupedMap[batchKey]) {
+                        groupedMap[batchKey] = {
+                            created_at: log.created_at,
+                            changed_by: log.changed_by || 'Admin',
+                            batch_id: log.batch_id,
+                            actions: []
+                        };
+                    }
+                    groupedMap[batchKey].actions.push(log);
+                });
+
+                let html = '';
+
+                Object.values(groupedMap).forEach(group => {
+                    const editor = group.changed_by;
+                    const isGuestSubmission = group.batch_id || editor.toLowerCase().includes('guest');
+                    
+                    const itemClass = isGuestSubmission ? 'history-timeline-item guest-submission' : 'history-timeline-item admin-edit';
+                    const badgeClass = isGuestSubmission ? 'history-badge-submission' : 'history-badge-admin';
+                    const badgeText = isGuestSubmission ? '<i class="bi bi-person-check-fill" style="margin-right: 4px;"></i>Guest RSVP Submission' : 'Manual Edit';
+
+                    let combinedDiffRows = '';
+
+                    group.actions.forEach(log => {
+                        const oldData = log.old_data || {};
+                        const newData = log.new_data || {};
+                        const entityName = log.entity_name || (log.table_name === 'parties' ? 'Household' : 'Guest');
+
+                        const allKeys = [...new Set([...Object.keys(oldData), ...Object.keys(newData)])];
+
+                        allKeys.forEach(key => {
+                            if (['id', 'created_at', 'updated_at', 'party_id'].includes(key)) return;
+
+                            let oldVal = oldData[key];
+                            let newVal = newData[key];
+
+                            const normOld = (oldVal === null || oldVal === undefined || oldVal === 'none') ? '' : String(oldVal).trim().toLowerCase();
+                            const normNew = (newVal === null || newVal === undefined || newVal === 'none') ? '' : String(newVal).trim().toLowerCase();
+
+                            if (normOld === normNew) return;
+
+                            const formattedOld = formatValue(oldVal);
+                            const oldDisplay = formattedOld !== '—' 
+                                ? `<span class="history-col-before">${formattedOld}</span>` 
+                                : `<span class="history-empty-val">—</span>`;
+
+                            combinedDiffRows += `
+                                <tr>
+                                    <td class="history-col-entity">${entityName}</td>
+                                    <td class="history-col-field">${formatFieldName(key)}</td>
+                                    <td>${oldDisplay}</td>
+                                    <td class="history-col-after">${formatValue(newVal)}</td>
+                                </tr>
+                            `;
+                        });
+                    });
+
+                    if (combinedDiffRows) {
+                        html += `
+                            <div class="${itemClass}">
+                                <div class="history-item-header">
+                                    <span class="history-timestamp">
+                                        <i class="bi bi-clock" style="margin-right: 4px;"></i>${formatLocalDateTime(group.created_at)}
+                                    </span>
+                                    <div class="history-badges">
+                                        <span class="${badgeClass}">${badgeText}</span>
+                                        <span class="history-badge-editor">${editor}</span>
+                                    </div>
+                                </div>
+                                <table class="history-diff-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Changed For</th>
+                                            <th>Field</th>
+                                            <th>Before</th>
+                                            <th>After</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>${combinedDiffRows}</tbody>
+                                </table>
+                            </div>
+                        `;
+                    }
+                });
+
+                body.innerHTML = html || `<div class="empty-history" style="text-align: center; color: #64748b; padding: 32px 0;">No significant field changes recorded.</div>`;
+
+            } catch (err) {
+                console.error(err);
+                body.innerHTML = `<div class="empty-history" style="text-align: center; color: #ef4444; padding: 32px 0;">Failed to load history. Please try again.</div>`;
+            }
+        }
+
+        function closeGuestHistory() {
+            const modal = document.getElementById('guestHistoryModal');
+            if (modal) modal.style.display = 'none';
+        }
+
+        window.addEventListener('click', function(event) {
+            const modal = document.getElementById('guestHistoryModal');
+            if (event.target === modal) {
+                closeGuestHistory();
+            }
         });
     </script>
+
 </body>
 </html>
