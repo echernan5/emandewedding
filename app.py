@@ -2480,55 +2480,61 @@ def rsvp_search():
     
     if not clean_name:
         flash("Please enter a name to search.", "error")
-        return redirect(url_for("rsvp"))  # Stays on the main RSVP page
+        return redirect(url_for("rsvp"))
 
+    # Use a regex pattern or word-boundary check to ensure full name/token matching 
+    # instead of loose substring matching (e.g., preventing "A" from matching "Alan")
     search_pattern = f"%{clean_name}%"
 
     query = """
         SELECT g.party_id, p.confirmation_code, g.rsvp_status 
         FROM guests g
         JOIN parties p ON g.party_id = p.id
-        WHERE (TRIM(COALESCE(g.first_name, '') || ' ' || COALESCE(g.last_name, '')) ILIKE %s
+        WHERE (
+           -- Matches exact full name structure (First + Last)
+           (g.first_name || ' ' || g.last_name) ILIKE %s
+           -- Or matches alternate full name combinations
            OR EXISTS (
                SELECT 1 
                FROM unnest(COALESCE(g.alt_first_name, ARRAY[]::text[])) af(fn),
                     unnest(COALESCE(g.alt_last_name, ARRAY[]::text[])) al(ln)
-               WHERE TRIM(fn || ' ' || ln) ILIKE %s
+               WHERE (fn || ' ' || ln) ILIKE %s
            )
            OR EXISTS (
                SELECT 1 
                FROM unnest(COALESCE(g.alt_first_name, ARRAY[]::text[])) af(fn)
-               WHERE TRIM(fn || ' ' || COALESCE(g.last_name, '')) ILIKE %s
+               WHERE (fn || ' ' || g.last_name) ILIKE %s
            )
            OR EXISTS (
                SELECT 1 
                FROM unnest(COALESCE(g.alt_last_name, ARRAY[]::text[])) al(ln)
-               WHERE TRIM(COALESCE(g.first_name, '') || ' ' || ln) ILIKE %s
-           ))
-          AND (g.record_status IS NULL OR LOWER(TRIM(g.record_status)) != 'inactive')
+               WHERE (g.first_name || ' ' || ln) ILIKE %s
+           )
+        )
+        -- Enforce that the clean_name query has at least a space (First and Last name entered)
+        AND length(%s) - length(replace(%s, ' ', '')) >= 1
+        AND (g.record_status IS NULL OR LOWER(TRIM(g.record_status)) != 'inactive')
         LIMIT 1;
     """
     
     conn = get_db_connection()
     if not conn:
         flash("Database unavailable. Please try searching by your confirmation code.", "error")
-        return redirect(url_for("rsvp"))  # Stays on the main RSVP page
+        return redirect(url_for("rsvp"))
 
     try:
         with conn.cursor() as cur:
-            cur.execute(query, (search_pattern, search_pattern, search_pattern, search_pattern))
+            cur.execute(query, (search_pattern, search_pattern, search_pattern, search_pattern, clean_name, clean_name))
             row = cur.fetchone()
             
-            # If not found OR if they are inactive (because the SQL query filters inactive out):
             if not row:
-                flash("We couldn't find an invitation under that name. Please check your spelling or search by your reference code.", "error")
-                return redirect(url_for("rsvp"))  # Stays on the main RSVP page
+                flash("Please enter your full first and last name as it appears on your invitation.", "error")
+                return redirect(url_for("rsvp"))
                 
             party_id = row[0]
             confirmation_code = row[1]
             rsvp_status = row[2]
 
-            # Store the current editor in the session for tracking purposes
             session['current_editor'] = f"Guest: {clean_name}"
             
             if not rsvp_status or rsvp_status.lower() == 'pending':
@@ -2539,7 +2545,7 @@ def rsvp_search():
     except Exception as e:
         print(f"!!! DB Error in rsvp_search: {e}")
         flash("An internal database error occurred. Please try searching by your confirmation code.", "error")
-        return redirect(url_for("rsvp"))  # Stays on the main RSVP page
+        return redirect(url_for("rsvp"))
     finally:
         conn.close()
 

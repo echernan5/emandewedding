@@ -577,9 +577,24 @@
             }
         }
 
+        function toProperCase(str) {
+            return str.replace(/\w\S*/g, function(txt) {
+                return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+            });
+        }
+
         function savePlusOneName(guestId) {
             const firstNameInput = document.getElementById(`first_input_${guestId}`);
             const lastNameInput = document.getElementById(`last_input_${guestId}`);
+            
+            // Auto-proper-case the values in the inputs immediately upon saving
+            if (firstNameInput && firstNameInput.value) {
+                firstNameInput.value = toProperCase(firstNameInput.value.trim());
+            }
+            if (lastNameInput && lastNameInput.value) {
+                lastNameInput.value = toProperCase(lastNameInput.value.trim());
+            }
+
             const nameDrawer = document.getElementById(`name_drawer_${guestId}`);
             const placeholder = document.getElementById(`name_placeholder_${guestId}`);
             const confirmedView = document.getElementById(`name_confirmed_view_${guestId}`);
