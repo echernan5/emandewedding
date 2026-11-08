@@ -2184,6 +2184,7 @@ def rsvp_confirmation(code):
                    ELSE TRIM(COALESCE(first_name, '') || ' ' || COALESCE(last_name, ''))
                END AS name,
                rsvp_status, 
+               welcome_dinner_rsvp,
                dietary_restrictions
         FROM guests
         WHERE party_id = %s AND (record_status IS NULL OR record_status != 'inactive')

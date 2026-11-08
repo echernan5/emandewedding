@@ -47,21 +47,38 @@
                 <p class="confirmation-subtitle">We’re so sorry you can’t make it, but thank you for letting us know. You’ll be with us in spirit!</p>
             {% endif %}
 
-            <!-- Guest & Attendance Recap -->
+            <!-- Guest & Attendance Recap (Main Wedding) -->
             <div class="recap-group">
-                <span class="recap-label">Attendance</span>
+                <span class="recap-label">Ceremony and Reception</span>
                 <div class="recap-entries">
                     {% for guest in party_members %}
                     <div class="guest-entry">
                         <div class="guest-main">
                             <span class="guest-name">{{ guest.name }}</span>
-                            <span class="guest-status {% if guest.rsvp_status in ['accepted', 'attending', 'accept'] %}status-attending{% else %}status-declined{% endif %}">
-                                {% if guest.rsvp_status in ['accepted', 'attending', 'accept'] %}Accepted{% else %}Declined{% endif %}
+                            <span class="guest-status {% if guest.rsvp_status in ['accepted', 'attending', 'accept'] %}status-attending{% elif guest.rsvp_status|lower == 'pending' or not guest.rsvp_status %}status-pending{% else %}status-declined{% endif %}">
+                                {% if guest.rsvp_status in ['accepted', 'attending', 'accept'] %}Attending{% elif guest.rsvp_status|lower == 'pending' or not guest.rsvp_status %}Pending{% else %}Declined{% endif %}
                             </span>
                         </div>
                         {% if guest.dietary_restrictions %}
                         <span class="guest-dietary">Dietary notes: {{ guest.dietary_restrictions }}</span>
                         {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Separate Welcome Gathering Section -->
+            <div class="recap-group">
+                <span class="recap-label">Thursday Welcome Gathering</span>
+                <div class="recap-entries">
+                    {% for guest in party_members %}
+                    <div class="guest-entry">
+                        <div class="guest-main">
+                            <span class="guest-name">{{ guest.name }}</span>
+                            <span class="guest-status {% if guest.welcome_dinner_rsvp == 'accepted' %}status-attending{% elif guest.welcome_dinner_rsvp == 'declined' %}status-declined{% else %}status-pending{% endif %}">
+                                {{ guest.welcome_dinner_rsvp.capitalize() if guest.welcome_dinner_rsvp else 'Pending' }}
+                            </span>
+                        </div>
                     </div>
                     {% endfor %}
                 </div>
