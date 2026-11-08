@@ -53,7 +53,11 @@ supabase: Client = create_client(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY)
 print("--- ENVIRONMENT DEBUG ---")
 print("SUPABASE_URL loaded:", bool(os.environ.get("SUPABASE_URL")))
 print("SUPABASE_PUBLISHABLE_KEY loaded:", bool(os.environ.get("SUPABASE_PUBLISHABLE_KEY")))
+print("DEBUG URL:", os.environ.get("SUPABASE_URL"))
+print("DEBUG KEY:", os.environ.get("SUPABASE_PUBLISHABLE_KEY"))
+supabase: Client = create_client(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY)
 print("-------------------------")
+
 
 # =============================================
 # Environment / CORS
