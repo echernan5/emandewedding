@@ -28,173 +28,177 @@
     </header>
 
     <main class="dashboard-main">
-        <!-- Metric Summary Cards (Exhibits) -->
-        <!-- Power BI-Inspired Executive KPI Header -->
-        <section class="dashboard-executive-header">
+        <!-- RSVP Overview & Analytics Section -->
+        <section class="dashboard-section" style="margin-bottom: 32px;">
+            <h2 class="dashboard-section-title">RSVP Analytics & Breakdown</h2>
             
-            <!-- Top Row: Core RSVP Funnel & Breakdown Countdown -->
-            <div class="kpi-main-row">
+            <!-- Power BI-Inspired Executive KPI Header -->
+            <div class="dashboard-executive-header" style="margin-bottom: 0;">
                 
-                <!-- Card 1: RSVP Funnel & Progress -->
-                <div class="kpi-card kpi-card-wide">
-                    <div class="kpi-header-flex" style="margin-bottom: 4px;">
-                        <span class="dashboard-metric-label">RSVP Response Funnel</span>
-                    </div>
-
-                    {% set total_universe = (total_accepted + total_pending + total_declined) or 1 %}
-                    {% set pct_acc = (total_accepted / total_universe * 100) | round | int %}
-                    {% set pct_pen = (total_pending / total_universe * 100) | round | int %}
-                    {% set pct_dec = 100 - (pct_acc + pct_pen) %}
-
-                    <!-- Segmented Funnel Bar -->
-                    <div class="widget-progress-track" style="height: 14px; margin: 12px 0;">
-                        <div class="widget-bar" style="background: var(--success-color); width: {{ pct_acc }}%;" title="Accepted: {{ total_accepted }}"></div>
-                        <div class="widget-bar" style="background: var(--accent-color); width: {{ pct_pen }}%;" title="Pending: {{ total_pending }}"></div>
-                        <div class="widget-bar" style="background: #adb5bd; width: {{ pct_dec }}%;" title="Declined: {{ total_declined }}"></div>
-                    </div>
-
-                    <div class="widget-legend" style="justify-content: space-between;">
-                        <span class="legend-item"><span class="dot" style="background: var(--success-color);"></span> <strong>{{ total_accepted }}</strong> Accepted</span>
-                        <span class="legend-item"><span class="dot" style="background: var(--accent-color);"></span> <strong>{{ total_pending }}</strong> Pending</span>
-                        <span class="legend-item"><span class="dot" style="background: #adb5bd;"></span> <strong>{{ total_declined }}</strong> Declined</span>
-                    </div>
-                </div>
-
-                <!-- Card 2: Months / Weeks / Days Countdown -->
-                <div class="kpi-card kpi-card-compact text-center" style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                    <span class="dashboard-metric-label" style="width: 100%;">Countdown to Deadline</span>
+                <!-- Top Row: Core RSVP Funnel & Breakdown Countdown -->
+                <div class="kpi-main-row">
                     
-                    {% set months = (days_until_rsvp // 30) %}
-                    {% set rem_days = (days_until_rsvp % 30) %}
-                    {% set weeks = (rem_days // 7) %}
-                    {% set final_days = (rem_days % 7) %}
+                    <!-- Card 1: RSVP Funnel & Progress -->
+                    <div class="kpi-card kpi-card-wide">
+                        <div class="kpi-header-flex" style="margin-bottom: 4px;">
+                            <span class="dashboard-metric-label">RSVP Response Tracker</span>
+                        </div>
 
-                    <div class="countdown-breakout-display">
-                        <div class="countdown-unit">
-                            <span class="unit-val">{{ months }}</span>
-                            <span class="unit-lbl">Mos</span>
+                        {% set total_universe = (total_accepted + total_pending + total_declined) or 1 %}
+                        {% set pct_acc = (total_accepted / total_universe * 100) | round | int %}
+                        {% set pct_pen = (total_pending / total_universe * 100) | round | int %}
+                        {% set pct_dec = 100 - (pct_acc + pct_pen) %}
+
+                        <!-- Segmented Funnel Bar -->
+                        <div class="widget-progress-track" style="height: 14px; margin: 12px 0;">
+                            <div class="widget-bar" style="background: var(--success-color); width: {{ pct_acc }}%;" title="Accepted: {{ total_accepted }}"></div>
+                            <div class="widget-bar" style="background: var(--accent-color); width: {{ pct_pen }}%;" title="Pending: {{ total_pending }}"></div>
+                            <div class="widget-bar" style="background: #adb5bd; width: {{ pct_dec }}%;" title="Declined: {{ total_declined }}"></div>
                         </div>
-                        <span class="countdown-sep">·</span>
-                        <div class="countdown-unit">
-                            <span class="unit-val">{{ weeks }}</span>
-                            <span class="unit-lbl">Wks</span>
-                        </div>
-                        <span class="countdown-sep">·</span>
-                        <div class="countdown-unit">
-                            <span class="unit-val">{{ final_days }}</span>
-                            <span class="unit-lbl">Days</span>
+
+                        <div class="widget-legend" style="justify-content: space-between;">
+                            <span class="legend-item"><span class="dot" style="background: var(--success-color);"></span> <strong>{{ total_accepted }}</strong> Accepted</span>
+                            <span class="legend-item"><span class="dot" style="background: var(--accent-color);"></span> <strong>{{ total_pending }}</strong> Pending</span>
+                            <span class="legend-item"><span class="dot" style="background: #adb5bd;"></span> <strong>{{ total_declined }}</strong> Declined</span>
                         </div>
                     </div>
-                    <span class="kpi-subtext text-center" style="margin-top: 4px; width: 100%;">Due May 14, 2027</span>
+
+                    <!-- Card 2: Months / Weeks / Days Countdown -->
+                    <div class="kpi-card kpi-card-compact text-center" style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                        <span class="dashboard-metric-label" style="width: 100%;">Countdown to Deadline</span>
+                        
+                        {% set months = (days_until_rsvp // 30) %}
+                        {% set rem_days = (days_until_rsvp % 30) %}
+                        {% set weeks = (rem_days // 7) %}
+                        {% set final_days = (rem_days % 7) %}
+
+                        <div class="countdown-breakout-display">
+                            <div class="countdown-unit">
+                                <span class="unit-val">{{ months }}</span>
+                                <span class="unit-lbl">Mos</span>
+                            </div>
+                            <span class="countdown-sep">·</span>
+                            <div class="countdown-unit">
+                                <span class="unit-val">{{ weeks }}</span>
+                                <span class="unit-lbl">Wks</span>
+                            </div>
+                            <span class="countdown-sep">·</span>
+                            <div class="countdown-unit">
+                                <span class="unit-val">{{ final_days }}</span>
+                                <span class="unit-lbl">Days</span>
+                            </div>
+                        </div>
+                        <span class="kpi-subtext text-center" style="margin-top: 4px; width: 100%;">Due May 14, 2027</span>
+                    </div>
+
+                </div>
+
+                <!-- Bottom Row: Donut Chart Grid -->
+                <div class="donut-charts-grid" style="margin-top: 16px;">
+                    
+                    <!-- Donut 1: Age Category -->
+                    <div class="kpi-card chart-card">
+                        <span class="dashboard-metric-label">Age Category</span>
+                        <div class="donut-chart-wrapper">
+                            {% set count_adult = lodging_metrics['Bay Pointe Inn']['21_plus'] + lodging_metrics['Best Western']['21_plus'] + lodging_metrics['Gun Lake Casino']['21_plus'] + lodging_metrics['Other / Unsure']['21_plus'] %}
+                            {% set count_young = lodging_metrics['Bay Pointe Inn']['12_to_20'] + lodging_metrics['Best Western']['12_to_20'] + lodging_metrics['Gun Lake Casino']['12_to_20'] + lodging_metrics['Other / Unsure']['12_to_20'] %}
+                            {% set count_child = lodging_metrics['Bay Pointe Inn']['under_12'] + lodging_metrics['Best Western']['under_12'] + lodging_metrics['Gun Lake Casino']['under_12'] + lodging_metrics['Other / Unsure']['under_12'] %}
+                            {% set total_age = (count_adult + count_young + count_child) or 1 %}
+                            
+                            {% set p1 = (count_adult / total_age * 100) %}
+                            {% set p2 = (count_young / total_age * 100) %}
+
+                            <div class="donut-graphic" style="background: conic-gradient(#4a6fa5 0% {{ p1 }}%, #599734 {{ p1 }}% {{ p1 + p2 }}%, #9aacc4 {{ p1 + p2 }}% 100%);">
+                                <div class="donut-hole">
+                                    <span class="donut-center-total">{{ total_age }}</span>
+                                    <span class="donut-center-label">Guests</span>
+                                </div>
+                            </div>
+                            <div class="chart-legend">
+                                <div class="chart-legend-row"><span class="dot" style="background: #4a6fa5;"></span> Adults (21+): <strong>{{ count_adult }}</strong></div>
+                                <div class="chart-legend-row"><span class="dot" style="background: #599734;"></span> Ages 12–20: <strong>{{ count_young }}</strong></div>
+                                <div class="chart-legend-row"><span class="dot" style="background: #9aacc4;"></span> Under 12: <strong>{{ count_child }}</strong></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Donut 2: Family vs Friends -->
+                    <div class="kpi-card chart-card">
+                        <span class="dashboard-metric-label">Family vs. Friends</span>
+                        <div class="donut-chart-wrapper">
+                            {% set count_fam = lodging_metrics['Bay Pointe Inn']['family'] + lodging_metrics['Best Western']['family'] + lodging_metrics['Gun Lake Casino']['family'] + lodging_metrics['Other / Unsure']['family'] %}
+                            {% set count_frd = lodging_metrics['Bay Pointe Inn']['friend'] + lodging_metrics['Best Western']['friend'] + lodging_metrics['Gun Lake Casino']['friend'] + lodging_metrics['Other / Unsure']['friend'] %}
+                            {% set total_rel = (count_fam + count_frd) or 1 %}
+                            {% set p_fam = (count_fam / total_rel * 100) %}
+
+                            <div class="donut-graphic" style="background: conic-gradient(#4a6fa5 0% {{ p_fam }}%, #9aacc4 {{ p_fam }}% 100%);">
+                                <div class="donut-hole">
+                                    <span class="donut-center-total">{{ total_rel }}</span>
+                                    <span class="donut-center-label">Guests</span>
+                                </div>
+                            </div>
+                            <div class="chart-legend">
+                                <div class="chart-legend-row"><span class="dot" style="background: #4a6fa5;"></span> Family: <strong>{{ count_fam }}</strong></div>
+                                <div class="chart-legend-row"><span class="dot" style="background: #9aacc4;"></span> Friends: <strong>{{ count_frd }}</strong></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Donut 3: Wedding Side -->
+                    <div class="kpi-card chart-card">
+                        <span class="dashboard-metric-label">Wedding Side</span>
+                        <div class="donut-chart-wrapper">
+                            {% set count_emma = lodging_metrics['Bay Pointe Inn']['emma'] + lodging_metrics['Best Western']['emma'] + lodging_metrics['Gun Lake Casino']['emma'] + lodging_metrics['Other / Unsure']['emma'] %}
+                            {% set count_ethan = lodging_metrics['Bay Pointe Inn']['ethan'] + lodging_metrics['Best Western']['ethan'] + lodging_metrics['Gun Lake Casino']['ethan'] + lodging_metrics['Other / Unsure']['ethan'] %}
+                            {% set count_mut = lodging_metrics['Bay Pointe Inn']['mutual'] + lodging_metrics['Best Western']['mutual'] + lodging_metrics['Gun Lake Casino']['mutual'] + lodging_metrics['Other / Unsure']['mutual'] %}
+                            {% set total_side = (count_emma + count_ethan + count_mut) or 1 %}
+                            
+                            {% set ps1 = (count_emma / total_side * 100) %}
+                            {% set ps2 = (count_ethan / total_side * 100) %}
+
+                            <div class="donut-graphic" style="background: conic-gradient(#9aacc4 0% {{ ps1 }}%, #4a6fa5 {{ ps1 }}% {{ ps1 + ps2 }}%, #599734 {{ ps1 + ps2 }}% 100%);">
+                                <div class="donut-hole">
+                                    <span class="donut-center-total">{{ total_side }}</span>
+                                    <span class="donut-center-label">Guests</span>
+                                </div>
+                            </div>
+                            <div class="chart-legend">
+                                <div class="chart-legend-row"><span class="dot" style="background: #9aacc4;"></span> Emma's Side: <strong>{{ count_emma }}</strong></div>
+                                <div class="chart-legend-row"><span class="dot" style="background: #4a6fa5;"></span> Ethan's Side: <strong>{{ count_ethan }}</strong></div>
+                                <div class="chart-legend-row"><span class="dot" style="background: #599734;"></span> Mutual Friends: <strong>{{ count_mut }}</strong></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Donut 4: Welcome Dinner -->
+                    <div class="kpi-card chart-card">
+                        <span class="dashboard-metric-label">Welcome Gathering</span>
+                        <div class="donut-chart-wrapper">
+                            {% set wd_att = welcome_dinner_counts.attending %}
+                            {% set wd_pen = welcome_dinner_counts.pending %}
+                            {% set wd_dec = welcome_dinner_counts.declined %}
+                            {% set wd_tot = (wd_att + wd_pen + wd_dec) or 1 %}
+                            
+                            {% set pw1 = (wd_att / wd_tot * 100) %}
+                            {% set pw2 = (wd_pen / wd_tot * 100) %}
+
+                            <div class="donut-graphic" style="background: conic-gradient(var(--success-color) 0% {{ pw1 }}%, var(--accent-color) {{ pw1 }}% {{ pw1 + pw2 }}%, #adb5bd {{ pw1 + pw2 }}% 100%);">
+                                <div class="donut-hole">
+                                    <span class="donut-center-total">{{ wd_att }}</span>
+                                    <span class="donut-center-label">Guests</span>
+                                </div>
+                            </div>
+                            <div class="chart-legend">
+                                <div class="chart-legend-row"><span class="dot" style="background: var(--success-color);"></span> Attending: <strong>{{ wd_att }}</strong></div>
+                                <div class="chart-legend-row"><span class="dot" style="background: var(--accent-color);"></span> Pending: <strong>{{ wd_pen }}</strong></div>
+                                <div class="chart-legend-row"><span class="dot" style="background: #adb5bd;"></span> Declined: <strong>{{ wd_dec }}</strong></div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
 
             </div>
-
-            <!-- Bottom Row: Donut Chart Grid (Age, Family vs Friends, Side, Welcome Dinner) -->
-            <div class="donut-charts-grid">
-                
-                <!-- Donut 1: Age Category -->
-                <div class="kpi-card chart-card">
-                    <span class="dashboard-metric-label">Age Category</span>
-                    <div class="donut-chart-wrapper">
-                        {% set count_adult = lodging_metrics['Bay Pointe Inn']['21_plus'] + lodging_metrics['Best Western']['21_plus'] + lodging_metrics['Gun Lake Casino']['21_plus'] + lodging_metrics['Other / Unsure']['21_plus'] %}
-                        {% set count_young = lodging_metrics['Bay Pointe Inn']['12_to_20'] + lodging_metrics['Best Western']['12_to_20'] + lodging_metrics['Gun Lake Casino']['12_to_20'] + lodging_metrics['Other / Unsure']['12_to_20'] %}
-                        {% set count_child = lodging_metrics['Bay Pointe Inn']['under_12'] + lodging_metrics['Best Western']['under_12'] + lodging_metrics['Gun Lake Casino']['under_12'] + lodging_metrics['Other / Unsure']['under_12'] %}
-                        {% set total_age = (count_adult + count_young + count_child) or 1 %}
-                        
-                        {% set p1 = (count_adult / total_age * 100) %}
-                        {% set p2 = (count_young / total_age * 100) %}
-
-                        <div class="donut-graphic" style="background: conic-gradient(#4a6fa5 0% {{ p1 }}%, #599734 {{ p1 }}% {{ p1 + p2 }}%, #9aacc4 {{ p1 + p2 }}% 100%);">
-                            <div class="donut-hole">
-                                <span class="donut-center-total">{{ total_age }}</span>
-                                <span class="donut-center-label">Guests</span>
-                            </div>
-                        </div>
-                        <div class="chart-legend">
-                            <div class="chart-legend-row"><span class="dot" style="background: #4a6fa5;"></span> Adults (21+): <strong>{{ count_adult }}</strong></div>
-                            <div class="chart-legend-row"><span class="dot" style="background: #599734;"></span> Ages 12–20: <strong>{{ count_young }}</strong></div>
-                            <div class="chart-legend-row"><span class="dot" style="background: #9aacc4;"></span> Under 12: <strong>{{ count_child }}</strong></div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Donut 2: Family vs Friends -->
-                <div class="kpi-card chart-card">
-                    <span class="dashboard-metric-label">Family vs. Friends</span>
-                    <div class="donut-chart-wrapper">
-                        {% set count_fam = lodging_metrics['Bay Pointe Inn']['family'] + lodging_metrics['Best Western']['family'] + lodging_metrics['Gun Lake Casino']['family'] + lodging_metrics['Other / Unsure']['family'] %}
-                        {% set count_frd = lodging_metrics['Bay Pointe Inn']['friend'] + lodging_metrics['Best Western']['friend'] + lodging_metrics['Gun Lake Casino']['friend'] + lodging_metrics['Other / Unsure']['friend'] %}
-                        {% set total_rel = (count_fam + count_frd) or 1 %}
-                        {% set p_fam = (count_fam / total_rel * 100) %}
-
-                        <div class="donut-graphic" style="background: conic-gradient(#4a6fa5 0% {{ p_fam }}%, #9aacc4 {{ p_fam }}% 100%);">
-                            <div class="donut-hole">
-                                <span class="donut-center-total">{{ total_rel }}</span>
-                                <span class="donut-center-label">Guests</span>
-                            </div>
-                        </div>
-                        <div class="chart-legend">
-                            <div class="chart-legend-row"><span class="dot" style="background: #4a6fa5;"></span> Family: <strong>{{ count_fam }}</strong></div>
-                            <div class="chart-legend-row"><span class="dot" style="background: #9aacc4;"></span> Friends: <strong>{{ count_frd }}</strong></div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Donut 3: Wedding Side -->
-                <div class="kpi-card chart-card">
-                    <span class="dashboard-metric-label">Wedding Side</span>
-                    <div class="donut-chart-wrapper">
-                        {% set count_emma = lodging_metrics['Bay Pointe Inn']['emma'] + lodging_metrics['Best Western']['emma'] + lodging_metrics['Gun Lake Casino']['emma'] + lodging_metrics['Other / Unsure']['emma'] %}
-                        {% set count_ethan = lodging_metrics['Bay Pointe Inn']['ethan'] + lodging_metrics['Best Western']['ethan'] + lodging_metrics['Gun Lake Casino']['ethan'] + lodging_metrics['Other / Unsure']['ethan'] %}
-                        {% set count_mut = lodging_metrics['Bay Pointe Inn']['mutual'] + lodging_metrics['Best Western']['mutual'] + lodging_metrics['Gun Lake Casino']['mutual'] + lodging_metrics['Other / Unsure']['mutual'] %}
-                        {% set total_side = (count_emma + count_ethan + count_mut) or 1 %}
-                        
-                        {% set ps1 = (count_emma / total_side * 100) %}
-                        {% set ps2 = (count_ethan / total_side * 100) %}
-
-                        <div class="donut-graphic" style="background: conic-gradient(#9aacc4 0% {{ ps1 }}%, #4a6fa5 {{ ps1 }}% {{ ps1 + ps2 }}%, #599734 {{ ps1 + ps2 }}% 100%);">
-                            <div class="donut-hole">
-                                <span class="donut-center-total">{{ total_side }}</span>
-                                <span class="donut-center-label">Guests</span>
-                            </div>
-                        </div>
-                        <div class="chart-legend">
-                            <div class="chart-legend-row"><span class="dot" style="background: #9aacc4;"></span> Emma's Side: <strong>{{ count_emma }}</strong></div>
-                            <div class="chart-legend-row"><span class="dot" style="background: #4a6fa5;"></span> Ethan's Side: <strong>{{ count_ethan }}</strong></div>
-                            <div class="chart-legend-row"><span class="dot" style="background: #599734;"></span> Mutual Friends: <strong>{{ count_mut }}</strong></div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Donut 4: Welcome Dinner -->
-                <div class="kpi-card chart-card">
-                    <span class="dashboard-metric-label">Welcome Dinner</span>
-                    <div class="donut-chart-wrapper">
-                        {% set wd_att = welcome_dinner_counts.attending %}
-                        {% set wd_pen = welcome_dinner_counts.pending %}
-                        {% set wd_dec = welcome_dinner_counts.declined %}
-                        {% set wd_tot = (wd_att + wd_pen + wd_dec) or 1 %}
-                        
-                        {% set pw1 = (wd_att / wd_tot * 100) %}
-                        {% set pw2 = (wd_pen / wd_tot * 100) %}
-
-                        <div class="donut-graphic" style="background: conic-gradient(var(--success-color) 0% {{ pw1 }}%, var(--accent-color) {{ pw1 }}% {{ pw1 + pw2 }}%, #adb5bd {{ pw1 + pw2 }}% 100%);">
-                            <div class="donut-hole">
-                                <span class="donut-center-total">{{ wd_att }}</span>
-                                <span class="donut-center-label">Guests</span>
-                            </div>
-                        </div>
-                        <div class="chart-legend">
-                            <div class="chart-legend-row"><span class="dot" style="background: var(--success-color);"></span> Attending: <strong>{{ wd_att }}</strong></div>
-                            <div class="chart-legend-row"><span class="dot" style="background: var(--accent-color);"></span> Pending: <strong>{{ wd_pen }}</strong></div>
-                            <div class="chart-legend-row"><span class="dot" style="background: #adb5bd;"></span> Declined: <strong>{{ wd_dec }}</strong></div>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-
         </section>
 
         <!-- Side-by-Side Expandable Insights Grid -->
@@ -206,8 +210,8 @@
                     <summary class="expandable-summary">
                         <div class="summary-header-main">
                             <div class="summary-title-wrapper">
-                                <h2 class="dashboard-section-title summary-title">Lodging Distribution</h2>
-                                <span class="summary-badge">{{ lodging_counts.bay_pointe + lodging_counts.best_western + lodging_counts.gun_lake + lodging_counts.other }} Guests Reported</span>
+                                <h2 class="dashboard-section-title summary-title">Lodging Breakdown</h2>
+                                <span class="summary-badge">{{ lodging_counts.bay_pointe + lodging_counts.best_western + lodging_counts.gun_lake + lodging_counts.other }} Guests</span>
                             </div>
 
                             {% set total_lodg = (lodging_counts.bay_pointe + lodging_counts.best_western + lodging_counts.gun_lake + lodging_counts.other) or 1 %}
@@ -487,7 +491,7 @@
         <!-- Full Guest Directory Table -->
         <section class="dashboard-table-wrapper">
             <div class="dashboard-table-header">
-                <h2 class="dashboard-section-title" style="margin-bottom: 0; border-bottom: none; padding-bottom: 0;">Guest Registry</h2>
+                <h2 class="dashboard-section-title" style="margin-bottom: 0; border-bottom: none; padding-bottom: 0;">Guest List</h2>
                 <p class="dashboard-table-subtitle">Live attendee roster and preferences</p>
             </div>
             
@@ -511,6 +515,7 @@
                             <th>Guest Name</th>
                             <th>Party / Household</th>
                             <th>Status</th>
+                            <th>Welcome Gathering</th>
                             <th>Lodging</th>
                             <th>Shuttle</th>
                             <th>Last Updated</th>
@@ -521,6 +526,7 @@
                         <tr data-rsvp="{{ (guest.rsvp_status or 'pending') | trim | lower }}"
                             data-lodging="{{ (guest.lodging_choice or 'unknown') | trim | lower }}"
                             data-shuttle="{{ (guest.shuttle_interest or 'no') | trim | lower }}"
+                            data-welcome-dinner="{{ (guest.welcome_dinner_rsvp or 'pending') | trim | lower }}"
                             data-age="{{ guest.age_group }}"
                             data-is-plus-one="{{ 'yes' if guest.is_anonymous else 'no' }}"
                             data-side="{{ guest.side | default('') | trim | lower }}"
@@ -547,6 +553,16 @@
                                 {% if status in ['accept', 'accepted'] %}
                                     <span class="dashboard-badge accepted">Accepted</span>
                                 {% elif status in ['decline', 'declined'] %}
+                                    <span class="dashboard-badge declined">Declined</span>
+                                {% else %}
+                                    <span class="dashboard-badge pending">Pending</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% set wd = (guest.welcome_dinner_rsvp or 'pending')|lower %}
+                                {% if wd in ['accept', 'accepted'] %}
+                                    <span class="dashboard-badge accepted">Accepted</span>
+                                {% elif wd in ['decline', 'declined'] %}
                                     <span class="dashboard-badge declined">Declined</span>
                                 {% else %}
                                     <span class="dashboard-badge pending">Pending</span>

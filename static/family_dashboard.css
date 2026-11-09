@@ -76,7 +76,7 @@ body.dashboard-body {
 }
 
 .dashboard-title {
-    font-family: 'Inria Serif', serif;
+    font-family: 'Inter', sans-serif;
     font-size: var(--font-xl);
     font-weight: 400;
     color: #ffffff;
@@ -140,7 +140,7 @@ body.dashboard-body {
     font-size: 2rem;
     font-weight: 400;
     color: var(--text-primary);
-    font-family: 'Inria Serif', serif;
+    font-family: 'Inter', sans-serif;
 }
 
 .dashboard-metric-value.accent {
@@ -160,13 +160,12 @@ body.dashboard-body {
 }
 
 .dashboard-section-title {
-    font-family: 'Inria Serif', serif;
+    font-family: 'Inter', sans-serif;
     font-size: var(--font-lg);
-    font-weight: 700;
+    font-weight: 500;
     color: var(--text-primary);
     margin: 0 0 16px 0;
     padding-bottom: 12px;
-    border-bottom: 1px solid var(--border-light);
 }
 
 .dashboard-block-group {
@@ -450,7 +449,7 @@ body.dashboard-body {
 }
 
 .filter-header h3 {
-    font-family: 'Inria Serif', serif;
+    font-family: 'Inter', sans-serif;
     font-size: var(--font-lg);
     margin: 0;
     color: var(--text-primary);
@@ -850,7 +849,7 @@ details[open] summary.expandable-summary::after {
 }
 
 .breakout-val {
-    font-family: 'Inria Serif', serif;
+    font-family: 'Inter', sans-serif;
     font-size: 1.5rem;
     font-weight: 400;
     color: var(--text-primary);
@@ -974,7 +973,6 @@ details[open] summary.expandable-summary::after {
 .dashboard-executive-header {
     display: flex;
     flex-direction: column;
-    gap: 16px;
     margin-bottom: 32px;
 }
 
@@ -1037,7 +1035,7 @@ details[open] summary.expandable-summary::after {
 }
 
 .kpi-stat-val {
-    font-family: 'Inria Serif', serif;
+    font-family: 'Inter', sans-serif;
     font-size: 1.5rem;
     font-weight: 400;
     color: var(--text-primary);
@@ -1093,7 +1091,7 @@ details[open] summary.expandable-summary::after {
 }
 
 .unit-val {
-    font-family: 'Inria Serif', serif;
+    font-family: 'Inter', sans-serif;
     font-size: 1.75rem;
     font-weight: 400;
     color: var(--accent-color);
@@ -1159,7 +1157,7 @@ details[open] summary.expandable-summary::after {
 }
 
 .donut-center-total {
-    font-family: 'Inria Serif', serif;
+    font-family: 'Inter', sans-serif;
     font-size: 1.25rem;
     font-weight: 400;
     line-height: 1;
@@ -1216,7 +1214,7 @@ details[open] summary.expandable-summary::after {
 }
 
 .donut-center-total {
-    font-family: 'Inria Serif', serif;
+    font-family: 'Inter', sans-serif;
     font-size: 1.15rem;
     font-weight: 400;
     color: var(--text-primary);
@@ -1324,4 +1322,41 @@ details[open] summary.expandable-summary::after {
         gap: 14px;
         margin-bottom: 0;
     }
+
+    .dashboard-table th:nth-child(7),
+    .dashboard-table td:nth-child(7) {
+        display: none;
+    }
+
+    /* Mobile Optimization for Donut Charts: Side-by-side Graphic & Legend */
+    .donut-chart-wrapper {
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 16px;
+    }
+
+    .donut-graphic {
+        width: 80px;
+        height: 80px;
+        flex-shrink: 0;
+    }
+
+    .donut-hole {
+        width: 52px;
+        height: 52px;
+    }
+
+    .donut-center-total {
+        font-size: 1rem;
+    }
+
+    .donut-center-label {
+        font-size: 0.5rem;
+    }
+
+    .chart-legend {
+        flex: 1;
+    }
+
 }
