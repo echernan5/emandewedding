@@ -18,7 +18,7 @@
     --accent-color: #4a6fa5;    /* Dusty blue primary accent */
     
     --success-bg: #e8f5e9;      /* Soft neutral muted green */
-    --success-color: #2e7d32;
+    --success-color: #599734;
     
     --warning-bg: #fff8e1;      /* Neutral amber tint */
     --warning-color: #f57f17;
@@ -27,7 +27,7 @@
     --danger-color: #c62828;
 
     /* Sizing & Borders (Square / Sharp Corners) */
-    --radius: 0px;
+    --radius: 10px;
     --radius-sm: 0px;
     --transition: 0.15s ease-in-out;
     
@@ -199,10 +199,6 @@ body.dashboard-body {
     transition: background var(--transition);
 }
 
-.dashboard-lodging-item:hover {
-    background: var(--border-light);
-}
-
 .dashboard-insights-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -224,9 +220,6 @@ body.dashboard-body {
 
 .dashboard-list-item,
 .dashboard-note-item {
-    background: var(--bg-subtle);
-    border: 1px solid var(--border-light);
-    border-radius: var(--radius-sm);
     padding: 12px 16px;
 }
 
@@ -248,8 +241,6 @@ body.dashboard-body {
     color: var(--text-muted);
     background: var(--bg-card);
     padding: 2px 8px;
-    border-radius: var(--radius-sm);
-    border: 1px solid var(--border-light);
 }
 
 .dashboard-note-party {
@@ -666,6 +657,578 @@ body.dashboard-body {
     .segment-declined {
         background: #6c757d; /* Meaningful Neutral Grey for Declined Savings */
     }
+
+    .dashboard-list-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.dashboard-list-item:last-child {
+    border-bottom: none;
+}
+
+.dashboard-note-item {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.dashboard-note-item:last-child {
+    border-bottom: none;
+}
+
+/* ==========================================================================
+   Collapsible Micro-Dashboard Cards Layout
+   ========================================================================== */
+.collapsible-section {
+    padding: 0 !important; /* Managed by summary wrapper */
+    overflow: hidden;
+    transition: box-shadow var(--transition), border-color var(--transition);
+}
+
+.collapsible-section:hover {
+    border-color: #adb5bd;
+}
+
+summary.expandable-summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 20px 24px;
+    user-select: none;
+    outline: none;
+    position: relative;
+}
+
+summary.expandable-summary::-webkit-details-marker {
+    display: none;
+}
+
+/* Header layout */
+.summary-header-main {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-right: 28px; /* Room for chevron indicator */
+    position: relative;
+}
+
+.summary-title-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.summary-title {
+    margin: 0 !important;
+    padding-bottom: 0 !important;
+    border-bottom: none !important;
+    font-size: var(--font-lg);
+}
+
+.summary-badge {
+    font-family: 'Inter', sans-serif;
+    font-size: var(--font-xs);
+    font-weight: 600;
+    background: var(--bg-subtle);
+    color: var(--text-muted);
+    padding: 3px 10px;
+    border-radius: var(--radius-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.summary-badge.highlight {
+    background: var(--accent-bg);
+    color: var(--accent-color);
+}
+
+/* Chevron indicator position */
+summary.expandable-summary::after {
+    content: "\F282";
+    font-family: "bootstrap-icons";
+    font-size: 1.1rem;
+    position: absolute;
+    right: 24px;
+    top: 22px;
+    color: var(--text-muted);
+    transition: transform 0.25s ease;
+}
+
+details[open] summary.expandable-summary::after {
+    transform: rotate(180deg);
+}
+
+/* --- Always Visible Micro-Widget --- */
+.summary-preview-widget {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 4px;
+}
+
+.widget-progress-track {
+    display: flex;
+    height: 20px;
+    width: 100%;
+    background: #e9ecef;
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.widget-bar {
+    height: 100%;
+    transition: width 0.3s ease;
+}
+
+/* Palette mapping */
+.bar-bp, .dot-bp   { background-color: #4a6fa5; } /* Dusty Blue */
+.bar-bw, .dot-bw   { background-color: #599734; } /* Muted Sage */
+.bar-gl, .dot-gl   { background-color: #d97706; } /* Warm Amber */
+.bar-oth, .dot-oth { background-color: #adb5bd; } /* Neutral Grey */
+
+.widget-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+}
+
+.legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.shuttle-capacity-callout {
+    font-size: var(--font-xs);
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+/* Expanded section detailing */
+.expandable-content {
+    padding: 0 24px 24px 24px;
+    animation: fadeIn 0.2s ease-in-out;
+}
+
+.detail-divider {
+    height: 1px;
+    background: var(--border-light);
+    margin-bottom: 16px;
+}
+
+.metric-breakout-box {
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-sm);
+    padding: 14px;
+    text-align: center;
+    background: var(--bg-main);
+}
+
+.breakout-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-size: var(--font-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-muted);
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.breakout-val {
+    font-family: 'Inria Serif', serif;
+    font-size: 1.5rem;
+    font-weight: 400;
+    color: var(--text-primary);
+}
+
+.breakout-val small {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.breakout-val.accent {
+    color: var(--accent-color);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ==========================================================================
+   Compact Shuttle Tabbed Breakdowns
+   ========================================================================== */
+.shuttle-tab-nav {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 12px;
+    border-bottom: 1px solid var(--border-light);
+    padding-bottom: 8px;
+    overflow-x: auto;
+}
+
+.shuttle-tab-btn {
+    background: transparent;
+    border: none;
+    font-family: 'Inter', sans-serif;
+    font-size: var(--font-xs);
+    font-weight: 500;
+    color: var(--text-muted);
+    padding: 4px 10px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all var(--transition);
+}
+
+.shuttle-tab-btn:hover {
+    background: var(--bg-subtle);
+    color: var(--text-primary);
+}
+
+.shuttle-tab-btn.active {
+    background: var(--accent-bg);
+    color: var(--accent-color);
+    font-weight: 600;
+}
+
+.shuttle-tab-pane {
+    display: none;
+}
+
+.shuttle-tab-pane.active {
+    display: block;
+    animation: fadeIn 0.15s ease-in-out;
+}
+
+.compact-breakout-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.compact-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 10px;
+    background: var(--bg-main);
+    border-radius: var(--radius-sm);
+    font-size: var(--font-xs);
+}
+
+.compact-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+.compact-val {
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+.hotel-breakout-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.breakout-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.breakout-category-title {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    font-weight: 600;
+    margin-top: 4px;
+    padding-left: 2px;
+}
+
+/* ==========================================================================
+   Power BI-Inspired Executive KPI Header Layout
+   ========================================================================== */
+.dashboard-executive-header {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 32px;
+}
+
+.kpi-main-row {
+    display: grid;
+    grid-template-columns: 2.5fr 1fr;
+    gap: 16px;
+}
+
+.kpi-secondary-row {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.kpi-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius);
+    padding: 20px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.01);
+}
+
+.kpi-header-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.kpi-subtext {
+    font-size: var(--font-xs);
+    color: var(--text-muted);
+    text-align: center;
+    margin-top: 10px !important;
+}
+
+.kpi-demographic-box {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 20px;
+}
+
+.demo-icon {
+    font-size: 1.5rem;
+    color: var(--text-muted);
+    background: var(--bg-subtle);
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-sm);
+    flex-shrink: 0;
+}
+
+.demo-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.kpi-stat-val {
+    font-family: 'Inria Serif', serif;
+    font-size: 1.5rem;
+    font-weight: 400;
+    color: var(--text-primary);
+    line-height: 1.2;
+}
+
+.kpi-stat-val small {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.highlight-box {
+    border-color: var(--accent-color);
+    background: var(--accent-bg);
+}
+
+.highlight-box .demo-icon {
+    background: var(--bg-card);
+    color: var(--accent-color);
+}
+
+/* Responsive adjustments for mobile */
+@media (max-width: 900px) {
+    .kpi-main-row {
+        grid-template-columns: 1fr;
+    }
+    .kpi-secondary-row {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+@media (max-width: 500px) {
+    .kpi-secondary-row {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ==========================================================================
+   Countdown Months/Weeks/Days Unit Display
+   ========================================================================== */
+.countdown-breakout-display {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 6px;
+}
+
+.countdown-unit {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.unit-val {
+    font-family: 'Inria Serif', serif;
+    font-size: 1.75rem;
+    font-weight: 400;
+    color: var(--accent-color);
+    line-height: 1;
+}
+
+.unit-lbl {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    margin-top: 2px;
+}
+
+.countdown-sep {
+    font-size: 1.5rem;
+    color: var(--border-light);
+    line-height: 1;
+}
+
+/* ==========================================================================
+   Donut Charts Grid Layout
+   ========================================================================== */
+.donut-charts-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.chart-card {
+    display: flex;
+    flex-direction: column;
+}
+
+.donut-chart-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 12px;
+    gap: 12px;
+}
+
+.donut-graphic {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    box-shadow: inset 0 0 2px rgba(0,0,0,0.1);
+}
+
+.donut-hole {
+    width: 62px;
+    height: 62px;
+    background: var(--bg-card);
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.donut-center-total {
+    font-family: 'Inria Serif', serif;
+    font-size: 1.25rem;
+    font-weight: 400;
+    line-height: 1;
+    color: var(--text-primary);
+}
+
+.donut-center-label {
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-muted);
+}
+
+.chart-legend {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: var(--font-xs);
+    color: var(--text-primary);
+}
+
+.chart-legend-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+@media (max-width: 1024px) {
+    .donut-charts-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 550px) {
+    .donut-charts-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ==========================================================================
+   Donut Hole Polish (Prevents text overlap)
+   ========================================================================== */
+.donut-hole {
+    width: 58px;
+    height: 58px;
+    background: var(--bg-card);
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+}
+
+.donut-center-total {
+    font-family: 'Inria Serif', serif;
+    font-size: 1.15rem;
+    font-weight: 400;
+    color: var(--text-primary);
+    margin-bottom: 2px;
+}
+
+.donut-center-label {
+    font-size: 0.55rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--text-muted);
+}
 
 /* ==========================================================================
    Mobile Responsive Breakpoints (< 768px)

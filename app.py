@@ -1384,6 +1384,7 @@ def admin():
 
     total_accepted = 0
     total_pending = 0
+    total_declined = 0
     total_21_plus = 0
     
     lodging_counts = {
@@ -1398,6 +1399,46 @@ def admin():
         'gun_lake': 0
     }
     
+    shuttle_metrics = {
+        'hotel': {'best_western': 0, 'gun_lake': 0, 'other': 0},
+        'relation': {'family': 0, 'friend': 0, 'other': 0},
+        'side': {'emma': 0, 'ethan': 0, 'mutual': 0},
+        'age': {'under_12': 0, '12_to_20': 0, '21_plus': 0}
+    }
+
+    lodging_metrics = {
+        'Bay Pointe Inn': {
+            'total': 0,
+            'family': 0, 'friend': 0, 'other_rel': 0,
+            'emma': 0, 'ethan': 0, 'mutual': 0,
+            'under_12': 0, '12_to_20': 0, '21_plus': 0
+        },
+        'Best Western': {
+            'total': 0,
+            'family': 0, 'friend': 0, 'other_rel': 0,
+            'emma': 0, 'ethan': 0, 'mutual': 0,
+            'under_12': 0, '12_to_20': 0, '21_plus': 0
+        },
+        'Gun Lake Casino': {
+            'total': 0,
+            'family': 0, 'friend': 0, 'other_rel': 0,
+            'emma': 0, 'ethan': 0, 'mutual': 0,
+            'under_12': 0, '12_to_20': 0, '21_plus': 0
+        },
+        'Other / Unsure': {
+            'total': 0,
+            'family': 0, 'friend': 0, 'other_rel': 0,
+            'emma': 0, 'ethan': 0, 'mutual': 0,
+            'under_12': 0, '12_to_20': 0, '21_plus': 0
+        }
+    }
+
+    welcome_dinner_counts = {
+        'attending': 0,
+        'declined': 0,
+        'pending': 0
+    }
+
     total_shuttle_requested = 0
     dietary_list = []
     guest_notes = []
@@ -1452,8 +1493,19 @@ def admin():
                 total_accepted += 1
                 if is_21 in [True, 1, 'true', 'True']:
                     total_21_plus += 1
-            elif status not in ['decline', 'declined']:
+            elif status in ['decline', 'declined']:
+                total_declined += 1
+            else:
                 total_pending += 1
+
+            # Welcome Dinner RSVP tally simulation (adjust column name if stored elsewhere)
+            welcome_status = (g.get('welcome_dinner_rsvp') or 'pending').lower()
+            if welcome_status in ['accept', 'accepted']:
+                welcome_dinner_counts['attending'] += 1
+            elif welcome_status in ['decline', 'declined']:
+                welcome_dinner_counts['declined'] += 1
+            else:
+                welcome_dinner_counts['pending'] += 1
                 
             # Collect Dietary Restrictions
             dietary = g.get('dietary_restrictions')
@@ -1474,15 +1526,13 @@ def admin():
             elif age_cat == 'adult':
                 computed_age_group = '21_plus'
             else:
-                # Fallback if age_category is empty
                 computed_age_group = '21_plus' if is_21_bool else '12_to_20'
 
-            # Define plus-one status variable here before building the dictionary
             is_plus_one_val = 'yes' if g.get('is_anonymous') else 'no'
                 
             # Build table row data
             formatted_guests.append({
-                'id': g.get('id'), # <-- ADD THIS LINE!
+                'id': g.get('id'),
                 'first_name': g.get('first_name'),
                 'last_name': g.get('last_name'),
                 'party_name': g.get('party_name') or g.get('legacy_key', ''),
@@ -1496,6 +1546,74 @@ def admin():
                 'has_plus_one': '',
                 'updated_at': format_last_updated(g.get('updated_at'))
             })
+
+            # Lodging Tab Metrics Breakdown for accepted guests
+            if status in ['accept', 'accepted']:
+                if 'Bay Pointe' in lodging:
+                    h_key = 'Bay Pointe Inn'
+                elif 'Best Western' in lodging:
+                    h_key = 'Best Western'
+                elif 'Gun Lake' in lodging:
+                    h_key = 'Gun Lake Casino'
+                else:
+                    h_key = 'Other / Unsure'
+
+                lodging_metrics[h_key]['total'] += 1
+
+                rel = (g.get('relation') or '').strip().lower()
+                if 'family' in rel:
+                    lodging_metrics[h_key]['family'] += 1
+                elif 'friend' in rel:
+                    lodging_metrics[h_key]['friend'] += 1
+                else:
+                    lodging_metrics[h_key]['other_rel'] += 1
+
+                side = (g.get('side') or '').strip().lower()
+                if side in ['bride', 'emma']:
+                    lodging_metrics[h_key]['emma'] += 1
+                elif side in ['groom', 'ethan']:
+                    lodging_metrics[h_key]['ethan'] += 1
+                else:
+                    lodging_metrics[h_key]['mutual'] += 1
+
+                if computed_age_group == 'under_12':
+                    lodging_metrics[h_key]['under_12'] += 1
+                elif computed_age_group == '12_to_20':
+                    lodging_metrics[h_key]['12_to_20'] += 1
+                else:
+                    lodging_metrics[h_key]['21_plus'] += 1
+
+            # Shuttle Tab Metrics Breakdown for accepted guests requesting shuttle
+            if status in ['accept', 'accepted'] and shuttle == 'yes':
+                if 'Best Western' in lodging:
+                    shuttle_metrics['hotel']['best_western'] += 1
+                elif 'Gun Lake' in lodging:
+                    shuttle_metrics['hotel']['gun_lake'] += 1
+                else:
+                    shuttle_metrics['hotel']['other'] += 1
+
+                rel = (g.get('relation') or '').strip().lower()
+                if 'family' in rel:
+                    shuttle_metrics['relation']['family'] += 1
+                elif 'friend' in rel:
+                    shuttle_metrics['relation']['friend'] += 1
+                else:
+                    shuttle_metrics['relation']['other'] += 1
+
+                side = (g.get('side') or '').strip().lower()
+                if side in ['bride', 'emma']:
+                    shuttle_metrics['side']['emma'] += 1
+                elif side in ['groom', 'ethan']:
+                    shuttle_metrics['side']['ethan'] += 1
+                else:
+                    shuttle_metrics['side']['mutual'] += 1
+
+                if computed_age_group == 'under_12':
+                    shuttle_metrics['age']['under_12'] += 1
+                elif computed_age_group == '12_to_20':
+                    shuttle_metrics['age']['12_to_20'] += 1
+                else:
+                    shuttle_metrics['age']['21_plus'] += 1
 
         # Count Shuttles
         if shuttle == 'yes' and accepted_in_party > 0:
@@ -1534,23 +1652,22 @@ def admin():
         "family_dashboard.html",
         total_accepted=total_accepted,
         total_pending=total_pending,
+        total_declined=total_declined,
         total_21_plus=total_21_plus,
         days_until_rsvp=days_until_rsvp,  
         lodging_counts=lodging_counts,
         shuttle_counts=shuttle_counts,
+        shuttle_metrics=shuttle_metrics,
+        lodging_metrics=lodging_metrics,
+        welcome_dinner_counts=welcome_dinner_counts,
         total_shuttle_requested=total_shuttle_requested,
         dietary_list=dietary_list,
         guest_notes=guest_notes,
-        all_guests=formatted_guests, # This is now the filtered list
+        all_guests=formatted_guests,
         supabase_url=os.environ.get("SUPABASE_URL"),
         SUPABASE_PUBLISHABLE_KEY=os.environ.get("SUPABASE_PUBLISHABLE_KEY")
     )
 
-# app.py - New route to handle the projections page
-
-# app.py - New route for the expense dashboard
-
-# Ensure ROUND_HALF_UP is imported along with Decimal
 from decimal import Decimal, ROUND_HALF_UP
 
 @app.route('/admin/expense')
