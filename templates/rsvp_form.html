@@ -255,10 +255,99 @@
             </div>
         </section>
 
+        <div class="draft-corner-indicator" role="status" aria-live="polite" data-draft-status>
+            <span class="draft-corner-dot" aria-hidden="true"></span>
+            <span class="draft-corner-text">Draft · Not submitted</span>
+        </div>
     </form>
 
     <script>
         console.log("=== RSVP CONCIERGE SCRIPT INITIALIZED ===");
+
+        // --- AUTOSAVE & DRAFT INDICATOR ---
+        let autosaveTimer = null;
+
+        function setDraftIndicator(state, label) {
+            const el = document.querySelector('[data-draft-status]');
+            if (!el) return;
+
+            const textEl = el.querySelector('.draft-corner-text');
+            el.classList.remove('is-saving', 'is-saved', 'is-error');
+
+            if (state === 'saving') {
+                el.classList.add('is-saving');
+                if (textEl) textEl.textContent = label || 'Saving draft…';
+            } else if (state === 'saved') {
+                el.classList.add('is-saved');
+                if (textEl) textEl.textContent = label || 'Draft saved';
+            } else if (state === 'error') {
+                el.classList.add('is-error');
+                if (textEl) textEl.textContent = label || 'Draft not saved';
+            } else {
+                if (textEl) textEl.textContent = label || 'Draft saved';
+            }
+        }
+
+        function triggerAutosave() {
+            const confirmationCode = document.querySelector('input[name="confirmation_code"]')?.value;
+            if (!confirmationCode) return;
+
+            // Immediately show loading/unsaved-draft state as soon as a change occurs
+            setDraftIndicator('saving', 'Saving draft…');
+
+            clearTimeout(autosaveTimer);
+            autosaveTimer = setTimeout(() => {
+                const guestsData = [];
+                const statusInputs = document.querySelectorAll('input[id^="status_"]');
+                statusInputs.forEach(input => {
+                    const guestId = input.id.replace('status_', '');
+                    const rsvpStatus = input.value || '';
+                    const welcomeInput = document.getElementById(`welcome_status_${guestId}`);
+                    const dietaryInput = document.querySelector(`input[name="dietary_${guestId}"]`);
+
+                    guestsData.push({
+                        id: guestId,
+                        rsvp_status: rsvpStatus,
+                        welcome_dinner_rsvp: welcomeInput ? welcomeInput.value : null,
+                        dietary_restrictions: dietaryInput ? dietaryInput.value : null
+                    });
+                });
+
+                const lodgingChoice = document.querySelector('input[name="lodging_choice"]:checked')?.value || null;
+                const shuttleInterest = document.querySelector('input[name="shuttle_interest"]:checked')?.value || null;
+                const guestNote = document.querySelector('textarea[name="guest_note"]')?.value || null;
+
+                let step = 1;
+                if (isStep1Complete()) step = 2;
+                if (isStep1Complete() && isWelcomePartyComplete()) step = 3;
+                if (isStep1Complete() && isWelcomePartyComplete() && isStep3Complete()) step = 4;
+
+                const payload = {
+                    confirmation_code: confirmationCode,
+                    form_step_reached: step,
+                    lodging_choice: lodgingChoice,
+                    shuttle_interest: shuttleInterest,
+                    guest_note: guestNote,
+                    guests: guestsData
+                };
+
+                fetch('/api/rsvp/autosave', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                })
+                .then(res => res.json().then(data => ({ ok: res.ok && data.ok, data })))
+                .then(({ ok, data }) => {
+                    if (!ok) throw new Error(data?.error || 'Autosave failed');
+                    setDraftIndicator('saved', 'Draft saved');
+                })
+                .catch(err => {
+                    console.error("Autosave error:", err);
+                    setDraftIndicator('error', 'Draft couldn’t save');
+                });
+            }, 600);
+        }
+        // -----------------------------------
 
         function areAllGuestsDeclined() {
             const statusInputs = document.querySelectorAll('input[id^="status_"]');
@@ -299,7 +388,6 @@
             const welcomeSec = document.getElementById('welcome-party-section');
             if (!welcomeSec || welcomeSec.style.display === 'none') return true;
 
-            // Check that every visible welcome row has been answered
             const visibleInputs = document.querySelectorAll('.welcome-guest-row:not([style*="display: none"]) input[id^="welcome_status_"]');
             for (let input of visibleInputs) {
                 const val = input.value ? input.value.trim().toLowerCase() : '';
@@ -330,6 +418,7 @@
 
             updateSnapAlignments();
             hideSpaToast();
+            triggerAutosave();
         }
 
         function isStep3Complete() {
@@ -353,7 +442,7 @@
         function updateStepNumbers() {
             const sections = document.querySelectorAll('.rsvp-snap-section');
             const visibleSections = Array.from(sections).filter(sec => sec.style.display !== 'none');
-            
+
             let stepCount = 1;
             visibleSections.forEach((sec, idx) => {
                 const kicker = sec.querySelector('.snap-kicker');
@@ -396,28 +485,6 @@
             });
         }
 
-        function setWelcomeParty(status) {
-            const welcomeSec = document.getElementById('welcome-party-section');
-            if (!welcomeSec) return;
-
-            const acceptBtn = welcomeSec.querySelector('.accept-btn');
-            const declineBtn = welcomeSec.querySelector('.decline-btn');
-            const hiddenInput = document.getElementById('welcome_dinner_rsvp_input');
-
-            if (hiddenInput) hiddenInput.value = status;
-
-            if (status === 'accepted') {
-                if (acceptBtn) acceptBtn.classList.add('btn-active-accept');
-                if (declineBtn) declineBtn.classList.remove('btn-active-decline');
-            } else {
-                if (declineBtn) declineBtn.classList.add('btn-active-decline');
-                if (acceptBtn) acceptBtn.classList.remove('btn-active-accept');
-            }
-
-            updateSnapAlignments();
-            hideSpaToast();
-        }
-
         function handleLodgingChange() {
             const checkedLodging = document.querySelector('input[name="lodging_choice"]:checked');
             const shuttleBox = document.getElementById('shuttle-container');
@@ -436,6 +503,7 @@
             if (isStep3Complete()) {
                 hideSpaToast();
             }
+            triggerAutosave();
         }
 
         function handleShuttleChange() {
@@ -443,6 +511,7 @@
             if (isStep3Complete()) {
                 hideSpaToast();
             }
+            triggerAutosave();
         }
 
         function toggleRestOfForm() {
@@ -514,7 +583,7 @@
             const acceptBtn = row.querySelector('.accept-btn');
             const declineBtn = row.querySelector('.decline-btn');
             const hiddenInput = document.getElementById(`status_${guestId}`);
-            
+
             const nameDrawer = document.getElementById(`name_drawer_${guestId}`);
             const confirmedView = document.getElementById(`name_confirmed_view_${guestId}`);
             const placeholder = document.getElementById(`name_placeholder_${guestId}`);
@@ -524,22 +593,18 @@
             const dietaryRow = document.getElementById(`dietary_row_${guestId}`);
             const dietaryInput = dietaryRow ? dietaryRow.querySelector('input') : null;
 
-            // --- WELCOME GATHERING ELEMENTS ---
             const welcomeRow = document.getElementById(`welcome_row_${guestId}`);
             const welcomeInput = document.getElementById(`welcome_status_${guestId}`);
             const welcomeAcceptBtn = welcomeRow ? welcomeRow.querySelector('.accept-btn') : null;
             const welcomeDeclineBtn = welcomeRow ? welcomeRow.querySelector('.decline-btn') : null;
-            // ----------------------------------
 
             if (hiddenInput) hiddenInput.value = status;
 
             if (status === 'accept' || status === 'accepted') {
                 if (acceptBtn) acceptBtn.classList.add('btn-active-accept');
                 if (declineBtn) declineBtn.classList.remove('btn-active-decline');
-                
-                if (dietaryRow) dietaryRow.style.display = 'block';
 
-                // Show this guest's welcome gathering row
+                if (dietaryRow) dietaryRow.style.display = 'block';
                 if (welcomeRow) welcomeRow.style.display = 'flex';
 
                 const hasConfirmedName = confirmedView && confirmedView.style.display === 'flex';
@@ -551,11 +616,10 @@
             } else {
                 if (declineBtn) declineBtn.classList.add('btn-active-decline');
                 if (acceptBtn) acceptBtn.classList.remove('btn-active-accept');
-                
+
                 if (dietaryRow) dietaryRow.style.display = 'none';
                 if (dietaryInput) dietaryInput.value = '';
 
-                // Hide and reset this guest's welcome gathering row
                 if (welcomeRow) welcomeRow.style.display = 'none';
                 if (welcomeInput) welcomeInput.value = '';
                 if (welcomeAcceptBtn) welcomeAcceptBtn.classList.remove('btn-active-accept');
@@ -575,6 +639,7 @@
             if (isStep1Complete()) {
                 hideSpaToast();
             }
+            triggerAutosave();
         }
 
         function toProperCase(str) {
@@ -586,8 +651,7 @@
         function savePlusOneName(guestId) {
             const firstNameInput = document.getElementById(`first_input_${guestId}`);
             const lastNameInput = document.getElementById(`last_input_${guestId}`);
-            
-            // Auto-proper-case the values in the inputs immediately upon saving
+
             if (firstNameInput && firstNameInput.value) {
                 firstNameInput.value = toProperCase(firstNameInput.value.trim());
             }
@@ -625,6 +689,7 @@
             if (isStep1Complete()) {
                 hideSpaToast();
             }
+            triggerAutosave();
         }
 
         function editPlusOne(guestId) {
@@ -675,7 +740,6 @@
             const sections = document.querySelectorAll('.rsvp-snap-section');
             const visibleSections = Array.from(sections).filter(sec => sec.style.display !== 'none');
 
-            // 1. Check Step 1 Lock
             if (!isStep1Complete()) {
                 const step1 = visibleSections[0];
                 if (window.scrollY > step1.offsetTop + 20) {
@@ -685,10 +749,9 @@
                 return;
             }
 
-            // 2. Check Welcome Party Lock
             if (!areAllGuestsDeclined() && !isWelcomePartyComplete()) {
                 const welcomeSec = document.getElementById('welcome-party-section');
-                if (welcomeSec && welcomeSec.style.display !== 'none')  {
+                if (welcomeSec && welcomeSec.style.display !== 'none') {
                     const rect = welcomeSec.getBoundingClientRect();
                     if (rect.bottom <= window.innerHeight + 20 && window.scrollY > welcomeSec.offsetTop + 10) {
                         window.scrollTo({ top: welcomeSec.offsetTop, behavior: 'auto' });
@@ -698,7 +761,6 @@
                 }
             }
 
-            // 3. Check Accommodations Lock
             if (!areAllGuestsDeclined() && !isStep3Complete()) {
                 const accommodationsSec = document.getElementById('accommodations-section');
                 if (accommodationsSec && accommodationsSec.style.display !== 'none') {
@@ -741,11 +803,17 @@
             return true;
         }
 
+        // Add input listeners for text inputs/textareas to autosave as you type
+        document.querySelectorAll('input[type="text"], input[type="email"], textarea').forEach(input => {
+            input.addEventListener('input', triggerAutosave);
+        });
+
         // Initialize state on load
         handleLodgingChange();
         toggleRestOfForm();
         updateStepNumbers();
         updateSnapAlignments();
+        setDraftIndicator('saved', 'Draft saved');
 
         document.querySelectorAll('.party-row').forEach(row => {
             const guestId = row.getAttribute('data-guest-id');

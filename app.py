@@ -78,11 +78,26 @@ else:
 # =============================================
 ROLE_RANK = {"viewer": 1, "editor": 2, "admin": 3}
 
-# Define your exact deadline in Pacific Time (May 15, 2027 at 12:00:00 AM PT)
-RSVP_DEADLINE = datetime(2027, 5, 15, 0, 0, 0, tzinfo=ZoneInfo("US/Pacific"))
+# Default global deadline for general landing pages before a party is identified
+GLOBAL_RSVP_DEADLINE = datetime(2027, 5, 15, 0, 0, 0, tzinfo=ZoneInfo("US/Pacific"))
 
 def check_is_post_deadline():
-    return datetime.now(ZoneInfo("US/Pacific")) >= RSVP_DEADLINE
+    return datetime.now(ZoneInfo("US/Pacific")) >= GLOBAL_RSVP_DEADLINE
+
+def is_party_deadline_passed(due_date):
+    """
+    Checks if the current time in Pacific Time has passed the given party due_date.
+    If due_date is None, falls back to the global deadline.
+    """
+    now_pt = datetime.now(ZoneInfo("US/Pacific"))
+    if not due_date:
+        return now_pt >= GLOBAL_RSVP_DEADLINE
+    
+    # Ensure due_date is timezone-aware
+    if due_date.tzinfo is None:
+        due_date = due_date.replace(tzinfo=ZoneInfo("US/Pacific"))
+        
+    return now_pt >= due_date
 
 # =============================================
 # Authentication & Role Helpers
@@ -1671,264 +1686,542 @@ def admin():
     )
 
 from decimal import Decimal, ROUND_HALF_UP
+from flask import Flask, render_template, request
+
+from decimal import Decimal, ROUND_HALF_UP
+from flask import Flask, render_template, request
+
+import math
+import numpy as np
+from decimal import Decimal, ROUND_HALF_UP
+from datetime import date
+from flask import render_template, request
+
+def prob_to_logit(p):
+    p = max(0.001, min(0.999, p))
+    return math.log(p / (1.0 - p))
+
+def logit_to_prob(logit):
+    return 1.0 / (1.0 + math.exp(-logit))
+
+def get_forecast_guest_price(age_group):
+    """Matches test_forecast.py pricing tiers + $1.50 cake cutting fee"""
+    cake_fee = Decimal('1.50')
+    if age_group == 'under_12':
+        return Decimal('45.00') + cake_fee, 'under_12'
+    elif age_group in ('12_to_21', '12_to_20', 'under_21'):
+        return Decimal('75.00') + cake_fee, 'under_21'
+    else:
+        return Decimal('115.25') + cake_fee, '21_plus'
 
 @app.route('/admin/expense')
 def expense_dashboard():
-    # 1. Constants and Budget Data (Precise decimal math required)
-    # ---------------------------------------------------------
-    MI_SALES_TAX = Decimal('0.06')     # 6% sales tax
-    SERVICE_FEE = Decimal('0.22')     # 22% service fee
-    CEREMONY_FEE = Decimal('850.00') # Taxable, but not serviced
-    PAVILION_FEE = Decimal('3500.00') # Taxable, but not serviced
-    
-    # Non-guest expenses that are now Taxable but NOT Serviced
+    num_simulations = 10000
+    filter_status = request.args.get('status', '').strip().lower()
+    filter_tier = request.args.get('tier', '').strip().lower()
+    filter_search = request.args.get('q', '').strip().lower()
+
+    # 1. Fetch Forecast Assumptions & Parties from Supabase
+    assumptions_res = supabase.table("forecast_assumptions").select("assumption_key, value").execute()
+    assumptions = {row["assumption_key"]: float(row["value"]) for row in (assumptions_res.data or [])}
+
+    parties_res = supabase.table("parties").select(
+        "id, display_name, legacy_key, rsvp_session_status, form_step_reached, distance_tier, "
+        "guests(id, first_name, last_name, rsvp_status, relationship, age_category, is_plus_one, record_status, has_verbal_commitment, is_21_plus, guest_of)"
+    ).eq("is_test", False).execute()
+
+    # 2. Financial & Contract Constants
+    MI_SALES_TAX = Decimal('0.06')
+    SERVICE_FEE = Decimal('0.22')
+    CEREMONY_FEE = Decimal('850.00')
+    PAVILION_FEE = Decimal('3500.00')
     flat_fees_subtotal_taxable = CEREMONY_FEE + PAVILION_FEE
 
     BUDGETED_AMOUNT = Decimal('18638.00')
     CONTRACT_FB_MIN = Decimal('9000.00')
     CONTRACT_ADULT_MIN = 75
-    
-    # VENDOR DATA ( Rule 3: Hardcoded, not in DB)
+
     VENDOR_COUNT = 13
     VENDOR_PRICE_PP = Decimal('58.00')
+    vendor_cost_subtotal = VENDOR_COUNT * VENDOR_PRICE_PP  # $754.00
 
-    # 2. Grab filter parameters (reusing standard names)
-    filter_status = request.args.get('status', '').strip().lower()
-    filter_tier = request.args.get('tier', '').strip().lower()
+    # Time decay window
+    invites_sent_date = date(2027, 2, 14)
+    rsvp_due_date = date(2027, 5, 14)
+    today = date.today()
+    total_window = (rsvp_due_date - invites_sent_date).days
+    elapsed_time = (today - invites_sent_date).days
+    time_progress = max(0.0, min(1.0, elapsed_time / total_window if total_window > 0 else 0.0))
 
-    conn = get_db_connection()
-    if not conn:
-        return "Database unavailable", 500
-
-    try:
-        with conn.cursor() as cur:
-            # Query active or null-status guests (Rule 1, 2c, 5)
-            cur.execute("""
-                SELECT 
-                    g.id, 
-                    g.first_name, 
-                    g.last_name, 
-                    g.rsvp_status, 
-                    g.is_21_plus,
-                    g.age_category,
-                    g.is_anonymous
-                FROM guests g
-                WHERE (g.record_status IS NULL OR LOWER(TRIM(g.record_status)) != 'inactive')
-                ORDER BY g.last_name, g.first_name;
-            """)
-            rows = cur.fetchall()
-            cols = [d[0] for d in cur.description]
-            all_guests_records = [dict(zip(cols, row)) for row in rows]
-    except Exception as e:
-        return f"Database query error: {e}", 500
-    finally:
-        conn.close()
-
-    rsvp_declined = ['decline', 'declined']
-
-    # 3. Headcounts & Raw F&B Calculations (Precise decimal math)
-    # ---------------------------------------------------------
-    # Rule 2a/2b: accepted + pending guests are factored into projections.
-    # (Declined guests count as $0 for F&B but are still filtered).
-    fb_subtotal_raw = Decimal('0.00')
-    
-    tier_counts = {
-        '21_plus': 0,
-        'under_21': 0,
-        'under_12': 0
+    structured_parties = []
+    guest_meta_lookup = {}
+    tier_summary = {
+        4: {"label": "Tier 4: Submitted", "count": 0, "expected": 0.0},
+        3: {"label": "Tier 3: In-Progress Draft", "count": 0, "expected": 0.0},
+        1: {"label": "Tier 1: Unopened / Projected", "count": 0, "expected": 0.0},
     }
-    tier_costs = {
-        '21_plus': Decimal('0.00'),
-        'under_21': Decimal('0.00'),
-        'under_12': Decimal('0.00')
-    }
-    contract_adult_headcount = 0
-    
-    formatted_guests_raw = []
 
-    for g in all_guests_records:
-        status = (g.get('rsvp_status') or 'pending').strip().lower()
-        is_21 = g.get('is_21_plus')
-        age_cat = str(g.get('age_category') or '').strip().lower()
-        
-        # Consistent check for boolean or string 'true'
-        is_21_bool = is_21 in [True, 1, 'true', 'True']
+    for party in (parties_res.data or []):
+        status = party.get("rsvp_session_status") or "not_started"
+        step = party.get("form_step_reached") or 0
+        distance = party.get("distance_tier") or "drivable_overnight"
+        dist = str(distance).strip().lower()
+        party_name = party.get("display_name") or party.get("legacy_key") or "Party"
 
-        # Reuse updated age mapping (Hernandez DB update)
-        if age_cat == 'under_12':
-            computed_age_group = 'under_12'
-        elif age_cat in ('12_to_21', '12-21', 'under_21'): 
-            computed_age_group = '12_to_21'
-        else:
-            # Fallback if age_category is empty
-            computed_age_group = '21_plus' if is_21_bool else '12_to_21'
+        party_guests = []
+        for guest in (party.get("guests") or []):
+            if guest.get("record_status") == "inactive":
+                continue
 
-        price, display_tier = get_guest_price(computed_age_group)
+            guest_id = guest.get("id")
+            name = f"{guest.get('first_name') or ''} {guest.get('last_name') or ''}".strip() or "Unnamed Guest"
+            relationship = guest.get("relationship") or "friend"
 
-        # Process guests (Rule 2a/2b: Accepted + Pending are tracked)
-        # (Rule 2c: declined = $0)
-        if status not in rsvp_declined:
-            tier_counts[display_tier] += 1
-            tier_costs[display_tier] += price
-            fb_subtotal_raw += price
-            
-            # Count for contractual adult minimum (Rule 4: 75 adults 21+)
-            if computed_age_group == '21_plus':
-                contract_adult_headcount += 1
+            age_cat = str(guest.get('age_category') or '').strip().lower()
+            is_21 = guest.get('is_21_plus')
+            is_21_bool = is_21 in [True, 1, 'true', 'True']
 
-        formatted_guests_raw.append({
-            'first_name': g.get('first_name'),
-            'last_name': g.get('last_name'),
-            'rsvp_status': g.get('rsvp_status', 'pending'),
-            'price_tier': display_tier, 
-            # Cost is price, or $0 if declined
-            'cost_pp': price if status not in rsvp_declined else Decimal('0.00'), 
-            'is_plus_one': g.get('is_anonymous') == True,
+            if age_cat == 'under_12':
+                computed_age_group = 'under_12'
+            elif age_cat in ('12_to_21', '12-21', 'under_21'):
+                computed_age_group = '12_to_21'
+            else:
+                computed_age_group = '21_plus' if is_21_bool else '12_to_21'
+
+            guest_price_pp, display_tier = get_forecast_guest_price(computed_age_group)
+            notes_list = []
+
+            if status == "submitted":
+                tier = 4
+                is_accepted = (guest.get("rsvp_status") == "accepted")
+                fixed_prob = 1.0 if is_accepted else 0.0
+                base_logit = prob_to_logit(fixed_prob)
+                is_locked = True
+                state_desc = "Submitted (Yes)" if is_accepted else "Submitted (No)"
+            elif status == "in_progress":
+                tier = 3
+                is_accepted = (guest.get("rsvp_status") == "accepted")
+                if is_accepted:
+                    step_key = f"tier3_step_{step}" if step > 0 else "tier3_step_1_rsvp"
+                    fixed_prob = assumptions.get(step_key, 0.80)
+                else:
+                    fixed_prob = 0.05
+                base_logit = prob_to_logit(fixed_prob)
+                is_locked = False
+                state_desc = f"Draft (Step {step})"
+            else:
+                tier = 1
+                rel = str(relationship).strip().lower()
+                is_po = guest.get("is_plus_one")
+                has_name = bool(str(guest.get("first_name") or "").strip())
+                has_verbal = guest.get("has_verbal_commitment", False)
+
+                if rel in ["immediate_family", "parent", "sibling", "wedding party"]:
+                    rel_label = "imm_fam"
+                    base_p = assumptions.get("base_prob_immediate_family", 0.98)
+                elif rel in ["extended_family", "aunt", "uncle", "cousin"]:
+                    rel_label = "ext_fam"
+                    base_p = assumptions.get("base_prob_extended_family", 0.85)
+                else:
+                    rel_label = "friend"
+                    base_p = assumptions.get("base_prob_friend", 0.72)
+
+                score = prob_to_logit(base_p)
+                notes_list.append(f"{rel_label}:{int(base_p * 100)}%")
+
+                dist_shift = assumptions.get(f"shift_dist_{dist}", -0.25)
+                score += dist_shift
+                if dist != "local":
+                    notes_list.append(dist[:5])
+
+                if is_po and not has_name:
+                    score = prob_to_logit(assumptions.get("base_prob_friend", 0.72)) + dist_shift
+                    score += assumptions.get("shift_unnamed_plus_one", -0.95)
+                    notes_list = [f"unnamed+1({dist[:5]})"]
+                elif is_po and has_name:
+                    score += assumptions.get("shift_named_plus_one", -0.20)
+                    notes_list.append("named+1")
+
+                if computed_age_group == 'under_12':
+                    score += assumptions.get("shift_child_under_12", -0.10)
+                    notes_list.append("child")
+
+                if has_verbal:
+                    score += assumptions.get("shift_verbal_commit", 1.80)
+                    notes_list.append("verbal")
+                elif time_progress > 0:
+                    max_decay = assumptions.get("shift_time_decay_max", -0.60)
+                    score += max_decay * time_progress
+                    notes_list.append("decay")
+
+                base_logit = score
+                is_locked = False
+                state_desc = " | ".join(notes_list)
+
+            g_data = {
+                "id": guest_id,
+                "name": name,
+                "party_name": party_name,
+                "relationship": relationship,
+                "tier": tier,
+                "display_tier": display_tier,
+                "state_desc": state_desc,
+                "base_logit": base_logit,
+                "is_locked": is_locked,
+                "price": guest_price_pp,
+                "guest_of": guest.get("guest_of"),
+                "rsvp_status": guest.get("rsvp_status") or "pending"
+            }
+            party_guests.append(g_data)
+            guest_meta_lookup[guest_id] = g_data
+
+        if party_guests:
+            structured_parties.append(party_guests)
+
+    # 3. Run Vectorized / Fast Monte Carlo Simulation
+    np.random.seed(42)  # Optional: remove if you want fresh jitter on every page refresh
+    sim_adult_headcounts = np.zeros(num_simulations)
+    sim_total_headcounts = np.zeros(num_simulations)
+    sim_total_costs = np.zeros(num_simulations)
+    sim_fb_raw_arr = np.zeros(num_simulations)
+    guest_attendance_counts = {g_id: 0 for g_id in guest_meta_lookup}
+
+    adult_min_met_count = 0
+    fb_min_met_count = 0
+    under_budget_count = 0
+
+    for sim in range(num_simulations):
+        sim_fb_raw = vendor_cost_subtotal
+        sim_adults = 0.0
+        sim_total_guests = 0.0
+
+        for party_guests in structured_parties:
+            household_shock = np.random.normal(0, 0.35)
+            attendance_map = {}
+
+            # Pass 1: Primary guests
+            for guest in party_guests:
+                if guest["guest_of"]:
+                    continue
+                if guest["is_locked"]:
+                    attends = (guest["base_logit"] > 0)
+                else:
+                    p_attends = logit_to_prob(guest["base_logit"] + household_shock)
+                    attends = np.random.rand() < p_attends
+
+                attendance_map[guest["id"]] = attends
+                if attends:
+                    guest_attendance_counts[guest["id"]] += 1
+                    sim_fb_raw += guest["price"]
+                    sim_total_guests += 1.0
+                    if guest["price"] == Decimal('116.75'):
+                        sim_adults += 1.0
+
+            # Pass 2: Plus-ones dependent on host
+            for guest in party_guests:
+                host_id = guest["guest_of"]
+                if not host_id:
+                    continue
+                if not attendance_map.get(host_id, False):
+                    attends = False
+                elif guest["is_locked"]:
+                    attends = (guest["base_logit"] > 0)
+                else:
+                    p_attends = logit_to_prob(guest["base_logit"] + household_shock)
+                    attends = np.random.rand() < p_attends
+
+                attendance_map[guest["id"]] = attends
+                if attends:
+                    guest_attendance_counts[guest["id"]] += 1
+                    sim_fb_raw += guest["price"]
+                    sim_total_guests += 1.0
+                    if guest["price"] == Decimal('116.75'):
+                        sim_adults += 1.0
+
+        billable_fb = sim_fb_raw
+        if sim_adults < CONTRACT_ADULT_MIN:
+            shortfall = Decimal(str(CONTRACT_ADULT_MIN - sim_adults))
+            billable_fb += shortfall * Decimal('115.25')
+
+        service_fee_fb = billable_fb * SERVICE_FEE
+        tax_fb = (billable_fb + service_fee_fb) * MI_SALES_TAX
+        tax_flat_fees = flat_fees_subtotal_taxable * MI_SALES_TAX
+        grand_total = billable_fb + service_fee_fb + tax_fb + flat_fees_subtotal_taxable + tax_flat_fees
+
+        sim_adult_headcounts[sim] = sim_adults
+        sim_total_headcounts[sim] = sim_total_guests
+        sim_total_costs[sim] = float(grand_total)
+        sim_fb_raw_arr[sim] = float(sim_fb_raw)
+
+        if sim_adults >= CONTRACT_ADULT_MIN:
+            adult_min_met_count += 1
+        if sim_fb_raw >= CONTRACT_FB_MIN:
+            fb_min_met_count += 1
+        if grand_total <= BUDGETED_AMOUNT:
+            under_budget_count += 1
+
+    # 4. Aggregate Percentiles & Histogram Distribution
+    prob_adults = (adult_min_met_count / num_simulations) * 100
+    prob_fb_min = (fb_min_met_count / num_simulations) * 100
+    prob_budget = (under_budget_count / num_simulations) * 100
+
+    med_adults = float(np.median(sim_adult_headcounts))
+    p5_adults = float(np.percentile(sim_adult_headcounts, 5))
+    p95_adults = float(np.percentile(sim_adult_headcounts, 95))
+
+    med_total = float(np.median(sim_total_headcounts))
+    p5_total = float(np.percentile(sim_total_headcounts, 5))
+    p95_total = float(np.percentile(sim_total_headcounts, 95))
+
+    med_cost = float(np.median(sim_total_costs))
+    mean_cost = float(np.mean(sim_total_costs))
+    p5_cost = float(np.percentile(sim_total_costs, 5))
+    p95_cost = float(np.percentile(sim_total_costs, 95))
+    med_fb_raw = float(np.median(sim_fb_raw_arr))
+
+    # Build 18-bin Histogram for Cost Distribution Chart
+    counts, bin_edges = np.histogram(sim_total_costs, bins=18)
+    max_bin_count = int(max(counts)) if len(counts) > 0 else 1
+    histogram_bins = []
+    budget_float = float(BUDGETED_AMOUNT)
+    for i in range(len(counts)):
+        b_start = float(bin_edges[i])
+        b_end = float(bin_edges[i + 1])
+        b_mid = (b_start + b_end) / 2.0
+        histogram_bins.append({
+            "start": f"{b_start:,.0f}",
+            "end": f"{b_end:,.0f}",
+            "mid": f"{b_mid:,.0f}",
+            "count": int(counts[i]),
+            "pct_height": round((counts[i] / max_bin_count) * 100, 1),
+            "is_under_budget": b_mid <= budget_float
         })
 
-    # 4. Inject Vendors separately into subtotals (Rule 3)
-    # ---------------------------------------------------------
-    # Added AFTER guest DB process to ensure clean filtering in table later.
-    vendor_cost_subtotal = VENDOR_COUNT * VENDOR_PRICE_PP
-    fb_subtotal_raw += vendor_cost_subtotal
+    # 5. Build Guest Table & Tier Breakdown
+    guest_rows = []
+    for party_guests in structured_parties:
+        for g in party_guests:
+            sim_prob = guest_attendance_counts[g["id"]] / num_simulations
+            expected_val = float(g["price"]) * sim_prob
+            
+            t = g["tier"]
+            tier_summary[t]["count"] += 1
+            tier_summary[t]["expected"] += sim_prob
 
-    # Vendors do NOT count towards the adult headcount minimum of 75 
-    # (they are vendors, not attending guests), so we don't increment contract_adult_headcount.
+            guest_rows.append({
+                "id": g["id"],
+                "name": g["name"],
+                "party_name": g["party_name"],
+                "relationship": g["relationship"].replace("_", " ").title(),
+                "tier": t,
+                "display_tier": g["display_tier"],
+                "state_desc": g["state_desc"],
+                "sim_prob": sim_prob,
+                "sim_pct": round(sim_prob * 100, 1),
+                "price": f"{g['price']:,.2f}",
+                "expected_cost": f"{expected_val:,.2f}",
+                "is_locked": g["is_locked"]
+            })
 
-    # 5. Apply Taxes & Fees (Service Fee 22%, Tax 6% on taxable items only)
-    # ---------------------------------------------------------
-    # A standard way to handle money rounding precisely using ROUND_HALF_UP.
-    def quant(val):
-        return val.quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
+    # Apply Optional Filters
+    if filter_tier in ["4", "3", "1"]:
+        guest_rows = [r for r in guest_rows if str(r["tier"]) == filter_tier]
+    if filter_status == "locked":
+        guest_rows = [r for r in guest_rows if r["is_locked"]]
+    elif filter_status == "uncertain":
+        guest_rows = [r for r in guest_rows if not r["is_locked"]]
+    if filter_search:
+        guest_rows = [
+            r for r in guest_rows 
+            if filter_search in r["name"].lower() or filter_search in r["party_name"].lower()
+        ]
 
-    # Tax on F&B (Guests + Vendors)
-    tax_fb = quant(fb_subtotal_raw * MI_SALES_TAX)
-    
-    # Service Fee on F&B only (Rule: Service fee is NOT taxed)
-    service_fee_fb = quant(fb_subtotal_raw * SERVICE_FEE)
-    
-    # --- THIS IS THE FIX ---
-    # Tax on Flat Fees (Rule: FLAT FEES ARE NOW TAXABLE 6%)
-    tax_flat_fees = quant(flat_fees_subtotal_taxable * MI_SALES_TAX)
+    # Sort guests by highest simulated odds, then name
+    guest_rows.sort(key=lambda x: (-x["sim_prob"], x["name"]))
 
-    # 6. Contractual Check against Minimums (Rule 4: Interactive trackers)
-    # ---------------------------------------------------------
-    # Checked against raw pre-tax subtotals
-    fb_min_met = fb_subtotal_raw >= CONTRACT_FB_MIN
-    adult_min_met = contract_adult_headcount >= CONTRACT_ADULT_MIN
-
-    # 7. Final Grand Totals
-    # ---------------------------------------------------------
-    grand_total_projected = (fb_subtotal_raw + tax_fb + service_fee_fb + 
-                             flat_fees_subtotal_taxable + tax_flat_fees)
-
-    # Budget tracking (Rule 3 & 4)
-    budget_variance = grand_total_projected - BUDGETED_AMOUNT
-    under_budget = budget_variance <= 0
-
-    # 8. Filter the table list (Rule 2c)
-    # ---------------------------------------------------------
-    formatted_guests = formatted_guests_raw
-    if filter_status:
-        formatted_guests = [g for g in formatted_guests if (g['rsvp_status'] or '').strip().lower() == filter_status]
-    if filter_tier:
-        formatted_guests = [g for g in formatted_guests if filter_tier == g['price_tier']]
-
-    # --- Cost Breakdown by RSVP Status for Visual Bar ---
-    tax_and_service_mult = Decimal('1.28') # 1 + 0.06 tax + 0.22 service fee
-    accepted_fb_raw = Decimal('0.00')
-    pending_fb_raw = Decimal('0.00')
-    declined_fb_raw = Decimal('0.00')
-
-    for g in all_guests_records:
-        status = (g.get('rsvp_status') or 'pending').strip().lower()
-        is_21 = g.get('is_21_plus')
-        age_cat = str(g.get('age_category') or '').strip().lower()
-        is_21_bool = is_21 in [True, 1, 'true', 'True']
-
-        if age_cat == 'under_12':
-            computed_age = 'under_12'
-        elif age_cat in ('12_to_21', '12-21', 'under_21'): 
-            computed_age = '12_to_21'
-        else:
-            computed_age = '21_plus' if is_21_bool else '12_to_21'
-
-        price, _ = get_guest_price(computed_age)
-
-        if status in ['accept', 'accepted']:
-            accepted_fb_raw += price
-        elif status in ['decline', 'declined']:
-            declined_fb_raw += price
-        else:
-            pending_fb_raw += price
-
-    # Include fixed 13 vendors in accepted total
-    accepted_fb_raw += vendor_cost_subtotal
-
-    cost_confirmed = (accepted_fb_raw * tax_and_service_mult) + (flat_fees_subtotal_taxable * Decimal('1.06'))
-    cost_pending = pending_fb_raw * tax_and_service_mult
-    cost_declined_saved = declined_fb_raw * tax_and_service_mult
-
-    # Total pool including declined savings for a complete 100% distribution bar
-    total_pool = cost_confirmed + cost_pending + cost_declined_saved
-    pct_confirmed = (cost_confirmed / total_pool * 100) if total_pool > 0 else 0
-    pct_pending = (cost_pending / total_pool * 100) if total_pool > 0 else 0
-    pct_declined = (cost_declined_saved / total_pool * 100) if total_pool > 0 else 0
-
-    # Helper function to format Decimal as standard currency string ("1,234.56")
-    def fmt(val):
-        return f"{val:,.2f}"
-
-    # Calculate percentage position of budget relative to projected total cost pool
-    # Scaling against total projected spend (Confirmed + Pending) ensures the line lands where $18,638 sits
-    cost_active_total = cost_confirmed + cost_pending
-    pct_budget_line = (BUDGETED_AMOUNT / cost_active_total * 100) if cost_active_total > 0 else 0
+    # Median Cost Breakdown Components
+    med_billable_fb = Decimal(str(round(med_fb_raw, 2)))
+    med_service_fee = med_billable_fb * SERVICE_FEE
+    med_fb_tax = (med_billable_fb + med_service_fee) * MI_SALES_TAX
+    med_flat_tax = flat_fees_subtotal_taxable * MI_SALES_TAX
 
     return render_template(
         "expense_dashboard.html",
-        # Budget tracking variables
-        budgeted_amount=fmt(BUDGETED_AMOUNT),
-        grand_total_projected=fmt(grand_total_projected),
-        budget_variance=fmt(abs(budget_variance)),
-        under_budget=under_budget,
-        
-        # Visual Breakdown Variables
-        cost_confirmed=fmt(cost_confirmed),
-        cost_pending=fmt(cost_pending),
-        cost_declined_saved=fmt(cost_declined_saved),
-        pct_confirmed=f"{pct_confirmed:.1f}",
-        pct_pending=f"{pct_pending:.1f}",
-        pct_declined=f"{pct_declined:.1f}",
-        pct_budget_line=f"{pct_budget_line:.1f}",
-        
-        # Breakdown section
-        fb_subtotal_raw=fmt(fb_subtotal_raw),
-        fb_total_final=fmt(fb_subtotal_raw + tax_fb + service_fee_fb),
-        fixed_fees_total=fmt(flat_fees_subtotal_taxable + tax_flat_fees),
-        
-        ceremony_fee=fmt(CEREMONY_FEE),
-        pavilion_fee=fmt(PAVILION_FEE),
-        
-        # Vendor data
+        num_simulations=f"{num_simulations:,}",
+        budgeted_amount=f"{BUDGETED_AMOUNT:,.2f}",
+        prob_budget=f"{prob_budget:.1f}",
+        prob_adults=f"{prob_adults:.1f}",
+        prob_fb_min=f"{prob_fb_min:.1f}",
+        med_cost=f"{med_cost:,.2f}",
+        mean_cost=f"{mean_cost:,.2f}",
+        p5_cost=f"{p5_cost:,.2f}",
+        p95_cost=f"{p95_cost:,.2f}",
+        budget_variance=f"{abs(med_cost - budget_float):,.2f}",
+        under_budget=(med_cost <= budget_float),
+        med_adults=f"{med_adults:.1f}",
+        p5_adults=f"{p5_adults:.0f}",
+        p95_adults=f"{p95_adults:.0f}",
+        contract_adult_min=CONTRACT_ADULT_MIN,
+        med_total=f"{med_total:.1f}",
+        p5_total=f"{p5_total:.0f}",
+        p95_total=f"{p95_total:.0f}",
+        histogram_bins=histogram_bins,
+        tier_summary=tier_summary,
+        # Breakdown at Median
+        med_fb_raw=f"{med_billable_fb:,.2f}",
+        med_service_fee=f"{med_service_fee:,.2f}",
+        med_fb_tax=f"{med_fb_tax:,.2f}",
+        flat_fees_total=f"{flat_fees_subtotal_taxable:,.2f}",
+        med_flat_tax=f"{med_flat_tax:,.2f}",
+        vendor_cost=f"{vendor_cost_subtotal:,.2f}",
         vendor_count=VENDOR_COUNT,
-        vendor_cost=fmt(vendor_cost_subtotal),
-
-        # Contractual requirements
-        fb_min_met=fb_min_met,
-        fb_min_required=fmt(CONTRACT_FB_MIN),
-        adult_headcount=contract_adult_headcount,
-        adult_min_required=CONTRACT_ADULT_MIN,
-        adult_min_met=adult_min_met,
-        
-        # Headcounts for headcounts grid
-        tier_21_count=tier_counts['21_plus'],
-        tier_under_21_count=tier_counts['under_21'],
-        tier_under_12_count=tier_counts['under_12'],
-        
-        all_guests=formatted_guests,
-        supabase_url=os.environ.get("SUPABASE_URL"),
-        SUPABASE_PUBLISHABLE_KEY=os.environ.get("SUPABASE_PUBLISHABLE_KEY")
+        contract_fb_min=f"{CONTRACT_FB_MIN:,.2f}",
+        # Table & Filters
+        guests=guest_rows,
+        total_guest_count=len(guest_meta_lookup),
+        filter_tier=filter_tier,
+        filter_status=filter_status,
+        filter_search=filter_search
     )
+
+from datetime import datetime
+from zoneinfo import ZoneInfo
+from flask import request, jsonify
+
+@app.route("/api/rsvp/autosave", methods=["POST"])
+def api_rsvp_autosave():
+    """
+    Handles background auto-saving for the RSVP form.
+    Matches public.parties and public.guests schema.
+    """
+    data = request.get_json(silent=True) or {}
+    confirmation_code = data.get("confirmation_code")
+    
+    if not confirmation_code:
+        return jsonify({"error": "Missing confirmation code"}), 400
+
+    conn = get_db_connection()
+    if not conn:
+        return jsonify({"error": "Database unavailable"}), 500
+
+    try:
+        with conn.cursor() as cur:
+            # 1. Fetch party
+            cur.execute(
+                """
+                SELECT id, rsvp_session_status 
+                FROM parties 
+                WHERE confirmation_code = %s;
+                """,
+                (confirmation_code,)
+            )
+            party_row = cur.fetchone()
+            if not party_row:
+                return jsonify({"error": "Party not found"}), 404
+
+            party_id, current_status = party_row[0], party_row[1]
+
+            # 2. Extract incoming form payload fields
+            form_step = data.get("form_step_reached", 0)
+            lodging_choice = data.get("lodging_choice")
+            guest_note = data.get("guest_note")
+            clicked_travel = bool(data.get("clicked_travel_link", False))
+            guest_updates = data.get("guests", [])
+
+            # Convert shuttle_interest ('yes' / 'no' / None) to proper boolean or None
+            raw_shuttle = data.get("shuttle_interest")
+            if raw_shuttle in ["yes", True, "true", "True"]:
+                shuttle_bool = True
+            elif raw_shuttle in ["no", False, "false", "False"]:
+                shuttle_bool = False
+            else:
+                shuttle_bool = None
+
+            now_pt = datetime.now(ZoneInfo("US/Pacific"))
+
+            # Keep status as 'submitted' if they are modifying an existing RSVP,
+            # otherwise set to 'in_progress'
+            new_status = 'submitted' if current_status == 'submitted' else 'in_progress'
+
+            # 3. Update Party / Household State
+            cur.execute(
+                """
+                UPDATE parties 
+                SET form_step_reached = GREATEST(COALESCE(form_step_reached, 0), %s),
+                    rsvp_session_status = %s::public.rsvp_session_status_enum,
+                    lodging_choice = COALESCE(NULLIF(%s, ''), lodging_choice),
+                    shuttle_interest = COALESCE(%s, shuttle_interest),
+                    guest_note = COALESCE(%s, guest_note),
+                    clicked_travel_link = CASE WHEN %s = true THEN true ELSE clicked_travel_link END,
+                    draft_updated_at = %s
+                WHERE id = %s;
+                """,
+                (
+                    form_step,
+                    new_status,
+                    lodging_choice, 
+                    shuttle_bool, 
+                    guest_note, 
+                    clicked_travel, 
+                    now_pt, 
+                    party_id
+                )
+            )
+
+            # 4. Update Individual Guest Draft Fields
+            for g in guest_updates:
+                g_id = g.get("id")
+                if not g_id:
+                    continue
+
+                raw_rsvp = (g.get("rsvp_status") or "").strip().lower()
+                if raw_rsvp in ["accept", "accepted", "attending"]:
+                    clean_rsvp = "accepted"
+                elif raw_rsvp in ["decline", "declined"]:
+                    clean_rsvp = "declined"
+                else:
+                    clean_rsvp = None
+
+                raw_welcome = (g.get("welcome_dinner_rsvp") or "").strip().lower()
+                if clean_rsvp == "declined":
+                    clean_welcome = "declined"
+                elif raw_welcome in ["accept", "accepted", "attending"]:
+                    clean_welcome = "accepted"
+                elif raw_welcome in ["decline", "declined"]:
+                    clean_welcome = "declined"
+                else:
+                    clean_welcome = None
+
+                dietary_val = g.get("dietary_restrictions")
+                if dietary_val is not None:
+                    dietary_val = dietary_val.strip()
+
+                cur.execute(
+                    """
+                    UPDATE guests 
+                    SET rsvp_status = COALESCE(%s::public.rsvp_status, rsvp_status),
+                        welcome_dinner_rsvp = COALESCE(%s::public.rsvp_status, welcome_dinner_rsvp),
+                        dietary_restrictions = COALESCE(%s, dietary_restrictions)
+                    WHERE id = %s AND party_id = %s;
+                    """,
+                    (
+                        clean_rsvp,
+                        clean_welcome,
+                        dietary_val,
+                        g_id,
+                        party_id
+                    )
+                )
+
+            conn.commit()
+            return jsonify({"ok": True, "saved_at": now_pt.isoformat()})
+
+    except Exception as e:
+        conn.rollback()
+        print(f"!!! Autosave Error: {e}")
+        return jsonify({"error": str(e)}), 500
+    finally:
+        conn.close()
 
 @app.route("/faqs")
 def faqs():
@@ -1944,34 +2237,45 @@ def rsvp_existing():
 
 @app.route("/rsvp/form")
 def rsvp_form():
-    # Extract the code parameter right away at the top
     code = request.args.get("code")
 
-    if check_is_post_deadline():
-        if code:
-            return redirect(url_for("rsvp_confirmation", code=code))
-        flash("The RSVP deadline has passed.", "info")
-        return redirect(url_for("rsvp_existing"))
-
-    # Ensure code exists even if accessed directly without query params
     if not code:
         flash("Confirmation code missing.", "error")
         return redirect(url_for("rsvp_existing"))
 
+    # Include due_date in party query
     party_query = """
-        SELECT id, confirmation_code, lodging_choice, shuttle_interest, guest_note, email
+        SELECT id, confirmation_code, lodging_choice, shuttle_interest, guest_note, email, due_date
         FROM parties
         WHERE confirmation_code = %s;
     """
     
+    # Updated query with Age Category priority and Primary-Host/Plus-One ordering
     guests_query = """
         SELECT g.id, g.party_id, g.first_name, g.last_name, g.rsvp_status, 
-               g.welcome_dinner_rsvp, g.dietary_restrictions, g.is_anonymous, g.guest_of, g.updated_at
+               g.welcome_dinner_rsvp, g.dietary_restrictions, g.is_anonymous, 
+               g.guest_of, g.updated_at, g.age_category, g.is_primary
         FROM guests g
+        LEFT JOIN guests host ON g.guest_of = host.id
         JOIN parties p ON g.party_id = p.id
         WHERE p.confirmation_code = %s
             AND (g.record_status IS NULL OR LOWER(TRIM(g.record_status)) != 'inactive')
-        ORDER BY CASE WHEN g.is_anonymous = true OR g.first_name IS NULL OR TRIM(g.first_name) = '' THEN 1 ELSE 0 END ASC, g.id ASC;
+        ORDER BY 
+            -- 1. Primary guests come first
+            CASE WHEN g.is_primary = true THEN 0 ELSE 1 END ASC,
+            -- 2. Sort by Age Category priority
+            CASE 
+                WHEN LOWER(TRIM(COALESCE(g.age_category::text, 'adult'))) = 'adult' THEN 1
+                WHEN LOWER(TRIM(g.age_category::text)) = 'under_21' THEN 2
+                WHEN LOWER(TRIM(g.age_category::text)) = 'under_12' THEN 3
+                ELSE 4 
+            END ASC,
+            -- 3. Sort alphabetically by primary host's name (or self name if primary)
+            COALESCE(TRIM(host.first_name || ' ' || host.last_name), TRIM(g.first_name || ' ' || g.last_name)) ASC,
+            -- 4. Primary host comes before their plus one
+            CASE WHEN g.guest_of IS NULL THEN 0 ELSE 1 END ASC,
+            -- 5. Fallback tie-breaker
+            g.id ASC;
     """
     
     conn = get_db_connection()
@@ -1991,13 +2295,18 @@ def rsvp_form():
             party_cols = [d[0] for d in cur.description]
             party_dict = dict(zip(party_cols, party_row))
 
+            # Check individual party deadline
+            if is_party_deadline_passed(party_dict.get("due_date")):
+                return redirect(url_for("rsvp_confirmation", code=code))
+
             party = {
                 "id": party_dict.get("id"),
                 "confirmation_code": party_dict.get("confirmation_code") or "",
                 "lodging_choice": party_dict.get("lodging_choice") or "",
                 "shuttle_interest": party_dict.get("shuttle_interest") or "",
                 "guest_note": party_dict.get("guest_note") or "",
-                "email": party_dict.get("email") or ""
+                "email": party_dict.get("email") or "",
+                "due_date": party_dict.get("due_date")
             }
 
             cur.execute(guests_query, (code,))
@@ -2033,9 +2342,6 @@ def rsvp_form():
 
 @app.route('/rsvp/<party_code>', methods=['GET'])
 def public_rsvp_form(party_code):
-    if check_is_post_deadline():
-        return redirect(url_for("rsvp_confirmation", code=party_code))
-
     conn = get_db_connection()
     if not conn:
         return jsonify({"error": "Database unavailable"}), 500
@@ -2044,7 +2350,7 @@ def public_rsvp_form(party_code):
         with conn.cursor() as cur:
             cur.execute(
                 """
-                SELECT id, confirmation_code, lodging_choice, shuttle_interest, guest_note
+                SELECT id, confirmation_code, lodging_choice, shuttle_interest, guest_note, due_date
                 FROM parties
                 WHERE confirmation_code = %s;
                 """,
@@ -2056,6 +2362,9 @@ def public_rsvp_form(party_code):
             
             party_cols = [d[0] for d in cur.description]
             party = dict(zip(party_cols, party_row))
+
+            if is_party_deadline_passed(party.get("due_date")):
+                return redirect(url_for("rsvp_confirmation", code=party_code))
 
             cur.execute(
                 """
@@ -2097,26 +2406,12 @@ def public_rsvp_form(party_code):
 
 @app.route("/rsvp/submit", methods=["POST"])
 def submit_rsvp():
-    if check_is_post_deadline():
-        flash("The RSVP deadline has passed. Submissions are no longer accepted.", "error")
-        code = request.form.get("confirmation_code")
-        return redirect(url_for("rsvp_confirmation", code=code) if code else url_for("rsvp_existing"))
-
     form_data = request.form
     confirmation_code = form_data.get("confirmation_code")
     
     if not confirmation_code:
         flash("Confirmation code missing. Please try again.", "error")
         return redirect(url_for("rsvp_existing"))
-
-    editor_name = session.get('current_editor', 'Guest (Direct Form Link)')
-    batch_id = str(uuid.uuid4())
-
-    lodging_choice = form_data.get("lodging_choice")
-    shuttle_interest = form_data.get("shuttle_interest")
-    guest_note = form_data.get("guest_note")
-    confirmation_email = form_data.get("confirmation_email", "").strip()
-    skip_email = form_data.get("skip_email") == "true"
 
     conn = get_db_connection()
     if not conn:
@@ -2125,33 +2420,73 @@ def submit_rsvp():
 
     try:
         with conn.cursor() as cur:
+            # 1. Fetch the party's due_date to check the deadline dynamically
+            cur.execute("SELECT due_date FROM parties WHERE confirmation_code = %s", (confirmation_code,))
+            party_row = cur.fetchone()
+            
+            if not party_row:
+                flash("We couldn't find an invitation tied to that code.", "error")
+                return redirect(url_for("rsvp_existing"))
+                
+            party_due_date = party_row[0]
+
+            # 2. Check if this specific party's deadline has passed
+            if is_party_deadline_passed(party_due_date):
+                flash("The RSVP deadline for your party has passed. Submissions are no longer accepted.", "error")
+                return redirect(url_for("rsvp_confirmation", code=confirmation_code))
+
+        editor_name = session.get('current_editor', 'Guest (Direct Form Link)')
+        batch_id = str(uuid.uuid4())
+
+        lodging_choice = form_data.get("lodging_choice")
+        
+        # Determine attendance first to check if they declined altogether
+        party_attending = False
+        for key, value in form_data.items():
+            if key.startswith("guest_") and key.endswith("_status"):
+                if (value or "").strip().lower() in ["accept", "accepted", "yes"]:
+                    party_attending = True
+                    break
+
+        # --- AUTOMATIC SHUTTLE OVERRIDE LOGIC ---
+        # Force shuttle to 'no' if they declined the wedding OR are staying at Bay Pointe Inn
+        if not party_attending or (lodging_choice and "bay pointe" in lodging_choice.lower()):
+            shuttle_interest = "no"
+        else:
+            shuttle_interest = form_data.get("shuttle_interest")
+        # ----------------------------------------
+
+        guest_note = form_data.get("guest_note")
+        confirmation_email = form_data.get("confirmation_email", "").strip()
+        skip_email = form_data.get("skip_email") == "true"
+
+        now_pt = datetime.now(ZoneInfo("US/Pacific"))
+
+        with conn.cursor() as cur:
             cur.execute("SELECT set_config('app.current_editor', %s, true);", (editor_name,))
             cur.execute("SELECT set_config('app.current_batch_id', %s, true);", (batch_id,))
 
-            # 1. Update Household Logistics, Note, & Email
+            # 3. Update Household Logistics, Note, Email, and Submission Timestamps
             cur.execute(
                 """
                 UPDATE parties 
                 SET lodging_choice = %s, 
                     shuttle_interest = %s, 
                     guest_note = %s,
-                    email = COALESCE(NULLIF(%s, ''), email)
+                    email = COALESCE(NULLIF(%s, ''), email),
+                    rsvp_session_status = 'submitted',
+                    submitted_at = %s,
+                    draft_updated_at = %s
                 WHERE confirmation_code = %s;
                 """,
-                (lodging_choice, shuttle_interest, guest_note, confirmation_email, confirmation_code)
+                (lodging_choice, shuttle_interest, guest_note, confirmation_email, now_pt, now_pt, confirmation_code)
             )
 
-            party_attending = False
-
-            # 2. Update Individual Guests (Attendance, Dietary, & Welcome Gathering)
+            # 4. Update Individual Guests (Attendance, Dietary, & Welcome Gathering)
             for key, value in form_data.items():
                 val_str = value.strip() if value else ""
                 
-                # Handle main wedding attendance, welcome dinner, & dietary notes together
                 if key.startswith("guest_") and key.endswith("_status"):
-                    if val_str.lower() in ["accept", "accepted", "yes"]:
-                        party_attending = True
-                        
                     guest_id = key[6:-7]
                     dietary_note = form_data.get(f"dietary_{guest_id}", "").strip() or None
                     first_name = form_data.get(f"guest_{guest_id}_first")
@@ -2159,7 +2494,6 @@ def submit_rsvp():
                     
                     rsvp_val = val_str if val_str else None
 
-                    # If they declined the wedding, automatically set welcome dinner to 'declined'
                     welcome_val = None
                     if rsvp_val in ["decline", "declined"]:
                         welcome_val = "declined"
@@ -2190,7 +2524,7 @@ def submit_rsvp():
 
             conn.commit()
 
-            # 3. Fetch the updated party and guest details for emails
+            # 5. Fetch updated party and guest details for emails
             with conn.cursor() as cur:
                 cur.execute(
                     """
@@ -2230,7 +2564,7 @@ def submit_rsvp():
                         "dietary": guest_dict.get('dietary_restrictions') or "None"
                     })
 
-            # 4. Trigger internal notification email to you & Ethan
+            # 6. Trigger internal notification email
             try:
                 send_internal_rsvp_notification(
                     party_name=party_name,
@@ -2242,7 +2576,7 @@ def submit_rsvp():
             except Exception as notify_err:
                 print(f"Non-fatal internal notification error: {notify_err}")
 
-            # 5. Trigger the guest confirmation email if provided and not skipped
+            # 7. Trigger guest confirmation email
             if confirmation_email and not skip_email:
                 if party_attending:
                     dynamic_preview = "We can't wait to celebrate with you at Bay Pointe Inn!"
@@ -2282,7 +2616,7 @@ def rsvp_confirmation(code):
         return redirect(url_for("rsvp_existing"))
 
     party_query = """
-        SELECT id, confirmation_code, lodging_choice, shuttle_interest, guest_note, email
+        SELECT id, confirmation_code, lodging_choice, shuttle_interest, guest_note, email, due_date
         FROM parties
         WHERE confirmation_code ILIKE %s
         LIMIT 1;
@@ -2297,28 +2631,42 @@ def rsvp_confirmation(code):
     party_id = real_party["id"]
 
     guests_query = """
-        SELECT id, 
+        SELECT g.id, 
                CASE 
-                   WHEN is_anonymous = true AND (first_name IS NULL OR TRIM(first_name) = '') THEN 'Plus One'
-                   ELSE TRIM(COALESCE(first_name, '') || ' ' || COALESCE(last_name, ''))
+                   WHEN g.is_anonymous = true AND (g.first_name IS NULL OR TRIM(g.first_name) = '') THEN 'Plus One'
+                   ELSE TRIM(COALESCE(g.first_name, '') || ' ' || COALESCE(g.last_name, ''))
                END AS name,
-               rsvp_status, 
-               welcome_dinner_rsvp,
-               dietary_restrictions
-        FROM guests
-        WHERE party_id = %s AND (record_status IS NULL OR record_status != 'inactive')
-        ORDER BY id ASC;
+               g.rsvp_status, 
+               g.welcome_dinner_rsvp,
+               g.dietary_restrictions,
+               g.guest_of
+        FROM guests g
+        LEFT JOIN guests host ON g.guest_of = host.id
+        WHERE g.party_id = %s AND (g.record_status IS NULL OR g.record_status != 'inactive')
+        ORDER BY 
+            -- 1. Sort by the primary host's name (if guest_of is NULL, use their own name)
+            COALESCE(TRIM(host.first_name || ' ' || host.last_name), TRIM(g.first_name || ' ' || g.last_name)) ASC,
+            -- 2. Primary hosts (guest_of IS NULL) come before their Plus One
+            CASE WHEN g.guest_of IS NULL THEN 0 ELSE 1 END ASC,
+            -- 3. Fallback secondary tie-breaker by ID
+            g.id ASC;
     """
     real_party_members, g_err = get_data_from_query(guests_query, (party_id,))
     if g_err:
         real_party_members = []
 
-    # Check if the deadline has passed
-    if check_is_post_deadline():
+    # Check if this specific party's deadline has passed
+    if is_party_deadline_passed(real_party.get("due_date")):
         for guest in real_party_members:
+            # Main wedding status fallback
             status = (guest.get('rsvp_status') or '').strip().lower()
             if status not in ['accept', 'accepted', 'attending']:
                 guest['rsvp_status'] = 'declined'
+
+            # Welcome dinner status fallback
+            welcome_status = (guest.get('welcome_dinner_rsvp') or '').strip().lower()
+            if welcome_status not in ['accept', 'accepted', 'attending']:
+                guest['welcome_dinner_rsvp'] = 'declined'
 
         return render_template(
             "rsvp_confirmation_closed.html", 
@@ -2497,24 +2845,63 @@ from flask import request, redirect, url_for, render_template, flash
 def search_by_code():
     code = request.form.get("confirmation_code", "").strip().upper()
     
-    # Query Supabase for the confirmation code
-    response = supabase.table("parties").select("*").eq("confirmation_code", code).execute()
-    
-    if not response.data:
-        # FIXED: Uses 'rsvp_existing' instead of 'find_rsvp_page'
-        flash("We couldn't find a reservation matching that reference code. Please check for typos or try searching by your name.", "error")
+    conn = get_db_connection()
+    if not conn:
+        flash("Database unavailable. Please try again later.", "error")
         return redirect(url_for("rsvp_existing"))
-        
-    # FIXED: Uses 'rsvp_confirmation' instead of 'confirmation_page'
-    return redirect(url_for("rsvp_confirmation", code=code))
 
+    try:
+        with conn.cursor() as cur:
+            cur.execute(
+                """
+                SELECT id, rsvp_session_status, due_date 
+                FROM parties 
+                WHERE confirmation_code = %s;
+                """,
+                (code,)
+            )
+            row = cur.fetchone()
+            
+            if not row:
+                flash("We couldn't find a reservation matching that reference code. Please check for typos or try searching by your name.", "error")
+                return redirect(url_for("rsvp_existing"))
+                
+            party_id = row[0]
+            session_status = row[1]
+            party_due_date = row[2]
 
-# ADD THIS MISSING ROUTE FOR SEARCHING BY NAME:
-from flask import current_app
-# (Ensure you import whatever database connection utility your project uses, 
-# e.g., psycopg2 or a get_db() context manager. Here is the standard psycopg2 approach:)
+            # Track Lookup Metrics & update status to 'in_progress' if not started
+            cur.execute(
+                """
+                UPDATE parties 
+                SET lookup_count = COALESCE(lookup_count, 0) + 1,
+                    last_lookup_at = %s,
+                    rsvp_session_status = CASE 
+                        WHEN rsvp_session_status = 'not_started' THEN 'in_progress'::public.rsvp_session_status_enum 
+                        ELSE rsvp_session_status 
+                    END
+                WHERE id = %s;
+                """,
+                (datetime.now(ZoneInfo("US/Pacific")), party_id)
+            )
+            conn.commit()
 
+            if is_party_deadline_passed(party_due_date):
+                return redirect(url_for("rsvp_confirmation", code=code))
 
+            # ONLY send to confirmation if they have explicitly submitted. Otherwise, send to the form.
+            if session_status == 'submitted':
+                return redirect(url_for("rsvp_confirmation", code=code))
+            else:
+                return redirect(url_for("rsvp_form", code=code))
+
+    except Exception as e:
+        conn.rollback()
+        print(f"!!! DB Error in search_by_code: {e}")
+        flash("An internal database error occurred. Please try again.", "error")
+        return redirect(url_for("rsvp_existing"))
+    finally:
+        conn.close()
 
 @app.route("/rsvp/modify/search-by-name", methods=["POST"])
 def search_by_name():
@@ -2527,9 +2914,8 @@ def search_by_name():
 
     search_pattern = f"%{clean_name}%"
 
-    # SQL query automatically filters out inactive guests (Rule 2c)
     query = """
-        SELECT g.party_id, p.confirmation_code, g.rsvp_status 
+        SELECT g.party_id, p.confirmation_code, p.rsvp_session_status, p.due_date 
         FROM guests g
         JOIN parties p ON g.party_id = p.id
         WHERE (TRIM(COALESCE(g.first_name, '') || ' ' || COALESCE(g.last_name, '')) ILIKE %s
@@ -2563,35 +2949,51 @@ def search_by_name():
             cur.execute(query, (search_pattern, search_pattern, search_pattern, search_pattern))
             row = cur.fetchone()
             
-            # Rule 2b & 2c: If not found or inactive, stay on page and show error
             if not row:
                 flash("We couldn't find an invitation under that name. Please check your spelling or search by your reference code.", "error")
                 return redirect(url_for("rsvp_existing"))
                 
             party_id = row[0]
             confirmation_code = row[1]
-            rsvp_status = row[2]
+            session_status = row[2]
+            party_due_date = row[3]
 
-            # Store the current editor in the session for tracking purposes
+            # Track Lookup Metrics & update status to 'in_progress' if not started
+            cur.execute(
+                """
+                UPDATE parties 
+                SET lookup_count = COALESCE(lookup_count, 0) + 1,
+                    last_lookup_at = %s,
+                    rsvp_session_status = CASE 
+                        WHEN rsvp_session_status = 'not_started' THEN 'in_progress'::public.rsvp_session_status_enum 
+                        ELSE rsvp_session_status 
+                    END
+                WHERE id = %s;
+                """,
+                (datetime.now(ZoneInfo("US/Pacific")), party_id)
+            )
+
             session['current_editor'] = f"Guest: {clean_name}"
 
-            # Rule 1: If found but RSVP deadline has passed, go to confirmation page
-            if check_is_post_deadline():
+            if is_party_deadline_passed(party_due_date):
+                conn.commit()
                 return redirect(url_for("rsvp_confirmation", code=confirmation_code))
             
-            # Rule 2: If found and active, go to form or confirmation page
-            if not rsvp_status or rsvp_status.lower() == 'pending':
+            # ONLY send to confirmation if they have explicitly submitted. Otherwise, send to the form.
+            if session_status == 'submitted':
+                conn.commit()
+                return redirect(url_for("rsvp_confirmation", code=confirmation_code))
+            else:
+                conn.commit()
                 return redirect(url_for("rsvp_form", code=confirmation_code))
-                
-            return redirect(url_for("rsvp_confirmation", code=confirmation_code))
             
     except Exception as e:
+        conn.rollback()
         print(f"!!! DB Error in search_by_name: {e}")
         flash("An internal database error occurred. Please try searching by your confirmation code.", "error")
         return redirect(url_for("rsvp_existing"))
     finally:
         conn.close()
-
 
 @app.route("/rsvp/search", methods=["POST"])
 def rsvp_search():
@@ -2602,18 +3004,14 @@ def rsvp_search():
         flash("Please enter a name to search.", "error")
         return redirect(url_for("rsvp"))
 
-    # Use a regex pattern or word-boundary check to ensure full name/token matching 
-    # instead of loose substring matching (e.g., preventing "A" from matching "Alan")
     search_pattern = f"%{clean_name}%"
 
     query = """
-        SELECT g.party_id, p.confirmation_code, g.rsvp_status 
+        SELECT g.party_id, p.confirmation_code, p.rsvp_session_status 
         FROM guests g
         JOIN parties p ON g.party_id = p.id
         WHERE (
-           -- Matches exact full name structure (First + Last)
            (g.first_name || ' ' || g.last_name) ILIKE %s
-           -- Or matches alternate full name combinations
            OR EXISTS (
                SELECT 1 
                FROM unnest(COALESCE(g.alt_first_name, ARRAY[]::text[])) af(fn),
@@ -2631,7 +3029,6 @@ def rsvp_search():
                WHERE (g.first_name || ' ' || ln) ILIKE %s
            )
         )
-        -- Enforce that the clean_name query has at least a space (First and Last name entered)
         AND length(%s) - length(replace(%s, ' ', '')) >= 1
         AND (g.record_status IS NULL OR LOWER(TRIM(g.record_status)) != 'inactive')
         LIMIT 1;
@@ -2653,16 +3050,43 @@ def rsvp_search():
                 
             party_id = row[0]
             confirmation_code = row[1]
-            rsvp_status = row[2]
+            session_status = row[2]
+
+            # Track Lookup Metrics & update status
+            cur.execute(
+                """
+                UPDATE parties 
+                SET lookup_count = COALESCE(lookup_count, 0) + 1,
+                    last_lookup_at = %s,
+                    rsvp_session_status = CASE 
+                        WHEN rsvp_session_status = 'not_started' THEN 'in_progress'::public.rsvp_session_status_enum 
+                        ELSE rsvp_session_status 
+                    END
+                WHERE id = %s;
+                """,
+                (datetime.now(ZoneInfo("US/Pacific")), party_id)
+            )
+
+            cur.execute("SELECT due_date FROM parties WHERE id = %s", (party_id,))
+            due_row = cur.fetchone()
+            party_due_date = due_row[0] if due_row else None
 
             session['current_editor'] = f"Guest: {clean_name}"
+
+            if is_party_deadline_passed(party_due_date):
+                conn.commit()
+                return redirect(url_for("rsvp_confirmation", code=confirmation_code))
             
-            if not rsvp_status or rsvp_status.lower() == 'pending':
+            # ONLY send to confirmation if they have explicitly submitted
+            if session_status == 'submitted':
+                conn.commit()
+                return redirect(url_for("rsvp_confirmation", code=confirmation_code))
+            else:
+                conn.commit()
                 return redirect(url_for("rsvp_form", code=confirmation_code))
-                
-            return redirect(url_for("rsvp_confirmation", code=confirmation_code))
             
     except Exception as e:
+        conn.rollback()
         print(f"!!! DB Error in rsvp_search: {e}")
         flash("An internal database error occurred. Please try searching by your confirmation code.", "error")
         return redirect(url_for("rsvp"))

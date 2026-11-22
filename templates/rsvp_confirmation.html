@@ -49,7 +49,7 @@
 
             <!-- Guest & Attendance Recap (Main Wedding) -->
             <div class="recap-group">
-                <span class="recap-label">Ceremony and Reception</span>
+                <span class="recap-label">Ceremony and Reception – Friday, June 18, 2027</span>
                 <div class="recap-entries">
                     {% for guest in party_members %}
                     <div class="guest-entry">
@@ -69,7 +69,7 @@
 
             <!-- Separate Welcome Gathering Section -->
             <div class="recap-group">
-                <span class="recap-label">Thursday Welcome Gathering</span>
+                <span class="recap-label">Welcome Gathering – Thursday, June 17, 2027</span>
                 <div class="recap-entries">
                     {% for guest in party_members %}
                     <div class="guest-entry">
@@ -92,14 +92,12 @@
                         <span class="logistics-label">Lodging</span>
                         <span class="logistics-value">{{ party.lodging_choice|default('None selected') }}</span>
                     </div>
-                    {% if party.shuttle_interest %}
                     <div class="logistics-row">
                         <span class="logistics-label">Shuttle Service</span>
-                        <span class="logistics-value status-attending">
+                        <span class="logistics-value {% if party.shuttle_interest == 'yes' %}status-attending{% else %}status-declined{% endif %}">
                             {% if party.shuttle_interest == 'yes' %}Requested{% else %}Declined{% endif %}
                         </span>
                     </div>
-                    {% endif %}
                 </div>
             </div>
 

@@ -68,7 +68,7 @@
 }
 
 .guest-entry {
-  padding: 12px 0;
+  padding: 10px 0;
   border-bottom: 1px solid #dddddd59;
 }
 
@@ -395,7 +395,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 0;
+  padding: 10px 0;
   border-bottom: 1px solid #dddddd59;
   font-family: 'Inria Serif', serif;
 }
@@ -669,5 +669,19 @@
     visibility: visible;
     pointer-events: auto;
     transform: translateX(-50%) translateY(0);
+}
+
+.logistics-value {
+  font-family: 'Inria Serif', serif;
+  font-size: 1rem;
+  letter-spacing: 0.08em;
+  color: #555;
+  font-weight: 600;
+}
+
+/* Add this rule so declined logistics match the guest card style */
+.logistics-value.status-declined {
+  color: #888;
+  font-weight: 400; /* Removes the bold weight */
 }
 
